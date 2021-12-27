@@ -5,6 +5,7 @@ import axios from 'axios';
 import Login from './Login';
 import Dashboard from './Dashboard';
 import Home from './Home';
+import Chat from './Chat';
 
 import PrivateRoute from './Utils/PrivateRoute';
 import PublicRoute from './Utils/PublicRoute';
@@ -41,6 +42,7 @@ function App() {
               <Route exact path="/" component={Home} />
               <PublicRoute path="/login" component={Login} />
               <PrivateRoute path="/dashboard" component={Dashboard} />
+              <PrivateRoute path="/chat" component={Chat} />
             </Switch>
           </div>
         </div>
