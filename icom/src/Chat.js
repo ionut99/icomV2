@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import classNames from 'classnames';
 import { getUser, removeUserSession } from './Utils/Common';
 import avatar from './images/avatar.png'
 
 
 function Chat(props) {
+  const [error, setError] = useState(null);
   const user = getUser();
+
+  axios.post('http://localhost:4000/users/chanel', { userid: user[0], param: "chanel" }).then(response => {
+    console.log(response.data.message);
+    }).catch(error => {
+      if (error.response.status === 401) setError(error.response.data.message);
+      else setError("Something went wrong. Please try again later.");
+    });
   let messages = [];
 
   for(let i = 0; i<30;i++){
@@ -36,7 +45,7 @@ function Chat(props) {
           <div className="content"><h2>Title</h2></div>
           <div className="right">
               <div className="user-bar">
-                  <div className="profile-name">Toan Nguyen Dinh</div>
+                  <div className="profile-name">{user.name}</div>
                   <div className="profile-image"><img className='photo' src={avatar} alt="profile"/></div>
               </div>
           </div>

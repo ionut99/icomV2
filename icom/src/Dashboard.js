@@ -10,10 +10,15 @@ function Dashboard(props) {
     props.history.push('/login');
   }
 
+  const handleChat = () => {
+    props.history.push('/chat');
+  }
+
   return (
-    <div>
-      Welcome {user.name}!<br /><br />
-      <input type="button" onClick={handleLogout} value="Logout" />
+    <div className='dashboard_menu'>
+      <h2>Welcome {user.name}!</h2><br />
+      <input className='action_button' type="button" onClick={handleChat} value="Chat" /><br /><br />
+      <input className='action_button' type="button" onClick={handleLogout} value="Logout" />
     </div>
   );
 }

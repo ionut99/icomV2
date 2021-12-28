@@ -118,6 +118,14 @@ app.post('/users/signin', function (req, res) {
   )
 });
 
+app.post('/users/chanel', function (req, res) {
+  const user = req.body.userid;
+  const pwd = req.body.param;
+
+  return res.json({ message: "hello, ionut!!"});
+  
+});
+
 
 // verify the token and return it if it's valid
 app.get('/verifyToken', function (req, res) {
