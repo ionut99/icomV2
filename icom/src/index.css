@@ -50,6 +50,8 @@ code {
 .app-messenger .main{
   height: 100%;
   display: flex;
+  overflow: hidden;
+
 }
 
 .header_mess{
@@ -115,17 +117,174 @@ code {
 
 .main .sidebar-left{
   width: 20%;
-  height: inherit;
   border-right: 1px solid var(--my_border);
 }
 
 .main .sidebar-right{
   width: 20%;
-  height: inherit;
   border-left: 1px solid var(--my_border);
 }
+
+.main .sidebar-right .title{
+  padding: 10px;
+}
+
+.main .sidebar-right .title h2{
+ font-size: 16px;
+ font-weight: 600;
+ color: rgb(0,0,0,0.8);
+}
+
 .main .content{
   width: 60%;
   flex-grow: 1;
-  height: inherit;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.main .content .messenger_input{
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  border-top: 1px solid var(--my_border);
+}
+
+.main .content .messenger_input .text_input {
+  
+  flex-grow: 1;
+  
+}
+.text_input textarea{
+  
+  border: 0 none;
+  width: 100%;
+  height: 100%;
+
+}
+
+.main .content .messenger_input .actions button{
+  
+  background: var(--primary-color);
+  color: #FFF;
+  border: 0 none;
+  padding: 7px 15px;
+  height: 100%;
+}
+
+.messages{
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.messages .one_message{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin: 15px;
+}
+
+.messages .one_message.me{
+  justify-content: flex-start;
+}
+
+.messages .one_message.me .message_body .message_text{
+  background: var(--primary-color);
+  color: #FFF;
+}
+
+.messages .one_message .image_user_message img{
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.messages .one_message .message_body{
+  padding-left: 10px;
+  
+}
+
+.messages .one_message .message_body .message_author{
+  
+}
+
+.messages .one_message .message_body .message_text{
+  background: var(--body-color);
+  color: #FFF;
+  padding: 10px;
+  border-radius: 10px;
+  
+}
+
+.chanels{
+
+}
+
+.chanels .chanel{
+  display: flex;
+  border-bottom: 1px solid var(--my_border);
+  padding: 8px 0;
+}
+
+.chanels .chanel .user_image{
+  width: 30px;
+}
+
+.chanels .chanel .user_image img{
+  width: 30px;
+  height: 30px;
+  border-radius: 50px;
+}
+
+.chanels .chanel .chanel_info{
+  flex-grow: 1;
+  padding-left: 10px;
+}
+
+.chanels .chanel .chanel_info h2{
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0%;
+}
+
+.chanels .chanel .chanel_info p{
+  margin: 0%;
+  font-size: 12px;
+}
+
+.members{
+
+}
+
+.members .member{
+  display: flex;
+  border-bottom: 1px solid var(--my_border);
+  padding: 8px 0;
+}
+
+.members .member .user_image{
+  width: 30px;
+}
+
+.members .member .user_image img{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  
+}
+
+.members .member .member_info{
+  flex-grow: 1;
+  padding-left: 8px;
+}
+
+.members .member .member_info h2{
+  font-size: 14px;
+  margin: 0%;
+}
+.members .member .member_info p{
+  font-size: 10px;
+  margin: 0%;
 }
