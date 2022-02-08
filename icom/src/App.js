@@ -1,35 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Switch } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Switch, NavLink, Redirect } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
-import Dashboard from './Dashboard';
-import Home from './Home';
-import Chat from './Chat';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 
-import PrivateRoute from './Utils/PrivateRoute';
-import PublicRoute from './Utils/PublicRoute';
+import PrivateRoute from './routes/PrivateRoute';
+import PublicRoute from './routes/PublicRoute';
 
-import { getToken, removeUserSession, setUserSession } from './Utils/Common';
+import { verifyTokenAsync } from './asyncActions/authAsyncActions';
 
 function App() {
-  const [authLoading, setAuthLoading] = useState(true);
+  
+  const authObj = useSelector(state => state.auth);
+  const dispatch = useDispatch();
 
+  const { authLoading, isAuthenticated } = authObj;
+
+  // verify token on app load
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      return;
-    }
-
-    axios.get(`http://localhost:4000/verifyToken?token=${token}`).then(response => {
-      setUserSession(response.data.token, response.data.user);
-      setAuthLoading(false);
-    }).catch(error => {
-      removeUserSession();
-      setAuthLoading(false);
-    });
+    dispatch(verifyTokenAsync());
   }, []);
 
-  if (authLoading && getToken()) {
+  // checking authentication
+  if (authLoading) {
     return <div className="content">Checking Authentication...</div>
   }
 
@@ -39,9 +33,9 @@ function App() {
         <div>
           <div className="content">
             <Switch>
-              <PublicRoute exact path="/" component={Home} />
-              <PrivateRoute path="/dashboard" component={Dashboard} />
-              <PrivateRoute path="/chat" component={Chat} />
+              <PublicRoute path="/login" component={Login} isAuthenticated={isAuthenticated} />
+              <PrivateRoute path="/dashboard" component={Dashboard} isAuthenticated={isAuthenticated} />
+              <Redirect to={isAuthenticated ? '/dashboard' : '/login'} />
             </Switch>
           </div>
         </div>

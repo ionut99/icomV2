@@ -3,162 +3,195 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
-const utils = require('./utils');
-const mysql = require("mysql");
+const cookieParser = require('cookie-parser');
+
+const {
+  refreshTokens, COOKIE_OPTIONS, generateToken, generateRefreshToken,
+  getCleanUser, verifyToken, clearTokens, handleResponse,
+} = require('./utils');
 
 const app = express();
 const port = process.env.PORT || 4000;
 
-// create DataBase Connection
-var config = 
-{
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'icomdatabase'
-}
-
-const db = new mysql.createConnection(config);
-
-// database user details
-var userData = {
-  userId: "",
-  passwordU: "",
-  surname: "",
-  name: "",
-  email: "",
-  isAdmin: false
-};
+// list of the users to be consider as a database for example
+const userList = [
+  {
+    userId: "123",
+    password: "clue",
+    name: "Clue",
+    email: "clue",
+    isAdmin: true
+  },
+  {
+    userId: "456",
+    password: "mediator",
+    name: "Mediator",
+    email: "mediator",
+    isAdmin: true
+  },
+  {
+    userId: "789",
+    password: "123456",
+    name: "Clue Mediator",
+    email: "cluemediator",
+    isAdmin: true
+  }
+]
 
 // enable CORS
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // url of the frontend application
+  credentials: true // set credentials true for secure httpOnly cookie
+}));
 // parse application/json
 app.use(bodyParser.json());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// use cookie parser for secure httpOnly cookie
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
-//middleware that checks if JWT token exists and verifies it if it does exist.
-//In all future routes, this helps to know if the request is authenticated or not.
-app.use(function (req, res, next) {
+
+// middleware that checks if JWT token exists and verifies it if it does exist.
+// In all private routes, this helps to know if the request is authenticated or not.
+const authMiddleware = function (req, res, next) {
   // check header or url parameters or post parameters for token
   var token = req.headers['authorization'];
-  if (!token) return next(); //if no token, continue
+  if (!token) return handleResponse(req, res, 401);
 
   token = token.replace('Bearer ', '');
-  jwt.verify(token, process.env.JWT_SECRET, function (err, user) {
-    if (err) {
-      return res.status(401).json({
-        error: true,
-        message: "Invalid user."
-      });
-    } else {
-      req.user = user; //set the user to req so other routes can use it
+
+  // get xsrf token from the header
+  const xsrfToken = req.headers['x-xsrf-token'];
+  if (!xsrfToken) {
+    return handleResponse(req, res, 403);
+  }
+
+  // verify xsrf token
+  const { signedCookies = {} } = req;
+  const { refreshToken } = signedCookies;
+  if (!refreshToken || !(refreshToken in refreshTokens) || refreshTokens[refreshToken] !== xsrfToken) {
+    return handleResponse(req, res, 401);
+  }
+
+  // verify token with secret key and xsrf token
+  verifyToken(token, xsrfToken, (err, payload) => {
+    if (err)
+      return handleResponse(req, res, 401);
+    else {
+      req.user = payload; //set the user to req so other routes can use it
       next();
     }
   });
-});
+}
 
 
-// request handlers
-app.get('/', (req, res) => {
-  if (!req.user) return res.status(401).json({ success: false, message: 'Invalid user to access it.' });
-  res.send('Welcome - ' + req.user.name);
-});
-
-
-// validate the user credentials
+// validate user credentials
 app.post('/users/signin', function (req, res) {
   const user = req.body.email;
   const pwd = req.body.password;
 
   // return 400 status if email/password is not exist
   if (!user || !pwd) {
-    return res.status(400).json({
-      error: true,
-      message: "email or Password required."
-    });
+    return handleResponse(req, res, 400, null, "email and Password required.");
   }
 
-  db.query(
-    "SELECT * FROM IUsers WHERE email = ? AND password = ?",
-    [user, pwd],
-    (err, result) => {
-      if (err) {
-          // error sql statement
-        return res.status(403).json({
-            error: true,
-            message: "Error select dataBase"
-          });
-      }
-      if (result.length > 0) {
-        // if succeed complete data with the result from database
-        
-        userData.userId = result[0].userId;
-        userData.name = result[0].Name;
-        userData.surname = result[0].Surname;
-        userData.email = result[0].email;
-        userData.passwordU = result[0].Password;
-        userData.isAdmin = result[0].IsAdmin;
+  const userData = userList.find(x => x.email === user && x.password === pwd);
 
-        // generate token
-        const token = utils.generateToken(userData);
-        // get basic user details
-        const userObj = utils.getCleanUser(userData);
-        // return the token along with user details
-        return res.json({ user: userObj, token });
-
-      } else {
-          // return 401 status if the credential is not match.
-        return res.status(401).json({
-            error: true,
-            message: "email or Password is Wrong."
-          });
-      }
-    }
-  )
-});
-
-app.post('/users/chanel', function (req, res) {
-  const user = req.body.userid;
-  //console.log(user);
-  const pwd = req.body.param;
-
-  return res.json({ message: "hello, ionut!!"});
-  
-});
-
-
-// verify the token and return it if it's valid
-app.get('/verifyToken', function (req, res) {
-  // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token;
-  if (!token) {
-    return res.status(400).json({
-      error: true,
-      message: "Token is required."
-    });
+  // return 401 status if the credential is not matched
+  if (!userData) {
+    return handleResponse(req, res, 401, null, "email or Password is Wrong.");
   }
-  // check token that was passed by decoding token using secret
-  jwt.verify(token, process.env.JWT_SECRET, function (err, user) {
-    if (err) return res.status(401).json({
-      error: true,
-      message: "Invalid token."
-    });
 
-    // return 401 status if the userId does not match.
-    if (user.userId !== userData.userId) {
-      return res.status(401).json({
-        error: true,
-        message: "Invalid user."
-      });
-    }
-    // get basic user details
-    var userObj = utils.getCleanUser(userData);
-    return res.json({ user: userObj, token });
+  // get basic user details
+  const userObj = getCleanUser(userData);
+
+  // generate access token
+  const tokenObj = generateToken(userData);
+
+  // generate refresh token
+  const refreshToken = generateRefreshToken(userObj.userId);
+
+  // refresh token list to manage the xsrf token
+  refreshTokens[refreshToken] = tokenObj.xsrfToken;
+
+  // set cookies
+  res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
+  res.cookie('XSRF-TOKEN', tokenObj.xsrfToken);
+
+  return handleResponse(req, res, 200, {
+    user: userObj,
+    token: tokenObj.token,
+    expiredAt: tokenObj.expiredAt
   });
 });
+
+
+// handle user logout
+app.post('/users/logout', (req, res) => {
+  clearTokens(req, res);
+  return handleResponse(req, res, 204);
+});
+
+
+// verify the token and return new tokens if it's valid
+app.post('/verifyToken', function (req, res) {
+
+  const { signedCookies = {} } = req;
+  const { refreshToken } = signedCookies;
+  if (!refreshToken) {
+    return handleResponse(req, res, 204);
+  }
+
+  // verify xsrf token
+  const xsrfToken = req.headers['x-xsrf-token'];
+  if (!xsrfToken || !(refreshToken in refreshTokens) || refreshTokens[refreshToken] !== xsrfToken) {
+    return handleResponse(req, res, 401);
+  }
+
+  // verify refresh token
+  verifyToken(refreshToken, '', (err, payload) => {
+    if (err) {
+      return handleResponse(req, res, 401);
+    }
+    else {
+      const userData = userList.find(x => x.userId === payload.userId);
+      if (!userData) {
+        return handleResponse(req, res, 401);
+      }
+
+      // get basic user details
+      const userObj = getCleanUser(userData);
+
+      // generate access token
+      const tokenObj = generateToken(userData);
+
+      // refresh token list to manage the xsrf token
+      refreshTokens[refreshToken] = tokenObj.xsrfToken;
+      res.cookie('XSRF-TOKEN', tokenObj.xsrfToken);
+
+      // return the token along with user details
+      return handleResponse(req, res, 200, {
+        user: userObj,
+        token: tokenObj.token,
+        expiredAt: tokenObj.expiredAt
+      });
+    }
+  });
+
+});
+
+
+// get list of the users
+app.get('/users/getList', authMiddleware, (req, res) => {
+  const list = userList.map(x => {
+    const user = { ...x };
+    delete user.password;
+    return user;
+  });
+  return handleResponse(req, res, 200, { random: Math.random(), userList: list });
+});
+
 
 app.listen(port, () => {
   console.log('Server started on: ' + port);
