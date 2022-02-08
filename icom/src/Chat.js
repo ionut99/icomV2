@@ -1,36 +1,49 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import classNames from 'classnames';
-import { getUser, removeUserSession } from './Utils/Common';
+import { getUser } from './Utils/Common';
 import avatar from './images/avatar.png'
 
 
 function Chat(props) {
   const [error, setError] = useState(null);
   const user = getUser();
-
-  axios.post('http://localhost:4000/users/chanel', { userid: user[0], param: "chanel" }).then(response => {
+  
+  axios.post('http://localhost:4000/users/chanel', { userid: user.userId, param: "chanel" }).then(response => {
     console.log(response.data.message);
     }).catch(error => {
       if (error.response.status === 401) setError(error.response.data.message);
       else setError("Something went wrong. Please try again later.");
     });
-  let messages = [];
+  const [messages, setmessages] = useState([]);
+  const [chanels, setchanels] = useState([]);
+  const [newInputMessage, setnewInputMessage] = useState("");
 
-  for(let i = 0; i<30;i++){
-      let isMe = false;
+  const handleNewChanel = () => {
+    const newchanel = {
+        groupname: `chanel personalizat`,
+        last_message: `hai noroc nou`,
+        avatar: avatar,
+    }
+    setchanels([...chanels, newchanel]);
+  }
 
-      if(i % 2 === 0){
-          isMe = true;
-      }
-
-       const newMsg = {
-           author: `Author ${i}`,
-           body: `The body of message ${i}`,
-           avatar: avatar,
-           me: isMe,
-       }
-       messages.push(newMsg);
+  const handleNewmessage = () => {
+    const newMsg = {
+        author: `Ionut`,
+        body: newInputMessage,
+        avatar: avatar,
+        me: true,
+    }
+    if(newInputMessage !== "")
+    {
+        setmessages([...messages, newMsg]);
+        document.getElementById("new_text").value = "";
+        setnewInputMessage("");
+    }
+  }
+  const handleDashboard = () => {
+    props.history.push('/dashboard');
   }
 
   return (
@@ -38,8 +51,8 @@ function Chat(props) {
       <div className="header_mess">
           <div className="left">
               <div className='actions'>
-
-                  <button>New message</button>
+                  <button onClick={handleDashboard}>back</button>
+                  <button onClick={handleNewChanel}>New message</button>
               </div>
           </div>
           <div className="content"><h2>Title</h2></div>
@@ -53,26 +66,19 @@ function Chat(props) {
       <div className="main">
         <div className="sidebar-left">
             <div className='chanels'>
-                <div className='chanel'>
-                    <div className='user_image'>
-                        <img src={avatar} alt=""/>
-                    </div>
-                    <div className='chanel_info'>
-                        <h2>SHeeees</h2>
-                        <p>Salut ...</p>
-                    </div>
-
-                </div>
-                <div className='chanel'>
-                    <div className='user_image'>
-                        <img src={avatar} alt=""/>
-                    </div>
-                    <div className='chanel_info'>
-                        <h2>SHeeees</h2>
-                        <p>Salut ...</p>
-                    </div>
-
-                </div>
+                {chanels.map((chanels, index) => {
+                    return (
+                        <div key={index} className='chanel'>
+                            <div className='user_image'>
+                                <img src={chanels.avatar} alt=""/>
+                            </div>
+                            <div className='chanel_info'>
+                                <h2>{chanels.groupname}</h2>
+                                <p>{chanels.last_message}</p>
+                            </div>
+                        </div>
+                    )
+                })}
             </div>
         </div>
         <div className="content">
@@ -96,10 +102,13 @@ function Chat(props) {
             </div>
             <div className='messenger_input'>
                 <div className='text_input'>
-                    <textarea placeholder='Write your message...'/>
+                    <textarea id='new_text' placeholder='Write your message...'
+                        onChange={e => setnewInputMessage(e.target.value)}
+                        >
+                    </textarea>
                 </div>
                 <div className='actions'>
-                    <button>Send</button>
+                    <button onClick={handleNewmessage}>Send</button>
                 </div>
             </div>
         </div>

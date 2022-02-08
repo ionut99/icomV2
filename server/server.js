@@ -25,8 +25,9 @@ const db = new mysql.createConnection(config);
 var userData = {
   userId: "",
   passwordU: "",
+  surname: "",
   name: "",
-  username: "",
+  email: "",
   isAdmin: false
 };
 
@@ -63,25 +64,25 @@ app.use(function (req, res, next) {
 // request handlers
 app.get('/', (req, res) => {
   if (!req.user) return res.status(401).json({ success: false, message: 'Invalid user to access it.' });
-  res.send('Welcome to the Node.js Tutorial! - ' + req.user.name);
+  res.send('Welcome - ' + req.user.name);
 });
 
 
 // validate the user credentials
 app.post('/users/signin', function (req, res) {
-  const user = req.body.username;
+  const user = req.body.email;
   const pwd = req.body.password;
 
-  // return 400 status if username/password is not exist
+  // return 400 status if email/password is not exist
   if (!user || !pwd) {
     return res.status(400).json({
       error: true,
-      message: "Username or Password required."
+      message: "email or Password required."
     });
   }
 
   db.query(
-    "SELECT * FROM IUsers WHERE username = ? AND password = ?",
+    "SELECT * FROM IUsers WHERE email = ? AND password = ?",
     [user, pwd],
     (err, result) => {
       if (err) {
@@ -96,7 +97,8 @@ app.post('/users/signin', function (req, res) {
         
         userData.userId = result[0].userId;
         userData.name = result[0].Name;
-        userData.username = result[0].Username;
+        userData.surname = result[0].Surname;
+        userData.email = result[0].email;
         userData.passwordU = result[0].Password;
         userData.isAdmin = result[0].IsAdmin;
 
@@ -111,7 +113,7 @@ app.post('/users/signin', function (req, res) {
           // return 401 status if the credential is not match.
         return res.status(401).json({
             error: true,
-            message: "Username or Password is Wrong."
+            message: "email or Password is Wrong."
           });
       }
     }
@@ -120,6 +122,7 @@ app.post('/users/signin', function (req, res) {
 
 app.post('/users/chanel', function (req, res) {
   const user = req.body.userid;
+  //console.log(user);
   const pwd = req.body.param;
 
   return res.json({ message: "hello, ionut!!"});
