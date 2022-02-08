@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Switch, Route, NavLink } from 'react-router-dom';
+import { BrowserRouter, Switch } from 'react-router-dom';
 import axios from 'axios';
 
-import Login from './Login';
 import Dashboard from './Dashboard';
 import Home from './Home';
 import Chat from './Chat';
 
 import PrivateRoute from './Utils/PrivateRoute';
 import PublicRoute from './Utils/PublicRoute';
+
 import { getToken, removeUserSession, setUserSession } from './Utils/Common';
 
 function App() {
@@ -39,8 +39,7 @@ function App() {
         <div>
           <div className="content">
             <Switch>
-              <Route exact path="/" component={Home} />
-              <PublicRoute path="/login" component={Login} />
+              <PublicRoute exact path="/" component={Home} />
               <PrivateRoute path="/dashboard" component={Dashboard} />
               <PrivateRoute path="/chat" component={Chat} />
             </Switch>

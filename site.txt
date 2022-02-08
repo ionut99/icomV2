@@ -10,3 +10,6 @@ cors – It’s an express middleware for enabling Cross-Origin Resource Sharing
 body-parser – Node.js request body parsing middleware which parses the incoming request body before your handlers, and make it available under req.body property. In other words, it simplifies the incoming request.
 jsonwebtoken – A JSON web tokens (JWT) is JSON Object which is used to securely transfer information over the web(between two parties). It can be used for an authentication process. We will use this package to create token with the help of user primary data and secret or private key. So when we need it then we can decode it and use the user data to manage application logs.
 dotenv – Dotenv is a zero-dependency module that loads environment variables from a .env file into process.env. We will store the JWT secret key in .env file.
+
+
+pentru CSRF protection - > https://www.cluemediator.com/login-app-with-csrf-protection-understanding-authentication-using-jwt-access-token-and-refresh-token
