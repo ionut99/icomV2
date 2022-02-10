@@ -25,6 +25,7 @@ function generateToken(user) {
   const u = {
     userId: user.userId,
     name: user.name,
+    surname: user.surname,
     email: user.email,
     isAdmin: user.isAdmin
   };
@@ -67,6 +68,7 @@ function getCleanUser(user) {
 
   return {
     userId: user.userId,
+    surname: user.surname,
     name: user.name,
     email: user.email,
     isAdmin: user.isAdmin

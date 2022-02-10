@@ -10,47 +10,35 @@ const {
   getCleanUser, verifyToken, clearTokens, handleResponse,
 } = require('./utils');
 
+const { GetUserFromDataBase, GetUserByID, } = require('./database.js');
+
 const app = express();
 const port = process.env.PORT || 4000;
 
-// list of the users to be consider as a database for example
-const userList = [
-  {
-    userId: "123",
-    password: "clue",
-    name: "Clue",
-    email: "clue",
-    isAdmin: true
-  },
-  {
-    userId: "456",
-    password: "mediator",
-    name: "Mediator",
-    email: "mediator",
-    isAdmin: true
-  },
-  {
-    userId: "789",
-    password: "123456",
-    name: "Clue Mediator",
-    email: "cluemediator",
-    isAdmin: true
-  }
-]
+
+userData ={
+  userId: "",
+  password: "",
+  surname: "",
+  name: "",
+  email: "",
+  isAdmin: false
+}
 
 // enable CORS
 app.use(cors({
   origin: 'http://localhost:3000', // url of the frontend application
   credentials: true // set credentials true for secure httpOnly cookie
 }));
+
 // parse application/json
 app.use(bodyParser.json());
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // use cookie parser for secure httpOnly cookie
 app.use(cookieParser(process.env.COOKIE_SECRET));
-
 
 // middleware that checks if JWT token exists and verifies it if it does exist.
 // In all private routes, this helps to know if the request is authenticated or not.
@@ -87,7 +75,7 @@ const authMiddleware = function (req, res, next) {
 
 
 // validate user credentials
-app.post('/users/signin', function (req, res) {
+app.post('/users/signin',async function (req, res) {
   const user = req.body.email;
   const pwd = req.body.password;
 
@@ -96,34 +84,47 @@ app.post('/users/signin', function (req, res) {
     return handleResponse(req, res, 400, null, "email and Password required.");
   }
 
-  const userData = userList.find(x => x.email === user && x.password === pwd);
+  try{
+    const userData_copy = await GetUserFromDataBase(user, pwd);
 
-  // return 401 status if the credential is not matched
-  if (!userData) {
-    return handleResponse(req, res, 401, null, "email or Password is Wrong.");
+    userData.userId = userData_copy[0].userId;
+    userData.surname = userData_copy[0].Surname;
+    userData.name = userData_copy[0].Name;
+    userData.email = userData_copy[0].Email;
+    userData.password = userData_copy[0].Password;
+    userData.isAdmin = userData_copy[0].IsAdmin;
+
+    console.log(userData);
+
+    // return 401 status if the credential is not matched
+    if (!userData) {
+      return handleResponse(req, res, 401, null, "email or Password is Wrong.");
+    }
+
+    // get basic user details
+    const userObj = getCleanUser(userData);
+
+    // generate access token
+    const tokenObj = generateToken(userData);
+
+    // generate refresh token
+    const refreshToken = generateRefreshToken(userObj.userId);
+
+    // refresh token list to manage the xsrf token
+    refreshTokens[refreshToken] = tokenObj.xsrfToken;
+
+    // set cookies
+    res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
+    res.cookie('XSRF-TOKEN', tokenObj.xsrfToken);
+
+    return handleResponse(req, res, 200, {
+      user: userObj,
+      token: tokenObj.token,
+      expiredAt: tokenObj.expiredAt
+    });
+  } catch(e) {
+    console.log(e);
   }
-
-  // get basic user details
-  const userObj = getCleanUser(userData);
-
-  // generate access token
-  const tokenObj = generateToken(userData);
-
-  // generate refresh token
-  const refreshToken = generateRefreshToken(userObj.userId);
-
-  // refresh token list to manage the xsrf token
-  refreshTokens[refreshToken] = tokenObj.xsrfToken;
-
-  // set cookies
-  res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
-  res.cookie('XSRF-TOKEN', tokenObj.xsrfToken);
-
-  return handleResponse(req, res, 200, {
-    user: userObj,
-    token: tokenObj.token,
-    expiredAt: tokenObj.expiredAt
-  });
 });
 
 
@@ -135,7 +136,7 @@ app.post('/users/logout', (req, res) => {
 
 
 // verify the token and return new tokens if it's valid
-app.post('/verifyToken', function (req, res) {
+app.post('/verifyToken',function (req, res) {
 
   const { signedCookies = {} } = req;
   const { refreshToken } = signedCookies;
@@ -150,12 +151,21 @@ app.post('/verifyToken', function (req, res) {
   }
 
   // verify refresh token
-  verifyToken(refreshToken, '', (err, payload) => {
+  verifyToken(refreshToken, '',async (err, payload) => {
     if (err) {
       return handleResponse(req, res, 401);
     }
     else {
-      const userData = userList.find(x => x.userId === payload.userId);
+      const userData_copy = await GetUserByID(payload.userId);
+
+      userData.userId = userData_copy[0].userId;
+      userData.surname = userData_copy[0].Surname;
+      userData.name = userData_copy[0].Name;
+      userData.email = userData_copy[0].Email;
+      userData.password = userData_copy[0].Password;
+      userData.isAdmin = userData_copy[0].IsAdmin;
+
+      console.log(userData);
       if (!userData) {
         return handleResponse(req, res, 401);
       }
@@ -179,17 +189,6 @@ app.post('/verifyToken', function (req, res) {
     }
   });
 
-});
-
-
-// get list of the users
-app.get('/users/getList', authMiddleware, (req, res) => {
-  const list = userList.map(x => {
-    const user = { ...x };
-    delete user.password;
-    return user;
-  });
-  return handleResponse(req, res, 200, { random: Math.random(), userList: list });
 });
 
 
