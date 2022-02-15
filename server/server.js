@@ -87,6 +87,10 @@ app.post('/users/signin',async function (req, res) {
   try{
     const userData_copy = await GetUserFromDataBase(user, pwd);
 
+    if (!userData_copy[0]) {
+      return handleResponse(req, res, 401, null, "Email or Password is Wrong.");
+    }
+
     userData.userId = userData_copy[0].userId;
     userData.surname = userData_copy[0].Surname;
     userData.name = userData_copy[0].Name;
@@ -158,6 +162,10 @@ app.post('/verifyToken',function (req, res) {
     else {
       const userData_copy = await GetUserByID(payload.userId);
 
+      if (!userData_copy[0]) {
+        return handleResponse(req, res, 401, null, "Email or Password is Wrong.");
+      }
+
       userData.userId = userData_copy[0].userId;
       userData.surname = userData_copy[0].Surname;
       userData.name = userData_copy[0].Name;
@@ -189,6 +197,16 @@ app.post('/verifyToken',function (req, res) {
     }
   });
 
+});
+
+// get list of the users
+app.get('/users/getList', authMiddleware, (req, res) => {
+  const list = userList.map(x => {
+    const user = { ...x };
+    delete user.password;
+    return user;
+  });
+  return handleResponse(req, res, 200, { random: Math.random(), userList: list });
 });
 
 
