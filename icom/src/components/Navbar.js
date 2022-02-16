@@ -4,17 +4,15 @@ import { SidebarData } from "./SidebarData";
 import "../cssFiles/Navbar.css";
 import { IconContext } from "react-icons";
 
-import logo from "../images/logo.png";
+import logo from "../images/white-logo.png";
 
 function Navbar() {
-  const [sidebar, setSidebar] = useState(false);
-  const showSidebar = () => setSidebar(!sidebar);
-
+  
   return (
     <>
       <IconContext.Provider value={{ color: "#fff" }}>
         <nav className={"nav-menu"}>
-          <ul className="nav-menu-items" onClick={showSidebar}>
+          <ul className="nav-menu-items">
             <img className="logo_picture" src={logo} alt="logo jmecher" />
             {SidebarData.map((item, index) => {
               return (

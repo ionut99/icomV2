@@ -8,7 +8,7 @@
   
   .nav-menu {
     /* border: red 3px solid; */
-    background-color: #0073e6;
+    background-color: #24292f;
     width: 200px;
     height: 100vh;
     display: flex;
@@ -30,7 +30,11 @@
     height: 60px;
   }
   .icon{
-    font-size: 22px;
+    font-size: 32px;
+    color: #f5f5f5;
+  }
+  .icon:hover {
+    color: rgb(190 191 193);
   }
   .nav-text a {
     /* border: red 3px solid; */
@@ -46,7 +50,7 @@
   }
   
   .nav-text a:hover {
-    background-color: #2691d9;
+    color: rgb(190 191 193);
   }
   
   .nav-menu-items {
