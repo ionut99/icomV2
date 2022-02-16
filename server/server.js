@@ -10,7 +10,7 @@ const {
   getCleanUser, verifyToken, clearTokens, handleResponse,
 } = require('./utils');
 
-const { GetUserFromDataBase, GetUserByID, } = require('./database.js');
+const { GetAllUsers, GetUserFromDataBase, GetUserByID, } = require('./database.js');
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -200,32 +200,33 @@ app.post('/verifyToken',function (req, res) {
 });
 
 // list of the users to be consider as a database for example
-const userList = [
-  {
-    userId: "123",
-    password: "clue",
-    name: "Clue",
-    username: "clue",
-    isAdmin: true
-  },
-  {
-    userId: "456",
-    password: "mediator",
-    name: "Mediator",
-    username: "mediator",
-    isAdmin: true
-  },
-  {
-    userId: "789",
-    password: "123456",
-    name: "Clue Mediator",
-    username: "cluemediator",
-    isAdmin: true
-  }
-]
+// const userList = [
+//   {
+//     userId: "123",
+//     password: "clue",
+//     name: "Clue",
+//     username: "clue",
+//     isAdmin: true
+//   },
+//   {
+//     userId: "456",
+//     password: "mediator",
+//     name: "Mediator",
+//     username: "mediator",
+//     isAdmin: true
+//   },
+//   {
+//     userId: "789",
+//     password: "123456",
+//     name: "Clue Mediator",
+//     username: "cluemediator",
+//     isAdmin: true
+//   }
+// ]
 
 // get list of the users
-app.get('/users/getList', authMiddleware, (req, res) => {
+app.get('/users/getList', authMiddleware,async (req, res) => {
+  const userList = await GetAllUsers();
   const list = userList.map(x => {
     const user = { ...x };
     delete user.password;

@@ -53,7 +53,7 @@ function Login() {
             />
             <img className="PwdImg"
               title={isRevealPwd ? "Hide password" : "Show password"}
-              src={isRevealPwd ? hidePwdImg : showPwdImg}
+              src={isRevealPwd ? showPwdImg : hidePwdImg}
               alt="visibility"
               onClick={() => setIsRevealPwd((prevState) => !prevState)}
             />
