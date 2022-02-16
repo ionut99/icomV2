@@ -5,8 +5,8 @@ import { userLoginAsync } from "./../asyncActions/authAsyncActions";
 import "../cssFiles/login.css";
 import avatar from "../images/loginAvatar.png";
 
-import showPwdImg from "../show-password.svg";
-import hidePwdImg from "../hide-password.svg";
+import showPwdImg from "../images/show-password.svg";
+import hidePwdImg from "../images/hide-password.svg";
 
 function Login() {
   const authObj = useSelector((state) => state.auth);
