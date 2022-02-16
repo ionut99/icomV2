@@ -7,9 +7,9 @@
 
   
   .nav-menu {
-    border: red 3px solid;
-    background-color: #060b26;
-    width: 150px;
+    /* border: red 3px solid; */
+    background-color: #0073e6;
+    width: 200px;
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -17,7 +17,10 @@
     top: 0;
   }
 
-  
+  .logo_picture{
+      width: 150px;
+      margin: 15px;
+  }
   .nav-text {
     display: flex;
     justify-content: start;
@@ -27,13 +30,13 @@
     height: 60px;
   }
   .icon{
-    font-size: 20px;
+    font-size: 22px;
   }
   .nav-text a {
-    border: red 3px solid;
+    /* border: red 3px solid; */
     text-decoration: none;
     color: #f5f5f5;
-    font-size: 15px;
+    font-size: 18px;
     width: 95%;
     height: 100%;
     display: flex;
@@ -43,7 +46,7 @@
   }
   
   .nav-text a:hover {
-    background-color: #1a83ff;
+    background-color: #2691d9;
   }
   
   .nav-menu-items {
