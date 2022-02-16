@@ -81,7 +81,7 @@ app.post('/users/signin',async function (req, res) {
 
   // return 400 status if email/password is not exist
   if (!user || !pwd) {
-    return handleResponse(req, res, 400, null, "email and Password required.");
+    return handleResponse(req, res, 400, null, "Email and Password required.");
   }
 
   try{
@@ -198,6 +198,31 @@ app.post('/verifyToken',function (req, res) {
   });
 
 });
+
+// list of the users to be consider as a database for example
+const userList = [
+  {
+    userId: "123",
+    password: "clue",
+    name: "Clue",
+    username: "clue",
+    isAdmin: true
+  },
+  {
+    userId: "456",
+    password: "mediator",
+    name: "Mediator",
+    username: "mediator",
+    isAdmin: true
+  },
+  {
+    userId: "789",
+    password: "123456",
+    name: "Clue Mediator",
+    username: "cluemediator",
+    isAdmin: true
+  }
+]
 
 // get list of the users
 app.get('/users/getList', authMiddleware, (req, res) => {
