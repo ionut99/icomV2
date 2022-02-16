@@ -28,23 +28,41 @@ function GetUserFromDataBase(email, password) {
 }
 
 function GetUserByID(userId) {
-    // create DataBase Connection
-  
-    return new Promise((resolve, reject) => {
-      db.query(
-        "SELECT * FROM IUsers WHERE userId = ?",
-        [userId],
-        (err, result) => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve(result);
+  // create DataBase Connection
+
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT * FROM IUsers WHERE userId = ?",
+      [userId],
+      (err, result) => {
+        if (err) {
+          return reject(err);
         }
-      );
-    });
-  }
+        return resolve(result);
+      }
+    );
+  });
+}
+
+function GetAllUsers() {
+  // create DataBase Connection
+
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT * FROM IUsers",
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  });
+}
+
 
 module.exports = {
+  GetAllUsers,
   GetUserFromDataBase,
   GetUserByID,
 };

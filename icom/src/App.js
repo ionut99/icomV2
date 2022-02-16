@@ -2,8 +2,11 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Switch, Redirect } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
+import Navbar from './components/Navbar';
+
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import ChatWindow from './pages/Chat';
 
 import PrivateRoute from './routes/PrivateRoute';
 import PublicRoute from './routes/PublicRoute';
@@ -35,6 +38,7 @@ function App() {
             <Switch>
               <PublicRoute path="/login" component={Login} isAuthenticated={isAuthenticated} />
               <PrivateRoute path="/dashboard" component={Dashboard} isAuthenticated={isAuthenticated} />
+              <PrivateRoute path="/chat" component={ChatWindow} isAuthenticated={isAuthenticated} />
               <Redirect to={isAuthenticated ? '/dashboard' : '/login'} />
             </Switch>
           </div>
