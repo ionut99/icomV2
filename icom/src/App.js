@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Switch, Redirect } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
-import Navbar from './components/Navbar';
-
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ChatWindow from './pages/Chat';
@@ -24,6 +22,7 @@ function App() {
   useEffect(() => {
     dispatch(verifyTokenAsync());
   }, []);
+
 
   // checking authentication
   if (authLoading) {
