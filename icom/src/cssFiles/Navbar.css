@@ -57,6 +57,12 @@
   /* display: block; */
   transition: 350ms;
 }
+
+.drop-menu-items{
+  border: red 2px solid;
+  height: 30px;
+  cursor: pointer;
+}
 .nav-menu {
   background-color: #24292f;
   width: 250px;

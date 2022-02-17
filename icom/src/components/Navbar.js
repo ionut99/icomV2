@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import * as FaIcons from "react-icons/fa";
-import * as AiIcons from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { SidebarData } from "./SidebarData";
 import "../cssFiles/Navbar.css";
@@ -8,8 +7,18 @@ import { IconContext } from "react-icons";
 
 import Applogo from "../images/white-logo.png";
 import UserAvatar from "../images/userAvatar.png";
+import { useDispatch, useSelector } from "react-redux";
+import { userLogoutAsync } from "./../asyncActions/authAsyncActions";
 
 function Navbar() {
+  // LOG OUT
+  const dispatch = useDispatch();
+
+  // handle click event of the logout button
+  function LogOut() {
+    dispatch(userLogoutAsync());
+  }
+
   const [sidebar, setSidebar] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
@@ -36,8 +45,14 @@ function Navbar() {
               alt="userAvatar jmecher"
               onClick={showdropdownMenu}
             />
-            <nav className={dropdownMenu ? "profile-menu active" : "profile-menu"}>
-
+            <nav
+              className={dropdownMenu ? "profile-menu active" : "profile-menu"}
+            >
+              <ul className="drop-menu-items">
+                <div onClick={LogOut}>
+                  <input type="button" onClick={LogOut} value="Logout" />
+                </div>
+              </ul>
             </nav>
           </div>
         </div>

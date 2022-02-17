@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 
@@ -12,8 +11,8 @@ import { userLogout, verifyTokenEnd } from "./../actions/authActions";
 import { setAuthToken } from "./../services/auth";
 import { getUserListService } from "./../services/user";
 
-import Navbar from '../components/Navbar';
-
+import Navbar from "../components/Navbar";
+import "../cssFiles/dashboard.css";
 
 function Dashboard() {
   const dispatch = useDispatch();
@@ -23,9 +22,9 @@ function Dashboard() {
   const [userList, setUserList] = useState([]);
 
   // handle click event of the logout button
-  const handleLogout = () => {
+  function LogOut() {
     dispatch(userLogoutAsync());
-  };
+  }
 
   // get user list
   const getUserList = async () => {
@@ -62,13 +61,8 @@ function Dashboard() {
         Welcome {user.name} {user.surname}!<br />
         <br />
       </div> */}
-      <div className="SideBarMenu">
-        <li>
-          <Link to="/chat">Chat</Link>
-        </li>
-      </div>
-      <div className="body">
-        <input type="button" onClick={handleLogout} value="Logout" />
+      {/* <div className="body">
+        <input type="button" onClick={LogOut} value="Logout" />
         <input type="button" onClick={getUserList} value="Get Data" />
         <br />
         <br />
@@ -76,7 +70,7 @@ function Dashboard() {
         <pre>{JSON.stringify(userList, null, 2)}</pre>
         <br />
         <br />
-      </div>
+      </div> */}
     </div>
   );
 }
