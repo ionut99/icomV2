@@ -1,31 +1,33 @@
 .navbar {
-  border: red 2px solid;
+  /* border: red 2px solid; */
   background-color: #24292f;
   height: 70px;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  z-index: 9;
+  
 }
 
 .left_section {
-  border: blue 2px solid;
+  /* border: blue 2px solid; */
   height: inherit;
   display: flex;
   align-items: center;
 }
 .right_section {
-  border: green 5px solid;
+  /* border: green 5px solid; */
   height: inherit;
   width: 100px;
   margin-left: auto;
   display: flex;
-  align-items: center;
 }
-.avatar_picture {
+.user_picture {
   height: 50px;
   width: 50px;
   border-radius: 50%;
   align-self: center!important;
+  cursor: pointer;
 }
 
 .menu-bars {
@@ -39,7 +41,22 @@
   font-size: 2rem;
   background: none;
 }
-
+.profile-menu{
+  top: -250px;
+  background-color: #24292f;
+  width: 250px;
+  height: 250px;
+  position: absolute;
+  right: 15px;
+  /* display: none; */
+  transition: 450ms;
+  z-index: -1;
+}
+.profile-menu.active {
+  top: 70px;
+  /* display: block; */
+  transition: 350ms;
+}
 .nav-menu {
   background-color: #24292f;
   width: 250px;
@@ -50,6 +67,8 @@
   top: 0;
   left: -100%;
   transition: 450ms;
+  /* z-index: -1; */
+
 }
 
 .nav-menu.active {

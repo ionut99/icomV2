@@ -58,10 +58,10 @@ function Dashboard() {
   return (
     <div>
       <Navbar />
-      <div className="header">
+      {/* <div className="header">
         Welcome {user.name} {user.surname}!<br />
         <br />
-      </div>
+      </div> */}
       <div className="SideBarMenu">
         <li>
           <Link to="/chat">Chat</Link>

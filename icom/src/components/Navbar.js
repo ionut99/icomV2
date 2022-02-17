@@ -14,6 +14,10 @@ function Navbar() {
 
   const showSidebar = () => setSidebar(!sidebar);
 
+  const [dropdownMenu, setdropdownMenu] = useState(false);
+
+  const showdropdownMenu = () => setdropdownMenu(!dropdownMenu);
+
   return (
     <>
       <IconContext.Provider value={{ color: "#fff" }}>
@@ -27,11 +31,14 @@ function Navbar() {
 
           <div className="right_section">
             <img
-              className="avatar_picture"
+              className="user_picture"
               src={UserAvatar}
               alt="userAvatar jmecher"
-              onClick={showSidebar}
+              onClick={showdropdownMenu}
             />
+            <nav className={dropdownMenu ? "profile-menu active" : "profile-menu"}>
+
+            </nav>
           </div>
         </div>
         <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
