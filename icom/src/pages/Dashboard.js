@@ -57,11 +57,11 @@ function Dashboard() {
   return (
     <div>
       <Navbar />
-      {/* <div className="header">
+      <div className="header">
         Welcome {user.name} {user.surname}!<br />
         <br />
-      </div> */}
-      {/* <div className="body">
+      </div>
+      <div className="body">
         <input type="button" onClick={LogOut} value="Logout" />
         <input type="button" onClick={getUserList} value="Get Data" />
         <br />
@@ -70,7 +70,7 @@ function Dashboard() {
         <pre>{JSON.stringify(userList, null, 2)}</pre>
         <br />
         <br />
-      </div> */}
+      </div>
     </div>
   );
 }
