@@ -1,0 +1,46 @@
+.page-content{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f6f8fa;
+}
+.chat-page{
+    border: red 5px solid;
+    /* height: 100vh; */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.left-section{
+    border: 2px solid blue;
+    width: 25%;
+    margin-left: 10%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+.right-section{
+    border: 2px solid green;
+    width: 50%;
+    margin-right: 15%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+@media screen and (max-width: 1400px){
+    .left-section{
+        width: 30%;
+        margin-left: 0;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+    .right-section{
+        width: 70%;
+        margin-right: 0;
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+}
