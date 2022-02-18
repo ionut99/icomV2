@@ -58,9 +58,8 @@ function Navbar() {
 
                 <div className="dropdown-options">
                   <div>
-                  <input type="button" onClick={LogOut} value="Logout" />
+                    <input type="button" onClick={LogOut} value="Logout" />
                   </div>
-                  
                 </div>
               </ul>
             </nav>
@@ -74,6 +73,7 @@ function Navbar() {
               </Link>
               <img className="logo_picture" src={Applogo} alt="logo jmecher" />
             </li>
+            <div className="group-nav-text"></div>
             {SidebarData.map((item, index) => {
               return (
                 <li key={index} className={item.cName}>
