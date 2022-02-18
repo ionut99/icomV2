@@ -19,6 +19,9 @@ function Navbar() {
     dispatch(userLogoutAsync());
   }
 
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
+
   const [sidebar, setSidebar] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
@@ -49,8 +52,14 @@ function Navbar() {
               className={dropdownMenu ? "profile-menu active" : "profile-menu"}
             >
               <ul className="drop-menu-items">
-                <div onClick={LogOut}>
-                  <input type="button" onClick={LogOut} value="Logout" />
+                <div className="user-details">Sign in as {user.name}</div>
+
+                <div className="dropdown-options">Profile</div>
+
+                <div className="dropdown-options">
+                  <div>
+                    <input type="button" onClick={LogOut} value="Logout" />
+                  </div>
                 </div>
               </ul>
             </nav>
@@ -64,6 +73,7 @@ function Navbar() {
               </Link>
               <img className="logo_picture" src={Applogo} alt="logo jmecher" />
             </li>
+            <div className="group-nav-text"></div>
             {SidebarData.map((item, index) => {
               return (
                 <li key={index} className={item.cName}>
