@@ -1,0 +1,121 @@
+.page-content {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #c9c9a9b9;
+}
+.chat-page {
+  /* height: 100vh; */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.search-button{
+  margin-top: 15px;
+  margin-left: 5px;
+  width: 30px;
+  height: 30px;
+}
+.left-section {
+  width: 25%;
+  margin-left: 10%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  border-right: 2px solid #dadde0;
+}
+.search-section {
+  height: 70px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  border-bottom: 2px solid #dadde0;
+}
+.search-box{
+  width: 88%;
+  height: 30px;
+  border-radius: 5px;
+  margin-top: 15px;
+}
+.conversation-picture{
+  width: 50px;
+  height: 50px;
+  margin: 8px;
+}
+.conversation-details-left{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.conversation-user-name{
+  margin-top: 5px;
+  margin-left: 12px;
+  font-size: medium;
+  height: 35px;
+  width: 95%;
+  display: flex;
+}
+.conversation-last-seen{
+  width: 50px;
+  margin-left: auto;
+  font-size: small;
+  font-weight: 700;
+}
+.last-message{
+  width: 100%;
+  height: 35px;
+  margin-left: 12px;
+  width: 95%;
+}
+.chat-persons {
+  height: 100%;
+}
+
+.conversation {
+  margin-left: 2px;
+  height: 70px;
+  display: flex;
+  flex-direction: row;
+  width: 99%;
+  border-bottom: 2px solid #dadde0;
+}
+
+.conversation:hover {
+  background-color: #dadde0;
+}
+.right-section {
+  width: 50%;
+  margin-right: 15%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+.conversation-details {
+  height: 70px;
+  border: 2px red solid;
+}
+
+.messages-coversation {
+    height: 100%;
+}
+
+@media screen and (max-width: 1400px) {
+  .left-section {
+    width: 40%;
+    margin-left: 0;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+  .right-section {
+    width: 60%;
+    margin-right: 0;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+}
