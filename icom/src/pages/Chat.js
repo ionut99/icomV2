@@ -4,7 +4,28 @@ import "../cssFiles/chat.css";
 import UserAvatar from "../images/userAvatar.png";
 import SearchIcon from "../images/Search_Icon.png";
 
+import avatar from "../images/userAvatar.png";
+import classNames from "classnames";
+
 function Chat() {
+  let messages = [];
+
+  for (let i = 0; i < 13; i++) {
+    let isMe = false;
+
+    if (i % 2 === 0) {
+      isMe = true;
+    }
+
+    const newMsg = {
+      author: `Author ${i}`,
+      body: `The body of message ${i}`,
+      avatar: avatar,
+      me: isMe,
+    };
+    messages.push(newMsg);
+  }
+
   return (
     <div className="page-content">
       <Navbar />
@@ -17,10 +38,10 @@ function Chat() {
               placeholder="  Search.."
             />
             <img
-                className="search-button"
-                src={SearchIcon}
-                alt="search button jmecher jmecher"
-              />
+              className="search-button"
+              src={SearchIcon}
+              alt="search button jmecher jmecher"
+            />
           </div>
           <div className="chat-persons">
             <div className="conversation">
@@ -61,8 +82,41 @@ function Chat() {
           </div>
         </div>
         <div className="right-section">
+          
+          <div className="messages-coversation">
           <div className="conversation-details"></div>
-          <div className="messages-coversation"></div>
+            <div className="messages-content">
+            
+              <div className="messages">
+                {messages.map((messages, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className={classNames("one_message", { me: messages.me })}
+                    >
+                      <div className="image_user_message">
+                        <img src={messages.avatar} alt="" />
+                      </div>
+                      <div className="message_body">
+                        <div className="message_author">
+                          {messages.me ? "You " : messages.author} says:
+                        </div>
+                        <div className="message_text">{messages.body}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="messenger_input">
+              <div className="text_input">
+                <textarea placeholder=" Write your message..." />
+              </div>
+              <div className="actions">
+                <button>Send</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
