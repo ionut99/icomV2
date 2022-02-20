@@ -55,6 +55,7 @@
   top: 75px;
   display: block;
   transition: 350ms;
+  z-index: 2;
 }
 .drop-menu-items {
   display: flex;
@@ -86,6 +87,7 @@
   top: 0;
   left: -100%;
   transition: 450ms;
+  z-index: 2;
 }
 
 .nav-menu.active {
