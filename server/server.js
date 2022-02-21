@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+var http = require('http');
 
 const {
   refreshTokens, COOKIE_OPTIONS, generateToken, generateRefreshToken,
@@ -15,6 +16,21 @@ const { GetAllUsers, GetUserFromDataBase, GetUserByID, } = require('./database.j
 const app = express();
 const port = process.env.PORT || 4000;
 
+// ATENTIE - de verificat cors-origin
+const server = http.createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+
+
+// ATENTIE - de verificat cors-origin
+// enable CORS
+app.use(cors({
+  origin: 'http://localhost:3000', // url of the frontend application
+  credentials: true // set credentials true for secure httpOnly cookie
+}));
 
 userData ={
   userId: "",
@@ -25,11 +41,6 @@ userData ={
   isAdmin: false
 }
 
-// enable CORS
-app.use(cors({
-  origin: 'http://localhost:3000', // url of the frontend application
-  credentials: true // set credentials true for secure httpOnly cookie
-}));
 
 // parse application/json
 app.use(bodyParser.json());
@@ -199,30 +210,6 @@ app.post('/verifyToken',function (req, res) {
 
 });
 
-// list of the users to be consider as a database for example
-// const userList = [
-//   {
-//     userId: "123",
-//     password: "clue",
-//     name: "Clue",
-//     username: "clue",
-//     isAdmin: true
-//   },
-//   {
-//     userId: "456",
-//     password: "mediator",
-//     name: "Mediator",
-//     username: "mediator",
-//     isAdmin: true
-//   },
-//   {
-//     userId: "789",
-//     password: "123456",
-//     name: "Clue Mediator",
-//     username: "cluemediator",
-//     isAdmin: true
-//   }
-// ]
 
 // get list of the users
 app.get('/users/getList', authMiddleware,async (req, res) => {
@@ -233,6 +220,32 @@ app.get('/users/getList', authMiddleware,async (req, res) => {
     return user;
   });
   return handleResponse(req, res, 200, { random: Math.random(), userList: list });
+});
+
+
+// conversatie chat
+const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
+
+io.on("connection", (socket) => {
+
+  console.log("Salut - aici avem partea de socket pentru chat");
+  // Join a conversation
+  const { roomId } = socket.handshake.query;
+  console.log("New connection established: ", roomId);
+  socket.join(roomId);
+
+  // Listen for new messages
+  socket.on(NEW_CHAT_MESSAGE_EVENT, (data) => {
+    io.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, data);
+    console.log("New message was sent:  ")
+    console.log(data);
+    console.log("On channel: " + roomId);
+  });
+
+  // Leave the room if the user closes the socket
+  socket.on("disconnect", () => {
+    socket.leave(roomId);
+  });
 });
 
 

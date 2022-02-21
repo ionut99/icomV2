@@ -1,29 +1,39 @@
-import React from "react";
+import { React, useState } from "react";
 import Navbar from "../components/Navbar";
 import "../cssFiles/chat.css";
 import UserAvatar from "../images/userAvatar.png";
 import SearchIcon from "../images/Search_Icon.png";
 
-import avatar from "../images/userAvatar.png";
+import groupAvatar from "../images/group.png";
+
 import classNames from "classnames";
 
 function Chat() {
-  let messages = [];
+  let isMe = true;
 
-  for (let i = 0; i < 13; i++) {
-    let isMe = false;
-
-    if (i % 2 === 0) {
-      isMe = true;
-    }
-
-    const newMsg = {
-      author: `Author ${i}`,
-      body: `The body of message ${i}`,
-      avatar: avatar,
+  const [
+    newMsg = {
+      author: `Author`,
+      body: ``,
+      avatar: UserAvatar,
       me: isMe,
-    };
-    messages.push(newMsg);
+    },
+    UpdateMessage,
+  ] = useState({
+    author: `Author`,
+    body: ``,
+    avatar: UserAvatar,
+    me: isMe,
+  });
+
+  const [messages, addMessages] = useState([]);
+
+  function SendMessage() {
+    addMessages((messages) => [...messages, newMsg]);
+  }
+
+  function GetMessageText(event) {
+    UpdateMessage((newMsg) => ({...newMsg, body: event.target.value}))
   }
 
   return (
@@ -37,56 +47,43 @@ function Chat() {
               type="text"
               placeholder="  Search.."
             />
+
             <img
-              className="search-button"
+              className="search-button-icon"
               src={SearchIcon}
-              alt="search button jmecher jmecher"
+              alt="search button jmecher"
             />
           </div>
           <div className="chat-persons">
             <div className="conversation">
               <img
                 className="conversation-picture"
-                src={UserAvatar}
+                src={groupAvatar}
                 alt="userAvatar jmecher"
               />
               <div className="conversation-details-left">
-                <div className="conversation-user-name">
-                  Mihai Alexandru
+                <div className="conversation-header">
+                  <div className="conversation-user-name">
+                    <p>
+                      Team 2 - Elaborare Proiect Diplomaaaaaaaaaaaabbbbbbbbb
+                    </p>
+                  </div>
                   <div className="conversation-last-seen">19:00</div>
                 </div>
-                <div className="last-message">How are you?</div>
+                <div className="last-message">
+                  <p>
+                    How are
+                    youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="conversation">
-              <img
-                className="conversation-picture"
-                src={UserAvatar}
-                alt="userAvatar jmecher"
-              />
-            </div>
-            <div className="conversation">
-              <img
-                className="conversation-picture"
-                src={UserAvatar}
-                alt="userAvatar jmecher"
-              />
-            </div>
-            <div className="conversation">
-              <img
-                className="conversation-picture"
-                src={UserAvatar}
-                alt="userAvatar jmecher"
-              />
             </div>
           </div>
         </div>
         <div className="right-section">
-          
           <div className="messages-coversation">
-          <div className="conversation-details"></div>
+            <div className="conversation-details"></div>
             <div className="messages-content">
-            
               <div className="messages">
                 {messages.map((messages, index) => {
                   return (
@@ -101,7 +98,9 @@ function Chat() {
                         <div className="message_author">
                           {messages.me ? "You " : messages.author} says:
                         </div>
-                        <div className="message_text">{messages.body}</div>
+                        <div className="message_text">
+                          <p>{messages.body}</p>
+                        </div>
                       </div>
                     </div>
                   );
@@ -110,9 +109,13 @@ function Chat() {
             </div>
             <div className="messenger_input">
               <div className="text_input">
-                <textarea placeholder=" Write your message..." />
+                <textarea
+                  value={newMsg.body}
+                  onChange={GetMessageText}
+                  placeholder=" Write your message..."
+                />
               </div>
-              <div className="actions">
+              <div className="actions" onClick={SendMessage}>
                 <button>Send</button>
               </div>
             </div>
