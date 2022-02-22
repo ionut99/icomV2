@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+var http = require('http');
 
 const {
   refreshTokens, COOKIE_OPTIONS, generateToken, generateRefreshToken,
@@ -11,9 +12,6 @@ const {
 } = require('./utils');
 
 const { GetAllUsers, GetUserFromDataBase, GetUserByID, } = require('./database.js');
-
-const app = express();
-const port = process.env.PORT || 4000;
 
 
 userData ={
@@ -25,11 +23,25 @@ userData ={
   isAdmin: false
 }
 
+const app = express();
+const SERVER_PORT = process.env.PORT || 5000;
+const SOCKET_PORT = 4000;
+
+// To Verify cors-origin !!!
+const server_socket_chat = http.createServer(app);
+const io = require("socket.io")(server_socket_chat, {
+  cors: {
+    origin: '*',
+  },
+});
+
+// To Verify cors-origin !!!
 // enable CORS
 app.use(cors({
   origin: 'http://localhost:3000', // url of the frontend application
   credentials: true // set credentials true for secure httpOnly cookie
 }));
+
 
 // parse application/json
 app.use(bodyParser.json());
@@ -72,7 +84,6 @@ const authMiddleware = function (req, res, next) {
     }
   });
 }
-
 
 // validate user credentials
 app.post('/users/signin',async function (req, res) {
@@ -151,6 +162,7 @@ app.post('/verifyToken',function (req, res) {
   // verify xsrf token
   const xsrfToken = req.headers['x-xsrf-token'];
   if (!xsrfToken || !(refreshToken in refreshTokens) || refreshTokens[refreshToken] !== xsrfToken) {
+    console.log("nu corespunde !!!!!");
     return handleResponse(req, res, 401);
   }
 
@@ -199,30 +211,6 @@ app.post('/verifyToken',function (req, res) {
 
 });
 
-// list of the users to be consider as a database for example
-// const userList = [
-//   {
-//     userId: "123",
-//     password: "clue",
-//     name: "Clue",
-//     username: "clue",
-//     isAdmin: true
-//   },
-//   {
-//     userId: "456",
-//     password: "mediator",
-//     name: "Mediator",
-//     username: "mediator",
-//     isAdmin: true
-//   },
-//   {
-//     userId: "789",
-//     password: "123456",
-//     name: "Clue Mediator",
-//     username: "cluemediator",
-//     isAdmin: true
-//   }
-// ]
 
 // get list of the users
 app.get('/users/getList', authMiddleware,async (req, res) => {
@@ -236,6 +224,35 @@ app.get('/users/getList', authMiddleware,async (req, res) => {
 });
 
 
-app.listen(port, () => {
-  console.log('Server started on: ' + port);
+// Start server for chat
+const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
+
+io.on("connection", (socket) => {
+
+  console.log("Salut - aici avem partea de socket pentru chat");
+  // Join a conversation
+  const { roomId } = socket.handshake.query;
+  console.log("New connection established: ", roomId);
+  socket.join(roomId);
+
+  // Listen for new messages
+  socket.on(NEW_CHAT_MESSAGE_EVENT, (data) => {
+    io.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, data);
+    console.log("New message was sent:  ")
+    console.log(data);
+    console.log("On channel: " + roomId);
+  });
+
+  // Leave the room if the user closes the socket
+  socket.on("disconnect", () => {
+    socket.leave(roomId);
+  });
+});
+
+app.listen(SERVER_PORT, () => {
+  console.log('Server started on: ' + SERVER_PORT);
+});
+
+server_socket_chat.listen(SOCKET_PORT, () => {
+  console.log(`Socket.IO Listening on port ${SOCKET_PORT}`);
 });

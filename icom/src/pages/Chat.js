@@ -1,31 +1,55 @@
+// import { React, useState } from "react";
 import React from "react";
+
 import Navbar from "../components/Navbar";
 import "../cssFiles/chat.css";
 import UserAvatar from "../images/userAvatar.png";
 import SearchIcon from "../images/Search_Icon.png";
 
-import avatar from "../images/userAvatar.png";
+import groupAvatar from "../images/group.png";
+
 import classNames from "classnames";
-
+import useChat from "../components/useChat";
 function Chat() {
-  let messages = [];
+  // let isMe = true;
 
-  for (let i = 0; i < 13; i++) {
-    let isMe = false;
+  // const [
+  //   newMsg = {
+  //     author: `Author`,
+  //     body: ``,
+  //     avatar: UserAvatar,
+  //     me: isMe,
+  //   },
+  //   UpdateMessage,
+  // ] = useState({
+  //   author: `Author`,
+  //   body: ``,
+  //   avatar: UserAvatar,
+  //   me: isMe,
+  // });
 
-    if (i % 2 === 0) {
-      isMe = true;
-    }
+  // const [messages, addMessages] = useState([]);
 
-    const newMsg = {
-      author: `Author ${i}`,
-      body: `The body of message ${i}`,
-      avatar: avatar,
-      me: isMe,
-    };
-    messages.push(newMsg);
-  }
+  // function SendMessage() {
+  //   addMessages((messages) => [...messages, newMsg]);
+  // }
 
+  // function GetMessageText(event) {
+  //   UpdateMessage((newMsg) => ({...newMsg, body: event.target.value}))
+  // }
+  const  roomId  = 1;
+  let userName = "ionut";
+  const { messages, sendMessage } = useChat(roomId, userName);
+  const [newMessage, setNewMessage] = React.useState("");
+
+  const handleNewMessageChange = (event) => {
+    setNewMessage(event.target.value);
+  };
+
+  const handleSendMessage = () => {
+    sendMessage(newMessage);
+    setNewMessage("");
+  };
   return (
     <div className="page-content">
       <Navbar />
@@ -37,71 +61,62 @@ function Chat() {
               type="text"
               placeholder="  Search.."
             />
+
             <img
-              className="search-button"
+              className="search-button-icon"
               src={SearchIcon}
-              alt="search button jmecher jmecher"
+              alt="search button jmecher"
             />
           </div>
           <div className="chat-persons">
             <div className="conversation">
               <img
                 className="conversation-picture"
-                src={UserAvatar}
+                src={groupAvatar}
                 alt="userAvatar jmecher"
               />
               <div className="conversation-details-left">
-                <div className="conversation-user-name">
-                  Mihai Alexandru
+                <div className="conversation-header">
+                  <div className="conversation-user-name">
+                    <p>
+                      Team 2 - Elaborare Proiect Diplomaaaaaaaaaaaabbbbbbbbb
+                    </p>
+                  </div>
                   <div className="conversation-last-seen">19:00</div>
                 </div>
-                <div className="last-message">How are you?</div>
+                <div className="last-message">
+                  <p>
+                    How are
+                    youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="conversation">
-              <img
-                className="conversation-picture"
-                src={UserAvatar}
-                alt="userAvatar jmecher"
-              />
-            </div>
-            <div className="conversation">
-              <img
-                className="conversation-picture"
-                src={UserAvatar}
-                alt="userAvatar jmecher"
-              />
-            </div>
-            <div className="conversation">
-              <img
-                className="conversation-picture"
-                src={UserAvatar}
-                alt="userAvatar jmecher"
-              />
             </div>
           </div>
         </div>
         <div className="right-section">
-          
           <div className="messages-coversation">
-          <div className="conversation-details"></div>
+            <div className="conversation-details"></div>
             <div className="messages-content">
-            
               <div className="messages">
                 {messages.map((messages, index) => {
                   return (
                     <div
                       key={index}
-                      className={classNames("one_message", { me: messages.me })}
+                      // className={classNames("one_message", { me: messages.me })}
+                      className={classNames("one_message", { me: true })}
                     >
                       <div className="image_user_message">
-                        <img src={messages.avatar} alt="" />
+                        <img src={UserAvatar} alt="" />
                       </div>
                       <div className="message_body">
                         <div className="message_author">
-                          {messages.me ? "You " : messages.author} says:
+                          {/* {messages.me ? "You " : messages.author} says: */}
+                          {true ? "You " : messages.author} says:
                         </div>
-                        <div className="message_text">{messages.body}</div>
+                        <div className="message_text">
+                          <p>{messages.body}</p>
+                        </div>
                       </div>
                     </div>
                   );
@@ -110,9 +125,15 @@ function Chat() {
             </div>
             <div className="messenger_input">
               <div className="text_input">
-                <textarea placeholder=" Write your message..." />
+                <textarea
+                  // value={newMsg.body}
+                  // onChange={GetMessageText}
+                  value={newMessage}
+                  onChange={handleNewMessageChange}
+                  placeholder=" Write your message..."
+                />
               </div>
-              <div className="actions">
+              <div className="actions" onClick={handleSendMessage}>
                 <button>Send</button>
               </div>
             </div>
