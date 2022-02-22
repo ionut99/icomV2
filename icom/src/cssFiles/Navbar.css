@@ -1,5 +1,4 @@
 .navbar {
-  /* border: red 2px solid; */
   background-color: #24292f;
   height: 70px;
   display: flex;
@@ -7,13 +6,11 @@
   align-items: flex-start;
 }
 .left_section {
-  /* border: blue 2px solid; */
   height: inherit;
   display: flex;
   align-items: center;
 }
 .right_section {
-  /* border: green 5px solid; */
   height: inherit;
   width: 100px;
   margin-left: auto;
@@ -34,8 +31,6 @@
 }
 
 .menu-bars {
-  /* border: 2px red solid; */
-
   margin-left: 2rem;
   font-size: 2rem;
   background: none;
@@ -107,7 +102,6 @@
 }
 .group-nav-text {
   height: 50px;
-  /* border: 2px red solid; */
 }
 .nav-text {
   display: flex;

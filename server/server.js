@@ -13,24 +13,6 @@ const {
 
 const { GetAllUsers, GetUserFromDataBase, GetUserByID, } = require('./database.js');
 
-const app = express();
-const port = process.env.PORT || 4000;
-
-// ATENTIE - de verificat cors-origin
-const server = http.createServer(app);
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "http://localhost:3000",
-  },
-});
-
-
-// ATENTIE - de verificat cors-origin
-// enable CORS
-app.use(cors({
-  origin: 'http://localhost:3000', // url of the frontend application
-  credentials: true // set credentials true for secure httpOnly cookie
-}));
 
 userData ={
   userId: "",
@@ -40,6 +22,25 @@ userData ={
   email: "",
   isAdmin: false
 }
+
+const app = express();
+const SERVER_PORT = process.env.PORT || 5000;
+const SOCKET_PORT = 4000;
+
+// To Verify cors-origin !!!
+const server_socket_chat = http.createServer(app);
+const io = require("socket.io")(server_socket_chat, {
+  cors: {
+    origin: '*',
+  },
+});
+
+// To Verify cors-origin !!!
+// enable CORS
+app.use(cors({
+  origin: 'http://localhost:3000', // url of the frontend application
+  credentials: true // set credentials true for secure httpOnly cookie
+}));
 
 
 // parse application/json
@@ -83,7 +84,6 @@ const authMiddleware = function (req, res, next) {
     }
   });
 }
-
 
 // validate user credentials
 app.post('/users/signin',async function (req, res) {
@@ -162,6 +162,7 @@ app.post('/verifyToken',function (req, res) {
   // verify xsrf token
   const xsrfToken = req.headers['x-xsrf-token'];
   if (!xsrfToken || !(refreshToken in refreshTokens) || refreshTokens[refreshToken] !== xsrfToken) {
+    console.log("nu corespunde !!!!!");
     return handleResponse(req, res, 401);
   }
 
@@ -223,7 +224,7 @@ app.get('/users/getList', authMiddleware,async (req, res) => {
 });
 
 
-// conversatie chat
+// Start server for chat
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 
 io.on("connection", (socket) => {
@@ -248,7 +249,10 @@ io.on("connection", (socket) => {
   });
 });
 
+app.listen(SERVER_PORT, () => {
+  console.log('Server started on: ' + SERVER_PORT);
+});
 
-app.listen(port, () => {
-  console.log('Server started on: ' + port);
+server_socket_chat.listen(SOCKET_PORT, () => {
+  console.log(`Socket.IO Listening on port ${SOCKET_PORT}`);
 });

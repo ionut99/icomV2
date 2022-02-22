@@ -1,4 +1,6 @@
-import { React, useState } from "react";
+// import { React, useState } from "react";
+import React from "react";
+
 import Navbar from "../components/Navbar";
 import "../cssFiles/chat.css";
 import UserAvatar from "../images/userAvatar.png";
@@ -7,35 +9,47 @@ import SearchIcon from "../images/Search_Icon.png";
 import groupAvatar from "../images/group.png";
 
 import classNames from "classnames";
-
+import useChat from "../components/useChat";
 function Chat() {
-  let isMe = true;
+  // let isMe = true;
 
-  const [
-    newMsg = {
-      author: `Author`,
-      body: ``,
-      avatar: UserAvatar,
-      me: isMe,
-    },
-    UpdateMessage,
-  ] = useState({
-    author: `Author`,
-    body: ``,
-    avatar: UserAvatar,
-    me: isMe,
-  });
+  // const [
+  //   newMsg = {
+  //     author: `Author`,
+  //     body: ``,
+  //     avatar: UserAvatar,
+  //     me: isMe,
+  //   },
+  //   UpdateMessage,
+  // ] = useState({
+  //   author: `Author`,
+  //   body: ``,
+  //   avatar: UserAvatar,
+  //   me: isMe,
+  // });
 
-  const [messages, addMessages] = useState([]);
+  // const [messages, addMessages] = useState([]);
 
-  function SendMessage() {
-    addMessages((messages) => [...messages, newMsg]);
-  }
+  // function SendMessage() {
+  //   addMessages((messages) => [...messages, newMsg]);
+  // }
 
-  function GetMessageText(event) {
-    UpdateMessage((newMsg) => ({...newMsg, body: event.target.value}))
-  }
+  // function GetMessageText(event) {
+  //   UpdateMessage((newMsg) => ({...newMsg, body: event.target.value}))
+  // }
+  const  roomId  = 1;
+  let userName = "ionut";
+  const { messages, sendMessage } = useChat(roomId, userName);
+  const [newMessage, setNewMessage] = React.useState("");
 
+  const handleNewMessageChange = (event) => {
+    setNewMessage(event.target.value);
+  };
+
+  const handleSendMessage = () => {
+    sendMessage(newMessage);
+    setNewMessage("");
+  };
   return (
     <div className="page-content">
       <Navbar />
@@ -89,14 +103,16 @@ function Chat() {
                   return (
                     <div
                       key={index}
-                      className={classNames("one_message", { me: messages.me })}
+                      // className={classNames("one_message", { me: messages.me })}
+                      className={classNames("one_message", { me: true })}
                     >
                       <div className="image_user_message">
-                        <img src={messages.avatar} alt="" />
+                        <img src={UserAvatar} alt="" />
                       </div>
                       <div className="message_body">
                         <div className="message_author">
-                          {messages.me ? "You " : messages.author} says:
+                          {/* {messages.me ? "You " : messages.author} says: */}
+                          {true ? "You " : messages.author} says:
                         </div>
                         <div className="message_text">
                           <p>{messages.body}</p>
@@ -110,12 +126,14 @@ function Chat() {
             <div className="messenger_input">
               <div className="text_input">
                 <textarea
-                  value={newMsg.body}
-                  onChange={GetMessageText}
+                  // value={newMsg.body}
+                  // onChange={GetMessageText}
+                  value={newMessage}
+                  onChange={handleNewMessageChange}
                   placeholder=" Write your message..."
                 />
               </div>
-              <div className="actions" onClick={SendMessage}>
+              <div className="actions" onClick={handleSendMessage}>
                 <button>Send</button>
               </div>
             </div>

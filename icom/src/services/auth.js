@@ -1,7 +1,7 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-const API_URL = 'http://localhost:4000';
+const API_URL = 'http://localhost:5000';
 
 // set token to the axios
 export const setAuthToken = token => {
