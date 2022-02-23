@@ -220,9 +220,17 @@ app.get('/users/getList', authMiddleware,async (req, res) => {
     delete user.password;
     return user;
   });
-  return handleResponse(req, res, 200, { random: Math.random(), userList: list });
+  return handleResponse(req, res, 200, { list });
 });
 
+
+// search - section input 
+app.post('/users/search',async function (req, res) {
+  const search_box_text = req.body.search_box_text;
+  console.log("Textul pentru cautare este:");
+  console.log(search_box_text);
+
+});
 
 // Start server for chat
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";

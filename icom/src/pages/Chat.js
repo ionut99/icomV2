@@ -1,6 +1,7 @@
 // import { React, useState } from "react";
 import React from "react";
-
+import { useSelector, useDispatch } from "react-redux";
+import { userSearchPersonAsync } from "./../asyncActions/authAsyncActions";
 import Navbar from "../components/Navbar";
 import "../cssFiles/chat.css";
 import UserAvatar from "../images/userAvatar.png";
@@ -37,10 +38,23 @@ function Chat() {
   // function GetMessageText(event) {
   //   UpdateMessage((newMsg) => ({...newMsg, body: event.target.value}))
   // }
-  const  roomId  = 1;
+  const roomId = 1;
   let userName = "ionut";
+
+  const dispatch = useDispatch();
+
+
+  const [search_box_content, Set_search_content] = React.useState("");
   const { messages, sendMessage } = useChat(roomId, userName);
   const [newMessage, setNewMessage] = React.useState("");
+
+  function SearchPerson (event){
+    Set_search_content(event.target.value);
+    //dispatch(userSearchPersonAsync(search_box_content));
+  }
+  function SearchPersonButtonAction (){
+    dispatch(userSearchPersonAsync(search_box_content));
+  }
 
   const handleNewMessageChange = (event) => {
     setNewMessage(event.target.value);
@@ -60,12 +74,15 @@ function Chat() {
               className="search-box"
               type="text"
               placeholder="  Search.."
+              value={search_box_content}
+              onChange={SearchPerson}
             />
 
             <img
               className="search-button-icon"
               src={SearchIcon}
               alt="search button jmecher"
+              onClick={SearchPersonButtonAction}
             />
           </div>
           <div className="chat-persons">
