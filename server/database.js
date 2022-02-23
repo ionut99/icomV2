@@ -60,9 +60,23 @@ function GetAllUsers() {
   });
 }
 
+function GetSearchUsersList(search_box_text){
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT * FROM iusers WHERE Email LIKE N'%${search_box_text}%' or Name LIKE N'%${search_box_text}%' or Surname LIKE N'%${search_box_text}%'`,
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+  })
+}
 
 module.exports = {
   GetAllUsers,
   GetUserFromDataBase,
   GetUserByID,
+  GetSearchUsersList
 };

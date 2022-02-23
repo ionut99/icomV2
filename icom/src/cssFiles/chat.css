@@ -10,11 +10,14 @@
   display: flex;
   flex-direction: row;
 }
+.searchIcon svg {
+  margin-top: 0;
+}
 .search-button-icon{
-  margin-top: 12px;
+  margin-top: 10px;
   margin-left: 5px;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
 }
 .search-button-icon:hover{
   cursor: pointer;
@@ -40,9 +43,12 @@
   border-bottom: 2px solid #dadde0;
 }
 .search-box{
+  padding-left: 20px;
   width: 88%;
-  height: 30px;
+  height: 40px;
   border-radius: 5px;
+  border: 2px #a7a7a7 solid;
+  font-size: 18px;
   margin-top: 12px;
   margin-left: 5px;
 }
@@ -134,7 +140,7 @@
 
 .messages-coversation {
 
-    height: 86%;
+    height: 84%;
     max-height: 86%;
     
 }
@@ -192,7 +198,8 @@
   word-wrap: break-word
 }
 .messenger_input{
-  height: 50px;
+  min-height: 50px;
+  height: 10%;
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -212,10 +219,13 @@
   height: 100%;
   border: 2px solid #bcbec0;
   border-radius: 2px;
+  font-size: 18px;
+  padding-left: 20px;
+  padding-top: 10px;
 }
 
 .content .messenger_input .actions {
-  width: 50px;  
+  width: 80px;  
 }
 
 .content .messenger_input .actions button{

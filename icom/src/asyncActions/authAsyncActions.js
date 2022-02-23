@@ -1,8 +1,8 @@
 import {
   verifyTokenStarted, verifyUserSuccess, verifyTokenEnd,
-  userLoginStarted, userLoginFailure, userLogout, userSearchPersonStarted, userSearchPersonFailure
+  userLoginStarted, userLoginFailure, userLogout
 } from "../actions/authActions";
-import { verifyTokenService, userLoginService, userLogoutService, userSearchPersonService } from '../services/auth';
+import { verifyTokenService, userLoginService, userLogoutService } from '../services/auth';
 
 // handle verify token
 export const verifyTokenAsync = (silentAuth = false) => async dispatch => {
@@ -41,17 +41,4 @@ export const userLoginAsync = (email, password) => async dispatch => {
 export const userLogoutAsync = () => dispatch => {
   dispatch(userLogout());
   userLogoutService();
-}
-
-// handle user Search Persons
-export const userSearchPersonAsync = (search_box_text) => async dispatch => {
-  dispatch(userSearchPersonStarted());
-
-  const result = await userSearchPersonService(search_box_text);
-
-  if (result.error) {
-    dispatch(userSearchPersonFailure(result.response.data.message));
-    return;
-  }
-  //dispatch(verifyUserSuccess(result.data));
 }
