@@ -48,3 +48,15 @@ export const userLogoutService = async () => {
     };
   }
 }
+
+// user Search Person API to return Persons Names
+export const userSearchPersonService = async (search_box_text) => {
+  try {
+    return await axios.post(`${API_URL}/users/search`, { search_box_text });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response
+    };
+  }
+}
