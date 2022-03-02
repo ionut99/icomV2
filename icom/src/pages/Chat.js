@@ -1,67 +1,69 @@
-// import { React, useState } from "react";
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { userSearchPersonAsync } from "./../asyncActions/authAsyncActions";
-import Navbar from "../components/Navbar";
-import "../cssFiles/chat.css";
-import UserAvatar from "../images/userAvatar.png";
-import SearchIcon from "../images/Search_Icon.png";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 
-import groupAvatar from "../images/group.png";
-
+import { userLogout, verifyTokenEnd } from "./../actions/authActions";
+import { getSearchPersonService } from "./../services/user";
 import classNames from "classnames";
+
 import useChat from "../components/useChat";
+import Navbar from "../components/Navbar";
+
+import SearchIcon from "@mui/icons-material/Search";
+import UserAvatar from "../images/userAvatar.png";
+import groupAvatar from "../images/group.png";
+import "../cssFiles/chat.css";
+
+// import SearchIcon from "../images/Search_Icon.png";
+
 function Chat() {
-  // let isMe = true;
-
-  // const [
-  //   newMsg = {
-  //     author: `Author`,
-  //     body: ``,
-  //     avatar: UserAvatar,
-  //     me: isMe,
-  //   },
-  //   UpdateMessage,
-  // ] = useState({
-  //   author: `Author`,
-  //   body: ``,
-  //   avatar: UserAvatar,
-  //   me: isMe,
-  // });
-
-  // const [messages, addMessages] = useState([]);
-
-  // function SendMessage() {
-  //   addMessages((messages) => [...messages, newMsg]);
-  // }
-
-  // function GetMessageText(event) {
-  //   UpdateMessage((newMsg) => ({...newMsg, body: event.target.value}))
-  // }
   const roomId = 1;
   let userName = "ionut";
 
   const dispatch = useDispatch();
 
-
   const [search_box_content, Set_search_content] = React.useState("");
+  const [err_messages, Set_err_messages] = React.useState("");
+
+  const [userSearchList, setUserSearchList] = useState([]);
   const { messages, sendMessage } = useChat(roomId, userName);
   const [newMessage, setNewMessage] = React.useState("");
 
-  function SearchPerson (event){
+  // get user SEARCH list
+  const getSearchUserList = async () => {
+    const result = await getSearchPersonService(search_box_content);
+    Set_search_content("");
+    if (result.error) {
+      dispatch(verifyTokenEnd());
+      if (result.response && [401, 403].includes(result.response.status))
+        dispatch(userLogout());
+      if (result.response && [400].includes(result.response.status))
+        //Set_err_messages(result.data);
+        setUserSearchList([]); // TO DO - modify in error div 
+      Set_search_content("");
+      return;
+    }
+    console.log(result.data);
+    setUserSearchList(result.data);
+  };
+
+  // get user list on page load
+  useEffect(() => {
+    getSearchUserList();
+  }, []);
+
+  
+  const SearchPerson = (event) => {
     Set_search_content(event.target.value);
-    //dispatch(userSearchPersonAsync(search_box_content));
-  }
-  function SearchPersonButtonAction (){
-    dispatch(userSearchPersonAsync(search_box_content));
-  }
+  };
 
   const handleNewMessageChange = (event) => {
     setNewMessage(event.target.value);
   };
 
   const handleSendMessage = () => {
-    sendMessage(newMessage);
+    if (newMessage !== "") {
+      sendMessage(newMessage);
+    }
     setNewMessage("");
   };
   return (
@@ -77,15 +79,16 @@ function Chat() {
               value={search_box_content}
               onChange={SearchPerson}
             />
-
-            <img
-              className="search-button-icon"
-              src={SearchIcon}
-              alt="search button jmecher"
-              onClick={SearchPersonButtonAction}
-            />
+            <div className="search-button-icon">
+              <SearchIcon
+                className="search-button-icon"
+                alt="search button jmecher"
+                onClick={getSearchUserList}
+              ></SearchIcon>
+            </div>
           </div>
           <div className="chat-persons">
+            <pre>{JSON.stringify(userSearchList, null, 2)}</pre>
             <div className="conversation">
               <img
                 className="conversation-picture"

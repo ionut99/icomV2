@@ -1,27 +1,37 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-var http = require('http');
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+var http = require("http");
 
 const {
-  refreshTokens, COOKIE_OPTIONS, generateToken, generateRefreshToken,
-  getCleanUser, verifyToken, clearTokens, handleResponse,
-} = require('./utils');
+  refreshTokens,
+  COOKIE_OPTIONS,
+  generateToken,
+  generateRefreshToken,
+  getCleanUser,
+  verifyToken,
+  clearTokens,
+  handleResponse,
+} = require("./utils");
 
-const { GetAllUsers, GetUserFromDataBase, GetUserByID, } = require('./database.js');
+const {
+  GetAllUsers,
+  GetUserFromDataBase,
+  GetUserByID,
+  GetSearchUsersList,
+} = require("./database.js");
 
-
-userData ={
+userData = {
   userId: "",
   password: "",
   surname: "",
   name: "",
   email: "",
-  isAdmin: false
-}
+  isAdmin: false,
+};
 
 const app = express();
 const SERVER_PORT = process.env.PORT || 5000;
@@ -31,17 +41,18 @@ const SOCKET_PORT = 4000;
 const server_socket_chat = http.createServer(app);
 const io = require("socket.io")(server_socket_chat, {
   cors: {
-    origin: '*',
+    origin: "*",
   },
 });
 
 // To Verify cors-origin !!!
 // enable CORS
-app.use(cors({
-  origin: 'http://localhost:3000', // url of the frontend application
-  credentials: true // set credentials true for secure httpOnly cookie
-}));
-
+app.use(
+  cors({
+    origin: "http://localhost:3000", // url of the frontend application
+    credentials: true, // set credentials true for secure httpOnly cookie
+  })
+);
 
 // parse application/json
 app.use(bodyParser.json());
@@ -56,13 +67,13 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 // In all private routes, this helps to know if the request is authenticated or not.
 const authMiddleware = function (req, res, next) {
   // check header or url parameters or post parameters for token
-  var token = req.headers['authorization'];
+  var token = req.headers["authorization"];
   if (!token) return handleResponse(req, res, 401);
 
-  token = token.replace('Bearer ', '');
+  token = token.replace("Bearer ", "");
 
   // get xsrf token from the header
-  const xsrfToken = req.headers['x-xsrf-token'];
+  const xsrfToken = req.headers["x-xsrf-token"];
   if (!xsrfToken) {
     return handleResponse(req, res, 403);
   }
@@ -70,23 +81,26 @@ const authMiddleware = function (req, res, next) {
   // verify xsrf token
   const { signedCookies = {} } = req;
   const { refreshToken } = signedCookies;
-  if (!refreshToken || !(refreshToken in refreshTokens) || refreshTokens[refreshToken] !== xsrfToken) {
+  if (
+    !refreshToken ||
+    !(refreshToken in refreshTokens) ||
+    refreshTokens[refreshToken] !== xsrfToken
+  ) {
     return handleResponse(req, res, 401);
   }
 
   // verify token with secret key and xsrf token
   verifyToken(token, xsrfToken, (err, payload) => {
-    if (err)
-      return handleResponse(req, res, 401);
+    if (err) return handleResponse(req, res, 401);
     else {
       req.user = payload; //set the user to req so other routes can use it
       next();
     }
   });
-}
+};
 
 // validate user credentials
-app.post('/users/signin',async function (req, res) {
+app.post("/users/signin", async function (req, res) {
   const user = req.body.email;
   const pwd = req.body.password;
 
@@ -95,7 +109,7 @@ app.post('/users/signin',async function (req, res) {
     return handleResponse(req, res, 400, null, "Email and Password required.");
   }
 
-  try{
+  try {
     const userData_copy = await GetUserFromDataBase(user, pwd);
 
     if (!userData_copy[0]) {
@@ -129,30 +143,27 @@ app.post('/users/signin',async function (req, res) {
     refreshTokens[refreshToken] = tokenObj.xsrfToken;
 
     // set cookies
-    res.cookie('refreshToken', refreshToken, COOKIE_OPTIONS);
-    res.cookie('XSRF-TOKEN', tokenObj.xsrfToken);
+    res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+    res.cookie("XSRF-TOKEN", tokenObj.xsrfToken);
 
     return handleResponse(req, res, 200, {
       user: userObj,
       token: tokenObj.token,
-      expiredAt: tokenObj.expiredAt
+      expiredAt: tokenObj.expiredAt,
     });
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
 });
 
-
 // handle user logout
-app.post('/users/logout', (req, res) => {
+app.post("/users/logout", (req, res) => {
   clearTokens(req, res);
   return handleResponse(req, res, 204);
 });
 
-
 // verify the token and return new tokens if it's valid
-app.post('/verifyToken',function (req, res) {
-
+app.post("/verifyToken", function (req, res) {
   const { signedCookies = {} } = req;
   const { refreshToken } = signedCookies;
   if (!refreshToken) {
@@ -160,22 +171,31 @@ app.post('/verifyToken',function (req, res) {
   }
 
   // verify xsrf token
-  const xsrfToken = req.headers['x-xsrf-token'];
-  if (!xsrfToken || !(refreshToken in refreshTokens) || refreshTokens[refreshToken] !== xsrfToken) {
-    console.log("nu corespunde !!!!!");
+  const xsrfToken = req.headers["x-xsrf-token"];
+  if (
+    !xsrfToken ||
+    !(refreshToken in refreshTokens) ||
+    refreshTokens[refreshToken] !== xsrfToken
+  ) {
+    console.log("Unauthorized access!!!!");
     return handleResponse(req, res, 401);
   }
 
   // verify refresh token
-  verifyToken(refreshToken, '',async (err, payload) => {
+  verifyToken(refreshToken, "", async (err, payload) => {
     if (err) {
       return handleResponse(req, res, 401);
-    }
-    else {
+    } else {
       const userData_copy = await GetUserByID(payload.userId);
 
       if (!userData_copy[0]) {
-        return handleResponse(req, res, 401, null, "Email or Password is Wrong.");
+        return handleResponse(
+          req,
+          res,
+          401,
+          null,
+          "Email or Password is Wrong."
+        );
       }
 
       userData.userId = userData_copy[0].userId;
@@ -198,46 +218,62 @@ app.post('/verifyToken',function (req, res) {
 
       // refresh token list to manage the xsrf token
       refreshTokens[refreshToken] = tokenObj.xsrfToken;
-      res.cookie('XSRF-TOKEN', tokenObj.xsrfToken);
+      res.cookie("XSRF-TOKEN", tokenObj.xsrfToken);
 
       // return the token along with user details
       return handleResponse(req, res, 200, {
         user: userObj,
         token: tokenObj.token,
-        expiredAt: tokenObj.expiredAt
+        expiredAt: tokenObj.expiredAt,
       });
     }
   });
-
 });
 
-
 // get list of the users
-app.get('/users/getList', authMiddleware,async (req, res) => {
+app.get("/users/getList", authMiddleware, async (req, res) => {
   const userList = await GetAllUsers();
-  const list = userList.map(x => {
+  const list = userList.map((x) => {
     const user = { ...x };
-    delete user.password;
+    delete user.Password;
     return user;
   });
   return handleResponse(req, res, 200, { list });
 });
 
-
-// search - section input 
-app.post('/users/search',async function (req, res) {
+// search - section input
+app.post("/users/search", authMiddleware, async function (req, res) {
   const search_box_text = req.body.search_box_text;
-  console.log("Textul pentru cautare este:");
-  console.log(search_box_text);
 
+  console.log("Loook in database after :");
+  console.log(search_box_text); //GetSearchUsersList
+
+  //const test = "ion";
+  const userSeachList = await GetSearchUsersList(search_box_text);
+  const list = userSeachList.map((x) => {
+    const user = { ...x };
+    delete user.Password;
+    return user;
+  });
+  console.log("Result of search User is: ");
+  console.log(list);
+  if(list.length === 0)
+    {
+      console.log("Empty list!");
+      return handleResponse(req, res, 400);
+    }
+  return handleResponse(req, res, 200, { list });
 });
+
+
+
+
 
 // Start server for chat
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 
 io.on("connection", (socket) => {
-
-  console.log("Salut - aici avem partea de socket pentru chat");
+  console.log("Hello - here is chat part!!");
   // Join a conversation
   const { roomId } = socket.handshake.query;
   console.log("New connection established: ", roomId);
@@ -246,7 +282,7 @@ io.on("connection", (socket) => {
   // Listen for new messages
   socket.on(NEW_CHAT_MESSAGE_EVENT, (data) => {
     io.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, data);
-    console.log("New message was sent:  ")
+    console.log("New message was sent:  ");
     console.log(data);
     console.log("On channel: " + roomId);
   });
@@ -258,7 +294,7 @@ io.on("connection", (socket) => {
 });
 
 app.listen(SERVER_PORT, () => {
-  console.log('Server started on: ' + SERVER_PORT);
+  console.log("Server started on: " + SERVER_PORT);
 });
 
 server_socket_chat.listen(SOCKET_PORT, () => {

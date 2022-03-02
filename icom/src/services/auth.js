@@ -1,17 +1,16 @@
 import axios from "axios";
 axios.defaults.withCredentials = true;
 
-const API_URL = 'http://localhost:5000';
+const API_URL = "http://localhost:5000";
 
 // set token to the axios
-export const setAuthToken = token => {
+export const setAuthToken = (token) => {
   if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common["Authorization"];
   }
-  else {
-    delete axios.defaults.headers.common['Authorization'];
-  }
-}
+};
 
 // verify refresh token to generate new access token if refresh token is present
 export const verifyTokenService = async () => {
@@ -20,10 +19,10 @@ export const verifyTokenService = async () => {
   } catch (err) {
     return {
       error: true,
-      response: err.response
+      response: err.response,
     };
   }
-}
+};
 
 // user login API to validate the credential
 export const userLoginService = async (email, password) => {
@@ -32,10 +31,10 @@ export const userLoginService = async (email, password) => {
   } catch (err) {
     return {
       error: true,
-      response: err.response
+      response: err.response,
     };
   }
-}
+};
 
 // manage user logout
 export const userLogoutService = async () => {
@@ -44,19 +43,8 @@ export const userLogoutService = async () => {
   } catch (err) {
     return {
       error: true,
-      response: err.response
+      response: err.response,
     };
   }
-}
+};
 
-// user Search Person API to return Persons Names
-export const userSearchPersonService = async (search_box_text) => {
-  try {
-    return await axios.post(`${API_URL}/users/search`, { search_box_text });
-  } catch (err) {
-    return {
-      error: true,
-      response: err.response
-    };
-  }
-}
