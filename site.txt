@@ -13,3 +13,10 @@ dotenv – Dotenv is a zero-dependency module that loads environment variables f
 
 
 pentru CSRF protection - > https://www.cluemediator.com/login-app-with-csrf-protection-understanding-authentication-using-jwt-access-token-and-refresh-token
+
+
+-> detalii organizatorice cu privire la aranjarea fisierelor.
+
+https://www.youtube.com/watch?v=oNlMrpnUSFE&ab_channel=PedroTech -> Folder Structure for API's - Beginner, Intermediate, and Advanced
+
+Arhitectura MVC -> https://towardsdatascience.com/everything-you-need-to-know-about-mvc-architecture-3c827930b4c1

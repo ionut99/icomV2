@@ -15,9 +15,9 @@ export const getUserListService = async () => {
 }
 
 // user Search Person API to return Persons Names
-export const getSearchPersonService = async (search_box_text) => {
+export const getSearchPersonService = async (search_box_text, userId) => {
   try {
-    return await axios.post(`${API_URL}/users/search`, { search_box_text });
+    return await axios.post(`${API_URL}/users/search`, { search_box_text, userId });
   } catch (err) {
     return {
       error: true,
