@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { userLogout, verifyTokenEnd } from "./../actions/authActions";
 import { getSearchPersonService } from "./../services/user";
@@ -28,9 +28,13 @@ function Chat() {
   const { messages, sendMessage } = useChat(roomId, userName);
   const [newMessage, setNewMessage] = React.useState("");
 
+
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
+
   // get user SEARCH list
   const getSearchUserList = async () => {
-    const result = await getSearchPersonService(search_box_content);
+    const result = await getSearchPersonService(search_box_content, user.userId);
     Set_search_content("");
     if (result.error) {
       dispatch(verifyTokenEnd());

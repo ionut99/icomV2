@@ -1,19 +1,28 @@
-const jwt = require('jsonwebtoken');
-const moment = require('moment');
-const randtoken = require('rand-token');
-const ms = require('ms');
+const jwt = require("jsonwebtoken");
+const moment = require("moment");
+const randtoken = require("rand-token");
+const ms = require("ms");
 
-const dev = process.env.NODE_ENV !== 'production';
+const dev = process.env.NODE_ENV !== "production";
 
 // refresh token list to manage the xsrf token
 const refreshTokens = {};
+
+const userData = {
+  userId: "",
+  password: "",
+  surname: "",
+  name: "",
+  email: "",
+  isAdmin: false,
+};
 
 // cookie options to create refresh token
 const COOKIE_OPTIONS = {
   // domain: "localhost",
   httpOnly: true,
   secure: !dev,
-  signed: true
+  signed: true,
 };
 
 // generate tokens and return it
@@ -27,7 +36,7 @@ function generateToken(user) {
     name: user.name,
     surname: user.surname,
     email: user.email,
-    isAdmin: user.isAdmin
+    isAdmin: user.isAdmin,
   };
 
   // generat xsrf token and use it to generate access token
@@ -37,27 +46,33 @@ function generateToken(user) {
   const privateKey = process.env.JWT_SECRET + xsrfToken;
 
   // generate access token and expiry date
-  const token = jwt.sign(u, privateKey, { expiresIn: process.env.ACCESS_TOKEN_LIFE });
+  const token = jwt.sign(u, privateKey, {
+    expiresIn: process.env.ACCESS_TOKEN_LIFE,
+  });
 
   // expiry time of the access token
-  const expiredAt = moment().add(ms(process.env.ACCESS_TOKEN_LIFE), 'ms').valueOf();
+  const expiredAt = moment()
+    .add(ms(process.env.ACCESS_TOKEN_LIFE), "ms")
+    .valueOf();
 
   return {
     token,
     expiredAt,
-    xsrfToken
-  }
+    xsrfToken,
+  };
 }
 
 // generate refresh token
 function generateRefreshToken(userId) {
   if (!userId) return null;
 
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: process.env.REFRESH_TOKEN_LIFE });
+  return jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_LIFE,
+  });
 }
 
 // verify access token and refresh token
-function verifyToken(token, xsrfToken = '', cb) {
+function verifyToken(token, xsrfToken = "", cb) {
   const privateKey = process.env.JWT_SECRET + xsrfToken;
   jwt.verify(token, privateKey, cb);
 }
@@ -71,7 +86,7 @@ function getCleanUser(user) {
     surname: user.surname,
     name: user.name,
     email: user.email,
-    isAdmin: user.isAdmin
+    isAdmin: user.isAdmin,
   };
 }
 
@@ -87,12 +102,12 @@ function handleResponse(req, res, statusCode, data, message) {
       break;
     case 401:
       isError = true;
-      errorMessage = message || 'Invalid user.';
+      errorMessage = message || "Invalid user.";
       clearTokens(req, res);
       break;
     case 403:
       isError = true;
-      errorMessage = message || 'Access to this resource is denied.';
+      errorMessage = message || "Access to this resource is denied.";
       clearTokens(req, res);
       break;
     default:
@@ -111,11 +126,12 @@ function clearTokens(req, res) {
   const { signedCookies = {} } = req;
   const { refreshToken } = signedCookies;
   delete refreshTokens[refreshToken];
-  res.clearCookie('XSRF-TOKEN');
-  res.clearCookie('refreshToken', COOKIE_OPTIONS);
+  res.clearCookie("XSRF-TOKEN");
+  res.clearCookie("refreshToken", COOKIE_OPTIONS);
 }
 
 module.exports = {
+  userData,
   refreshTokens,
   COOKIE_OPTIONS,
   generateToken,
@@ -123,5 +139,5 @@ module.exports = {
   verifyToken,
   getCleanUser,
   handleResponse,
-  clearTokens
-}
+  clearTokens,
+};
