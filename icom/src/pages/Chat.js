@@ -2,7 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { userLogout, verifyTokenEnd } from "./../actions/authActions";
-import { getSearchPersonService } from "./../services/user";
+import {
+  getSearchPersonService,
+  getSearchRoomService,
+} from "./../services/user";
+import { verifyTokenAsync } from "./../asyncActions/authAsyncActions";
+import { setAuthToken } from "./../services/auth";
+import moment from "moment";
+
 import classNames from "classnames";
 
 import useChat from "../components/useChat";
@@ -20,42 +27,63 @@ function Chat() {
   let userName = "ionut";
 
   const dispatch = useDispatch();
+  const authObj = useSelector((state) => state.auth);
+  const { user, expiredAt, token } = authObj;
 
-  const [search_box_content, Set_search_content] = React.useState("");
-  const [err_messages, Set_err_messages] = React.useState("");
+  const [search_box_content, Set_search_content] = useState("");
 
   const [userSearchList, setUserSearchList] = useState([]);
+  const [RoomSearchList, setRoomSearchList] = useState([]);
+
   const { messages, sendMessage } = useChat(roomId, userName);
-  const [newMessage, setNewMessage] = React.useState("");
+  const [newMessage, setNewMessage] = useState("");
 
-
-  const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;
-
+  function SearchEnter(event) {
+    if (event.key === "Enter") {
+      getSearchUserList();
+    }
+  }
   // get user SEARCH list
   const getSearchUserList = async () => {
-    const result = await getSearchPersonService(search_box_content, user.userId);
-    Set_search_content("");
-    if (result.error) {
+    const result = await getSearchPersonService(
+      search_box_content,
+      user.userId
+    );
+
+    const Roomresult = await getSearchRoomService(
+      search_box_content,
+      user.userId
+    );
+    if (result.error || Roomresult.error) {
       dispatch(verifyTokenEnd());
       if (result.response && [401, 403].includes(result.response.status))
         dispatch(userLogout());
-      if (result.response && [400].includes(result.response.status))
-        //Set_err_messages(result.data);
-        setUserSearchList([]); // TO DO - modify in error div 
-      Set_search_content("");
       return;
     }
-    console.log(result.data);
-    setUserSearchList(result.data);
+    setUserSearchList([]);
+    if (search_box_content !== "") {
+      setUserSearchList(result.data["list"]);
+    }
+
+    setRoomSearchList(Roomresult.data["list"]);
   };
+
+  // set timer to renew token
+  useEffect(() => {
+    setAuthToken(token);
+    const verifyTokenTimer = setTimeout(() => {
+      dispatch(verifyTokenAsync(true));
+    }, moment(expiredAt).diff() - 10 * 1000);
+    return () => {
+      clearTimeout(verifyTokenTimer);
+    };
+  }, [expiredAt, token, dispatch]);
 
   // get user list on page load
   useEffect(() => {
     getSearchUserList();
   }, []);
 
-  
   const SearchPerson = (event) => {
     Set_search_content(event.target.value);
   };
@@ -70,6 +98,7 @@ function Chat() {
     }
     setNewMessage("");
   };
+
   return (
     <div className="page-content">
       <Navbar />
@@ -82,6 +111,7 @@ function Chat() {
               placeholder="  Search.."
               value={search_box_content}
               onChange={SearchPerson}
+              onKeyDown={SearchEnter}
             />
             <div className="search-button-icon">
               <SearchIcon
@@ -92,8 +122,9 @@ function Chat() {
             </div>
           </div>
           <div className="chat-persons">
-            <pre>{JSON.stringify(userSearchList, null, 2)}</pre>
-            <div className="conversation">
+            {/* <pre>{JSON.stringify(userSearchList, null, 2)}</pre>
+            <pre>{JSON.stringify(RoomSearchList, null, 2)}</pre> */}
+            {/* <div className="conversation">
               <img
                 className="conversation-picture"
                 src={groupAvatar}
@@ -115,7 +146,69 @@ function Chat() {
                   </p>
                 </div>
               </div>
+            </div> */}
+            <div
+              className="RoomDelimiter"
+              style={{ display: RoomSearchList.length ? "flex" : "none" }}
+            >
+              <p>Conversations</p>
             </div>
+            {RoomSearchList.map((RoomSearchList, index) => {
+              return (
+                <div className="conversation" key={index}>
+                  <img
+                    className="conversation-picture"
+                    src={groupAvatar}
+                    alt="userAvatar jmecher"
+                  />
+                  <div className="conversation-details-left">
+                    <div className="conversation-header">
+                      <div className="conversation-user-name">
+                        <p>{RoomSearchList.RoomName}</p>
+                      </div>
+                      <div className="conversation-last-seen">19:00</div>
+                    </div>
+                    <div className="last-message">
+                      <p>
+                        How are
+                        youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            <div
+              className="RoomDelimiter"
+              style={{ display: userSearchList.length ? "flex" : "none" }}
+            >
+              <p>Persons</p>
+            </div>
+            {userSearchList.map((userSearchList, index) => {
+              return (
+                <div className="conversation" key={index}>
+                  <img
+                    className="conversation-picture"
+                    src={groupAvatar}
+                    alt="userAvatar jmecher"
+                  />
+                  <div className="conversation-details-left">
+                    <div className="conversation-header">
+                      <div className="conversation-user-name">
+                        <p>{userSearchList.UserName}</p>
+                      </div>
+                      <div className="conversation-last-seen">19:00</div>
+                    </div>
+                    <div className="last-message">
+                      <p>
+                        How are
+                        youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
         <div className="right-section">
