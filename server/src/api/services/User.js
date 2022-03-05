@@ -18,7 +18,7 @@ function GetSearchUsersList(search_box_text, userId) {
   const db = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT * FROM iusers WHERE ( Email LIKE N'%${search_box_text}%' or Name LIKE N'%${search_box_text}%' or Surname LIKE N'%${search_box_text}%') and NOT userId = ${userId}`,
+      `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers WHERE ( Email LIKE N'%${search_box_text}%' or Name LIKE N'%${search_box_text}%' or Surname LIKE N'%${search_box_text}%') and NOT userId = ${userId}`,
       (err, result) => {
         if (err) {
           return reject(err);
@@ -29,11 +29,12 @@ function GetSearchUsersList(search_box_text, userId) {
   });
 }
 
-function GetUserRoomsList(userId) {
+function GetUserRoomsList(search_box_text, userId) {
+  console.log(userId);
   const db = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     db.query(
-      `SELECT room.Name as conversationName from room inner join participants on room.ID = participants.RoomID inner join iusers on iusers.userId = participants.UserID where participants.UserID = ${userId}`,
+      `SELECT room.ID as RoomID, room.Name as RoomName from room INNER JOIN participants ON room.ID = participants.RoomID WHERE participants.UserID = ${userId} AND room.Name LIKE N'%${search_box_text}%'`,
       (err, result) => {
         if (err) {
           return reject(err);

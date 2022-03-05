@@ -52,6 +52,9 @@ app.post("/verifyToken", AuthRouter);
 // search - section input
 app.post("/users/search", UserRouter);
 
+// room - search - section input
+app.post("/room/search", UserRouter);
+
 app.get("/users/getList", UserRouter);
 
 

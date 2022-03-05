@@ -13,16 +13,28 @@
 .searchIcon svg {
   margin-top: 0;
 }
-.search-button-icon{
+.search-button-icon {
   margin-top: 10px;
   margin-left: 5px;
   width: 40px;
   height: 40px;
 }
-.search-button-icon:hover{
+.search-button-icon:hover {
   cursor: pointer;
   background-color: #dadde0;
   border-radius: 5px;
+}
+.RoomDelimiter {
+  border: red 1px solid;
+  height: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: medium;
+  padding-top: 5px;
+  border-bottom: 2px solid #dadde0;
 }
 
 .left-section {
@@ -34,7 +46,6 @@
   display: flex;
   flex-direction: column;
   border-right: 2px solid #dadde0;
-
 }
 .search-section {
   height: 70px;
@@ -42,7 +53,7 @@
   flex-direction: row;
   border-bottom: 2px solid #dadde0;
 }
-.search-box{
+.search-box {
   padding-left: 20px;
   width: 88%;
   height: 40px;
@@ -53,18 +64,18 @@
   margin-left: 5px;
 }
 
-.conversation-picture{
+.conversation-picture {
   width: 50px;
   height: 50px;
   margin: 8px;
 }
-.conversation-details-left{
+.conversation-details-left {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 85%;
   height: 100%;
 }
-.conversation-user-name{
+.conversation-user-name {
   margin-top: 5px;
   margin-left: 12px;
   margin-right: 5px;
@@ -73,32 +84,32 @@
   width: 83%;
   display: flex;
 }
-.conversation-user-name p{
+.conversation-user-name p {
   width: 300px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.conversation-header{
+.conversation-header {
   display: flex;
   flex-direction: row;
   justify-content: center;
 }
-.conversation-last-seen{
+.conversation-last-seen {
   margin: 10px;
   width: 50px;
   margin-left: auto;
   font-size: medium;
   font-weight: 700;
 }
-.last-message{
+.last-message {
   margin-top: -5px;
-  width: 100%;
+  width: 95%;
   height: 35px;
   margin-left: 12px;
   width: 95%;
 }
-.last-message p{
+.last-message p {
   width: 200px;
   white-space: nowrap;
   overflow: hidden;
@@ -107,7 +118,6 @@
 .chat-persons {
   height: 100%;
   overflow-y: auto;
-
 }
 
 .conversation {
@@ -130,7 +140,6 @@
   background-color: white;
   display: flex;
   flex-direction: column;
- 
 }
 .conversation-details {
   height: 65px;
@@ -139,10 +148,8 @@
 }
 
 .messages-coversation {
-
-    height: 84%;
-    max-height: 86%;
-    
+  height: 84%;
+  max-height: 86%;
 }
 
 .messages-content {
@@ -150,11 +157,11 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  height: 100%; 
+  height: 100%;
   flex-grow: 1;
 }
 
-.messages{
+.messages {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -162,7 +169,7 @@
   background-color: #ddddddb9;
 }
 
-.messages .one_message{
+.messages .one_message {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -173,31 +180,29 @@
   justify-content: flex-end;
 }
 
-.messages .one_message .image_user_message img{
+.messages .one_message .image_user_message img {
   width: 20px;
   height: 20px;
   border-radius: 50%;
 }
 
-.messages .one_message .message_body{
+.messages .one_message .message_body {
   padding-left: 10px;
   max-width: 90%;
-  
 }
-.messages .one_message.me .message_body .message_text{
+.messages .one_message.me .message_body .message_text {
   background-color: #2ecc71;
-  
 }
-.messages .one_message .message_body .message_text{
+.messages .one_message .message_body .message_text {
   background: #0969da;
-  color: #FFF;
+  color: #fff;
   padding: 10px;
   border-radius: 10px;
 }
-.messages .one_message .message_body .message_text p{
-  word-wrap: break-word
+.messages .one_message .message_body .message_text p {
+  word-wrap: break-word;
 }
-.messenger_input{
+.messenger_input {
   min-height: 50px;
   height: 10%;
   width: 100%;
@@ -207,13 +212,11 @@
   bottom: 0px;
 }
 .content .messenger_input .text_input {
-  
   flex-grow: 1;
   width: 100%;
   height: 100%;
 }
-.text_input textarea{
-  
+.text_input textarea {
   border: 0 none;
   width: 100%;
   height: 100%;
@@ -225,20 +228,16 @@
 }
 
 .content .messenger_input .actions {
-  width: 80px;  
+  width: 80px;
 }
 
-.content .messenger_input .actions button{
-  
+.content .messenger_input .actions button {
   width: 100%;
   height: 100%;
   background-color: #2ecc71;
-  
 }
-.content .messenger_input .actions button:hover{
-  
+.content .messenger_input .actions button:hover {
   cursor: pointer;
-  
 }
 
 @media screen and (max-width: 1400px) {
@@ -259,37 +258,30 @@
 @media screen and (max-height: 900px) {
   .messages-coversation {
     max-height: 82%;
-    
-}
+  }
 }
 @media screen and (max-height: 800px) {
   .messages-coversation {
     max-height: 78%;
-    
-}
+  }
 }
 @media screen and (max-height: 700px) {
   .messages-coversation {
     max-height: 74%;
-    
-}
+  }
 }
 @media screen and (max-height: 600px) {
   .messages-coversation {
     max-height: 70%;
-    
-}
+  }
 }
 @media screen and (max-height: 500px) {
   .messages-coversation {
     max-height: 60%;
-    
-}
+  }
 }
 @media screen and (max-height: 400px) {
   .messages-coversation {
     max-height: 55%;
-    
+  }
 }
-}
-
