@@ -48,7 +48,7 @@ function Dashboard() {
     return () => {
       clearTimeout(verifyTokenTimer);
     };
-  }, [expiredAt, token]);
+  }, [expiredAt, token, dispatch]);
 
   // get user list on page load
   useEffect(() => {

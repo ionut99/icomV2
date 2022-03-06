@@ -39,7 +39,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // use cookie parser for secure httpOnly cookie
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
-
 // validate user credentials
 app.post("/users/signin", AuthRouter);
 
@@ -57,15 +56,13 @@ app.post("/room/search", UserRouter);
 
 app.get("/users/getList", UserRouter);
 
-
 // Start server for chat
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 
 io.on("connection", (socket) => {
-  console.log("Hello - here is chat part!!");
   // Join a conversation
   const { roomId } = socket.handshake.query;
-  console.log("New connection established: ", roomId);
+  console.log("New connection established for chat part: ", roomId);
   socket.join(roomId);
 
   // Listen for new messages
@@ -81,11 +78,6 @@ io.on("connection", (socket) => {
     socket.leave(roomId);
   });
 });
-
-
-
-
-
 
 app.listen(SERVER_PORT, () => {
   console.log("Server started on: " + SERVER_PORT);

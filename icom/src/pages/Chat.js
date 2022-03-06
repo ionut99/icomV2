@@ -20,8 +20,6 @@ import UserAvatar from "../images/userAvatar.png";
 import groupAvatar from "../images/group.png";
 import "../cssFiles/chat.css";
 
-// import SearchIcon from "../images/Search_Icon.png";
-
 function Chat() {
   const roomId = 1;
   let userName = "ionut";
@@ -45,12 +43,11 @@ function Chat() {
   }
   // get user SEARCH list
   const getSearchUserList = async () => {
-    const result = await getSearchPersonService(
+    const Roomresult = await getSearchRoomService(
       search_box_content,
       user.userId
     );
-
-    const Roomresult = await getSearchRoomService(
+    const result = await getSearchPersonService(
       search_box_content,
       user.userId
     );
@@ -61,6 +58,7 @@ function Chat() {
       return;
     }
     setUserSearchList([]);
+    setRoomSearchList([]);
     if (search_box_content !== "") {
       setUserSearchList(result.data["list"]);
     }
@@ -124,29 +122,6 @@ function Chat() {
           <div className="chat-persons">
             {/* <pre>{JSON.stringify(userSearchList, null, 2)}</pre>
             <pre>{JSON.stringify(RoomSearchList, null, 2)}</pre> */}
-            {/* <div className="conversation">
-              <img
-                className="conversation-picture"
-                src={groupAvatar}
-                alt="userAvatar jmecher"
-              />
-              <div className="conversation-details-left">
-                <div className="conversation-header">
-                  <div className="conversation-user-name">
-                    <p>
-                      Team 2 - Elaborare Proiect Diplomaaaaaaaaaaaabbbbbbbbb
-                    </p>
-                  </div>
-                  <div className="conversation-last-seen">19:00</div>
-                </div>
-                <div className="last-message">
-                  <p>
-                    How are
-                    youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
-                  </p>
-                </div>
-              </div>
-            </div> */}
             <div
               className="RoomDelimiter"
               style={{ display: RoomSearchList.length ? "flex" : "none" }}
