@@ -1,30 +1,38 @@
 import {
-  verifyTokenStarted, verifyUserSuccess, verifyTokenEnd,
-  userLoginStarted, userLoginFailure, userLogout
+  verifyTokenStarted,
+  verifyUserSuccess,
+  verifyTokenEnd,
+  userLoginStarted,
+  userLoginFailure,
+  userLogout,
 } from "../actions/authActions";
-import { verifyTokenService, userLoginService, userLogoutService } from '../services/auth';
+import {
+  verifyTokenService,
+  userLoginService,
+  userLogoutService,
+} from "../services/auth";
 
 // handle verify token
-export const verifyTokenAsync = (silentAuth = false) => async dispatch => {
-  dispatch(verifyTokenStarted(silentAuth));
+export const verifyTokenAsync =
+  (silentAuth = false) =>
+  async (dispatch) => {
+    dispatch(verifyTokenStarted(silentAuth));
 
-  const result = await verifyTokenService();
+    const result = await verifyTokenService();
 
-  if (result.error) {
-    dispatch(verifyTokenEnd());
-    if (result.response && [401, 403].includes(result.response.status))
-      dispatch(userLogout());
-    return;
-  }
+    if (result.error) {
+      dispatch(verifyTokenEnd());
+      if (result.response && [401, 403].includes(result.response.status))
+        dispatch(userLogout());
+      return;
+    }
 
-  if (result.status === 204)
-    dispatch(verifyTokenEnd());
-  else
-    dispatch(verifyUserSuccess(result.data));
-}
+    if (result.status === 204) dispatch(verifyTokenEnd());
+    else dispatch(verifyUserSuccess(result.data));
+  };
 
 // handle user login
-export const userLoginAsync = (email, password) => async dispatch => {
+export const userLoginAsync = (email, password) => async (dispatch) => {
   dispatch(userLoginStarted());
 
   const result = await userLoginService(email, password);
@@ -35,10 +43,10 @@ export const userLoginAsync = (email, password) => async dispatch => {
   }
 
   dispatch(verifyUserSuccess(result.data));
-}
+};
 
 // handle user logout
-export const userLogoutAsync = () => dispatch => {
+export const userLogoutAsync = () => (dispatch) => {
   dispatch(userLogout());
   userLogoutService();
-}
+};

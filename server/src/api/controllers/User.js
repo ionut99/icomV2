@@ -25,7 +25,7 @@ async function GetUserSearchList(req, res) {
     const room = { ...x };
 
     room.RoomName = room.RoomName.replace(userName, "");
-    room.RoomName = room.RoomName.replace("-", "");
+    room.RoomName = room.RoomName.replace("#", "");
     return room;
   });
 
@@ -57,9 +57,10 @@ async function GetRoomSearchList(req, res) {
     const room = { ...x };
 
     room.RoomName = room.RoomName.replace(userName, "");
-    room.RoomName = room.RoomName.replace("-", "");
+    room.RoomName = room.RoomName.replace("#", "");
     return room;
   });
+  // console.log(list);
   return handleResponse(req, res, 200, { list });
 }
 
@@ -70,7 +71,7 @@ async function GetUsers(req, res) {
     const user = { ...x };
     delete user.Password;
     return user;
-  });
+  }); 
   return handleResponse(req, res, 200, { list });
 }
 

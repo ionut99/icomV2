@@ -75,20 +75,41 @@
 .conversation-details-left {
   display: flex;
   flex-direction: column;
-  width: 85%;
+  width: 80%;
   height: 100%;
 }
-.conversation-user-name {
+.conversation-user-details {
   margin-top: 5px;
   margin-left: 12px;
   margin-right: 5px;
   font-size: medium;
-  height: 35px;
-  width: 83%;
+  height: 50px;
+  width: 78%;
   display: flex;
+  flex-direction: column;
 }
-.conversation-user-name p {
-  width: 300px;
+.MoreHorizIcon {
+  margin-left: 15px;
+}
+.MoreHorizIcon:hover {
+  cursor: pointer;
+}
+
+.more_options {
+  padding-left: 5px;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  justify-content: center;
+}
+.more_options .css-1cdpoyg-MuiSvgIcon-root:hover{
+  color: #0969da;
+  transition: 0.2s;
+}
+.conversation-user-details p {
+  width: inherit;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -99,21 +120,18 @@
   justify-content: center;
 }
 .conversation-last-seen {
-  margin: 10px;
-  width: 50px;
   margin-left: auto;
-  font-size: medium;
+  font-size: small;
   font-weight: 700;
 }
 .last-message {
-  margin-top: -5px;
-  width: 95%;
-  height: 35px;
-  margin-left: 12px;
-  width: 95%;
+  margin-top: 8px;
+  width: inherit;
+  height: 20px;
+  font-size: small;
 }
 .last-message p {
-  width: 200px;
+  width: inherit;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -125,7 +143,7 @@
 
 .conversation {
   margin-left: 2px;
-  height: 70px;
+  height: 60px;
   display: flex;
   flex-direction: row;
   width: 99%;
@@ -142,7 +160,6 @@
   margin-bottom: 20px;
   background-color: white;
   display: block;
-  
 }
 .conversation-details {
   height: 65px;
@@ -211,7 +228,6 @@
   width: 100%;
   display: flex;
   flex-direction: row;
-  
 }
 .content .messenger_input .text_input {
   flex-grow: 1;
@@ -243,6 +259,26 @@
   cursor: pointer;
 }
 
+/* custom scrollbar */
+::-webkit-scrollbar {
+  width: 18px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d6dee1;
+  border-radius: 15px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a8bbbf;
+}
+
 @media screen and (max-width: 1400px) {
   .left-section {
     width: 40%;
@@ -257,7 +293,11 @@
     margin-bottom: 0px;
   }
 }
-
+@media screen and (max-width: 865px) {
+  .conversation-user-details{
+    width: 50%;
+  }
+}
 @media screen and (max-height: 900px) {
   .messages-coversation {
     max-height: 82%;
