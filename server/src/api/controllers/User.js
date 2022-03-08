@@ -5,26 +5,39 @@ const {
 } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
+const { GetUserByID } = require("../services/Auth");
 
 // List for search bar from chat window
 async function GetUserSearchList(req, res) {
   const search_box_text = req.body.search_box_text;
   const userId = req.body.userId;
 
-  var userSeachList = [];
+  var list = await GetSearchUsersList(search_box_text, userId);
 
-  userSeachList = await GetSearchUsersList(search_box_text, userId);
+  var userRoomList = [];
 
-  const list = userSeachList.map((x) => {
-    const user = { ...x };
-    delete user.Password;
-    return user;
+  userRoomList = await GetUserRoomsList(search_box_text, userId);
+  var userDetails = await GetUserByID(userId);
+
+  var userName = userDetails[0].Surname + " " + userDetails[0].Name;
+
+  const Roomlist = userRoomList.map((x) => {
+    const room = { ...x };
+
+    room.RoomName = room.RoomName.replace(userName, "");
+    room.RoomName = room.RoomName.replace("#", "");
+    return room;
   });
 
-  // if (list.length === 0) {
-  //   console.log("Empty list!");
-  //   return handleResponse(req, res, 400);
-  // }
+  for (let j = 0; j < Roomlist.length; j++) {
+    for (let i = 0; i < list.length; i++) {
+      if (Roomlist[j].RoomName.indexOf(list[i].UserName) != -1) {
+        list.splice(i, 1);
+        continue;
+      }
+    }
+  }
+
   return handleResponse(req, res, 200, { list });
 }
 
@@ -36,17 +49,18 @@ async function GetRoomSearchList(req, res) {
   var userRoomList = [];
 
   userRoomList = await GetUserRoomsList(search_box_text, userId);
+  var userDetails = await GetUserByID(userId);
+
+  var userName = userDetails[0].Surname + " " + userDetails[0].Name;
 
   const list = userRoomList.map((x) => {
-    const user = { ...x };
-    delete user.Password;
-    return user;
-  });
+    const room = { ...x };
 
-  // if (list.length === 0) {
-  //   console.log("Empty list!");
-  //   return handleResponse(req, res, 400);
-  // }
+    room.RoomName = room.RoomName.replace(userName, "");
+    room.RoomName = room.RoomName.replace("#", "");
+    return room;
+  });
+  // console.log(list);
   return handleResponse(req, res, 200, { list });
 }
 
@@ -57,7 +71,7 @@ async function GetUsers(req, res) {
     const user = { ...x };
     delete user.Password;
     return user;
-  });
+  }); 
   return handleResponse(req, res, 200, { list });
 }
 

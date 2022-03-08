@@ -30,7 +30,6 @@ function GetSearchUsersList(search_box_text, userId) {
 }
 
 function GetUserRoomsList(search_box_text, userId) {
-  console.log(userId);
   const db = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     db.query(

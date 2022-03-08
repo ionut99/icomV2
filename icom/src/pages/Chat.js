@@ -14,13 +14,13 @@ import classNames from "classnames";
 
 import useChat from "../components/useChat";
 import Navbar from "../components/Navbar";
+import ConversationList from "../components/ConversationList";
 
 import SearchIcon from "@mui/icons-material/Search";
-import UserAvatar from "../images/userAvatar.png";
-import groupAvatar from "../images/group.png";
-import "../cssFiles/chat.css";
 
-// import SearchIcon from "../images/Search_Icon.png";
+import UserAvatar from "../images/userAvatar.png";
+import "../cssFiles/chat.css";
+import PersonList from "../components/PersonList";
 
 function Chat() {
   const roomId = 1;
@@ -29,6 +29,9 @@ function Chat() {
   const dispatch = useDispatch();
   const authObj = useSelector((state) => state.auth);
   const { user, expiredAt, token } = authObj;
+
+  const chatObj = useSelector((state) => state.chatRedu);
+  const { channelID } = chatObj;
 
   const [search_box_content, Set_search_content] = useState("");
 
@@ -43,14 +46,12 @@ function Chat() {
       getSearchUserList();
     }
   }
-  // get user SEARCH list
   const getSearchUserList = async () => {
-    const result = await getSearchPersonService(
+    const Roomresult = await getSearchRoomService(
       search_box_content,
       user.userId
     );
-
-    const Roomresult = await getSearchRoomService(
+    const result = await getSearchPersonService(
       search_box_content,
       user.userId
     );
@@ -61,6 +62,7 @@ function Chat() {
       return;
     }
     setUserSearchList([]);
+    setRoomSearchList([]);
     if (search_box_content !== "") {
       setUserSearchList(result.data["list"]);
     }
@@ -93,6 +95,7 @@ function Chat() {
   };
 
   const handleSendMessage = () => {
+    console.log("Canalul de com este: " + channelID);
     if (newMessage !== "") {
       sendMessage(newMessage);
     }
@@ -124,91 +127,8 @@ function Chat() {
           <div className="chat-persons">
             {/* <pre>{JSON.stringify(userSearchList, null, 2)}</pre>
             <pre>{JSON.stringify(RoomSearchList, null, 2)}</pre> */}
-            {/* <div className="conversation">
-              <img
-                className="conversation-picture"
-                src={groupAvatar}
-                alt="userAvatar jmecher"
-              />
-              <div className="conversation-details-left">
-                <div className="conversation-header">
-                  <div className="conversation-user-name">
-                    <p>
-                      Team 2 - Elaborare Proiect Diplomaaaaaaaaaaaabbbbbbbbb
-                    </p>
-                  </div>
-                  <div className="conversation-last-seen">19:00</div>
-                </div>
-                <div className="last-message">
-                  <p>
-                    How are
-                    youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
-                  </p>
-                </div>
-              </div>
-            </div> */}
-            <div
-              className="RoomDelimiter"
-              style={{ display: RoomSearchList.length ? "flex" : "none" }}
-            >
-              <p>Conversations</p>
-            </div>
-            {RoomSearchList.map((RoomSearchList, index) => {
-              return (
-                <div className="conversation" key={index}>
-                  <img
-                    className="conversation-picture"
-                    src={groupAvatar}
-                    alt="userAvatar jmecher"
-                  />
-                  <div className="conversation-details-left">
-                    <div className="conversation-header">
-                      <div className="conversation-user-name">
-                        <p>{RoomSearchList.RoomName}</p>
-                      </div>
-                      <div className="conversation-last-seen">19:00</div>
-                    </div>
-                    <div className="last-message">
-                      <p>
-                        How are
-                        youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-            <div
-              className="RoomDelimiter"
-              style={{ display: userSearchList.length ? "flex" : "none" }}
-            >
-              <p>Persons</p>
-            </div>
-            {userSearchList.map((userSearchList, index) => {
-              return (
-                <div className="conversation" key={index}>
-                  <img
-                    className="conversation-picture"
-                    src={groupAvatar}
-                    alt="userAvatar jmecher"
-                  />
-                  <div className="conversation-details-left">
-                    <div className="conversation-header">
-                      <div className="conversation-user-name">
-                        <p>{userSearchList.UserName}</p>
-                      </div>
-                      <div className="conversation-last-seen">19:00</div>
-                    </div>
-                    <div className="last-message">
-                      <p>
-                        How are
-                        youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            <ConversationList RoomSearchList={RoomSearchList} />
+            <PersonList userSearchList={userSearchList} />
           </div>
         </div>
         <div className="right-section">
