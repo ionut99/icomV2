@@ -1,11 +1,30 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import "../cssFiles/chat.css";
 import groupAvatar from "../images/group.png";
 
-function PersonList(props) {
-  var userSearchList = props.userSearchList;
-  
+import {
+  updateNewPersonIDConversation,
+  resetUserSearchBoxContent,
+  resetPersonSearchList,
+} from "./../actions/userActions";
+
+function ClickHandler(PersonID, dispatch) {
+  console.log("Button Click din lista de persoane " + PersonID);
+  dispatch(updateNewPersonIDConversation(PersonID));
+  dispatch(resetUserSearchBoxContent());
+  dispatch(resetPersonSearchList());
+}
+
+function PersonList() {
+  const dispatch = useDispatch();
+
+  const chatObj = useSelector((state) => state.chatRedu);
+  const { userSearchList } = chatObj;
+
+  //var userSearchList = props.userSearchList;
+
   return (
     <>
       <div
@@ -16,7 +35,11 @@ function PersonList(props) {
       </div>
       {userSearchList.map((userSearchList, index) => {
         return (
-          <div className="conversation" key={index} >
+          <div
+            className="conversation"
+            key={index}
+            onClick={() => ClickHandler(userSearchList.userId, dispatch)}
+          >
             <img
               className="conversation-picture"
               src={groupAvatar}

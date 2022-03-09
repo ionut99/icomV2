@@ -1,19 +1,22 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import groupAvatar from "../images/group.png";
 import "../cssFiles/chat.css";
 
-import { updateChannelID } from "./../actions/userActions";
+import { updateChannelID, resetPersonSearchList } from "./../actions/userActions";
 
-function ConversationList(props) {
+function ClickHandler(ID, dispatch) {
+  console.log("Button Click " + ID);
+  dispatch(updateChannelID(ID));
+  dispatch(resetPersonSearchList());
+}
+
+function ConversationList() {
   const dispatch = useDispatch();
 
-  function ClickHandler(ID) {
-    console.log("Button Click " + ID);
-    dispatch(updateChannelID(ID));
-  }
-  var RoomSearchList = props.RoomSearchList;
+  const chatObj = useSelector((state) => state.chatRedu);
+  const { RoomSearchList } = chatObj;
 
   return (
     <>

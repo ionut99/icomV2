@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { userLogout, verifyTokenEnd } from "./../actions/authActions";
-import {
-  getSearchPersonService,
-  getSearchRoomService,
-} from "./../services/user";
 import { verifyTokenAsync } from "./../asyncActions/authAsyncActions";
 import { setAuthToken } from "./../services/auth";
 import moment from "moment";
@@ -22,6 +17,17 @@ import UserAvatar from "../images/userAvatar.png";
 import "../cssFiles/chat.css";
 import PersonList from "../components/PersonList";
 
+import { setUserSearchBoxContent } from "./../actions/userActions";
+
+import {
+  userResetRoomListAsync,
+  userSearchPersonListAsync,
+} from "../asyncActions/userAsyncActions";
+
+function setSearchBoxContent(search_box_content, dispatch) {
+  dispatch(setUserSearchBoxContent(search_box_content));
+}
+
 function Chat() {
   const roomId = 1;
   let userName = "ionut";
@@ -31,43 +37,20 @@ function Chat() {
   const { user, expiredAt, token } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID } = chatObj;
-
-  const [search_box_content, Set_search_content] = useState("");
-
-  const [userSearchList, setUserSearchList] = useState([]);
-  const [RoomSearchList, setRoomSearchList] = useState([]);
+  const { channelID, search_box_content } = chatObj;
 
   const { messages, sendMessage } = useChat(roomId, userName);
   const [newMessage, setNewMessage] = useState("");
 
   function SearchEnter(event) {
     if (event.key === "Enter") {
+      console.log("nume inainte de getList: " + search_box_content);
       getSearchUserList();
     }
   }
   const getSearchUserList = async () => {
-    const Roomresult = await getSearchRoomService(
-      search_box_content,
-      user.userId
-    );
-    const result = await getSearchPersonService(
-      search_box_content,
-      user.userId
-    );
-    if (result.error || Roomresult.error) {
-      dispatch(verifyTokenEnd());
-      if (result.response && [401, 403].includes(result.response.status))
-        dispatch(userLogout());
-      return;
-    }
-    setUserSearchList([]);
-    setRoomSearchList([]);
-    if (search_box_content !== "") {
-      setUserSearchList(result.data["list"]);
-    }
-
-    setRoomSearchList(Roomresult.data["list"]);
+    dispatch(userResetRoomListAsync(search_box_content, user.userId));
+    dispatch(userSearchPersonListAsync(search_box_content, user.userId));
   };
 
   // set timer to renew token
@@ -87,7 +70,7 @@ function Chat() {
   }, []);
 
   const SearchPerson = (event) => {
-    Set_search_content(event.target.value);
+    setSearchBoxContent(event.target.value, dispatch);
   };
 
   const handleNewMessageChange = (event) => {
@@ -127,8 +110,9 @@ function Chat() {
           <div className="chat-persons">
             {/* <pre>{JSON.stringify(userSearchList, null, 2)}</pre>
             <pre>{JSON.stringify(RoomSearchList, null, 2)}</pre> */}
-            <ConversationList RoomSearchList={RoomSearchList} />
-            <PersonList userSearchList={userSearchList} />
+            {/* <ConversationList RoomSearchList={RoomSearchList} /> exemplu pentru trimitere de argumente */}
+            <ConversationList/>
+            <PersonList />
           </div>
         </div>
         <div className="right-section">
