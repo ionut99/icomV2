@@ -1,12 +1,15 @@
 import { userLogout, verifyTokenEnd } from "./../actions/authActions";
 import { getSearchRoomService, getSearchPersonService } from "../services/user";
 
-import { setRoomList, setPersonSearchList } from "./../actions/userActions";
+import {
+  setRoomList,
+  setPersonSearchList,
+  setNewRoomID,
+} from "./../actions/userActions";
 
 // handle RoomList Search
 export const userResetRoomListAsync =
   (search_box_content, userId) => async (dispatch) => {
-    console.log("salut din userResetListRoom");
     const Roomresult = await getSearchRoomService(search_box_content, userId);
 
     if (Roomresult.error) {
@@ -18,15 +21,17 @@ export const userResetRoomListAsync =
         dispatch(userLogout());
       return;
     }
-    console.log("salut din async pentru conversatii");
-    console.log(Roomresult.data["list"]);
+
     dispatch(setRoomList(Roomresult.data["list"]));
+
+    if (search_box_content === "") {
+      dispatch(setNewRoomID(Roomresult.data["list"].length + 1));
+    }
   };
 
 // handle Person Search
 export const userSearchPersonListAsync =
   (search_box_content, userId) => async (dispatch) => {
-    console.log("salut din userSearchPersonList");
     const Personresult = await getSearchPersonService(
       search_box_content,
       userId
@@ -41,8 +46,6 @@ export const userSearchPersonListAsync =
         dispatch(userLogout());
       return;
     }
-    console.log("salut din async pentru conversatii");
-    console.log(Personresult.data["list"]);
     if (search_box_content !== "") {
       dispatch(setPersonSearchList(Personresult.data["list"]));
     } else {

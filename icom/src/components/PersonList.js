@@ -1,18 +1,32 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import "../cssFiles/chat.css";
 import groupAvatar from "../images/group.png";
+import "../cssFiles/chat.css";
 
 import {
-  updateNewPersonIDConversation,
   resetUserSearchBoxContent,
   resetPersonSearchList,
+  setNewRoomInList,
+  updateChannelID
 } from "./../actions/userActions";
 
-function ClickHandler(PersonID, dispatch) {
-  console.log("Button Click din lista de persoane " + PersonID);
-  dispatch(updateNewPersonIDConversation(PersonID));
+import { userResetRoomListAsync } from "../asyncActions/userAsyncActions";
+
+function ClickHandler(
+  wantedUserID,
+  wantedUserName,
+  userThatWantID,
+  ChannelID,
+  dispatch
+) {
+  //dispatch(updateNewPersonIDConversation(wantedUserID));
+  dispatch(userResetRoomListAsync(" ", userThatWantID));
+
+  dispatch(setNewRoomInList(wantedUserName, wantedUserID));
+
+  dispatch(updateChannelID(ChannelID));
+
   dispatch(resetUserSearchBoxContent());
   dispatch(resetPersonSearchList());
 }
@@ -21,9 +35,10 @@ function PersonList() {
   const dispatch = useDispatch();
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { userSearchList } = chatObj;
+  const { userSearchList, newRoomID } = chatObj;
 
-  //var userSearchList = props.userSearchList;
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
 
   return (
     <>
@@ -38,7 +53,15 @@ function PersonList() {
           <div
             className="conversation"
             key={index}
-            onClick={() => ClickHandler(userSearchList.userId, dispatch)}
+            onClick={() =>
+              ClickHandler(
+                userSearchList.userId,
+                userSearchList.UserName,
+                user.userId,
+                newRoomID,
+                dispatch
+              )
+            }
           >
             <img
               className="conversation-picture"

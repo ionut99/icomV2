@@ -1,20 +1,28 @@
 import {
   USER_UPDATE_CHAT,
-  USER_SET_NEW_PERSON_CONVERSATION,
   USER_SET_SEARCH_BOX_CONTENT,
   USER_RESET_SEARCH_BOX_CONTENT,
   USER_SET_PERSON_SEARCH_LIST,
   USER_RESET_PERSON_SEARCH_LIST,
   USER_SET_ROOM_LIST,
   USER_RESET_ROOM_LIST,
+  USER_SET_ROOM_NAME,
+  SET_NEW_ROOM_ID,
+  RESET_NEW_ROOM_ITEMS,
 } from "../actions/actionTypes";
 
 const ChannelState = {
-  channelID: null,
-  personSelectedID: null,
+  channelID: 1,
+
   search_box_content: "",
   userSearchList: [],
   RoomSearchList: [],
+
+  personSelectedID: null,
+  newRoomID: null,
+  newRoomName: "",
+
+  RoomMessages: [],
 };
 
 const chatRedu = (state = ChannelState, action) => {
@@ -25,13 +33,6 @@ const chatRedu = (state = ChannelState, action) => {
       return {
         ...state,
         channelID,
-      };
-    // set new person ID content
-    case USER_SET_NEW_PERSON_CONVERSATION:
-      const { personSelectedID } = action.payload;
-      return {
-        ...state,
-        personSelectedID,
       };
 
     // set Chat search box content
@@ -77,6 +78,29 @@ const chatRedu = (state = ChannelState, action) => {
         RoomSearchList: [],
       };
 
+    // set newRoomID
+    case SET_NEW_ROOM_ID:
+      const { newRoomID } = action.payload;
+      return {
+        ...state,
+        newRoomID: newRoomID,
+      };
+
+    case USER_SET_ROOM_NAME:
+      const { RoomName, personSelectedID } = action.payload;
+      return {
+        ...state,
+        newRoomName: RoomName,
+        personSelectedID: personSelectedID,
+      };
+
+    case RESET_NEW_ROOM_ITEMS:
+      return {
+        ...state,
+        // newRoomID: null,
+        // newRoomName: "",
+        // personSelectedID: null,
+      };
     default:
       return state;
   }

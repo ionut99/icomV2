@@ -4,11 +4,20 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import groupAvatar from "../images/group.png";
 import "../cssFiles/chat.css";
 
-import { updateChannelID, resetPersonSearchList } from "./../actions/userActions";
+import {
+  updateChannelID,
+  resetPersonSearchList,
+  resetUserSearchBoxContent,
+} from "./../actions/userActions";
 
-function ClickHandler(ID, dispatch) {
-  console.log("Button Click " + ID);
+import { userResetRoomListAsync } from "../asyncActions/userAsyncActions";
+
+function ClickHandler(ID, userThatWantID, dispatch) {
+  
   dispatch(updateChannelID(ID));
+  dispatch(userResetRoomListAsync(" ", userThatWantID));
+
+  dispatch(resetUserSearchBoxContent());
   dispatch(resetPersonSearchList());
 }
 
@@ -16,7 +25,20 @@ function ConversationList() {
   const dispatch = useDispatch();
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { RoomSearchList } = chatObj;
+  const { RoomSearchList, newRoomID, newRoomName, personSelectedID } = chatObj;
+
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
+
+  var ok = true;
+  for (let i = 0; i < RoomSearchList.length; i++) {
+    if (RoomSearchList[i].RoomName === newRoomName) {
+      ok = false;
+    }
+  }
+  if (ok && newRoomName !== "" && personSelectedID !== null) {
+    RoomSearchList.push({ RoomID: newRoomID, RoomName: newRoomName });
+  }
 
   return (
     <>
@@ -31,7 +53,9 @@ function ConversationList() {
           <div
             className="conversation"
             key={index}
-            onClick={() => ClickHandler(RoomSearchList.RoomID, dispatch)}
+            onClick={() =>
+              ClickHandler(RoomSearchList.RoomID, user.userId, dispatch)
+            }
           >
             <img
               className="conversation-picture"
