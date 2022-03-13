@@ -62,8 +62,8 @@ const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 io.on("connection", (socket) => {
   // Join a conversation
   const { roomID } = socket.handshake.query;
-  console.log("incercare roomID: " + roomID);
-  console.log("New connection established for chat part: ", roomID);
+  //console.log("incercare roomID: " + roomID);
+  //console.log("New connection established for chat part: ", roomID);
   socket.join(roomID);
 
   // Listen for new messages

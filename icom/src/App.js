@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ChatWindow from "./pages/Chat";
+import Files from "./pages/Files";
 
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
@@ -20,7 +21,7 @@ function App() {
   // verify token on app load
   useEffect(() => {
     dispatch(verifyTokenAsync());
-  }, []);
+  },[dispatch]);
 
   // checking authentication
   if (authLoading) {
@@ -45,6 +46,11 @@ function App() {
             <PrivateRoute
               path="/chat"
               component={ChatWindow}
+              isAuthenticated={isAuthenticated}
+            />
+            <PrivateRoute
+              path="/files"
+              component={Files}
               isAuthenticated={isAuthenticated}
             />
             <Redirect to={isAuthenticated ? "/dashboard" : "/login"} />

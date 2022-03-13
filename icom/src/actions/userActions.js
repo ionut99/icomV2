@@ -11,7 +11,6 @@ import {
   RESET_NEW_ROOM_ITEMS,
 } from "./actionTypes";
 
-// de vazut partea asta cu {channelID} de ce nu a functionat cu {}
 export const updateChannelID = (channelID) => {
   console.log("Canalul de comunicatie este : ", channelID);
   return {

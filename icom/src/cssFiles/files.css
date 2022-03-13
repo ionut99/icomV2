@@ -1,0 +1,84 @@
+@import "colors.css";
+
+.main-window {
+  border: solid red 1px;
+  height: 100vh;
+  width: 100vw;
+}
+.list-files-section {
+  border: green solid 2px;
+  height: 100% - 60px;
+  width: 76%;
+  bottom: 0px;
+  top: 60px;
+  position: absolute;
+  right: 25px;
+  background-color: var(--white-color);
+  overflow-y: auto;
+  /* display: flex;
+    flex-direction: column; */
+}
+
+.list-files-section .files-details {
+  width: 100%;
+  height: 65px;
+  border: solid blue 1px;
+  display: inline-flex;
+  position: sticky;
+  top: 0;
+}
+
+.file-list {
+  overflow-y: auto;
+}
+.list-files-section .file-element {
+  width: 100%;
+  height: 50px;
+  border: solid violet 1px;
+  display: inline-flex;
+}
+
+.list-files-section .type-sort {
+  padding-top: 16px;
+  border: solid black 1px;
+  text-align: center;
+  min-width: 50px;
+  height: 100%;
+}
+
+.list-files-section .name-location-sort {
+  padding-left: 10px;
+  padding-top: 16px;
+  border: blue 1px solid;
+  min-width: 150px;
+  width: 35%;
+  height: 100%;
+}
+.list-files-section .modified-sort {
+  padding-left: 10px;
+  padding-top: 16px;
+  border: red 2px solid;
+  width: 150px;
+  height: 100%;
+}
+
+.list-files-section .refresh {
+  padding-top: 16px;
+  border: solid black 1px;
+  text-align: center;
+  min-width: 50px;
+  height: 100%;
+}
+
+@media screen and (max-width: 700px) {
+  .list-files-section {
+    right: 0;
+  }
+  .list-files-section .modified-sort {
+    display: none;
+  }
+  .list-files-section .name-location-sort {
+    width: 50%;
+    min-width: auto;
+  }
+}

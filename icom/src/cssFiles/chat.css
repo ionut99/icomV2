@@ -1,8 +1,10 @@
+@import "colors.css";
+
 .page-content {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #c9c9a9b9;
+  background-color: var(--bg-color-step-one);
 }
 .chat-page {
   width: 100%;
@@ -21,7 +23,7 @@
 }
 .search-button-icon:hover {
   cursor: pointer;
-  background-color: #dadde0;
+  background-color: var(--color-element-hover);
   border-radius: 5px;
 }
 .RoomDelimiter {
@@ -36,39 +38,39 @@
   margin-right: auto;
   font-size: medium;
   padding-top: 5px;
-  background-color: white;
-  border-bottom: 2px solid #dadde0;
+  background-color: var(--white-color);
+  border-bottom: 2px solid var(--color-element-hover);
 }
 
 .left-section {
   width: 35%;
   max-width: 350px;
   margin-left: 5%;
-  background-color: white;
+  background-color: var(--white-color);
   display: flex;
   flex-direction: column;
-  border-right: 2px solid #dadde0;
+  border-right: 2px solid var(--color-element-hover);
 }
 .search-section {
-  height: 70px;
+  height: 65px;
   display: flex;
   flex-direction: row;
-  border-bottom: 2px solid #dadde0;
+  border-bottom: 2px solid var(--color-element-hover);
 }
 .search-box {
   padding-left: 20px;
   width: 88%;
   height: 40px;
   border-radius: 5px;
-  border: 2px #a7a7a7 solid;
+  border: 2px var(--border-color) solid;
   font-size: 18px;
   margin-top: 12px;
   margin-left: 5px;
 }
 
 .conversation-picture {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   margin: 8px;
 }
 .conversation-details-left {
@@ -105,7 +107,7 @@
   justify-content: center;
 }
 .more_options .css-1cdpoyg-MuiSvgIcon-root:hover {
-  color: #0969da;
+  color: var(--sender-message-color);
   transition: 0.2s;
 }
 .conversation-user-details p {
@@ -147,22 +149,22 @@
   display: flex;
   flex-direction: row;
   width: 99%;
-  border-bottom: 2px solid #dadde0;
+  border-bottom: 2px solid var(--color-element-hover);
 }
 
 .conversation:hover {
-  background-color: #dadde0;
+  background-color: var(--color-element-hover);
 }
 .right-section {
   width: 70%;
-  background-color: #e6e6e6;
+  background-color: var(--bg-color-step-two);
   display: block;
 }
 .conversation-details {
-  height: 65px;
+  height: 60px;
   width: 100%;
-  background-color: #fff;
-  border: 2px #bcbec0 solid;
+  background-color: var(--white-color);
+  border: 2px var(--border-color-less-intense) solid;
 }
 
 .messages-coversation {
@@ -210,11 +212,11 @@
   max-width: 90%;
 }
 .messages .one_message.me .message_body .message_text {
-  background-color: #2ecc71;
+  background-color: var(--me-message-color);
 }
 .messages .one_message .message_body .message_text {
-  background: #0969da;
-  color: #fff;
+  background: var(--sender-message-color);
+  color: var(--white-color);
   padding: 10px;
   border-radius: 10px;
 }
@@ -242,7 +244,7 @@
   border: 0 none;
   width: 100%;
   height: 100%;
-  border: 2px solid #bcbec0;
+  border: 2px solid var(--border-color-less-intense);
   border-radius: 2px;
   font-size: 18px;
   padding-left: 20px;
@@ -256,13 +258,13 @@
 .content .messenger_input .actions button {
   width: 100%;
   height: 100%;
-  background-color: #2ecc71;
+  background-color: var(--me-message-color);
 }
 .content .messenger_input .actions button:hover {
   cursor: pointer;
 }
 
-/* custom scrollbar */
+/* custom scrollbar -- start */
 ::-webkit-scrollbar {
   width: 18px;
 }
@@ -272,15 +274,17 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #d6dee1;
+  background-color: var(--skroll-bar);
   border-radius: 15px;
   border: 6px solid transparent;
   background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #a8bbbf;
+  background-color: var(--skroll-bar-hover);
 }
+
+/* custom scrollbar --end */
 
 @media screen and (max-width: 1400px) {
   .messages .one_message {
@@ -312,6 +316,15 @@
 @media screen and (max-width: 865px) {
   .conversation-user-details {
     width: 50%;
+  }
+
+  .left-section {
+    width: 40%;
+    margin-left: 0;
+  }
+  .right-section {
+    max-width: 60%;
+    margin-right: 0%;
   }
 }
 @media screen and (max-height: 900px) {

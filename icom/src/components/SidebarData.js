@@ -4,7 +4,6 @@ import * as AiIcons from "react-icons/ai";
 import * as IoIcons from "react-icons/io";
 import * as SiIcons from "react-icons/si";
 
-// import * as SiFilesIcons from 'react-icons/fa';
 
 export const SidebarData = [
   {
@@ -40,7 +39,7 @@ export const SidebarData = [
   },
   {
     title: "Files",
-    path: "/dashboard",
+    path: "/files",
     icon: <SiIcons.SiFiles />,
     cName: "nav-text",
   },
