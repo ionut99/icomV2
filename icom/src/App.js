@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
 import { BrowserRouter, Switch, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect } from "react";
 
-import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ChatWindow from "./pages/Chat";
 import Files from "./pages/Files";
+import Login from "./pages/Login";
 
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";

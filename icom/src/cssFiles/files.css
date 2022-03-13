@@ -15,8 +15,6 @@
   right: 25px;
   background-color: var(--white-color);
   overflow-y: auto;
-  /* display: flex;
-    flex-direction: column; */
 }
 
 .list-files-section .files-details {
@@ -26,6 +24,7 @@
   display: inline-flex;
   position: sticky;
   top: 0;
+  background-color: var(--white-color);
 }
 
 .file-list {
@@ -62,7 +61,7 @@
   height: 100%;
 }
 
-.list-files-section .refresh {
+.list-files-section .download-refresh {
   padding-top: 16px;
   border: solid black 1px;
   text-align: center;

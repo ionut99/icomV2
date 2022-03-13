@@ -3,6 +3,7 @@ import "../cssFiles/files.css";
 
 import Navbar from "../components/Navbar";
 import * as IoIcons from "react-icons/io";
+import * as AiIcons from "react-icons/ai";
 
 function Files() {
   var filesList = [];
@@ -25,19 +26,22 @@ function Files() {
           <div className="modified-sort">Modified</div>
           <div className="modified-sort">Modified by</div>
           <div className="name-location-sort">Location</div>
-          <div className="refresh">
+          <div className="download-refresh">
             <IoIcons.IoIosRefresh size={25} />
           </div>
         </div>
         <div className="file-list">
           {filesList.map((filesList, index) => {
             return (
-              <div
-                className="file-element"
-                key={index}
-              >
-                
-                
+              <div className="file-element" key={index}>
+                <div className="type-sort">{filesList.Type}</div>
+                <div className="name-location-sort">Name</div>
+                <div className="modified-sort">Modified</div>
+                <div className="modified-sort">Modified by</div>
+                <div className="name-location-sort">Location</div>
+                <div className="download-refresh">
+                  <AiIcons.AiOutlineDownload size={25} />
+                </div>
               </div>
             );
           })}

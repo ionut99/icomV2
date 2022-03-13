@@ -1,17 +1,17 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import groupAvatar from "../images/group.png";
-import "../cssFiles/chat.css";
+import groupAvatar from "../../images/group.png";
+import "./search.css";
 
 import {
   resetUserSearchBoxContent,
   resetPersonSearchList,
   setNewRoomInList,
   updateChannelID,
-} from "./../actions/userActions";
+} from "../../actions/userActions";
 
-import { userResetRoomListAsync } from "../asyncActions/userAsyncActions";
+import { userResetRoomListAsync } from "../../asyncActions/userAsyncActions";
 
 function ClickHandler(
   wantedUserID,

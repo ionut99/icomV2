@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect } from "react";
 
 import { verifyTokenAsync } from "./../asyncActions/authAsyncActions";
+import { setUserSearchBoxContent } from "./../actions/userActions";
 import { setAuthToken } from "./../services/auth";
 import moment from "moment";
 
-import classNames from "classnames";
 
-import useChat from "../components/useChat";
+import ConversationList from "../components/Search/ConversationList";
+import PersonList from "../components/Search/PersonList";
+import Room from "../components/Room/Room";
 import Navbar from "../components/Navbar";
-import ConversationList from "../components/ConversationList";
 
 import SearchIcon from "@mui/icons-material/Search";
-
-import UserAvatar from "../images/userAvatar.png";
 import "../cssFiles/chat.css";
-import PersonList from "../components/PersonList";
 
-import { setUserSearchBoxContent } from "./../actions/userActions";
 
 import {
   userResetRoomListAsync,
@@ -36,8 +33,6 @@ function Chat() {
   const chatObj = useSelector((state) => state.chatRedu);
   const { channelID, search_box_content } = chatObj;
   console.log("canalul este + ", channelID);
-  const { messages, sendMessage } = useChat(channelID, user.userId, user.name + " " + user.surname);
-  const [newMessage, setNewMessage] = useState("");
 
   function SearchEnter(event) {
     if (event.key === "Enter") {
@@ -67,17 +62,6 @@ function Chat() {
 
   const SearchPerson = (event) => {
     setSearchBoxContent(event.target.value, dispatch);
-  };
-
-  const handleNewMessageChange = (event) => {
-    setNewMessage(event.target.value);
-  };
-
-  const handleSendMessage = () => {
-    if (newMessage !== "") {
-      sendMessage(newMessage);
-    }
-    setNewMessage("");
   };
 
   return (
@@ -110,49 +94,7 @@ function Chat() {
             <PersonList />
           </div>
         </div>
-        <div className="right-section">
-          <div className="messages-coversation">
-            <div className="conversation-details"></div>
-            <div className="messages-content">
-              <div className="messages">
-                {messages.map((messages, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className={classNames("one_message", { 'me': messages.ownedByCurrentUser })}
-                    >
-                      <div className="image_user_message">
-                        <img src={UserAvatar} alt="" />
-                      </div>
-                      <div className="message_body">
-                        <div className="message_author">
-                        {messages.ownedByCurrentUser ? 'Aici punem data ' : messages.AuthorName}
-                        </div>
-                        <div className="message_text">
-                          <p>{messages.body}</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="messenger_input">
-              <div className="text_input">
-                <textarea
-                  // value={newMsg.body}
-                  // onChange={GetMessageText}
-                  value={newMessage}
-                  onChange={handleNewMessageChange}
-                  placeholder=" Write your message..."
-                />
-              </div>
-              <div className="actions" onClick={handleSendMessage}>
-                <button>Send</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Room />
       </div>
     </div>
   );
