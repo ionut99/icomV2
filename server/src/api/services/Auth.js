@@ -3,9 +3,9 @@ const mysql = require("mysql");
 const { DataBaseConfig } = require("../../config/dataBase");
 
 function GetUserFromDataBase(email, password) {
-  const db = new mysql.createConnection(DataBaseConfig);
+  const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
-    db.query(
+    connection.query(
       "SELECT * FROM IUsers WHERE email = ? AND password = ?",
       [email, password],
       (err, result) => {
@@ -15,13 +15,14 @@ function GetUserFromDataBase(email, password) {
         return resolve(result);
       }
     );
+    connection.end();
   });
 }
 
 function GetUserByID(userId) {
-  const db = new mysql.createConnection(DataBaseConfig);
+  const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
-    db.query(
+    connection.query(
       "SELECT * FROM IUsers WHERE userId = ?",
       [userId],
       (err, result) => {
@@ -31,6 +32,7 @@ function GetUserByID(userId) {
         return resolve(result);
       }
     );
+    connection.end();
   });
 }
 module.exports = {

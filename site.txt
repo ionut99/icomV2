@@ -20,3 +20,7 @@ pentru CSRF protection - > https://www.cluemediator.com/login-app-with-csrf-prot
 https://www.youtube.com/watch?v=oNlMrpnUSFE&ab_channel=PedroTech -> Folder Structure for API's - Beginner, Intermediate, and Advanced
 
 Arhitectura MVC -> https://towardsdatascience.com/everything-you-need-to-know-about-mvc-architecture-3c827930b4c1
+
+
+de retinut: https://github.com/pgn127/ReactGoogleDocs
+	    https://github.com/ether/etherpad-lite

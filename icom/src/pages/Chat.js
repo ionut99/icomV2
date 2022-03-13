@@ -1,45 +1,38 @@
-import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect } from "react";
 
-import { userLogout, verifyTokenEnd } from "./../actions/authActions";
-import {
-  getSearchPersonService,
-  getSearchRoomService,
-} from "./../services/user";
 import { verifyTokenAsync } from "./../asyncActions/authAsyncActions";
+import { setUserSearchBoxContent } from "./../actions/userActions";
 import { setAuthToken } from "./../services/auth";
 import moment from "moment";
 
-import classNames from "classnames";
 
-import useChat from "../components/useChat";
+import ConversationList from "../components/Search/ConversationList";
+import PersonList from "../components/Search/PersonList";
+import Room from "../components/Room/Room";
 import Navbar from "../components/Navbar";
-import ConversationList from "../components/ConversationList";
 
 import SearchIcon from "@mui/icons-material/Search";
-
-import UserAvatar from "../images/userAvatar.png";
 import "../cssFiles/chat.css";
-import PersonList from "../components/PersonList";
+
+
+import {
+  userResetRoomListAsync,
+  userSearchPersonListAsync,
+} from "../asyncActions/userAsyncActions";
+
+function setSearchBoxContent(search_box_content, dispatch) {
+  dispatch(setUserSearchBoxContent(search_box_content));
+}
 
 function Chat() {
-  const roomId = 1;
-  let userName = "ionut";
-
   const dispatch = useDispatch();
   const authObj = useSelector((state) => state.auth);
   const { user, expiredAt, token } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID } = chatObj;
-
-  const [search_box_content, Set_search_content] = useState("");
-
-  const [userSearchList, setUserSearchList] = useState([]);
-  const [RoomSearchList, setRoomSearchList] = useState([]);
-
-  const { messages, sendMessage } = useChat(roomId, userName);
-  const [newMessage, setNewMessage] = useState("");
+  const { channelID, search_box_content } = chatObj;
+  console.log("canalul este + ", channelID);
 
   function SearchEnter(event) {
     if (event.key === "Enter") {
@@ -47,27 +40,8 @@ function Chat() {
     }
   }
   const getSearchUserList = async () => {
-    const Roomresult = await getSearchRoomService(
-      search_box_content,
-      user.userId
-    );
-    const result = await getSearchPersonService(
-      search_box_content,
-      user.userId
-    );
-    if (result.error || Roomresult.error) {
-      dispatch(verifyTokenEnd());
-      if (result.response && [401, 403].includes(result.response.status))
-        dispatch(userLogout());
-      return;
-    }
-    setUserSearchList([]);
-    setRoomSearchList([]);
-    if (search_box_content !== "") {
-      setUserSearchList(result.data["list"]);
-    }
-
-    setRoomSearchList(Roomresult.data["list"]);
+    dispatch(userResetRoomListAsync(search_box_content, user.userId));
+    dispatch(userSearchPersonListAsync(search_box_content, user.userId));
   };
 
   // set timer to renew token
@@ -87,19 +61,7 @@ function Chat() {
   }, []);
 
   const SearchPerson = (event) => {
-    Set_search_content(event.target.value);
-  };
-
-  const handleNewMessageChange = (event) => {
-    setNewMessage(event.target.value);
-  };
-
-  const handleSendMessage = () => {
-    console.log("Canalul de com este: " + channelID);
-    if (newMessage !== "") {
-      sendMessage(newMessage);
-    }
-    setNewMessage("");
+    setSearchBoxContent(event.target.value, dispatch);
   };
 
   return (
@@ -127,55 +89,12 @@ function Chat() {
           <div className="chat-persons">
             {/* <pre>{JSON.stringify(userSearchList, null, 2)}</pre>
             <pre>{JSON.stringify(RoomSearchList, null, 2)}</pre> */}
-            <ConversationList RoomSearchList={RoomSearchList} />
-            <PersonList userSearchList={userSearchList} />
+            {/* <ConversationList RoomSearchList={RoomSearchList} /> exemplu pentru trimitere de argumente */}
+            <ConversationList />
+            <PersonList />
           </div>
         </div>
-        <div className="right-section">
-          <div className="messages-coversation">
-            <div className="conversation-details"></div>
-            <div className="messages-content">
-              <div className="messages">
-                {messages.map((messages, index) => {
-                  return (
-                    <div
-                      key={index}
-                      // className={classNames("one_message", { me: messages.me })}
-                      className={classNames("one_message", { me: true })}
-                    >
-                      <div className="image_user_message">
-                        <img src={UserAvatar} alt="" />
-                      </div>
-                      <div className="message_body">
-                        <div className="message_author">
-                          {/* {messages.me ? "You " : messages.author} says: */}
-                          {true ? "You " : messages.author} says:
-                        </div>
-                        <div className="message_text">
-                          <p>{messages.body}</p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="messenger_input">
-              <div className="text_input">
-                <textarea
-                  // value={newMsg.body}
-                  // onChange={GetMessageText}
-                  value={newMessage}
-                  onChange={handleNewMessageChange}
-                  placeholder=" Write your message..."
-                />
-              </div>
-              <div className="actions" onClick={handleSendMessage}>
-                <button>Send</button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Room />
       </div>
     </div>
   );

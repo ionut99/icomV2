@@ -1,0 +1,103 @@
+@import "../../cssFiles/chat.css";
+@import "../../cssFiles/colors.css";
+
+.RoomDelimiter {
+  top: 0;
+  position: sticky;
+  border: red 1px solid;
+  height: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: medium;
+  padding-top: 5px;
+  background-color: var(--white-color);
+  border-bottom: 2px solid var(--color-element-hover);
+}
+
+.conversation {
+  width: 99%;
+  height: 60px;
+  margin-left: 2px;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 2px solid var(--color-element-hover);
+}
+
+.conversation:hover {
+  background-color: var(--color-element-hover);
+}
+
+.conversation-picture {
+  width: 40px;
+  height: 40px;
+  margin: 8px;
+  border-radius: 50%;
+}
+
+.conversation-details-left {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  height: 100%;
+}
+
+.conversation-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.conversation-user-details {
+  margin-top: 5px;
+  margin-left: 12px;
+  margin-right: 5px;
+  font-size: medium;
+  height: 50px;
+  width: 78%;
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation-user-details p {
+  width: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.last-message {
+  margin-top: 8px;
+  width: inherit;
+  height: 20px;
+  font-size: small;
+}
+.last-message p {
+  width: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.more_options {
+  right: 10px;
+  padding-left: 5px;
+  height: 50px;
+  width: 50px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  justify-content: center;
+}
+.more_options .css-1cdpoyg-MuiSvgIcon-root:hover {
+  color: var(--sender-message-color);
+  transition: 0.2s;
+}
+
+.conversation-last-seen {
+  margin-left: auto;
+  font-size: small;
+  font-weight: 700;
+}

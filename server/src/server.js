@@ -61,21 +61,22 @@ const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 
 io.on("connection", (socket) => {
   // Join a conversation
-  const { roomId } = socket.handshake.query;
-  console.log("New connection established for chat part: ", roomId);
-  socket.join(roomId);
+  const { roomID } = socket.handshake.query;
+  //console.log("incercare roomID: " + roomID);
+  //console.log("New connection established for chat part: ", roomID);
+  socket.join(roomID);
 
   // Listen for new messages
   socket.on(NEW_CHAT_MESSAGE_EVENT, (data) => {
-    io.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, data);
+    io.in(roomID).emit(NEW_CHAT_MESSAGE_EVENT, data);
     console.log("New message was sent:  ");
     console.log(data);
-    console.log("On channel: " + roomId);
+    console.log("On channel: " + roomID);
   });
 
   // Leave the room if the user closes the socket
   socket.on("disconnect", () => {
-    socket.leave(roomId);
+    socket.leave(roomID);
   });
 });
 
