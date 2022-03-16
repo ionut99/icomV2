@@ -6,6 +6,10 @@ import { setUserSearchBoxContent } from "./../actions/userActions";
 import { setAuthToken } from "./../services/auth";
 import moment from "moment";
 
+import {
+  userResetRoomListAsync,
+  userSearchPersonListAsync,
+} from "../asyncActions/userAsyncActions";
 
 import ConversationList from "../components/Search/ConversationList";
 import PersonList from "../components/Search/PersonList";
@@ -14,12 +18,6 @@ import Navbar from "../components/Navbar";
 
 import SearchIcon from "@mui/icons-material/Search";
 import "../cssFiles/chat.css";
-
-
-import {
-  userResetRoomListAsync,
-  userSearchPersonListAsync,
-} from "../asyncActions/userAsyncActions";
 
 function setSearchBoxContent(search_box_content, dispatch) {
   dispatch(setUserSearchBoxContent(search_box_content));
@@ -31,8 +29,7 @@ function Chat() {
   const { user, expiredAt, token } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID, search_box_content } = chatObj;
-  console.log("canalul este + ", channelID);
+  const { search_box_content } = chatObj;
 
   function SearchEnter(event) {
     if (event.key === "Enter") {

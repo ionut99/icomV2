@@ -58,6 +58,23 @@
   display: inline-flex;
   background-color: var(--white-color);
   border: 2px var(--border-color-less-intense) solid;
+  padding-right: 15px;
+}
+
+.conversation-details .room-instrument {
+  border: 1px solid var(--border-color-less-intense);
+  margin-top: 10px;
+  justify-content: center;
+  border-radius: 20%;
+  margin-right: 5px;
+  font-size: 20px;
+  height: 30px;
+  width: 30px;
+}
+
+.conversation-details .room-instrument:hover {
+  cursor: pointer;
+  background-color: var(--bg-color-step-two);
 }
 
 .conversation-picture {
@@ -72,6 +89,7 @@
   margin-left: 10px;
   font-size: larger;
   font-weight: bold;
+  margin-right: auto;
 }
 
 .messages {
@@ -127,11 +145,11 @@
   font-size: large;
 }
 
-.messenger_input .toolbar-send .instrument {
+.messenger_input .toolbar-send .write-instrument {
   font-size: larger;
   margin-right: 7px;
 }
-.messenger_input .toolbar-send .instrument:hover {
+.messenger_input .toolbar-send .write-instrument:hover {
   cursor: pointer;
 }
 

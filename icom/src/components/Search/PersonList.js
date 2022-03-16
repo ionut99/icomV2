@@ -8,7 +8,7 @@ import {
   resetUserSearchBoxContent,
   resetPersonSearchList,
   setNewRoomInList,
-  updateChannelID,
+  updateCurrentChannel,
 } from "../../actions/userActions";
 
 import { userResetRoomListAsync } from "../../asyncActions/userAsyncActions";
@@ -24,7 +24,7 @@ function ClickHandler(
 
   dispatch(setNewRoomInList(wantedUserName, wantedUserID));
 
-  dispatch(updateChannelID(ChannelID));
+  dispatch(updateCurrentChannel(ChannelID, wantedUserName));
 
   dispatch(resetUserSearchBoxContent());
   dispatch(resetPersonSearchList());

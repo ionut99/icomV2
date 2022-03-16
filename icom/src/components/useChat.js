@@ -1,18 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import socketIOClient from "socket.io-client";
 // var CryptoJs = require("crypto-js");
+import { InsertNewMessage } from "../asyncActions/userAsyncActions";
+import { InsertNewMessageLocal } from "../actions/userActions";
+
+import { v4 as uuidv4 } from "uuid";
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const SOCKET_SERVER_URL = "http://localhost:4000";
 
-// const newMsg = {
-//   userID: null,
-//   RoomID: null,
-//   Message_body: "",
-// };
-
-const useChat = (roomID, userID, AuthorName) => {
-  const [messages, setMessages] = useState([]);
+const useChat = (roomID, userID) => {
+  const dispatch = useDispatch();
+  var uuidMessage = uuidv4(); // pentru coduri unice
   const socketRef = useRef();
 
   useEffect(() => {
@@ -25,11 +25,14 @@ const useChat = (roomID, userID, AuthorName) => {
       //var bytes = CryptoJs.AES.decrypt(message, secret.toString().substring(0,18));
       //var decryptedData = JSON.parse(bytes.toString(CryptoJs.enc.Utf8));
 
-      const incomingMessage = {
-        ...message,
-        ownedByCurrentUser: message.senderId === socketRef.current.id,
-      };
-      setMessages((messages) => [...messages, incomingMessage]);
+      dispatch(
+        InsertNewMessageLocal(
+          message.ID_message,
+          message.roomID,
+          message.senderID,
+          message.body
+        )
+      );
     });
 
     return () => {
@@ -39,18 +42,20 @@ const useChat = (roomID, userID, AuthorName) => {
 
   const sendMessage = (messageBody) => {
     var dataToSend = {
+      //senderSocketId: socketRef.current.id,
       body: messageBody,
-      senderId: socketRef.current.id,
-      userID: userID,
-      roomId: roomID,
-      AuthorName: AuthorName
+      senderID: userID,
+      roomID: roomID,
+      ID_message: uuidMessage,
     };
+
+    dispatch(InsertNewMessage(uuidMessage, userID, roomID, messageBody));
     //var secret = CryptoJs.SHA256(roomId);
     //var cipherText = CryptoJs.AES.encrypt(JSON.stringify(dataToSend),secret.toString().substring(0,18)).toString();
     socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
   };
 
-  return { messages, sendMessage };
+  return { sendMessage };
 };
 
 export default useChat;
