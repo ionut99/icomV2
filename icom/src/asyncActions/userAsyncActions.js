@@ -4,6 +4,7 @@ import {
   getSearchPersonService,
   getRoomMessages,
   InsertNewMessageDataBase,
+  CreateNewRoomDataBase,
 } from "../services/user";
 
 import {
@@ -28,6 +29,8 @@ export const userResetRoomListAsync =
       return;
     }
 
+    console.log("Afisare roomList");
+    console.log(Roomresult.data["list"]);
     dispatch(setRoomList(Roomresult.data["list"]));
 
     if (search_box_content === "") {
@@ -100,4 +103,16 @@ export const InsertNewMessage =
 
     // console.log("verificare de la server: ");
     // console.log(varVerify);
+  };
+
+export const CreateNewConversation =
+  (RoomName, Private, userSearchListID, userID) => async (dispatch) => {
+    const varverify = await CreateNewRoomDataBase(
+      RoomName,
+      Private,
+      userSearchListID,
+      userID
+    );
+
+    // tratare raspuns de la server
   };

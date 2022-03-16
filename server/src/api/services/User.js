@@ -35,7 +35,7 @@ function GetUserRoomsList(search_box_text, userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT room.ID as RoomID, room.Name as RoomName from room INNER JOIN participants ON room.ID = participants.RoomID WHERE participants.UserID = ${userId} AND room.Name LIKE N'%${search_box_text}%'`,
+      `SELECT room.ID as RoomID, room.Name as RoomName from room INNER JOIN participants ON room.ID = participants.RoomID WHERE participants.UserID = '${userId}' AND room.Name LIKE N'%${search_box_text}%'`,
       (err, result) => {
         if (err) {
           return reject(err);
@@ -51,7 +51,7 @@ function GetRoomMessagesData(ChannelID) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM messages INNER JOIN room ON messages.RoomID = room.ID WHERE room.ID = ${ChannelID}`,
+      `SELECT * FROM messages INNER JOIN room ON messages.RoomID = room.ID WHERE room.ID = '${ChannelID}'`,
       (err, result) => {
         if (err) {
           return reject(err);
@@ -79,23 +79,39 @@ function InsertNewMessageData(ID_message, senderID, roomID, messageBody) {
   });
 }
 
-// function GetLastIDMessage() {
-//   const connection = new mysql.createConnection(DataBaseConfig);
-//   return new Promise((resolve, reject) => {
-//     connection.query(
-//       `SELECT MAX(ID_message) from messages`,
-//       (err, result) => {
-//         if (err) {
-//           return reject(err);
-//         }
-//         return resolve(result);
-//       }
-//     );
-//     connection.end();
-//   });
-// }
+function InsertNewRoomData(RoomName, Private, uuidRoom) {
+  const connection = new mysql.createConnection(DataBaseConfig);
 
-//SELECT MAX(ID_message) from messages
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `INSERT INTO room (ID, Name, Private) VALUES ('${uuidRoom}', '${RoomName}', '${Private}');`,
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+function InsertParticipantData(uuidRoom, userSearchListID, userID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `INSERT INTO participants (ID, UserID, RoomID) VALUES (NULL, '${userID}', '${uuidRoom}'), (NULL, '${userSearchListID}', '${uuidRoom}');`,
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
 
 module.exports = {
   GetAllUsersDataBase,
@@ -103,4 +119,6 @@ module.exports = {
   GetUserRoomsList,
   GetRoomMessagesData,
   InsertNewMessageData,
+  InsertNewRoomData,
+  InsertParticipantData,
 };

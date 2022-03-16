@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import groupAvatar from "../../images/group.png";
@@ -14,10 +14,8 @@ import {
   updateChannelDetails,
 } from "../../asyncActions/userAsyncActions";
 
-function ClickHandler(ID, userThatWantID, selectedRoomName, dispatch) {
-  dispatch(updateChannelDetails(ID, selectedRoomName));
-  //dispatch(updateCurrentChannel(ID, selectedRoomName));
-  // de modificat!!!!
+function ClickHandler(roomID, userThatWantID, selectedRoomName, dispatch) {
+  dispatch(updateChannelDetails(roomID, selectedRoomName));
   dispatch(userResetRoomListAsync(" ", userThatWantID));
 
   dispatch(resetUserSearchBoxContent());
@@ -28,20 +26,17 @@ function ConversationList() {
   const dispatch = useDispatch();
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { RoomSearchList, newRoomID, newRoomName, personSelectedID } = chatObj;
+  const { RoomSearchList } = chatObj;
+
+  console.log("Lista de convorbiri:");
+  console.log(RoomSearchList);
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  var ok = true;
-  for (let i = 0; i < RoomSearchList.length; i++) {
-    if (RoomSearchList[i].RoomName === newRoomName) {
-      ok = false;
-    }
-  }
-  if (ok && newRoomName !== "" && personSelectedID !== null) {
-    RoomSearchList.push({ RoomID: newRoomID, RoomName: newRoomName });
-  }
+  const [dropdownMenu, setdropdownMenu] = useState(false);
+
+  const showdropdownMenu = () => setdropdownMenu(!dropdownMenu);
 
   return (
     <>
@@ -53,44 +48,58 @@ function ConversationList() {
       </div>
       {RoomSearchList.map((RoomSearchList, index) => {
         return (
-          <div
-            className="conversation"
-            key={index}
-            onClick={() =>
-              ClickHandler(
-                RoomSearchList.RoomID,
-                user.userId,
-                RoomSearchList.RoomName,
-                dispatch
-              )
-            }
-          >
-            <img
-              className="conversation-picture"
-              src={groupAvatar}
-              alt="userAvatar jmecher"
-            />
-            <div className="conversation-details-left">
-              <div className="conversation-header">
-                <div className="conversation-user-details">
-                  <p>{RoomSearchList.RoomName}</p>
-                  <div className="last-message">
-                    <p>
-                      How are
-                      youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
-                    </p>
+          <>
+            <div
+              className="conversation"
+              key={index}
+              onClick={() =>
+                ClickHandler(
+                  RoomSearchList.RoomID,
+                  user.userId,
+                  RoomSearchList.RoomName,
+                  dispatch
+                )
+              }
+            >
+              <img
+                className="conversation-picture"
+                src={groupAvatar}
+                alt="userAvatar jmecher"
+              />
+              <div className="conversation-details-left">
+                <div className="conversation-header">
+                  <div className="conversation-user-details">
+                    <p>{RoomSearchList.RoomName}</p>
+                    <div className="last-message">
+                      <p>
+                        How are
+                        youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="more_options">
-                  <MoreHorizIcon
-                    sx={{ fontSize: 30, color: "green" }}
-                    className="MoreHorizIcon"
-                  ></MoreHorizIcon>
-                  <div className="conversation-last-seen">19:00</div>
+                  <div className="more_options">
+                    <MoreHorizIcon
+                      sx={{ fontSize: 30, color: "green" }}
+                      className="MoreHorizIcon"
+                      onClick={showdropdownMenu}
+                    ></MoreHorizIcon>
+                    <div className="conversation-last-seen">19:00</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+            <nav className={dropdownMenu ? "room-menu active" : "room-menu"}>
+              <ul className="drop-down-menu-items">
+                <div className="dropdown-options">Profile</div>
+
+                <div className="dropdown-options">
+                  <div>
+                    <input type="button" value="Delete" />
+                  </div>
+                </div>
+              </ul>
+            </nav>
+          </>
         );
       })}
     </>

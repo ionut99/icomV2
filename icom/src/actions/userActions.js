@@ -6,7 +6,6 @@ import {
   USER_RESET_PERSON_SEARCH_LIST,
   USER_SET_ROOM_LIST,
   USER_RESET_ROOM_LIST,
-  USER_SET_ROOM_NAME,
   SET_NEW_ROOM_ID,
   RESET_NEW_ROOM_ITEMS,
   USER_ADD_NEW_MESSAGE,
@@ -87,12 +86,7 @@ export const setNewRoomID = (newRoomID) => {
   };
 };
 
-export const setNewRoomInList = (RoomName, personSelectedID) => {
-  return {
-    type: USER_SET_ROOM_NAME,
-    payload: { RoomName, personSelectedID },
-  };
-};
+
 export const resetNewRoomActions = () => {
   return {
     type: RESET_NEW_ROOM_ITEMS,

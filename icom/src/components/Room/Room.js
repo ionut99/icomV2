@@ -31,7 +31,6 @@ function Room() {
   const [newMessage, setNewMessage] = useState("");
 
   const handleNewMessageChange = (event) => {
-    console.log("ai tastat din nou :)");
     setNewMessage(event.target.value);
   };
 

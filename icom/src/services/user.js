@@ -57,13 +57,35 @@ export const getRoomMessages = async (ChannelID) => {
 };
 
 // insert new message that was sent in table
-export const InsertNewMessageDataBase = async (ID_message, senderID, roomID, messageBody) => {
+export const InsertNewMessageDataBase = async (
+  ID_message,
+  senderID,
+  roomID,
+  messageBody
+) => {
   try {
     return await axios.post(`${API_URL}/room/newmessage`, {
       ID_message,
       senderID,
       roomID,
       messageBody,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+// insert new message that was sent in table
+export const CreateNewRoomDataBase = async (RoomName, Private, userSearchListID, userID) => {
+  try {
+    return await axios.post(`${API_URL}/room/newroom`, {
+      RoomName,
+      Private,
+      userSearchListID, 
+      userID,
     });
   } catch (err) {
     return {
