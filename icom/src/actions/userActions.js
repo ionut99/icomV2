@@ -9,14 +9,22 @@ import {
   USER_SET_ROOM_NAME,
   SET_NEW_ROOM_ID,
   RESET_NEW_ROOM_ITEMS,
+  USER_ADD_NEW_MESSAGE,
 } from "./actionTypes";
 
-export const updateChannelID = (channelID) => {
-  console.log("Canalul de comunicatie este : ", channelID);
+export const updateCurrentChannel = (
+  channelID,
+  currentChannelName,
+  RoomMessages
+) => {
+  //console.log("Canalul de comunicatie este : ", channelID, currentChannelName, RoomMessages);
+  // aici trebuie si updatate mesajele
   return {
     type: USER_UPDATE_CHAT,
     payload: {
       channelID,
+      currentChannelName,
+      RoomMessages,
     },
   };
 };
@@ -89,5 +97,12 @@ export const resetNewRoomActions = () => {
   return {
     type: RESET_NEW_ROOM_ITEMS,
     payload: {},
+  };
+};
+
+export const InsertNewMessageLocal = (ID_message, RoomID, senderID, Body) => {
+  return {
+    type: USER_ADD_NEW_MESSAGE,
+    payload: { ID_message, RoomID, senderID, Body },
   };
 };

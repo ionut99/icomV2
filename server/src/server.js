@@ -54,6 +54,13 @@ app.post("/users/search", UserRouter);
 // room - search - section input
 app.post("/room/search", UserRouter);
 
+// room - return existend messages
+app.post("/room/messages", UserRouter);
+
+// room - insert new message
+app.post("/room/newmessage", UserRouter);
+
+// return all user List
 app.get("/users/getList", UserRouter);
 
 // Start server for chat

@@ -2,6 +2,8 @@ const {
   GetSearchUsersList,
   GetAllUsersDataBase,
   GetUserRoomsList,
+  GetRoomMessagesData,
+  InsertNewMessageData,
 } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
@@ -64,6 +66,33 @@ async function GetRoomSearchList(req, res) {
   return handleResponse(req, res, 200, { list });
 }
 
+async function GetRoomMessages(req, res) {
+  const roomID = req.body.ChannelID;
+
+  var messageRoomList = await GetRoomMessagesData(roomID);
+  return handleResponse(req, res, 200, { messageRoomList });
+}
+
+async function InsertNewMessage(req, res) {
+  // de completat serviciu de insert mesaj
+  const senderID = req.body.senderID;
+  const roomID = req.body.roomID;
+  const messageBody = req.body.messageBody;
+  const ID_message = req.body.ID_message;
+
+  var result = await InsertNewMessageData(
+    ID_message,
+    senderID,
+    roomID,
+    messageBody
+  );
+
+  // console.log("Rezultat din functia de adaugare a mesajului !");
+  // console.log(result);
+
+  return handleResponse(req, res, 200, { result });
+}
+
 // list with all users
 async function GetUsers(req, res) {
   const userList = await GetAllUsersDataBase();
@@ -71,7 +100,7 @@ async function GetUsers(req, res) {
     const user = { ...x };
     delete user.Password;
     return user;
-  }); 
+  });
   return handleResponse(req, res, 200, { list });
 }
 
@@ -79,4 +108,6 @@ module.exports = {
   GetUserSearchList,
   GetRoomSearchList,
   GetUsers,
+  GetRoomMessages,
+  InsertNewMessage,
 };

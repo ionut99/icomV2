@@ -7,6 +7,7 @@ import classNames from "classnames";
 import * as MdIcons from "react-icons/md";
 import * as IoIcons from "react-icons/io";
 import * as BsIcons from "react-icons/bs";
+import * as IoIcons2 from "react-icons/io5";
 
 import UserAvatar from "../../images/userAvatar.png";
 import groupAvatar from "../../images/group.png";
@@ -20,16 +21,17 @@ function Room() {
   const { user } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID } = chatObj;
-  console.log("canalul este + ", channelID);
-  const { messages, sendMessage } = useChat(
+  const { channelID, currentChannelName, RoomMessages } = chatObj;
+  console.log(RoomMessages);
+  //console.log("canalul este + ", channelID);
+  const { sendMessage } = useChat(
     channelID,
     user.userId,
-    user.name + " " + user.surname
   );
   const [newMessage, setNewMessage] = useState("");
 
   const handleNewMessageChange = (event) => {
+    console.log("ai tastat din nou :)");
     setNewMessage(event.target.value);
   };
 
@@ -50,30 +52,36 @@ function Room() {
             alt="poza din user details"
           />
           <div className="room-name">
-            <p>Popescul Alexandru</p>
+            <p>{currentChannelName}</p>
+          </div>
+          <div className="room-instrument">
+            <BsIcons.BsCameraVideo />
+          </div>
+          <div className="room-instrument">
+            <IoIcons2.IoCallOutline />
           </div>
         </div>
         <div className="test-scrollbar">
           <div className="messages">
             <ReactScrollableFeed>
-              {messages.map((messages, index) => {
+              {RoomMessages.map((RoomMessages, index) => {
                 return (
                   <div
                     key={index}
                     className={classNames("one_message", {
-                      me: messages.ownedByCurrentUser,
+                      me: RoomMessages.senderID === user.userId,
                     })}
                   >
                     <img src={UserAvatar} alt="" />
 
                     <div className="message_body">
                       <div className="message_author">
-                        {messages.ownedByCurrentUser
+                        {RoomMessages.senderID === user.userId
                           ? "Aici punem data "
-                          : messages.AuthorName}
+                          : RoomMessages.senderID}
                       </div>
                       <div className="message_text">
-                        <p>{messages.body}</p>
+                        <p>{RoomMessages.Body}</p>
                       </div>
                     </div>
                   </div>
@@ -100,13 +108,13 @@ function Room() {
             </div>
           </div>
           <div className="toolbar-send">
-            <div className="instrument">
+            <div className="write-instrument">
               <MdIcons.MdTextFormat />
             </div>
-            <div className="instrument">
+            <div className="write-instrument">
               <IoIcons.IoIosAttach />
             </div>
-            <div className="instrument">
+            <div className="write-instrument">
               <BsIcons.BsEmojiSmile />
             </div>
           </div>

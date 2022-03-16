@@ -9,10 +9,13 @@ import {
   USER_SET_ROOM_NAME,
   SET_NEW_ROOM_ID,
   RESET_NEW_ROOM_ITEMS,
+  USER_ADD_NEW_MESSAGE,
 } from "../actions/actionTypes";
 
 const ChannelState = {
-  channelID: 1,
+  channelID: null,
+  currentChannelName: "",
+  RoomMessages: [],
 
   search_box_content: "",
   userSearchList: [],
@@ -21,18 +24,18 @@ const ChannelState = {
   personSelectedID: null,
   newRoomID: null,
   newRoomName: "",
-
-  RoomMessages: [],
 };
 
 const chatRedu = (state = ChannelState, action) => {
   switch (action.type) {
     // update chat room ID
     case USER_UPDATE_CHAT:
-      const { channelID } = action.payload;
+      const { channelID, currentChannelName, RoomMessages } = action.payload;
       return {
         ...state,
         channelID,
+        currentChannelName,
+        RoomMessages,
       };
 
     // set Chat search box content
@@ -100,6 +103,12 @@ const chatRedu = (state = ChannelState, action) => {
         // newRoomID: null,
         // newRoomName: "",
         // personSelectedID: null,
+      };
+    case USER_ADD_NEW_MESSAGE:
+      const { ID_message, RoomID, senderID, Body } = action.payload;
+      return {
+        ...state,
+        RoomMessages: [...state.RoomMessages, {ID_message:ID_message, RoomID:RoomID, senderID:senderID, Body:Body}],
       };
     default:
       return state;

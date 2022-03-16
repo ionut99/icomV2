@@ -5,15 +5,19 @@ import groupAvatar from "../../images/group.png";
 import "./search.css";
 
 import {
-  updateChannelID,
   resetPersonSearchList,
   resetUserSearchBoxContent,
 } from "../../actions/userActions";
 
-import { userResetRoomListAsync } from "../../asyncActions/userAsyncActions";
+import {
+  userResetRoomListAsync,
+  updateChannelDetails,
+} from "../../asyncActions/userAsyncActions";
 
-function ClickHandler(ID, userThatWantID, dispatch) {
-  dispatch(updateChannelID(ID));
+function ClickHandler(ID, userThatWantID, selectedRoomName, dispatch) {
+  dispatch(updateChannelDetails(ID, selectedRoomName));
+  //dispatch(updateCurrentChannel(ID, selectedRoomName));
+  // de modificat!!!!
   dispatch(userResetRoomListAsync(" ", userThatWantID));
 
   dispatch(resetUserSearchBoxContent());
@@ -53,7 +57,12 @@ function ConversationList() {
             className="conversation"
             key={index}
             onClick={() =>
-              ClickHandler(RoomSearchList.RoomID, user.userId, dispatch)
+              ClickHandler(
+                RoomSearchList.RoomID,
+                user.userId,
+                RoomSearchList.RoomName,
+                dispatch
+              )
             }
           >
             <img

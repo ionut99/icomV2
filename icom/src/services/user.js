@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = 'http://localhost:5000';
+const API_URL = "http://localhost:5000";
 
 // get list of the users
 export const getUserListService = async () => {
@@ -9,15 +9,18 @@ export const getUserListService = async () => {
   } catch (err) {
     return {
       error: true,
-      response: err.response
+      response: err.response,
     };
   }
-}
+};
 
 // user Search Person API to return Persons Names
 export const getSearchPersonService = async (search_box_text, userId) => {
   try {
-    return await axios.post(`${API_URL}/users/search`, { search_box_text, userId });
+    return await axios.post(`${API_URL}/users/search`, {
+      search_box_text,
+      userId,
+    });
   } catch (err) {
     return {
       error: true,
@@ -26,10 +29,42 @@ export const getSearchPersonService = async (search_box_text, userId) => {
   }
 };
 
-// Room Search Person API to return Room Names -> channels that is open 
+// Room Search Person API to return Room Names -> channels that is open
 export const getSearchRoomService = async (search_box_text, userId) => {
   try {
-    return await axios.post(`${API_URL}/room/search`, { search_box_text, userId });
+    return await axios.post(`${API_URL}/room/search`, {
+      search_box_text,
+      userId,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+// get messages list from a room
+export const getRoomMessages = async (ChannelID) => {
+  try {
+    return await axios.post(`${API_URL}/room/messages`, { ChannelID });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+// insert new message that was sent in table
+export const InsertNewMessageDataBase = async (ID_message, senderID, roomID, messageBody) => {
+  try {
+    return await axios.post(`${API_URL}/room/newmessage`, {
+      ID_message,
+      senderID,
+      roomID,
+      messageBody,
+    });
   } catch (err) {
     return {
       error: true,

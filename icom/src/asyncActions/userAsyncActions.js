@@ -1,10 +1,16 @@
 import { userLogout, verifyTokenEnd } from "./../actions/authActions";
-import { getSearchRoomService, getSearchPersonService } from "../services/user";
+import {
+  getSearchRoomService,
+  getSearchPersonService,
+  getRoomMessages,
+  InsertNewMessageDataBase,
+} from "../services/user";
 
 import {
   setRoomList,
   setPersonSearchList,
   setNewRoomID,
+  updateCurrentChannel,
 } from "./../actions/userActions";
 
 // handle RoomList Search
@@ -51,4 +57,47 @@ export const userSearchPersonListAsync =
     } else {
       dispatch(setPersonSearchList([]));
     }
+  };
+
+// handle to select channel and fetch messages from data-base
+export const updateChannelDetails =
+  (channelID, currentChannelName) => async (dispatch) => {
+    if (channelID == null) {
+      return [];
+    }
+    const messageList = await getRoomMessages(channelID);
+
+    if (messageList.error) {
+      dispatch(verifyTokenEnd());
+      if (
+        messageList.response &&
+        [401, 403].includes(messageList.response.status)
+      )
+        dispatch(userLogout());
+      return;
+    }
+
+    dispatch(
+      updateCurrentChannel(
+        channelID,
+        currentChannelName,
+        messageList.data["messageRoomList"]
+      )
+    );
+  };
+
+// handle insert new message in database
+export const InsertNewMessage =
+  (ID_message, senderID, roomID, messageBody) => async (dispatch) => {
+    const varVerify = await InsertNewMessageDataBase(
+      ID_message,
+      senderID,
+      roomID,
+      messageBody
+    );
+
+    // tratare raspuns de la server dupa inserare
+
+    // console.log("verificare de la server: ");
+    // console.log(varVerify);
   };
