@@ -1,48 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import groupAvatar from "../../images/group.png";
 import "./search.css";
 
+import * as MdIcons from "react-icons/md";
+import * as AiIcons from "react-icons/ai";
+
 import {
-  resetPersonSearchList,
-  resetUserSearchBoxContent,
+  setPersonSearchList,
+  setUserSearchBoxContent,
 } from "../../actions/userActions";
 
 import {
-  userResetRoomListAsync,
   updateChannelDetails,
+  DeleteConversation,
 } from "../../asyncActions/userAsyncActions";
 
-function ClickHandler(ID, userThatWantID, selectedRoomName, dispatch) {
-  dispatch(updateChannelDetails(ID, selectedRoomName));
-  //dispatch(updateCurrentChannel(ID, selectedRoomName));
-  // de modificat!!!!
-  dispatch(userResetRoomListAsync(" ", userThatWantID));
+import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 
-  dispatch(resetUserSearchBoxContent());
-  dispatch(resetPersonSearchList());
+function ClickHandler(roomID, selectedRoomName, dispatch) {
+  dispatch(updateChannelDetails(roomID, selectedRoomName));
+
+  dispatch(setUserSearchBoxContent(""));
+  dispatch(setPersonSearchList([]));
 }
 
 function ConversationList() {
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: "",
+    subTitle: "",
+  });
   const dispatch = useDispatch();
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { RoomSearchList, newRoomID, newRoomName, personSelectedID } = chatObj;
+  const { RoomSearchList } = chatObj;
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  var ok = true;
-  for (let i = 0; i < RoomSearchList.length; i++) {
-    if (RoomSearchList[i].RoomName === newRoomName) {
-      ok = false;
-    }
-  }
-  if (ok && newRoomName !== "" && personSelectedID !== null) {
-    RoomSearchList.push({ RoomID: newRoomID, RoomName: newRoomName });
-  }
+  // console.log("Lista de convorbiri:");
+  // console.log(RoomSearchList);
 
+  // cod pentru stergerea de conversatie
+  const onDelete = (id) => {
+    setConfirmDialog({
+      ...confirmDialog,
+      isOpen: false,
+    });
+    console.log("se va sterge " + id);
+
+    dispatch(DeleteConversation(id, user.userId));
+  };
   return (
     <>
       <div
@@ -59,7 +69,6 @@ function ConversationList() {
             onClick={() =>
               ClickHandler(
                 RoomSearchList.RoomID,
-                user.userId,
                 RoomSearchList.RoomName,
                 dispatch
               )
@@ -82,10 +91,35 @@ function ConversationList() {
                   </div>
                 </div>
                 <div className="more_options">
-                  <MoreHorizIcon
-                    sx={{ fontSize: 30, color: "green" }}
-                    className="MoreHorizIcon"
-                  ></MoreHorizIcon>
+                  <div className="dropdown">
+                    <MoreHorizIcon
+                      sx={{ fontSize: 30, color: "green" }}
+                      className="MoreHorizIcon"
+                    ></MoreHorizIcon>
+
+                    <div className="dropdown-content">
+                      <div
+                        className="dropdown-instrument"
+                        onClick={() => {
+                          setConfirmDialog({
+                            isOpen: true,
+                            title: "Are you sure to delete this record?",
+                            subTitle: "You can't undo this operation",
+                            onConfirm: () => {
+                              onDelete(RoomSearchList.RoomID);
+                            },
+                          });
+                        }}
+                      >
+                        <MdIcons.MdDeleteOutline size={20} />
+                        <p>Delete Channel</p>
+                      </div>
+                      <div className="dropdown-instrument">
+                        <AiIcons.AiOutlinePushpin size={20} />
+                        <p>Pin</p>
+                      </div>
+                    </div>
+                  </div>
                   <div className="conversation-last-seen">19:00</div>
                 </div>
               </div>
@@ -93,6 +127,10 @@ function ConversationList() {
           </div>
         );
       })}
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        setConfirmDialog={setConfirmDialog}
+      />
     </>
   );
 }

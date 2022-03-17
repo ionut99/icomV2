@@ -25,14 +25,16 @@ const useChat = (roomID, userID) => {
       //var bytes = CryptoJs.AES.decrypt(message, secret.toString().substring(0,18));
       //var decryptedData = JSON.parse(bytes.toString(CryptoJs.enc.Utf8));
 
-      dispatch(
-        InsertNewMessageLocal(
-          message.ID_message,
-          message.roomID,
-          message.senderID,
-          message.body
-        )
-      );
+      if (message.roomID != null) {
+        dispatch(
+          InsertNewMessageLocal(
+            message.ID_message,
+            message.roomID,
+            message.senderID,
+            message.body
+          )
+        );
+      }
     });
 
     return () => {

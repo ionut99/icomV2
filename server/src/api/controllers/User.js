@@ -1,9 +1,15 @@
+var uui = require("uuid");
 const {
   GetSearchUsersList,
   GetAllUsersDataBase,
   GetUserRoomsList,
   GetRoomMessagesData,
   InsertNewMessageData,
+  InsertNewRoomData,
+  InsertParticipantData,
+  DeleteAllMessageFromRoom,
+  DeleteAllParticipantsFromRoom,
+  DeleteRoomData,
 } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
@@ -13,6 +19,10 @@ const { GetUserByID } = require("../services/Auth");
 async function GetUserSearchList(req, res) {
   const search_box_text = req.body.search_box_text;
   const userId = req.body.userId;
+
+  if (userId === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
 
   var list = await GetSearchUsersList(search_box_text, userId);
 
@@ -48,8 +58,11 @@ async function GetRoomSearchList(req, res) {
   const search_box_text = req.body.search_box_text;
   const userId = req.body.userId;
 
-  var userRoomList = [];
+  if (userId === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
 
+  var userRoomList = [];
   userRoomList = await GetUserRoomsList(search_box_text, userId);
   var userDetails = await GetUserByID(userId);
 
@@ -69,6 +82,10 @@ async function GetRoomSearchList(req, res) {
 async function GetRoomMessages(req, res) {
   const roomID = req.body.ChannelID;
 
+  if (roomID === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
   var messageRoomList = await GetRoomMessagesData(roomID);
   return handleResponse(req, res, 200, { messageRoomList });
 }
@@ -80,6 +97,16 @@ async function InsertNewMessage(req, res) {
   const messageBody = req.body.messageBody;
   const ID_message = req.body.ID_message;
 
+  if (
+    roomID === null ||
+    senderID === null ||
+    messageBody === "" ||
+    messageBody === " " ||
+    ID_message === ""
+  ) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
   var result = await InsertNewMessageData(
     ID_message,
     senderID,
@@ -87,10 +114,58 @@ async function InsertNewMessage(req, res) {
     messageBody
   );
 
+  return handleResponse(req, res, 200, { result });
+}
+
+async function CreateNewRoom(req, res) {
+  // de completat serviciu de insert mesaj
+  const RoomName = req.body.RoomName;
+  const Private = req.body.Private;
+  const userSearchListID = req.body.userSearchListID;
+  const userID = req.body.userID;
+
+  if (
+    RoomName === "" ||
+    Private === null ||
+    userSearchListID === null ||
+    userID === null
+  ) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  const uuidRoom = uui.v4();
+
+  // adaugare camera noua in tabela
+  var roomResult = await InsertNewRoomData(RoomName, Private, uuidRoom);
+
+  // adaugare participant la camera creata mai sus
+  var participantResult = await InsertParticipantData(
+    uuidRoom,
+    userSearchListID,
+    userID
+  );
+
   // console.log("Rezultat din functia de adaugare a mesajului !");
   // console.log(result);
 
-  return handleResponse(req, res, 200, { result });
+  return handleResponse(req, res, 200, { participantResult });
+}
+
+async function DeleteRoom(req, res) {
+  const roomID = req.body.roomID;
+
+  console.log("camera care urmeaza sa se stearga este: ");
+  console.log(roomID);
+
+  if (roomID === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  var res_deletemes = await DeleteAllMessageFromRoom(roomID);
+  var res_deletepart = await DeleteAllParticipantsFromRoom(roomID);
+  var res_deleteroom = await DeleteRoomData(roomID);
+
+  return handleResponse(req, res, 200, { res_deleteroom });
 }
 
 // list with all users
@@ -110,4 +185,6 @@ module.exports = {
   GetUsers,
   GetRoomMessages,
   InsertNewMessage,
+  CreateNewRoom,
+  DeleteRoom,
 };

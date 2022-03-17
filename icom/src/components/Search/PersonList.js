@@ -1,40 +1,41 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+// import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import groupAvatar from "../../images/group.png";
 import "./search.css";
 
+import { CreateNewConversation } from "../../asyncActions/userAsyncActions";
+
 import {
-  resetUserSearchBoxContent,
-  resetPersonSearchList,
-  setNewRoomInList,
-  updateCurrentChannel,
+  setUserSearchBoxContent,
+  setPersonSearchList,
 } from "../../actions/userActions";
 
-import { userResetRoomListAsync } from "../../asyncActions/userAsyncActions";
-
 function ClickHandler(
-  wantedUserID,
-  wantedUserName,
-  userThatWantID,
-  ChannelID,
+  userSearchListName,
+  userSearchListID,
+  userName,
+  userID,
   dispatch
 ) {
-  dispatch(userResetRoomListAsync(" ", userThatWantID));
+  dispatch(
+    CreateNewConversation(
+      userSearchListName + " # " + userName,
+      1,
+      userSearchListID,
+      userID
+    )
+  );
 
-  dispatch(setNewRoomInList(wantedUserName, wantedUserID));
-
-  dispatch(updateCurrentChannel(ChannelID, wantedUserName));
-
-  dispatch(resetUserSearchBoxContent());
-  dispatch(resetPersonSearchList());
+  dispatch(setUserSearchBoxContent(""));
+  dispatch(setPersonSearchList([]));
 }
 
 function PersonList() {
   const dispatch = useDispatch();
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { userSearchList, newRoomID } = chatObj;
+  const { userSearchList } = chatObj;
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
@@ -54,10 +55,10 @@ function PersonList() {
             key={index}
             onClick={() =>
               ClickHandler(
-                userSearchList.userId,
                 userSearchList.UserName,
+                userSearchList.userId,
+                user.surname + " " + user.name,
                 user.userId,
-                newRoomID,
                 dispatch
               )
             }
@@ -71,19 +72,6 @@ function PersonList() {
               <div className="conversation-header">
                 <div className="conversation-user-details">
                   <p>{userSearchList.UserName}</p>
-                  <div className="last-message">
-                    <p>
-                      How are
-                      youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
-                    </p>
-                  </div>
-                </div>
-                <div className="more_options">
-                  <MoreHorizIcon
-                    sx={{ fontSize: 30, color: "green" }}
-                    className="MoreHorizIcon"
-                  ></MoreHorizIcon>
-                  <div className="conversation-last-seen">19:00</div>
                 </div>
               </div>
             </div>

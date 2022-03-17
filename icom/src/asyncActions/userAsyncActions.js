@@ -4,17 +4,18 @@ import {
   getSearchPersonService,
   getRoomMessages,
   InsertNewMessageDataBase,
+  CreateNewRoomDataBase,
+  DeleteRoomDataBase,
 } from "../services/user";
 
 import {
   setRoomList,
   setPersonSearchList,
-  setNewRoomID,
   updateCurrentChannel,
 } from "./../actions/userActions";
 
 // handle RoomList Search
-export const userResetRoomListAsync =
+export const userSetRoomListAsync =
   (search_box_content, userId) => async (dispatch) => {
     const Roomresult = await getSearchRoomService(search_box_content, userId);
 
@@ -28,11 +29,9 @@ export const userResetRoomListAsync =
       return;
     }
 
+    //console.log("Afisare roomList");
+    //console.log(Roomresult.data["list"]);
     dispatch(setRoomList(Roomresult.data["list"]));
-
-    if (search_box_content === "") {
-      dispatch(setNewRoomID(Roomresult.data["list"].length + 1));
-    }
   };
 
 // handle Person Search
@@ -95,9 +94,26 @@ export const InsertNewMessage =
       roomID,
       messageBody
     );
-
-    // tratare raspuns de la server dupa inserare
-
-    // console.log("verificare de la server: ");
-    // console.log(varVerify);
   };
+
+export const CreateNewConversation =
+  (RoomName, Private, userSearchListID, userID) => async (dispatch) => {
+    const varverify = await CreateNewRoomDataBase(
+      RoomName,
+      Private,
+      userSearchListID,
+      userID
+    );
+
+    dispatch(userSetRoomListAsync(" ", userID));
+    // tratare raspuns de la server
+  };
+
+export const DeleteConversation = (RoomID, userID) => async (dispatch) => {
+  console.log("Camera care se sterge este: ");
+  console.log(RoomID);
+  const varverify = await DeleteRoomDataBase(RoomID);
+
+  dispatch(userSetRoomListAsync(" ", userID));
+  // tratare raspuns de la server
+};

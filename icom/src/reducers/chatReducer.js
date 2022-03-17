@@ -6,8 +6,6 @@ import {
   USER_RESET_PERSON_SEARCH_LIST,
   USER_SET_ROOM_LIST,
   USER_RESET_ROOM_LIST,
-  USER_SET_ROOM_NAME,
-  SET_NEW_ROOM_ID,
   RESET_NEW_ROOM_ITEMS,
   USER_ADD_NEW_MESSAGE,
 } from "../actions/actionTypes";
@@ -81,22 +79,6 @@ const chatRedu = (state = ChannelState, action) => {
         RoomSearchList: [],
       };
 
-    // set newRoomID
-    case SET_NEW_ROOM_ID:
-      const { newRoomID } = action.payload;
-      return {
-        ...state,
-        newRoomID: newRoomID,
-      };
-
-    case USER_SET_ROOM_NAME:
-      const { RoomName, personSelectedID } = action.payload;
-      return {
-        ...state,
-        newRoomName: RoomName,
-        personSelectedID: personSelectedID,
-      };
-
     case RESET_NEW_ROOM_ITEMS:
       return {
         ...state,
@@ -108,8 +90,17 @@ const chatRedu = (state = ChannelState, action) => {
       const { ID_message, RoomID, senderID, Body } = action.payload;
       return {
         ...state,
-        RoomMessages: [...state.RoomMessages, {ID_message:ID_message, RoomID:RoomID, senderID:senderID, Body:Body}],
+        RoomMessages: [
+          ...state.RoomMessages,
+          {
+            ID_message: ID_message,
+            RoomID: RoomID,
+            senderID: senderID,
+            Body: Body,
+          },
+        ],
       };
+
     default:
       return state;
   }

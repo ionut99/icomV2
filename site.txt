@@ -1,3 +1,12 @@
+TO DO:
+
+-> de tratat raspunsul de la server pentru inserare in baza de date
+-> Implementare functionalitate de stergere room X
+-> implementare functionalitate de golire local storage cu privire la chat 
+
+
+
+
 Creare Log in 
 https://www.cluemediator.com/implement-login-authentication-in-react-app-using-node-js
 

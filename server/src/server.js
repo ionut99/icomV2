@@ -60,6 +60,12 @@ app.post("/room/messages", UserRouter);
 // room - insert new message
 app.post("/room/newmessage", UserRouter);
 
+// room - create new room 
+app.post("/room/newroom", UserRouter);
+
+// room - delete room 
+app.post("/room/deleteroom", UserRouter);
+
 // return all user List
 app.get("/users/getList", UserRouter);
 
