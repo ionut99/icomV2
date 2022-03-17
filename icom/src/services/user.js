@@ -78,14 +78,34 @@ export const InsertNewMessageDataBase = async (
   }
 };
 
-// insert new message that was sent in table
-export const CreateNewRoomDataBase = async (RoomName, Private, userSearchListID, userID) => {
+// insert new room in database
+export const CreateNewRoomDataBase = async (
+  RoomName,
+  Private,
+  userSearchListID,
+  userID
+) => {
   try {
     return await axios.post(`${API_URL}/room/newroom`, {
       RoomName,
       Private,
-      userSearchListID, 
+      userSearchListID,
       userID,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+// delete room from database
+
+export const DeleteRoomDataBase = async (roomID) => {
+  try {
+    return await axios.post(`${API_URL}/room/deleteroom`, {
+      roomID,
     });
   } catch (err) {
     return {

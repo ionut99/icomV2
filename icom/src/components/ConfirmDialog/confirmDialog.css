@@ -1,0 +1,52 @@
+.background {
+  top: -60px;
+  left: 0;
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  backdrop-filter: blur(5px);
+}
+
+.dialog-component {
+  padding: 25px;
+  position: absolute;
+  top: 20%;
+  left: 45%;
+  background-color: var(--white-color);
+  border-radius: 5%;
+  box-shadow: 8px 8px 16px 0px rgba(0, 0, 0, 0.2);
+}
+
+.dialogContent {
+  text-align: center;
+}
+.dialogContent .typography-title {
+  font-size: 18px;
+}
+
+.dialog-component .typography-subtitle {
+  font-size: 14px;
+  color: var(--red-color);
+}
+
+.dialogAction {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.dialogAction .mybutton {
+  margin: 5px;
+}
+
+.dialogAction .mybutton:hover {
+  cursor: pointer;
+  background-color: var(--color-element-hover);
+  background-color: var(--red-color);
+  color: var(--white-color);
+}
+
+.dialogAction .mybutton-yes:hover {
+  cursor: pointer;
+  background-color: var(--me-message-color);
+  color: var(--white-color);
+}

@@ -22,7 +22,7 @@ function Room() {
 
   const chatObj = useSelector((state) => state.chatRedu);
   const { channelID, currentChannelName, RoomMessages } = chatObj;
-  console.log(RoomMessages);
+  //console.log(RoomMessages);
   //console.log("canalul este + ", channelID);
   const { sendMessage } = useChat(
     channelID,

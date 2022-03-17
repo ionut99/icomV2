@@ -113,6 +113,57 @@ function InsertParticipantData(uuidRoom, userSearchListID, userID) {
   });
 }
 
+function DeleteAllMessageFromRoom(RoomID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `DELETE FROM messages WHERE messages.RoomID = '${RoomID}'`,
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+function DeleteAllParticipantsFromRoom(RoomID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `DELETE FROM participants WHERE participants.RoomID = '${RoomID}'`,
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+function DeleteRoomData(RoomID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `DELETE FROM room WHERE room.ID = '${RoomID}'`,
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
 module.exports = {
   GetAllUsersDataBase,
   GetSearchUsersList,
@@ -121,4 +172,7 @@ module.exports = {
   InsertNewMessageData,
   InsertNewRoomData,
   InsertParticipantData,
+  DeleteRoomData,
+  DeleteAllMessageFromRoom,
+  DeleteAllParticipantsFromRoom,
 };

@@ -7,6 +7,9 @@ const {
   InsertNewMessageData,
   InsertNewRoomData,
   InsertParticipantData,
+  DeleteAllMessageFromRoom,
+  DeleteAllParticipantsFromRoom,
+  DeleteRoomData,
 } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
@@ -148,6 +151,23 @@ async function CreateNewRoom(req, res) {
   return handleResponse(req, res, 200, { participantResult });
 }
 
+async function DeleteRoom(req, res) {
+  const roomID = req.body.roomID;
+
+  console.log("camera care urmeaza sa se stearga este: ");
+  console.log(roomID);
+
+  if (roomID === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  var res_deletemes = await DeleteAllMessageFromRoom(roomID);
+  var res_deletepart = await DeleteAllParticipantsFromRoom(roomID);
+  var res_deleteroom = await DeleteRoomData(roomID);
+
+  return handleResponse(req, res, 200, { res_deleteroom });
+}
+
 // list with all users
 async function GetUsers(req, res) {
   const userList = await GetAllUsersDataBase();
@@ -166,4 +186,5 @@ module.exports = {
   GetRoomMessages,
   InsertNewMessage,
   CreateNewRoom,
+  DeleteRoom,
 };

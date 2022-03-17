@@ -9,6 +9,7 @@ const {
   GetRoomMessages,
   InsertNewMessage,
   CreateNewRoom,
+  DeleteRoom,
 } = require("../controllers/User");
 
 router.post("/users/search", authMiddleware, GetUserSearchList);
@@ -16,6 +17,9 @@ router.post("/room/search", authMiddleware, GetRoomSearchList);
 router.post("/room/messages", authMiddleware, GetRoomMessages);
 router.post("/room/newmessage", authMiddleware, InsertNewMessage)
 router.post("/room/newroom", authMiddleware, CreateNewRoom)
+
+router.post("/room/deleteroom", authMiddleware, DeleteRoom)
+
 
 router.get("/users/getList", authMiddleware, GetUsers);
 

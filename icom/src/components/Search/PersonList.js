@@ -1,17 +1,14 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+// import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import groupAvatar from "../../images/group.png";
 import "./search.css";
 
-import {
-  CreateNewConversation,
-  userResetRoomListAsync,
-} from "../../asyncActions/userAsyncActions";
+import { CreateNewConversation } from "../../asyncActions/userAsyncActions";
 
 import {
-  resetUserSearchBoxContent,
-  resetPersonSearchList,
+  setUserSearchBoxContent,
+  setPersonSearchList,
 } from "../../actions/userActions";
 
 function ClickHandler(
@@ -30,9 +27,8 @@ function ClickHandler(
     )
   );
 
-  dispatch(resetUserSearchBoxContent());
-  dispatch(resetPersonSearchList());
-  dispatch(userResetRoomListAsync(" ", userID));
+  dispatch(setUserSearchBoxContent(""));
+  dispatch(setPersonSearchList([]));
 }
 
 function PersonList() {

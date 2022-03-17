@@ -34,8 +34,19 @@
   border-radius: 50%;
 }
 
+.right-section .messenger_input {
+  margin-top: 20px;
+  height: 75px;
+  width: 68%;
+  flex-direction: column;
+  /* position: sticky; */
+  margin: 0 auto;
+  display: flex;
+  bottom: 0px;
+  margin-top: 12px;
+}
+
 .right-section .messenger_input .text_input {
-  flex-grow: 1;
   bottom: 0;
   width: 100%;
   display: inline-flex;
@@ -50,6 +61,41 @@
   padding-top: 10px;
   height: 40px;
   width: 100%;
+}
+
+.right-section .messenger_input .toolbar-send {
+  height: 35px;
+  width: 100%;
+  display: flex;
+  padding-top: 5px;
+  padding-left: 5px;
+  flex-direction: row;
+  align-items: flex-start;
+  font-size: large;
+}
+
+.right-section .messenger_input .toolbar-send .write-instrument {
+  font-size: larger;
+  margin-right: 7px;
+}
+
+.right-section .messenger_input .toolbar-send .write-instrument:hover {
+  cursor: pointer;
+}
+
+.right-section .messenger_input .actions {
+  width: 40px;
+  height: 40px;
+}
+
+.right-section .messenger_input .actions button {
+  width: 100%;
+  height: 100%;
+  background-color: var(--me-message-color);
+}
+
+.right-section .messenger_input .actions button:hover {
+  cursor: pointer;
 }
 
 .conversation-details {
@@ -120,51 +166,6 @@
 }
 .messages .one_message .message_body .message_text p {
   word-wrap: break-word;
-}
-
-.messenger_input {
-  margin-top: 20px;
-  height: 75px;
-  width: 68%;
-  flex-direction: column;
-  position: sticky;
-  margin: 0 auto;
-  display: flex;
-  bottom: 0px;
-  margin-top: 12px;
-}
-
-.messenger_input .toolbar-send {
-  height: 35px;
-  width: 100%;
-  display: flex;
-  padding-top: 5px;
-  padding-left: 5px;
-  flex-direction: row;
-  align-items: flex-start;
-  font-size: large;
-}
-
-.messenger_input .toolbar-send .write-instrument {
-  font-size: larger;
-  margin-right: 7px;
-}
-.messenger_input .toolbar-send .write-instrument:hover {
-  cursor: pointer;
-}
-
-.content .messenger_input .actions {
-  width: 40px;
-  height: 40px;
-}
-
-.content .messenger_input .actions button {
-  width: 100%;
-  height: 100%;
-  background-color: var(--me-message-color);
-}
-.content .messenger_input .actions button:hover {
-  cursor: pointer;
 }
 
 @media screen and (max-width: 1400px) {

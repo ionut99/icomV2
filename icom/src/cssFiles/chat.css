@@ -102,6 +102,9 @@
     margin-top: 0px;
     margin-bottom: 0px;
   }
+  .conversation{
+    max-width: 90%;
+  }
 }
 
 @media screen and (max-width: 865px) {
@@ -109,4 +112,5 @@
     max-width: 350px;
     margin-left: 0%;
   }
+  
 }

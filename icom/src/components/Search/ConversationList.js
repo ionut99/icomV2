@@ -4,40 +4,55 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import groupAvatar from "../../images/group.png";
 import "./search.css";
 
+import * as MdIcons from "react-icons/md";
+import * as AiIcons from "react-icons/ai";
+
 import {
-  resetPersonSearchList,
-  resetUserSearchBoxContent,
+  setPersonSearchList,
+  setUserSearchBoxContent,
 } from "../../actions/userActions";
 
 import {
-  userResetRoomListAsync,
   updateChannelDetails,
+  DeleteConversation,
 } from "../../asyncActions/userAsyncActions";
 
-function ClickHandler(roomID, userThatWantID, selectedRoomName, dispatch) {
-  dispatch(updateChannelDetails(roomID, selectedRoomName));
-  dispatch(userResetRoomListAsync(" ", userThatWantID));
+import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 
-  dispatch(resetUserSearchBoxContent());
-  dispatch(resetPersonSearchList());
+function ClickHandler(roomID, selectedRoomName, dispatch) {
+  dispatch(updateChannelDetails(roomID, selectedRoomName));
+
+  dispatch(setUserSearchBoxContent(""));
+  dispatch(setPersonSearchList([]));
 }
 
 function ConversationList() {
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: "",
+    subTitle: "",
+  });
   const dispatch = useDispatch();
 
   const chatObj = useSelector((state) => state.chatRedu);
   const { RoomSearchList } = chatObj;
 
-  console.log("Lista de convorbiri:");
-  console.log(RoomSearchList);
-
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  const [dropdownMenu, setdropdownMenu] = useState(false);
+  // console.log("Lista de convorbiri:");
+  // console.log(RoomSearchList);
 
-  const showdropdownMenu = () => setdropdownMenu(!dropdownMenu);
+  // cod pentru stergerea de conversatie
+  const onDelete = (id) => {
+    setConfirmDialog({
+      ...confirmDialog,
+      isOpen: false,
+    });
+    console.log("se va sterge " + id);
 
+    dispatch(DeleteConversation(id, user.userId));
+  };
   return (
     <>
       <div
@@ -48,60 +63,74 @@ function ConversationList() {
       </div>
       {RoomSearchList.map((RoomSearchList, index) => {
         return (
-          <>
-            <div
-              className="conversation"
-              key={index}
-              onClick={() =>
-                ClickHandler(
-                  RoomSearchList.RoomID,
-                  user.userId,
-                  RoomSearchList.RoomName,
-                  dispatch
-                )
-              }
-            >
-              <img
-                className="conversation-picture"
-                src={groupAvatar}
-                alt="userAvatar jmecher"
-              />
-              <div className="conversation-details-left">
-                <div className="conversation-header">
-                  <div className="conversation-user-details">
-                    <p>{RoomSearchList.RoomName}</p>
-                    <div className="last-message">
-                      <p>
-                        How are
-                        youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
-                      </p>
-                    </div>
+          <div
+            className="conversation"
+            key={index}
+            onClick={() =>
+              ClickHandler(
+                RoomSearchList.RoomID,
+                RoomSearchList.RoomName,
+                dispatch
+              )
+            }
+          >
+            <img
+              className="conversation-picture"
+              src={groupAvatar}
+              alt="userAvatar jmecher"
+            />
+            <div className="conversation-details-left">
+              <div className="conversation-header">
+                <div className="conversation-user-details">
+                  <p>{RoomSearchList.RoomName}</p>
+                  <div className="last-message">
+                    <p>
+                      How are
+                      youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
+                    </p>
                   </div>
-                  <div className="more_options">
+                </div>
+                <div className="more_options">
+                  <div className="dropdown">
                     <MoreHorizIcon
                       sx={{ fontSize: 30, color: "green" }}
                       className="MoreHorizIcon"
-                      onClick={showdropdownMenu}
                     ></MoreHorizIcon>
-                    <div className="conversation-last-seen">19:00</div>
+
+                    <div className="dropdown-content">
+                      <div
+                        className="dropdown-instrument"
+                        onClick={() => {
+                          setConfirmDialog({
+                            isOpen: true,
+                            title: "Are you sure to delete this record?",
+                            subTitle: "You can't undo this operation",
+                            onConfirm: () => {
+                              onDelete(RoomSearchList.RoomID);
+                            },
+                          });
+                        }}
+                      >
+                        <MdIcons.MdDeleteOutline size={20} />
+                        <p>Delete Channel</p>
+                      </div>
+                      <div className="dropdown-instrument">
+                        <AiIcons.AiOutlinePushpin size={20} />
+                        <p>Pin</p>
+                      </div>
+                    </div>
                   </div>
+                  <div className="conversation-last-seen">19:00</div>
                 </div>
               </div>
             </div>
-            <nav className={dropdownMenu ? "room-menu active" : "room-menu"}>
-              <ul className="drop-down-menu-items">
-                <div className="dropdown-options">Profile</div>
-
-                <div className="dropdown-options">
-                  <div>
-                    <input type="button" value="Delete" />
-                  </div>
-                </div>
-              </ul>
-            </nav>
-          </>
+          </div>
         );
       })}
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        setConfirmDialog={setConfirmDialog}
+      />
     </>
   );
 }

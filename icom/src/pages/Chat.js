@@ -7,7 +7,7 @@ import { setAuthToken } from "./../services/auth";
 import moment from "moment";
 
 import {
-  userResetRoomListAsync,
+  userSetRoomListAsync,
   userSearchPersonListAsync,
 } from "../asyncActions/userAsyncActions";
 
@@ -37,7 +37,7 @@ function Chat() {
     }
   }
   const getSearchUserList = async () => {
-    dispatch(userResetRoomListAsync(search_box_content, user.userId));
+    dispatch(userSetRoomListAsync(search_box_content, user.userId));
     dispatch(userSearchPersonListAsync(search_box_content, user.userId));
   };
 
