@@ -16,18 +16,13 @@ import useChat from "../useChat";
 import "./room.css";
 
 function Room() {
-  //const dispatch = useDispatch();
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
   const { channelID, currentChannelName, RoomMessages } = chatObj;
-  //console.log(RoomMessages);
-  //console.log("canalul este + ", channelID);
-  const { sendMessage } = useChat(
-    channelID,
-    user.userId,
-  );
+
+  const { sendMessage } = useChat(channelID, user.userId);
   const [newMessage, setNewMessage] = useState("");
 
   const handleNewMessageChange = (event) => {
@@ -43,7 +38,16 @@ function Room() {
 
   return (
     <>
-      <div className="right-section">
+      <div
+        className="right-section-empty"
+        style={{ display: channelID ? "none" : "block" }}
+      >
+        <p>Choose a channel or create a new one</p>
+      </div>
+      <div
+        className="right-section"
+        style={{ display: channelID ? "block" : "none" }}
+      >
         <div className="conversation-details">
           <img
             className="conversation-picture"

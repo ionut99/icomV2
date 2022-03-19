@@ -123,6 +123,7 @@ async function CreateNewRoom(req, res) {
   const Private = req.body.Private;
   const userSearchListID = req.body.userSearchListID;
   const userID = req.body.userID;
+  const uuidRoom = req.body.uuidRoom;
 
   if (
     RoomName === "" ||
@@ -132,8 +133,6 @@ async function CreateNewRoom(req, res) {
   ) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
   }
-
-  const uuidRoom = uui.v4();
 
   // adaugare camera noua in tabela
   var roomResult = await InsertNewRoomData(RoomName, Private, uuidRoom);

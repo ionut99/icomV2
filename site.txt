@@ -1,8 +1,11 @@
 TO DO:
 
+-> de deschis fereastra de conversare atunci cand se alege o noua persoana 
+-> de tratat cazul in care nu este selectata nici o conversatie X
+-> de adaugat timp la mesaj + sortare dupa timp 
 -> de tratat raspunsul de la server pentru inserare in baza de date
+-> implementare functionalitate de golire local storage cu privire la chat X
 -> Implementare functionalitate de stergere room X
--> implementare functionalitate de golire local storage cu privire la chat 
 
 
 
