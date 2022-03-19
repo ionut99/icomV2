@@ -97,14 +97,15 @@ export const InsertNewMessage =
   };
 
 export const CreateNewConversation =
-  (RoomName, Private, userSearchListID, userID) => async (dispatch) => {
+  (RoomName, Private, userSearchListID, userID, uuidRoom) => async (dispatch) => {
     const varverify = await CreateNewRoomDataBase(
       RoomName,
       Private,
       userSearchListID,
-      userID
+      userID,
+      uuidRoom
     );
-
+    
     dispatch(userSetRoomListAsync(" ", userID));
     // tratare raspuns de la server
   };

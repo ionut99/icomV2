@@ -1,12 +1,10 @@
 import {
   USER_UPDATE_CHAT,
   USER_SET_SEARCH_BOX_CONTENT,
-  USER_RESET_SEARCH_BOX_CONTENT,
   USER_SET_PERSON_SEARCH_LIST,
   USER_RESET_PERSON_SEARCH_LIST,
   USER_SET_ROOM_LIST,
   USER_RESET_ROOM_LIST,
-  RESET_NEW_ROOM_ITEMS,
   USER_ADD_NEW_MESSAGE,
 } from "../actions/actionTypes";
 
@@ -18,10 +16,6 @@ const ChannelState = {
   search_box_content: "",
   userSearchList: [],
   RoomSearchList: [],
-
-  personSelectedID: null,
-  newRoomID: null,
-  newRoomName: "",
 };
 
 const chatRedu = (state = ChannelState, action) => {
@@ -42,13 +36,6 @@ const chatRedu = (state = ChannelState, action) => {
       return {
         ...state,
         search_box_content,
-      };
-
-    // reset Chat search box
-    case USER_RESET_SEARCH_BOX_CONTENT:
-      return {
-        ...state,
-        search_box_content: "",
       };
 
     // set Search Person List
@@ -79,13 +66,6 @@ const chatRedu = (state = ChannelState, action) => {
         RoomSearchList: [],
       };
 
-    case RESET_NEW_ROOM_ITEMS:
-      return {
-        ...state,
-        // newRoomID: null,
-        // newRoomName: "",
-        // personSelectedID: null,
-      };
     case USER_ADD_NEW_MESSAGE:
       const { ID_message, RoomID, senderID, Body } = action.payload;
       return {

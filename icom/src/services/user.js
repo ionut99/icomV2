@@ -83,7 +83,8 @@ export const CreateNewRoomDataBase = async (
   RoomName,
   Private,
   userSearchListID,
-  userID
+  userID,
+  uuidRoom
 ) => {
   try {
     return await axios.post(`${API_URL}/room/newroom`, {
@@ -91,6 +92,7 @@ export const CreateNewRoomDataBase = async (
       Private,
       userSearchListID,
       userID,
+      uuidRoom,
     });
   } catch (err) {
     return {

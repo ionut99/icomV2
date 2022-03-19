@@ -10,6 +10,7 @@ import * as AiIcons from "react-icons/ai";
 import {
   setPersonSearchList,
   setUserSearchBoxContent,
+  updateCurrentChannel,
 } from "../../actions/userActions";
 
 import {
@@ -40,19 +41,17 @@ function ConversationList() {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  // console.log("Lista de convorbiri:");
-  // console.log(RoomSearchList);
-
-  // cod pentru stergerea de conversatie
-  const onDelete = (id) => {
+  // delete room function -- start
+  const onDelete = (RoomID) => {
     setConfirmDialog({
       ...confirmDialog,
       isOpen: false,
     });
-    console.log("se va sterge " + id);
 
-    dispatch(DeleteConversation(id, user.userId));
+    dispatch(DeleteConversation(RoomID, user.userId));
+    dispatch(updateCurrentChannel(null, "", []));
   };
+  // delete room function --end
   return (
     <>
       <div

@@ -4,12 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import groupAvatar from "../../images/group.png";
 import "./search.css";
 
-import { CreateNewConversation } from "../../asyncActions/userAsyncActions";
+import {
+  CreateNewConversation,
+  updateChannelDetails,
+} from "../../asyncActions/userAsyncActions";
 
 import {
   setUserSearchBoxContent,
   setPersonSearchList,
 } from "../../actions/userActions";
+
+import { v4 as uuidv4 } from "uuid";
 
 function ClickHandler(
   userSearchListName,
@@ -18,15 +23,17 @@ function ClickHandler(
   userID,
   dispatch
 ) {
+  var uuidRoom = uuidv4(); // pentru coduri unice
   dispatch(
     CreateNewConversation(
       userSearchListName + " # " + userName,
       1,
       userSearchListID,
-      userID
+      userID,
+      uuidRoom
     )
   );
-
+  dispatch(updateChannelDetails(uuidRoom, userSearchListName));
   dispatch(setUserSearchBoxContent(""));
   dispatch(setPersonSearchList([]));
 }

@@ -10,6 +10,8 @@ import UserAvatar from "../images/userAvatar.png";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogoutAsync } from "./../asyncActions/authAsyncActions";
 
+import { updateCurrentChannel } from "../actions/userActions";
+
 function Navbar() {
   // LOG OUT
   const dispatch = useDispatch();
@@ -17,6 +19,7 @@ function Navbar() {
   // handle click event of the logout button
   function LogOut() {
     dispatch(userLogoutAsync());
+    dispatch(updateCurrentChannel(null, "", []));
   }
 
   const authObj = useSelector((state) => state.auth);
