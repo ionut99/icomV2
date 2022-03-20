@@ -5,7 +5,7 @@
   width: 100vw;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-color-step-one);
+  background-color: var(--bg-color-step-two);
 }
 
 .chat-page {

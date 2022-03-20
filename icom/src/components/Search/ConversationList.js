@@ -16,13 +16,15 @@ import {
 import {
   updateChannelDetails,
   DeleteConversation,
+  userSetRoomListAsync,
 } from "../../asyncActions/userAsyncActions";
 
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 
-function ClickHandler(roomID, selectedRoomName, dispatch) {
+function ClickHandler(roomID, userID, selectedRoomName, dispatch) {
   dispatch(updateChannelDetails(roomID, selectedRoomName));
 
+  dispatch(userSetRoomListAsync(" ", userID));
   dispatch(setUserSearchBoxContent(""));
   dispatch(setPersonSearchList([]));
 }
@@ -68,6 +70,7 @@ function ConversationList() {
             onClick={() =>
               ClickHandler(
                 RoomSearchList.RoomID,
+                user.userId,
                 RoomSearchList.RoomName,
                 dispatch
               )

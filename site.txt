@@ -1,6 +1,10 @@
 TO DO:
 
--> de deschis fereastra de conversare atunci cand se alege o noua persoana 
+-> de vazut de ce se sterg valorile din react redux pentru chat, iar pentru user nu 
+-> de pus useEffect de trimitere token pentru toate ferestrele
+-> corectare culori Link din SideBar
+-> creare functionalitate de editare documente in timp real 
+-> de deschis fereastra de conversare atunci cand se alege o noua persoana X
 -> de tratat cazul in care nu este selectata nici o conversatie X
 -> de adaugat timp la mesaj + sortare dupa timp 
 -> de tratat raspunsul de la server pentru inserare in baza de date

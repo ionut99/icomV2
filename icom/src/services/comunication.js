@@ -3,14 +3,16 @@ import { useDispatch } from "react-redux";
 import socketIOClient from "socket.io-client";
 // var CryptoJs = require("crypto-js");
 import { InsertNewMessage } from "../asyncActions/userAsyncActions";
-import { InsertNewMessageLocal } from "../actions/userActions";
+import { InsertNewMessageLocal, UpdateDeltaFile } from "../actions/userActions";
 
 import { v4 as uuidv4 } from "uuid";
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
+const NEW_EVENT_DOCUMENT = "newEventDocument";
+
 const SOCKET_SERVER_URL = "http://localhost:4000";
 
-const useChat = (roomID, userID) => {
+const Comunication = (roomID, userID) => {
   const dispatch = useDispatch();
   var uuidMessage = uuidv4(); // pentru coduri unice
   const socketRef = useRef();
@@ -37,6 +39,16 @@ const useChat = (roomID, userID) => {
       }
     });
 
+    socketRef.current.on(NEW_EVENT_DOCUMENT, (newDocChange) => {
+      if (newDocChange.roomID != null) {
+        console.log("ce am primit");
+        console.log(newDocChange);
+        if (newDocChange.roomID != null) {
+          dispatch(UpdateDeltaFile(newDocChange.body, newDocChange.senderID));
+        }
+      }
+    });
+
     return () => {
       socketRef.current.disconnect();
     };
@@ -57,7 +69,17 @@ const useChat = (roomID, userID) => {
     socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
   };
 
-  return { sendMessage };
+  const sendDocumentChanges = (changeDocument) => {
+    //console.log(changeDocument);
+    var dataToSend = {
+      body: changeDocument,
+      senderID: userID,
+      roomID: roomID,
+      change_ID: uuidv4(),
+    };
+    socketRef.current.emit(NEW_EVENT_DOCUMENT, dataToSend);
+  };
+  return { sendMessage, sendDocumentChanges };
 };
 
-export default useChat;
+export default Comunication;

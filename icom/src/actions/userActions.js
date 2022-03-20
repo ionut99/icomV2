@@ -5,6 +5,7 @@ import {
   USER_SET_ROOM_LIST,
   USER_RESET_ROOM_LIST,
   USER_ADD_NEW_MESSAGE,
+  UPDATE_FILE_DELTA,
 } from "./actionTypes";
 
 export const updateCurrentChannel = (
@@ -60,5 +61,12 @@ export const InsertNewMessageLocal = (ID_message, RoomID, senderID, Body) => {
   return {
     type: USER_ADD_NEW_MESSAGE,
     payload: { ID_message, RoomID, senderID, Body },
+  };
+};
+
+export const UpdateDeltaFile = (delta, senderID) => {
+  return {
+    type: UPDATE_FILE_DELTA,
+    payload: { delta,  senderID},
   };
 };

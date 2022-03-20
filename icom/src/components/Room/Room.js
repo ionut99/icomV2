@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 import ReactScrollableFeed from "react-scrollable-feed";
 import classNames from "classnames";
@@ -8,10 +9,11 @@ import * as MdIcons from "react-icons/md";
 import * as IoIcons from "react-icons/io";
 import * as BsIcons from "react-icons/bs";
 import * as IoIcons2 from "react-icons/io5";
+import * as AiIcons from "react-icons/ai";
 
 import UserAvatar from "../../images/userAvatar.png";
 import groupAvatar from "../../images/group.png";
-import useChat from "../useChat";
+import Comunication from "../../services/comunication";
 
 import "./room.css";
 
@@ -22,7 +24,7 @@ function Room() {
   const chatObj = useSelector((state) => state.chatRedu);
   const { channelID, currentChannelName, RoomMessages } = chatObj;
 
-  const { sendMessage } = useChat(channelID, user.userId);
+  const { sendMessage } = Comunication(channelID, user.userId);
   const [newMessage, setNewMessage] = useState("");
 
   const handleNewMessageChange = (event) => {
@@ -56,6 +58,11 @@ function Room() {
           />
           <div className="room-name">
             <p>{currentChannelName}</p>
+          </div>
+          <div className="room-instrument">
+            <Link to={`/newdocument/${channelID}`}>
+              {<AiIcons.AiOutlineEdit />}
+            </Link>
           </div>
           <div className="room-instrument">
             <BsIcons.BsCameraVideo />

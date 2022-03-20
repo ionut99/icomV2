@@ -60,10 +60,10 @@ app.post("/room/messages", UserRouter);
 // room - insert new message
 app.post("/room/newmessage", UserRouter);
 
-// room - create new room 
+// room - create new room
 app.post("/room/newroom", UserRouter);
 
-// room - delete room 
+// room - delete room
 app.post("/room/deleteroom", UserRouter);
 
 // return all user List
@@ -71,6 +71,7 @@ app.get("/users/getList", UserRouter);
 
 // Start server for chat
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
+const NEW_EVENT_DOCUMENT = "newEventDocument";
 
 io.on("connection", (socket) => {
   // Join a conversation
@@ -83,6 +84,14 @@ io.on("connection", (socket) => {
   socket.on(NEW_CHAT_MESSAGE_EVENT, (data) => {
     io.in(roomID).emit(NEW_CHAT_MESSAGE_EVENT, data);
     console.log("New message was sent:  ");
+    console.log(data);
+    console.log("On channel: " + roomID);
+  });
+
+  // Listen for new document changes
+  socket.on(NEW_EVENT_DOCUMENT, (data) => {
+    io.in(roomID).emit(NEW_EVENT_DOCUMENT, data);
+    console.log("New document changes was sent:  ");
     console.log(data);
     console.log("On channel: " + roomID);
   });

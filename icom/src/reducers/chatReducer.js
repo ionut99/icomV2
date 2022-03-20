@@ -28,7 +28,7 @@ const chatRedu = (state = ChannelState, action) => {
         channelID,
         currentChannelName,
         RoomMessages,
-      };
+      }; 
 
     // set Chat search box content
     case USER_SET_SEARCH_BOX_CONTENT:
