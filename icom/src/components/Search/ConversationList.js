@@ -7,6 +7,8 @@ import "./search.css";
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 
+
+
 import {
   setPersonSearchList,
   setUserSearchBoxContent,
@@ -20,11 +22,12 @@ import {
 } from "../../asyncActions/userAsyncActions";
 
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
+// import {getSearchUserList} from "../../pages/Chat";
 
 function ClickHandler(roomID, userID, selectedRoomName, dispatch) {
   dispatch(updateChannelDetails(roomID, selectedRoomName));
 
-  dispatch(userSetRoomListAsync(" ", userID));
+  dispatch(userSetRoomListAsync("", userID));
   dispatch(setUserSearchBoxContent(""));
   dispatch(setPersonSearchList([]));
 }
@@ -61,6 +64,7 @@ function ConversationList() {
         style={{ display: RoomSearchList.length ? "flex" : "none" }}
       >
         <p>Conversations</p>
+
       </div>
       {RoomSearchList.map((RoomSearchList, index) => {
         return (

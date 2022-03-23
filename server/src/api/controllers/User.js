@@ -70,12 +70,14 @@ async function GetRoomSearchList(req, res) {
 
   const list = userRoomList.map((x) => {
     const room = { ...x };
-
-    room.RoomName = room.RoomName.replace(userName, "");
-    room.RoomName = room.RoomName.replace("#", "");
+    if (room.Type === 0) return room;
+    if (room.Type === 1) {
+      room.RoomName = room.RoomName.replace(userName, "");
+      room.RoomName = room.RoomName.replace("#", "");
+    }
     return room;
   });
-  // console.log(list);
+  console.log(list);
   return handleResponse(req, res, 200, { list });
 }
 
@@ -138,16 +140,16 @@ async function CreateNewRoom(req, res) {
   var roomResult = await InsertNewRoomData(RoomName, Private, uuidRoom);
 
   // adaugare participant la camera creata mai sus
-  var participantResult = await InsertParticipantData(
-    uuidRoom,
-    userSearchListID,
-    userID
-  );
+  if (userSearchListID !== null) {
+    await InsertParticipantData(uuidRoom, userSearchListID);
+  }
 
-  // console.log("Rezultat din functia de adaugare a mesajului !");
-  // console.log(result);
+  if (userID !== null) {
+    await InsertParticipantData(uuidRoom, userID);
+  }
 
-  return handleResponse(req, res, 200, { participantResult });
+  // TO DO : de trimis rezultat pozitiv
+  return handleResponse(req, res, 200, { "positive-result": "ok" });
 }
 
 async function DeleteRoom(req, res) {
@@ -165,6 +167,35 @@ async function DeleteRoom(req, res) {
   var res_deleteroom = await DeleteRoomData(roomID);
 
   return handleResponse(req, res, 200, { res_deleteroom });
+}
+
+async function CreateNewRoom_Group(req, res) {
+  const NewGroupName = req.body.NewGroupName;
+  const Type = req.body.Type;
+  const userID = req.body.userID;
+  const uuidRoom = req.body.uuidRoom;
+
+  console.log("Se va crea noul grup!");
+  console.log(NewGroupName);
+
+  if (
+    NewGroupName === "" ||
+    Type === null ||
+    userID === null ||
+    uuidRoom === null
+  ) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  // adaugare camera noua in tabela
+  var roomResult = await InsertNewRoomData(NewGroupName, Type, uuidRoom);
+
+  // adaugare participant la camera creata mai sus
+  if (userID !== null) {
+    await InsertParticipantData(uuidRoom, userID);
+  }
+
+  return handleResponse(req, res, 200, "New Group Created successful");
 }
 
 // list with all users
@@ -186,4 +217,5 @@ module.exports = {
   InsertNewMessage,
   CreateNewRoom,
   DeleteRoom,
+  CreateNewRoom_Group,
 };

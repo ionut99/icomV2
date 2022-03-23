@@ -36,26 +36,33 @@
 }
 
 .search-box {
-  padding-left: 20px;
+  /* padding-left: 20px; */
   width: 88%;
-  height: 40px;
+  height: 35px;
   border-radius: 5px;
   border: 2px var(--border-color) solid;
   font-size: 18px;
   margin-top: 12px;
   margin-left: 5px;
+  margin-right: 5px;
 }
 
 .searchIcon svg {
   margin-top: 0;
 }
-.search-button-icon {
+.conversation-options-button-icon {
   margin-top: 10px;
-  margin-left: 5px;
+  margin-right: 3px;
   width: 40px;
-  height: 40px;
+  height: 35px;
 }
-.search-button-icon:hover {
+
+.conversation-options-button-icon .symbol{
+  padding-left: 4px;
+  font-size: 28px;
+  margin-top: 7px;
+}
+.conversation-options-button-icon:hover {
   cursor: pointer;
   background-color: var(--color-element-hover);
   border-radius: 5px;
@@ -65,6 +72,28 @@
   height: 100%;
   overflow-y: auto;
 }
+
+.chat-persons .new-group-name{
+  height: 60px;
+  width: 100%;
+  padding-left: 20px;
+  padding-top: 5px;
+  display: block;
+}
+.chat-persons .new-group-name .input-section{
+  display: inline-flex;
+}
+.chat-persons .new-group-name input{
+  height: 25px;
+}
+
+.chat-persons .new-group-name button{
+  margin-left: 5px;
+  height: 25px;
+  width: 40px;
+  background-color: var(--me-message-color);
+}
+
 .MoreHorizIcon {
   margin-left: 15px;
 }

@@ -4,7 +4,6 @@
 .RoomDelimiter {
   top: 0;
   position: sticky;
-  border: red 1px solid;
   height: 40px;
   width: 100%;
   display: flex;
@@ -15,6 +14,7 @@
   padding-top: 5px;
   background-color: var(--white-color);
   border-bottom: 2px solid var(--color-element-hover);
+  z-index: 1;
 }
 
 .conversation {

@@ -17,7 +17,7 @@ function App() {
   const authObj = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const { authLoading, isAuthenticated } = authObj;
+  const { authLoading, isAuthenticated } = authObj; 
 
   // verify token on app load
   useEffect(() => {

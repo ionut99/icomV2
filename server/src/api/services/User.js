@@ -35,7 +35,7 @@ function GetUserRoomsList(search_box_text, userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT room.ID as RoomID, room.Name as RoomName from room INNER JOIN participants ON room.ID = participants.RoomID WHERE participants.UserID = '${userId}' AND room.Name LIKE N'%${search_box_text}%'`,
+      `SELECT room.ID as RoomID, room.Name as RoomName, room.Private as Type from room INNER JOIN participants ON room.ID = participants.RoomID WHERE participants.UserID = '${userId}' AND room.Name LIKE N'%${search_box_text}%'`,
       (err, result) => {
         if (err) {
           return reject(err);
@@ -96,12 +96,12 @@ function InsertNewRoomData(RoomName, Private, uuidRoom) {
   });
 }
 
-function InsertParticipantData(uuidRoom, userSearchListID, userID) {
+function InsertParticipantData(uuidRoom, userID) {
   const connection = new mysql.createConnection(DataBaseConfig);
 
   return new Promise((resolve, reject) => {
     connection.query(
-      `INSERT INTO participants (ID, UserID, RoomID) VALUES (NULL, '${userID}', '${uuidRoom}'), (NULL, '${userSearchListID}', '${uuidRoom}');`,
+      `INSERT INTO participants (ID, UserID, RoomID) VALUES (NULL, '${userID}', '${uuidRoom}');`,
       (err, result) => {
         if (err) {
           return reject(err);

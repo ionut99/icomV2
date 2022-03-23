@@ -44,7 +44,7 @@ function TextEditor() {
     };
     quill.on("text-change", handler);
 
-    if (user.userId != senderID) {
+    if (user.userId !== senderID) {
       quill.updateContents(delta);
     }
 

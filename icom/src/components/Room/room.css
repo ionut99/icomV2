@@ -132,17 +132,7 @@
   width: 35px;
 }
 
-a {
-  text-decoration: none;
-}
 
-a:link, a:visited {
-  color: black;
-}
-
-a:hover {
-  color: black;
-}
 
 .conversation-details .room-instrument:hover {
   cursor: pointer;
