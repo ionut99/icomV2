@@ -43,21 +43,22 @@ function Chat() {
     }
   }
 
-  // function CreateEnter(event) {
-  //   if (event.key === "Enter") {
-  //     CreateNewRoom();
-  //   }
-  // }
+  function CreateEnter(event) {
+    if (event.key === "Enter") {
+      CreateNewRoom();
+    }
+  }
 
   const CreateNewRoom = async () => {
-    //e.preventDefault();
-    console.log("se va crea conversatia cu numele: ");
-    console.log(groupName);
+    //e.preventDefault(); // help to prevent reload component
+    // console.log("se va crea conversatia cu numele: ");
+    // console.log(groupName);
     if (groupName === "") {
       console.log("Nu s-a introdus niciun nume pentru noul grup!");
     }
-    if (groupName !== "") {
+    if (groupName !== "" && newGroup === true) {
       SetgroupName("");
+      SetnewGroup(!newGroup);
       dispatch(CreateNewGroup(groupName, 0, user.userId, uuidv4()));
     }
   };
@@ -117,15 +118,17 @@ function Chat() {
             </div>
           </div>
           <div className="chat-persons">
-            <div className="new-group-name"
-            style={{ display: newGroup ? "block" : "none" }}>
+            <div
+              className="new-group-name"
+              style={{ display: newGroup ? "block" : "none" }}
+            >
               <p>Enter New Channel Name:</p>
               <div className="input-section">
                 <input
                   type="text"
                   value={groupName}
                   onChange={(event) => SetgroupName(event.target.value)}
-                  //onKeyDown={CreateEnter}
+                  onKeyDown={CreateEnter}
                 />
                 <button onClick={CreateNewRoom}>New</button>
               </div>

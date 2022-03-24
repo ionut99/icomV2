@@ -7,6 +7,8 @@ import {
   CreateNewRoomDataBase,
   DeleteRoomDataBase,
   CreateNewGroupDataBase,
+  AddNewMemberInRoomDataBase,
+  getParticipantsListService,
 } from "../services/user";
 
 import {
@@ -30,14 +32,15 @@ export const userSetRoomListAsync =
       return;
     }
 
-    console.log("Afisare roomList");
-    console.log(Roomresult.data["list"]);
+    // console.log("Afisare roomList");
+    // console.log(Roomresult.data["list"]);
     dispatch(setRoomList(Roomresult.data["list"]));
   };
 
 // handle Person Search
 export const userSearchPersonListAsync =
   (search_box_content, userId) => async (dispatch) => {
+    console.log("cautam persoanele!");
     const Personresult = await getSearchPersonService(
       search_box_content,
       userId
@@ -52,6 +55,7 @@ export const userSearchPersonListAsync =
         dispatch(userLogout());
       return;
     }
+    console.log(Personresult.data["list"]);
     if (search_box_content !== "") {
       dispatch(setPersonSearchList(Personresult.data["list"]));
     } else {
@@ -109,6 +113,7 @@ export const CreateNewConversation =
     );
 
     dispatch(userSetRoomListAsync("", userID));
+    //TO DO:
     // tratare raspuns de la server
   };
 
@@ -118,6 +123,7 @@ export const DeleteConversation = (RoomID, userID) => async (dispatch) => {
   const varverify = await DeleteRoomDataBase(RoomID);
 
   dispatch(userSetRoomListAsync("", userID));
+  //TO DO:
   // tratare raspuns de la server
 };
 
@@ -135,5 +141,29 @@ export const CreateNewGroup =
     );
 
     dispatch(userSetRoomListAsync("", userID));
+    //TO DO:
     // tratare raspuns de la server
   };
+
+// handle add new member in a group
+export const AddNewMemberInGroup =
+  (RoomID, userSearchListID) => async (dispatch) => {
+    const varVerify = await AddNewMemberInRoomDataBase(
+      RoomID,
+      userSearchListID
+    );
+  };
+
+// get participants from room list
+export const getParticipantList = (RoomID) => async (dispatch) => {
+  const result = await getParticipantsListService(RoomID);
+  // if (result.error) {
+  //   dispatch(verifyTokenEnd());
+  //   if (result.response && [401, 403].includes(result.response.status))
+  //     dispatch(userLogout());
+  //   return;
+  // }
+  console.log("Tovarasii grupului sunt: ");
+  console.log(result.data);
+  return result.data;
+};

@@ -6,6 +6,7 @@ import {
   USER_RESET_ROOM_LIST,
   USER_ADD_NEW_MESSAGE,
   UPDATE_FILE_DELTA,
+  UPDATE_ADD_USER_IN_GROUP,
 } from "./actionTypes";
 
 export const updateCurrentChannel = (
@@ -67,6 +68,13 @@ export const InsertNewMessageLocal = (ID_message, RoomID, senderID, Body) => {
 export const UpdateDeltaFile = (delta, senderID) => {
   return {
     type: UPDATE_FILE_DELTA,
-    payload: { delta,  senderID},
+    payload: { delta, senderID },
+  };
+};
+
+export const UpdateAddUserInGroup = (addUserInGroup) => {
+  return {
+    type: UPDATE_ADD_USER_IN_GROUP,
+    payload: { addUserInGroup },
   };
 };

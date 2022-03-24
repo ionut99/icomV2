@@ -132,6 +132,9 @@
   width: 35px;
 }
 
+.conversation-details a {
+  color: black;
+}
 
 
 .conversation-details .room-instrument:hover {

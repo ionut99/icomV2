@@ -102,6 +102,37 @@ export const CreateNewRoomDataBase = async (
   }
 };
 
+// insert new member in a group in database
+export const AddNewMemberInRoomDataBase = async (
+  RoomID, userSearchListID
+) => {
+  console.log("Bagam +" + userSearchListID + " " + RoomID);
+  try {
+    return await axios.post(`${API_URL}/room/newmember`, {
+      RoomID, userSearchListID
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+// get list of participants from a room
+export const getParticipantsListService = async (roomID) => {
+  try {
+    return await axios.post(`${API_URL}/room/participants`, {
+      roomID
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
 // delete room from database
 
 export const DeleteRoomDataBase = async (roomID) => {

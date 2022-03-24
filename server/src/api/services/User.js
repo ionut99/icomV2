@@ -5,7 +5,7 @@ const { DataBaseConfig } = require("../../config/dataBase");
 function GetAllUsersDataBase() {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
-    connection.query("SELECT * FROM IUsers", (err, result) => {
+    connection.query("SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers", (err, result) => {
       if (err) {
         return reject(err);
       }
@@ -164,6 +164,38 @@ function DeleteRoomData(RoomID) {
   });
 }
 
+function AddNewMemberInGroupData(roomID, userSearchListID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `INSERT INTO participants (ID, UserID, RoomID) VALUES (NULL, '${userSearchListID}', '${roomID}');`,
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+function GetPartListData(ChannelID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName FROM participants INNER JOIN iusers ON participants.UserID = iusers.userId WHERE RoomID = '${ChannelID}'`,
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
 module.exports = {
   GetAllUsersDataBase,
   GetSearchUsersList,
@@ -175,4 +207,6 @@ module.exports = {
   DeleteRoomData,
   DeleteAllMessageFromRoom,
   DeleteAllParticipantsFromRoom,
+  AddNewMemberInGroupData,
+  GetPartListData,
 };

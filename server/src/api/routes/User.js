@@ -11,6 +11,8 @@ const {
   CreateNewRoom,
   DeleteRoom,
   CreateNewRoom_Group,
+  AddNewMemberInGroup,
+  GetPartList,
 } = require("../controllers/User");
 
 router.post("/users/search", authMiddleware, GetUserSearchList);
@@ -21,7 +23,8 @@ router.post("/room/newroom", authMiddleware, CreateNewRoom);
 
 router.post("/room/deleteroom", authMiddleware, DeleteRoom);
 router.post("/room/newgroup", authMiddleware, CreateNewRoom_Group);
-
+router.post("/room/newmember", authMiddleware, AddNewMemberInGroup);
+router.post("/room/participants", authMiddleware, GetPartList);
 router.get("/users/getList", authMiddleware, GetUsers);
 
 module.exports = router;

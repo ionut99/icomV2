@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import groupAvatar from "../../images/group.png";
@@ -6,65 +6,46 @@ import "./search.css";
 
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
-
-
-
-import {
-  setPersonSearchList,
-  setUserSearchBoxContent,
-  updateCurrentChannel,
-} from "../../actions/userActions";
-
-import {
-  updateChannelDetails,
-  DeleteConversation,
-  userSetRoomListAsync,
-} from "../../asyncActions/userAsyncActions";
+import * as BsIcons from "react-icons/bs";
 
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
-// import {getSearchUserList} from "../../pages/Chat";
+import SearchService from "./searchService.js";
 
-function ClickHandler(roomID, userID, selectedRoomName, dispatch) {
-  dispatch(updateChannelDetails(roomID, selectedRoomName));
-
-  dispatch(userSetRoomListAsync("", userID));
-  dispatch(setUserSearchBoxContent(""));
-  dispatch(setPersonSearchList([]));
-}
-
-function ConversationList() {
-  const [confirmDialog, setConfirmDialog] = useState({
-    isOpen: false,
-    title: "",
-    subTitle: "",
-  });
+const ConversationList = () => {
   const dispatch = useDispatch();
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { RoomSearchList } = chatObj;
+  const { RoomSearchList, addUserInGroup } = chatObj;
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  // delete room function -- start
-  const onDelete = (RoomID) => {
-    setConfirmDialog({
-      ...confirmDialog,
-      isOpen: false,
-    });
+  const {
+    ClickChannel,
+    onAddUser,
+    onDelete,
+    setConfirmDialog,
+    ShowParticipants,
+    confirmDialog,
+  } = SearchService(user.userId);
 
-    dispatch(DeleteConversation(RoomID, user.userId));
-    dispatch(updateCurrentChannel(null, "", []));
+  const handleAddUserInGroup = (RoomID) => {
+    onAddUser(RoomID);
   };
-  // delete room function --end
-  return (
-    <>
-      <div
-        className="RoomDelimiter"
-        style={{ display: RoomSearchList.length ? "flex" : "none" }}
-      >
-        <p>Conversations</p>
+  const handleDeleteUser = (RoomID) => {
+    onDelete(RoomID);
+  };
 
+  const handleShowParticipants = (RoomID) => {
+    var plist = ShowParticipants(RoomID);
+    console.log("lista cu tovarasi este: ");
+    console.log(plist);
+  };
+
+  return (
+    <div style={{ display: addUserInGroup === "" ? "block" : "none" }}>
+      <div className="RoomDelimiter">
+        <p>Conversations</p>
       </div>
       {RoomSearchList.map((RoomSearchList, index) => {
         return (
@@ -72,9 +53,8 @@ function ConversationList() {
             className="conversation"
             key={index}
             onClick={() =>
-              ClickHandler(
+              ClickChannel(
                 RoomSearchList.RoomID,
-                user.userId,
                 RoomSearchList.RoomName,
                 dispatch
               )
@@ -112,13 +92,37 @@ function ConversationList() {
                             title: "Are you sure to delete this record?",
                             subTitle: "You can't undo this operation",
                             onConfirm: () => {
-                              onDelete(RoomSearchList.RoomID);
+                              handleDeleteUser(RoomSearchList.RoomID);
                             },
                           });
                         }}
                       >
                         <MdIcons.MdDeleteOutline size={20} />
                         <p>Delete Channel</p>
+                      </div>
+                      <div
+                        className="dropdown-instrument"
+                        style={{
+                          display: RoomSearchList.Type ? "none" : "flex",
+                        }}
+                        onClick={() =>
+                          handleAddUserInGroup(RoomSearchList.RoomID)
+                        }
+                      >
+                        <AiIcons.AiOutlineUserAdd size={20} />
+                        <p>Add User</p>
+                      </div>
+                      <div
+                        className="dropdown-instrument"
+                        style={{
+                          display: RoomSearchList.Type ? "none" : "flex",
+                        }}
+                        onClick={() =>
+                          handleShowParticipants(RoomSearchList.RoomID)
+                        }
+                      >
+                        <BsIcons.BsPeople size={20} />
+                        <p>Participants</p>
                       </div>
                       <div className="dropdown-instrument">
                         <AiIcons.AiOutlinePushpin size={20} />
@@ -137,8 +141,8 @@ function ConversationList() {
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
       />
-    </>
+    </div>
   );
-}
+};
 
 export default ConversationList;

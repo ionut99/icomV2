@@ -57,7 +57,7 @@
   height: 35px;
 }
 
-.conversation-options-button-icon .symbol{
+.conversation-options-button-icon .symbol {
   padding-left: 4px;
   font-size: 28px;
   margin-top: 7px;
@@ -73,21 +73,22 @@
   overflow-y: auto;
 }
 
-.chat-persons .new-group-name{
+.chat-persons .new-group-name {
   height: 60px;
   width: 100%;
   padding-left: 20px;
   padding-top: 5px;
   display: block;
+  border-bottom: 2px solid var(--color-element-hover);
 }
-.chat-persons .new-group-name .input-section{
+.chat-persons .new-group-name .input-section {
   display: inline-flex;
 }
-.chat-persons .new-group-name input{
+.chat-persons .new-group-name input {
   height: 25px;
 }
 
-.chat-persons .new-group-name button{
+.chat-persons .new-group-name button {
   margin-left: 5px;
   height: 25px;
   width: 40px;
@@ -131,7 +132,7 @@
     margin-top: 0px;
     margin-bottom: 0px;
   }
-  .conversation{
+  .conversation {
     max-width: 90%;
   }
 }
@@ -141,5 +142,4 @@
     max-width: 350px;
     margin-left: 0%;
   }
-  
 }

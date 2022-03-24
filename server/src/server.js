@@ -72,6 +72,11 @@ app.get("/users/getList", UserRouter);
 // create new room (group) of people
 app.post("/room/newgroup", UserRouter);
 
+// create new room (group) of people
+app.post("/room/newmember", UserRouter);
+
+app.post("/room/participants", UserRouter);
+
 // Start server for chat
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const NEW_EVENT_DOCUMENT = "newEventDocument";

@@ -10,10 +10,12 @@ const {
   DeleteAllMessageFromRoom,
   DeleteAllParticipantsFromRoom,
   DeleteRoomData,
+  AddNewMemberInGroupData,
+  GetPartListData,
 } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
-const { GetUserByID } = require("../services/Auth");
+const { GetUserByID, GetParticipantByID } = require("../services/Auth");
 
 // List for search bar from chat window
 async function GetUserSearchList(req, res) {
@@ -24,6 +26,13 @@ async function GetUserSearchList(req, res) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
   }
 
+  // return all List of all Users
+  if (search_box_text === "Z2V0QGxsVXNlcnM=") {
+    var list = await GetAllUsersDataBase();
+    return handleResponse(req, res, 200, { list });
+  }
+
+  // return list of Users with No conversation
   var list = await GetSearchUsersList(search_box_text, userId);
 
   var userRoomList = [];
@@ -49,7 +58,6 @@ async function GetUserSearchList(req, res) {
       }
     }
   }
-
   return handleResponse(req, res, 200, { list });
 }
 
@@ -77,7 +85,6 @@ async function GetRoomSearchList(req, res) {
     }
     return room;
   });
-  console.log(list);
   return handleResponse(req, res, 200, { list });
 }
 
@@ -155,8 +162,8 @@ async function CreateNewRoom(req, res) {
 async function DeleteRoom(req, res) {
   const roomID = req.body.roomID;
 
-  console.log("camera care urmeaza sa se stearga este: ");
-  console.log(roomID);
+  // console.log("camera care urmeaza sa se stearga este: ");
+  // console.log(roomID);
 
   if (roomID === null) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
@@ -175,8 +182,8 @@ async function CreateNewRoom_Group(req, res) {
   const userID = req.body.userID;
   const uuidRoom = req.body.uuidRoom;
 
-  console.log("Se va crea noul grup!");
-  console.log(NewGroupName);
+  // console.log("Se va crea noul grup!");
+  // console.log(NewGroupName);
 
   if (
     NewGroupName === "" ||
@@ -198,7 +205,38 @@ async function CreateNewRoom_Group(req, res) {
   return handleResponse(req, res, 200, "New Group Created successful");
 }
 
-// list with all users
+async function AddNewMemberInGroup(req, res) {
+  // de completat serviciu de insert mesaj
+
+  const roomID = req.body.RoomID;
+  const userSearchListID = req.body.userSearchListID;
+
+  if (roomID === "" || userSearchListID === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  var participantDetails = await GetParticipantByID(userSearchListID);
+
+  if (!participantDetails.length) {
+    var result = await AddNewMemberInGroupData(roomID, userSearchListID);
+    return handleResponse(req, res, 200, { result });
+  } else {
+    return handleResponse(req, res, 200, "User is Already a member");
+  }
+}
+
+async function GetPartList(req, res) {
+  const roomID = req.body.roomID;
+
+  if (roomID === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  var participantsRoomList = await GetPartListData(roomID);
+  return handleResponse(req, res, 200, { participantsRoomList });
+}
+
+// list with all userss
 async function GetUsers(req, res) {
   const userList = await GetAllUsersDataBase();
   const list = userList.map((x) => {
@@ -218,4 +256,6 @@ module.exports = {
   CreateNewRoom,
   DeleteRoom,
   CreateNewRoom_Group,
+  AddNewMemberInGroup,
+  GetPartList,
 };

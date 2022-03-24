@@ -19,7 +19,7 @@ const Comunication = (roomID, userID) => {
 
   useEffect(() => {
     socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
-      query: { roomID },
+      query: { roomID }, 
     });
 
     socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
