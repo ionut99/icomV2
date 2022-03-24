@@ -6,6 +6,7 @@ import {
   InsertNewMessageDataBase,
   CreateNewRoomDataBase,
   DeleteRoomDataBase,
+  CreateNewGroupDataBase,
 } from "../services/user";
 
 import {
@@ -29,8 +30,8 @@ export const userSetRoomListAsync =
       return;
     }
 
-    //console.log("Afisare roomList");
-    //console.log(Roomresult.data["list"]);
+    console.log("Afisare roomList");
+    console.log(Roomresult.data["list"]);
     dispatch(setRoomList(Roomresult.data["list"]));
   };
 
@@ -97,7 +98,8 @@ export const InsertNewMessage =
   };
 
 export const CreateNewConversation =
-  (RoomName, Private, userSearchListID, userID, uuidRoom) => async (dispatch) => {
+  (RoomName, Private, userSearchListID, userID, uuidRoom) =>
+  async (dispatch) => {
     const varverify = await CreateNewRoomDataBase(
       RoomName,
       Private,
@@ -105,8 +107,8 @@ export const CreateNewConversation =
       userID,
       uuidRoom
     );
-    
-    dispatch(userSetRoomListAsync(" ", userID));
+
+    dispatch(userSetRoomListAsync("", userID));
     // tratare raspuns de la server
   };
 
@@ -115,6 +117,23 @@ export const DeleteConversation = (RoomID, userID) => async (dispatch) => {
   console.log(RoomID);
   const varverify = await DeleteRoomDataBase(RoomID);
 
-  dispatch(userSetRoomListAsync(" ", userID));
+  dispatch(userSetRoomListAsync("", userID));
   // tratare raspuns de la server
 };
+
+// functie pentru adaugare grup nou
+export const CreateNewGroup =
+  (NewGroupName, Type, userID, uuiRoom) => async (dispatch) => {
+    console.log("Facem un nou grup: ");
+    console.log(NewGroupName, Type, userID, uuiRoom);
+
+    const varverify = await CreateNewGroupDataBase(
+      NewGroupName,
+      Type,
+      userID,
+      uuiRoom
+    );
+
+    dispatch(userSetRoomListAsync("", userID));
+    // tratare raspuns de la server
+  };

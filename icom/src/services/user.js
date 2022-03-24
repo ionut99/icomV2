@@ -116,3 +116,26 @@ export const DeleteRoomDataBase = async (roomID) => {
     };
   }
 };
+
+// create new group in database
+
+export const CreateNewGroupDataBase = async (
+  NewGroupName,
+  Type,
+  userID,
+  uuidRoom
+) => {
+  try {
+    return await axios.post(`${API_URL}/room/newgroup`, {
+      NewGroupName,
+      Type,
+      userID,
+      uuidRoom,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};

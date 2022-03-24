@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import ChatWindow from "./pages/Chat";
 import Files from "./pages/Files";
 import Login from "./pages/Login";
+import TextEditor from "./pages/TextEditor/TextEditor";
 
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
@@ -16,7 +17,7 @@ function App() {
   const authObj = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-  const { authLoading, isAuthenticated } = authObj;
+  const { authLoading, isAuthenticated } = authObj; 
 
   // verify token on app load
   useEffect(() => {
@@ -51,6 +52,11 @@ function App() {
             <PrivateRoute
               path="/files"
               component={Files}
+              isAuthenticated={isAuthenticated}
+            />
+            <PrivateRoute
+              path="/newdocument/:roomID"
+              component={TextEditor}
               isAuthenticated={isAuthenticated}
             />
             <Redirect to={isAuthenticated ? "/dashboard" : "/login"} />

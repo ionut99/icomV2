@@ -26,7 +26,7 @@ const auth = (state = initialState, action) => {
       } : initialState;
     // verify token - ended/failed
     case VERIFY_TOKEN_END:
-      return {
+      return { 
         ...state,
         authLoading: false
       };
