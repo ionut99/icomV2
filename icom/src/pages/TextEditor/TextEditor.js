@@ -99,6 +99,7 @@ function TextEditor() {
   // set timer to renew token
   useEffect(() => {
     setAuthToken(token);
+    console.log("Am reinnoit token ul ");
     const verifyTokenTimer = setTimeout(() => {
       dispatch(verifyTokenAsync(true));
     }, moment(expiredAt).diff() - 10 * 1000);

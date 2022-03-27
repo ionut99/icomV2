@@ -66,23 +66,15 @@ function Dashboard() {
       <Navbar />
       <div className="home-page">
         <div className="teams-content">
-          <div class="videos">
+          <div className="videos">
             {teamlist.map((teamlist, index) => {
               return (
-                <div class="video">
-                  <div class="thumbnail"></div>
+                <div className="video" key={index}>
+                  <p>{teamlist}</p>
+                  <div className="thumbnail"></div>
 
-                  <div class="details">
-                    <div class="author">
-                      <img src={UserAvatar} alt="" />
-                    </div>
-                    <div class="author">
-                      <img src={UserAvatar} alt="" />
-                    </div>
-                    <div class="author">
-                      <img src={UserAvatar} alt="" />
-                    </div>
-                    <div class="author">
+                  <div className="details">
+                    <div className="author">
                       <img src={UserAvatar} alt="" />
                     </div>
                   </div>

@@ -2,6 +2,16 @@ TO DO:
 13241dfd-e294-440b-a56f-ec55aa996409
 
 
+{filesList.map((filesList, index) => {
+            return (
+
+
+
+
+
+
+
+
 NOTE: 
 !! Fisiere vor fi incarcate din baza de date, de vazut unde le vom stoca
 -> de definitizat si urmarit procesut GetDocumentFile

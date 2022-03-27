@@ -133,7 +133,7 @@ function VerifyToken(req, res) {
       // refresh token list to manage the xsrf token
       refreshTokens[refreshToken] = tokenObj.xsrfToken;
       res.cookie("XSRF-TOKEN", tokenObj.xsrfToken);
-
+      console.log("token verificat pentru ", userData.email);
       // return the token along with user details
       return handleResponse(req, res, 200, {
         user: userObj,

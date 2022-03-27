@@ -1,4 +1,3 @@
-// const AuthRouter = require("./api/routes/Auth");
 const room = require("./api/routes/room");
 const user = require("./api/routes/user");
 const document = require("./api/routes/file");
@@ -13,8 +12,8 @@ require("dotenv").config();
 
 const app = express();
 
-const SERVER_PORT = process.env.PORT || 5000;
-const SOCKET_PORT = 4000;
+const SERVER_PORT = process.env.SERVER_PORT;
+const SOCKET_PORT = process.env.SOCKET_PORT;
 
 // To Verify cors-origin !!!
 const server_socket_chat = http.createServer(app);
@@ -28,7 +27,7 @@ const io = require("socket.io")(server_socket_chat, {
 // enable CORS
 app.use(
   cors({
-    origin: "http://localhost:3000", // url of the frontend application
+    origin: process.env.CLIENT_URL, // url of the frontend application
     credentials: true, // set credentials true for secure httpOnly cookie
   })
 );
