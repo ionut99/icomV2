@@ -9,12 +9,14 @@ import {
   CreateNewGroupDataBase,
   AddNewMemberInRoomDataBase,
   getParticipantsListService,
+  GetDocumentFileData,
 } from "../services/user";
 
 import {
   setRoomList,
   setPersonSearchList,
   updateCurrentChannel,
+  GetFileDocument,
 } from "./../actions/userActions";
 
 // handle RoomList Search
@@ -32,15 +34,12 @@ export const userSetRoomListAsync =
       return;
     }
 
-    // console.log("Afisare roomList");
-    // console.log(Roomresult.data["list"]);
     dispatch(setRoomList(Roomresult.data["list"]));
   };
 
 // handle Person Search
 export const userSearchPersonListAsync =
   (search_box_content, userId) => async (dispatch) => {
-    console.log("cautam persoanele!");
     const Personresult = await getSearchPersonService(
       search_box_content,
       userId
@@ -55,7 +54,6 @@ export const userSearchPersonListAsync =
         dispatch(userLogout());
       return;
     }
-    console.log(Personresult.data["list"]);
     if (search_box_content !== "") {
       dispatch(setPersonSearchList(Personresult.data["list"]));
     } else {
@@ -163,7 +161,14 @@ export const getParticipantList = (RoomID) => async (dispatch) => {
   //     dispatch(userLogout());
   //   return;
   // }
-  console.log("Tovarasii grupului sunt: ");
-  console.log(result.data);
-  return result.data;
+  dispatch(setPersonSearchList(result.data["participantsRoomList"]));
+};
+
+// handle insert new message in database
+export const GetDocumentFile = (FileName, FilePath) => async (dispatch) => {
+  const documentData = await GetDocumentFileData(FileName, FilePath);
+  // aici avem nevoie de verificari...
+  const string = documentData.data;
+  //dispatch(GetFileDocument(string));
+  return string;
 };

@@ -1,11 +1,14 @@
-const AuthRouter = require("./api/routes/Auth");
-const UserRouter = require("./api/routes/User");
+// const AuthRouter = require("./api/routes/Auth");
+const room = require("./api/routes/room");
+const user = require("./api/routes/user");
+const document = require("./api/routes/file");
 
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const express = require("express");
 const cors = require("cors");
 var http = require("http");
+const { use } = require("express/lib/application");
 require("dotenv").config();
 
 const app = express();
@@ -39,47 +42,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // use cookie parser for secure httpOnly cookie
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
-// validate user credentials
-app.post("/users/signin", AuthRouter);
+app.use("/users", user);
 
-// handle user logout
-app.post("/users/logout", AuthRouter);
+app.use("/room", room);
 
-// verify the token and return new tokens if it's valid
-app.post("/verifyToken", AuthRouter);
-
-// search - section input
-app.post("/users/search", UserRouter);
-
-// room - search - section input
-app.post("/room/search", UserRouter);
-
-// room - return existend messages
-app.post("/room/messages", UserRouter);
-
-// room - insert new message
-app.post("/room/newmessage", UserRouter);
-
-// room - create new room
-app.post("/room/newroom", UserRouter);
-
-// room - delete room
-app.post("/room/deleteroom", UserRouter);
-
-// return all user List
-app.get("/users/getList", UserRouter);
-
-// create new room (group) of people
-app.post("/room/newgroup", UserRouter);
-
-// create new room (group) of people
-app.post("/room/newmember", UserRouter);
-
-app.post("/room/participants", UserRouter);
+app.use("/document", document);
 
 // Start server for chat
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
-const NEW_EVENT_DOCUMENT = "newEventDocument";
+const NEW_CHANGE_DOCUMENT_EVENT = "newEventDocument";
 
 io.on("connection", (socket) => {
   // Join a conversation
@@ -97,8 +68,8 @@ io.on("connection", (socket) => {
   });
 
   // Listen for new document changes
-  socket.on(NEW_EVENT_DOCUMENT, (data) => {
-    io.in(roomID).emit(NEW_EVENT_DOCUMENT, data);
+  socket.on(NEW_CHANGE_DOCUMENT_EVENT, (data) => {
+    io.in(roomID).emit(NEW_CHANGE_DOCUMENT_EVENT, data);
     console.log("New document changes was sent:  ");
     console.log(data);
     console.log("On channel: " + roomID);

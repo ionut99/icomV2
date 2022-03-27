@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   setPersonSearchList,
@@ -23,6 +23,9 @@ import { v4 as uuidv4 } from "uuid";
 const SearchService = (userID) => {
   const dispatch = useDispatch();
 
+  const chatObj = useSelector((state) => state.chatRedu);
+  const { RoomSearchList } = chatObj;
+
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     title: "",
@@ -30,9 +33,6 @@ const SearchService = (userID) => {
   });
 
   const onAddUser = async (RoomID) => {
-    console.log(
-      "Am nevoie de toate persoanele pentru a le adauga in grup" + userID
-    );
     dispatch(UpdateAddUserInGroup(RoomID));
     dispatch(userSearchPersonListAsync("Z2V0QGxsVXNlcnM=", userID));
   };
@@ -45,7 +45,20 @@ const SearchService = (userID) => {
     dispatch(setPersonSearchList([]));
   };
 
+  // when click on person tab
   const ClickPerson = (userSearchListName, userSearchListID, userName) => {
+    // console.log("conversatie:");
+    // console.log(RoomSearchList);
+    for (let i = 0; i < RoomSearchList.length; i++) {
+      if (RoomSearchList[i]["RoomName"].includes(userSearchListName)) {
+        dispatch(
+          updateChannelDetails(RoomSearchList[i]["RoomID"], userSearchListName)
+        );
+        dispatch(setUserSearchBoxContent(""));
+        dispatch(setPersonSearchList([]));
+        return;
+      }
+    }
     var uuidRoom = uuidv4(); // pentru coduri unice
     dispatch(
       CreateNewConversation(
@@ -68,8 +81,8 @@ const SearchService = (userID) => {
   };
 
   const ShowParticipants = (RoomID) => {
-    // de intors lista cu participanti
     dispatch(getParticipantList(RoomID));
+    dispatch(UpdateAddUserInGroup(RoomID));
   };
 
   // delete room function -- start
@@ -84,6 +97,13 @@ const SearchService = (userID) => {
   };
   // delete room function --end
 
+  const CloseChannelOptions = () => {
+    dispatch(UpdateAddUserInGroup(""));
+    dispatch(setPersonSearchList([]));
+    dispatch(setUserSearchBoxContent(""));
+    dispatch(userSetRoomListAsync("", userID));
+  };
+
   return {
     ClickChannel,
     onAddUser,
@@ -92,6 +112,7 @@ const SearchService = (userID) => {
     ClickPerson,
     ClickAddPersonInGroup,
     ShowParticipants,
+    CloseChannelOptions,
     confirmDialog,
   };
 };

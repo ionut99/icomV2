@@ -1,10 +1,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
-// import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import groupAvatar from "../../images/group.png";
 import "./search.css";
 
 import SearchService from "./searchService.js";
+import * as AiIcons from "react-icons/ai";
 
 function PersonList() {
   const chatObj = useSelector((state) => state.chatRedu);
@@ -13,14 +13,20 @@ function PersonList() {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  const { ClickPerson, ClickAddPersonInGroup } = SearchService(user.userId);
+  const { ClickPerson, ClickAddPersonInGroup, CloseChannelOptions } =
+    SearchService(user.userId);
 
   const handleClickPerson = (UserName, PersonID, thisName) => {
-    if (addUserInGroup === "") {
-      ClickPerson(UserName, PersonID, thisName);
-    } else {
+    // if (addUserInGroup === "") {
+    //   console.log(UserName + " " + PersonID);
+    ClickPerson(UserName, PersonID, thisName);
+    if (addUserInGroup !== "") {
       ClickAddPersonInGroup(addUserInGroup, PersonID);
     }
+  };
+
+  const handleCloseChannelOptions = () => {
+    CloseChannelOptions();
   };
   return (
     <>
@@ -28,7 +34,13 @@ function PersonList() {
         className="RoomDelimiter"
         style={{ display: userSearchList.length ? "flex" : "none" }}
       >
-        <p>Persons</p>
+        <div className="close-person-list">
+          <AiIcons.AiOutlineCloseCircle
+            className="symbol"
+            onClick={handleCloseChannelOptions}
+          />
+        </div>
+        <p>{addUserInGroup === "" ? "Persons" : "Participants"}</p>
       </div>
       {userSearchList.map((userSearchList, index) => {
         return (

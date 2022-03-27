@@ -1,19 +1,35 @@
 TO DO:
 13241dfd-e294-440b-a56f-ec55aa996409
 
+
+NOTE: 
+!! Fisiere vor fi incarcate din baza de date, de vazut unde le vom stoca
+-> de definitizat si urmarit procesut GetDocumentFile
+
+!!! DE CREAT PROCEDURI STOCATE
+
+-> pe viitor doar administratorii vor putea crea grupuri
 -> vezi getUserList din getParticipantList pentru tratare erori
--> verificat introdus duplicate in tabelul de participants
--> de modificat "addUserInGroup" intr-o variabila care sa specifice numele ID ului grupului unde urmeaza sa fie adaugat
--> inainte de a incepe o conversatie noua cu o persoana trebuie verificat daca exista deja una...
--> adaugare participanti intr-un grup 
+
+
+
+
 -> am ramas la minutul 30:26 pentru google docs clone (Dev Simplified)
--> de vazut de ce se sterg valorile din react redux pentru chat, iar pentru user nu 
--> de pus useEffect de trimitere token pentru toate ferestrele
+-> de vazut de ce se sterg valorile din react redux pentru chat, iar pentru user nu !!!!!!!! PROBLEM!!
+
 -> creare functionalitate de editare documente in timp real LOADING...
 -> de adaugat timp la mesaj + sortare dupa timp 
 -> de tratat raspunsul de la server pentru inserare in baza de date
 
 
+-> inainte de a incepe o conversatie noua cu o persoana trebuie verificat daca exista deja una...X
+-> de pus useEffect de trimitere token pentru toate ferestrele (finalizat pentru Dashboard, Chat, TextEditor) X
+-> creare fisier de rute separate X
+-> verificat introdus duplicate in tabelul de participants X
+26.04.2022: 
+-> corectare functie GetParticipantByID de pe server (verifica daca exista participantul in tabela, dar trebuie adaugata si conditia pentru camera) X
+-> adaugare participanti intr-un grup X
+-> de terminat functionalitate de afisare participanti pentru grupuri X
 -> implementare creare grup nou X
 -> corectare culori Link din SideBar X
 -> de verificar reload pagina de conversatii X

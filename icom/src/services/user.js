@@ -103,13 +103,11 @@ export const CreateNewRoomDataBase = async (
 };
 
 // insert new member in a group in database
-export const AddNewMemberInRoomDataBase = async (
-  RoomID, userSearchListID
-) => {
-  console.log("Bagam +" + userSearchListID + " " + RoomID);
+export const AddNewMemberInRoomDataBase = async (RoomID, userSearchListID) => {
   try {
     return await axios.post(`${API_URL}/room/newmember`, {
-      RoomID, userSearchListID
+      RoomID,
+      userSearchListID,
     });
   } catch (err) {
     return {
@@ -123,7 +121,7 @@ export const AddNewMemberInRoomDataBase = async (
 export const getParticipantsListService = async (roomID) => {
   try {
     return await axios.post(`${API_URL}/room/participants`, {
-      roomID
+      roomID,
     });
   } catch (err) {
     return {
@@ -162,6 +160,21 @@ export const CreateNewGroupDataBase = async (
       Type,
       userID,
       uuidRoom,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+// get document data
+export const GetDocumentFileData = async (FileName, FilePath) => {
+  try {
+    return await axios.post(`${API_URL}/document/getdocument`, {
+      FileName,
+      FilePath,
     });
   } catch (err) {
     return {

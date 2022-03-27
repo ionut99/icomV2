@@ -37,13 +37,16 @@ const ConversationList = () => {
   };
 
   const handleShowParticipants = (RoomID) => {
-    var plist = ShowParticipants(RoomID);
-    console.log("lista cu tovarasi este: ");
-    console.log(plist);
+    ShowParticipants(RoomID);
   };
 
   return (
-    <div style={{ display: addUserInGroup === "" ? "block" : "none" }}>
+    <div
+      style={{
+        display:
+          addUserInGroup === "" && RoomSearchList.length ? "block" : "none",
+      }}
+    >
       <div className="RoomDelimiter">
         <p>Conversations</p>
       </div>

@@ -117,7 +117,7 @@
   width: 100%;
   display: inline-flex;
   background-color: var(--white-color);
-  border: 2px var(--border-color-less-intense) solid;
+  /* border: 2px var(--border-color-less-intense) solid; */
   padding-right: 15px;
 }
 

@@ -51,21 +51,6 @@ function Navbar() {
               alt="userAvatar jmecher"
               onClick={showdropdownMenu}
             />
-            <nav
-              className={dropdownMenu ? "profile-menu active" : "profile-menu"}
-            >
-              <ul className="drop-menu-items">
-                <div className="user-details">Sign in as {user.name}</div>
-
-                <div className="dropdown-options">Profile</div>
-
-                <div className="dropdown-options">
-                  <div>
-                    <input type="button" onClick={LogOut} value="Logout" />
-                  </div>
-                </div>
-              </ul>
-            </nav>
           </div>
         </div>
         <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
@@ -87,6 +72,19 @@ function Navbar() {
                 </li>
               );
             })}
+          </ul>
+        </nav>
+        <nav className={dropdownMenu ? "profile-menu active" : "profile-menu"}>
+          <ul className="drop-menu-items">
+            <div className="user-details">Sign in as {user.name}</div>
+
+            <div className="dropdown-options">Profile</div>
+
+            <div className="dropdown-options">
+              <div>
+                <input type="button" onClick={LogOut} value="Logout" />
+              </div>
+            </div>
           </ul>
         </nav>
       </IconContext.Provider>

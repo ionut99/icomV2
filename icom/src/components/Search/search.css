@@ -17,6 +17,23 @@
   z-index: 1;
 }
 
+.close-person-list {
+  width: 30px;
+  height: 30px;
+  left: 10px;
+  position: absolute;
+}
+
+.close-person-list .symbol {
+  font-size: 28px;
+}
+
+.close-person-list:hover {
+  cursor: pointer;
+  background-color: var(--color-element-hover);
+  border-radius: 5px;
+}
+
 .conversation {
   width: 99%;
   height: 60px;
@@ -146,7 +163,6 @@
 
 .dropdown-content .dropdown-instrument:hover {
   background-color: #ddd;
-  cursor: pointer;
 }
 
 .dropdown:hover .dropdown-content {

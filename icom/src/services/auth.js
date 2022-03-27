@@ -15,7 +15,7 @@ export const setAuthToken = (token) => {
 // verify refresh token to generate new access token if refresh token is present
 export const verifyTokenService = async () => {
   try {
-    return await axios.post(`${API_URL}/verifyToken`);
+    return await axios.post(`${API_URL}/users/verifyToken`);
   } catch (err) {
     return {
       error: true,

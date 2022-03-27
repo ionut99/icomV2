@@ -2,7 +2,7 @@ import { BrowserRouter, Switch, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
 
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import ChatWindow from "./pages/Chat";
 import Files from "./pages/Files";
 import Login from "./pages/Login";

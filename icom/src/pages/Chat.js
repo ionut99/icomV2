@@ -51,8 +51,6 @@ function Chat() {
 
   const CreateNewRoom = async () => {
     //e.preventDefault(); // help to prevent reload component
-    // console.log("se va crea conversatia cu numele: ");
-    // console.log(groupName);
     if (groupName === "") {
       console.log("Nu s-a introdus niciun nume pentru noul grup!");
     }
@@ -82,7 +80,7 @@ function Chat() {
   // get user list on page load
   useEffect(() => {
     getSearchUserList();
-  }, []);
+  }, [search_box_content]);
 
   const SearchPerson = (event) => {
     setSearchBoxContent(event.target.value, dispatch);

@@ -7,6 +7,7 @@ import {
   USER_ADD_NEW_MESSAGE,
   UPDATE_FILE_DELTA,
   UPDATE_ADD_USER_IN_GROUP,
+  UPDATE_DOCUMENT_DATA
 } from "./actionTypes";
 
 export const updateCurrentChannel = (
@@ -65,6 +66,7 @@ export const InsertNewMessageLocal = (ID_message, RoomID, senderID, Body) => {
   };
 };
 
+// file DELTA document update
 export const UpdateDeltaFile = (delta, senderID) => {
   return {
     type: UPDATE_FILE_DELTA,
@@ -76,5 +78,13 @@ export const UpdateAddUserInGroup = (addUserInGroup) => {
   return {
     type: UPDATE_ADD_USER_IN_GROUP,
     payload: { addUserInGroup },
+  };
+};
+
+// file DATA document update -- LOADING...
+export const GetFileDocument = (documentData) => {
+  return {
+    type: UPDATE_DOCUMENT_DATA,
+    payload: { documentData },
   };
 };

@@ -15,9 +15,9 @@ const ChannelState = {
   RoomMessages: [],
 
   search_box_content: "",
+  addUserInGroup: "",
   userSearchList: [],
   RoomSearchList: [],
-  addUserInGroup: "",
 };
 
 const chatRedu = (state = ChannelState, action) => {

@@ -36,11 +36,11 @@ function GetUserByID(userId) {
   });
 }
 
-function GetParticipantByID(participantId) {
+function GetParticipantByID(participantId, roomID) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM participants WHERE UserID = '${participantId}'`,
+      `SELECT * FROM participants WHERE UserID = '${participantId}' AND RoomID ='${roomID}'`,
       (err, result) => {
         if (err) {
           return reject(err);
@@ -51,6 +51,7 @@ function GetParticipantByID(participantId) {
     connection.end();
   });
 }
+
 module.exports = {
   GetUserFromDataBase,
   GetUserByID,
