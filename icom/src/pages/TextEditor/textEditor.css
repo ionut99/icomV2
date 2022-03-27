@@ -5,19 +5,15 @@
 }
 
 .edit-box {
-  /* border: red 5px solid; */
   height: 100%;
   bottom: 0;
 }
 .container {
   height: 100%;
-  /* border: green 5px solid; */
   bottom: 0;
 }
 .container .ql-editor {
   margin-top: 100px;
-  /* width: 8.3in;
-  height: 8in; */
   width: 21cm;
   height: 25.5cm;
   padding: 0.5in;
@@ -37,7 +33,7 @@
   justify-content: center;
   position: sticky;
   top: 60px;
-  /* z-index: 1; */
+  z-index: 1;
   background-color: white;
 }
 

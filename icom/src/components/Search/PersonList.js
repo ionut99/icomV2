@@ -1,59 +1,46 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-// import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { useSelector } from "react-redux";
 import groupAvatar from "../../images/group.png";
 import "./search.css";
 
-import {
-  CreateNewConversation,
-  updateChannelDetails,
-} from "../../asyncActions/userAsyncActions";
-
-import {
-  setUserSearchBoxContent,
-  setPersonSearchList,
-} from "../../actions/userActions";
-
-import { v4 as uuidv4 } from "uuid";
-
-function ClickHandler(
-  userSearchListName,
-  userSearchListID,
-  userName,
-  userID,
-  dispatch
-) {
-  var uuidRoom = uuidv4(); // pentru coduri unice
-  dispatch(
-    CreateNewConversation(
-      userSearchListName + " # " + userName,
-      1,
-      userSearchListID,
-      userID,
-      uuidRoom
-    )
-  );
-  dispatch(updateChannelDetails(uuidRoom, userSearchListName));
-  dispatch(setUserSearchBoxContent(""));
-  dispatch(setPersonSearchList([]));
-}
+import SearchService from "./searchService.js";
+import * as AiIcons from "react-icons/ai";
 
 function PersonList() {
-  const dispatch = useDispatch();
-
   const chatObj = useSelector((state) => state.chatRedu);
-  const { userSearchList } = chatObj;
+  const { userSearchList, addUserInGroup } = chatObj;
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
+  const { ClickPerson, ClickAddPersonInGroup, CloseChannelOptions } =
+    SearchService(user.userId);
+
+  const handleClickPerson = (UserName, PersonID, thisName) => {
+    // if (addUserInGroup === "") {
+    //   console.log(UserName + " " + PersonID);
+    ClickPerson(UserName, PersonID, thisName);
+    if (addUserInGroup !== "") {
+      ClickAddPersonInGroup(addUserInGroup, PersonID);
+    }
+  };
+
+  const handleCloseChannelOptions = () => {
+    CloseChannelOptions();
+  };
   return (
     <>
       <div
         className="RoomDelimiter"
         style={{ display: userSearchList.length ? "flex" : "none" }}
       >
-        <p>Persons</p>
+        <div className="close-person-list">
+          <AiIcons.AiOutlineCloseCircle
+            className="symbol"
+            onClick={handleCloseChannelOptions}
+          />
+        </div>
+        <p>{addUserInGroup === "" ? "Persons" : "Participants"}</p>
       </div>
       {userSearchList.map((userSearchList, index) => {
         return (
@@ -61,12 +48,10 @@ function PersonList() {
             className="conversation"
             key={index}
             onClick={() =>
-              ClickHandler(
+              handleClickPerson(
                 userSearchList.UserName,
                 userSearchList.userId,
-                user.surname + " " + user.name,
-                user.userId,
-                dispatch
+                user.surname + " " + user.name
               )
             }
           >

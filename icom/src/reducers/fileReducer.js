@@ -1,8 +1,12 @@
-import { UPDATE_FILE_DELTA } from "../actions/actionTypes";
+import {
+  UPDATE_FILE_DELTA,
+  UPDATE_DOCUMENT_DATA,
+} from "../actions/actionTypes";
 
 const FileState = {
   delta: [],
   senderID: null,
+  documentData: "un document default din file reducer :)",
 };
 
 const fileRedu = (state = FileState, action) => {
@@ -16,6 +20,13 @@ const fileRedu = (state = FileState, action) => {
         senderID,
       };
 
+    // update document data -- LOADING..
+    case UPDATE_DOCUMENT_DATA:
+      const { documentData } = action.payload;
+      return {
+        ...state,
+        documentData,
+      };
     default:
       return state;
   }

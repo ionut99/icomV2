@@ -36,7 +36,7 @@ async function SignInUser(req, res) {
     userData.password = userData_copy[0].Password;
     userData.isAdmin = userData_copy[0].IsAdmin;
 
-    console.log(userData);
+    //console.log(userData);
 
     // return 401 status if the credential is not matched
     if (!userData) {
@@ -48,9 +48,11 @@ async function SignInUser(req, res) {
 
     // generate access token
     const tokenObj = generateToken(userData);
+    console.log("tokenObj ul este : " + tokenObj);
 
     // generate refresh token
     const refreshToken = generateRefreshToken(userObj.userId);
+    console.log("refreshToken ul este : " + refreshToken);
 
     // refresh token list to manage the xsrf token
     refreshTokens[refreshToken] = tokenObj.xsrfToken;
@@ -58,6 +60,8 @@ async function SignInUser(req, res) {
     // set cookies
     res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
     res.cookie("XSRF-TOKEN", tokenObj.xsrfToken);
+
+    console.log("User log in: " + userData.surname + " " + userData.name);
 
     return handleResponse(req, res, 200, {
       user: userObj,
@@ -116,7 +120,6 @@ function VerifyToken(req, res) {
       userData.password = userData_copy[0].Password;
       userData.isAdmin = userData_copy[0].IsAdmin;
 
-      console.log(userData);
       if (!userData) {
         return handleResponse(req, res, 401);
       }
@@ -130,7 +133,7 @@ function VerifyToken(req, res) {
       // refresh token list to manage the xsrf token
       refreshTokens[refreshToken] = tokenObj.xsrfToken;
       res.cookie("XSRF-TOKEN", tokenObj.xsrfToken);
-
+      console.log("token verificat pentru ", userData.email);
       // return the token along with user details
       return handleResponse(req, res, 200, {
         user: userObj,

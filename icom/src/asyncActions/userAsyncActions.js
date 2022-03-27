@@ -7,12 +7,16 @@ import {
   CreateNewRoomDataBase,
   DeleteRoomDataBase,
   CreateNewGroupDataBase,
+  AddNewMemberInRoomDataBase,
+  getParticipantsListService,
+  GetDocumentFileData,
 } from "../services/user";
 
 import {
   setRoomList,
   setPersonSearchList,
   updateCurrentChannel,
+  GetFileDocument,
 } from "./../actions/userActions";
 
 // handle RoomList Search
@@ -30,8 +34,6 @@ export const userSetRoomListAsync =
       return;
     }
 
-    console.log("Afisare roomList");
-    console.log(Roomresult.data["list"]);
     dispatch(setRoomList(Roomresult.data["list"]));
   };
 
@@ -109,6 +111,7 @@ export const CreateNewConversation =
     );
 
     dispatch(userSetRoomListAsync("", userID));
+    //TO DO:
     // tratare raspuns de la server
   };
 
@@ -118,6 +121,7 @@ export const DeleteConversation = (RoomID, userID) => async (dispatch) => {
   const varverify = await DeleteRoomDataBase(RoomID);
 
   dispatch(userSetRoomListAsync("", userID));
+  //TO DO:
   // tratare raspuns de la server
 };
 
@@ -135,5 +139,36 @@ export const CreateNewGroup =
     );
 
     dispatch(userSetRoomListAsync("", userID));
+    //TO DO:
     // tratare raspuns de la server
   };
+
+// handle add new member in a group
+export const AddNewMemberInGroup =
+  (RoomID, userSearchListID) => async (dispatch) => {
+    const varVerify = await AddNewMemberInRoomDataBase(
+      RoomID,
+      userSearchListID
+    );
+  };
+
+// get participants from room list
+export const getParticipantList = (RoomID) => async (dispatch) => {
+  const result = await getParticipantsListService(RoomID);
+  // if (result.error) {
+  //   dispatch(verifyTokenEnd());
+  //   if (result.response && [401, 403].includes(result.response.status))
+  //     dispatch(userLogout());
+  //   return;
+  // }
+  dispatch(setPersonSearchList(result.data["participantsRoomList"]));
+};
+
+// handle insert new message in database
+export const GetDocumentFile = (FileName, FilePath) => async (dispatch) => {
+  const documentData = await GetDocumentFileData(FileName, FilePath);
+  // aici avem nevoie de verificari...
+  const string = documentData.data;
+  //dispatch(GetFileDocument(string));
+  return string;
+};

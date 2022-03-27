@@ -8,17 +8,16 @@ import { InsertNewMessageLocal, UpdateDeltaFile } from "../actions/userActions";
 import { v4 as uuidv4 } from "uuid";
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
-const NEW_EVENT_DOCUMENT = "newEventDocument";
+const NEW_CHANGE_DOCUMENT_EVENT = "newEventDocument";
 
-const SOCKET_SERVER_URL = "http://localhost:4000";
-
+const { REACT_APP_WEBSOCKET_URL } = process.env;
 const Comunication = (roomID, userID) => {
   const dispatch = useDispatch();
-  var uuidMessage = uuidv4(); // pentru coduri unice
+  var uuidMessage = uuidv4();
   const socketRef = useRef();
 
   useEffect(() => {
-    socketRef.current = socketIOClient(SOCKET_SERVER_URL, {
+    socketRef.current = socketIOClient(REACT_APP_WEBSOCKET_URL, {
       query: { roomID },
     });
 
@@ -38,8 +37,8 @@ const Comunication = (roomID, userID) => {
         );
       }
     });
-
-    socketRef.current.on(NEW_EVENT_DOCUMENT, (newDocChange) => {
+    // receive document changes
+    socketRef.current.on(NEW_CHANGE_DOCUMENT_EVENT, (newDocChange) => {
       if (newDocChange.roomID != null) {
         console.log("ce am primit");
         console.log(newDocChange);
@@ -77,7 +76,7 @@ const Comunication = (roomID, userID) => {
       roomID: roomID,
       change_ID: uuidv4(),
     };
-    socketRef.current.emit(NEW_EVENT_DOCUMENT, dataToSend);
+    socketRef.current.emit(NEW_CHANGE_DOCUMENT_EVENT, dataToSend);
   };
   return { sendMessage, sendDocumentChanges };
 };

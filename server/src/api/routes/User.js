@@ -2,26 +2,15 @@ const express = require("express");
 
 const router = express.Router();
 const { authMiddleware } = require("../middlewares/Auth");
-const {
-  GetUserSearchList,
-  GetUsers,
-  GetRoomSearchList,
-  GetRoomMessages,
-  InsertNewMessage,
-  CreateNewRoom,
-  DeleteRoom,
-  CreateNewRoom_Group,
-} = require("../controllers/User");
+const { GetUserSearchList, GetUsers } = require("../controllers/User");
+const { SignInUser, LogOutUser, VerifyToken } = require("../controllers/Auth");
 
-router.post("/users/search", authMiddleware, GetUserSearchList);
-router.post("/room/search", authMiddleware, GetRoomSearchList);
-router.post("/room/messages", authMiddleware, GetRoomMessages);
-router.post("/room/newmessage", authMiddleware, InsertNewMessage);
-router.post("/room/newroom", authMiddleware, CreateNewRoom);
+router.post("/signin", SignInUser);
+router.post("/logout", LogOutUser);
+router.post("/verifyToken", VerifyToken);
 
-router.post("/room/deleteroom", authMiddleware, DeleteRoom);
-router.post("/room/newgroup", authMiddleware, CreateNewRoom_Group);
 
-router.get("/users/getList", authMiddleware, GetUsers);
+router.post("/search", authMiddleware, GetUserSearchList);
+router.get("/getList", authMiddleware, GetUsers);
 
 module.exports = router;

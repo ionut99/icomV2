@@ -10,18 +10,25 @@ const {
   DeleteAllMessageFromRoom,
   DeleteAllParticipantsFromRoom,
   DeleteRoomData,
+  AddNewMemberInGroupData,
+  GetPartListData,
 } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
-const { GetUserByID } = require("../services/Auth");
+const { GetUserByID, GetParticipantByID } = require("../services/Auth");
 
-// List for search bar from chat window
+// return list with all users
 async function GetUserSearchList(req, res) {
   const search_box_text = req.body.search_box_text;
   const userId = req.body.userId;
 
   if (userId === null) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  if (search_box_text === "Z2V0QGxsVXNlcnM=") {
+    var list = await GetAllUsersDataBase();
+    return handleResponse(req, res, 200, { list });
   }
 
   var list = await GetSearchUsersList(search_box_text, userId);
@@ -49,11 +56,10 @@ async function GetUserSearchList(req, res) {
       }
     }
   }
-
   return handleResponse(req, res, 200, { list });
 }
 
-// List for search bar from chat window
+// return list with room search
 async function GetRoomSearchList(req, res) {
   const search_box_text = req.body.search_box_text;
   const userId = req.body.userId;
@@ -77,10 +83,10 @@ async function GetRoomSearchList(req, res) {
     }
     return room;
   });
-  console.log(list);
   return handleResponse(req, res, 200, { list });
 }
 
+// return messages from a room
 async function GetRoomMessages(req, res) {
   const roomID = req.body.ChannelID;
 
@@ -92,8 +98,8 @@ async function GetRoomMessages(req, res) {
   return handleResponse(req, res, 200, { messageRoomList });
 }
 
+// insert new message in a room
 async function InsertNewMessage(req, res) {
-  // de completat serviciu de insert mesaj
   const senderID = req.body.senderID;
   const roomID = req.body.roomID;
   const messageBody = req.body.messageBody;
@@ -119,8 +125,8 @@ async function InsertNewMessage(req, res) {
   return handleResponse(req, res, 200, { result });
 }
 
+// creata a new grup
 async function CreateNewRoom(req, res) {
-  // de completat serviciu de insert mesaj
   const RoomName = req.body.RoomName;
   const Private = req.body.Private;
   const userSearchListID = req.body.userSearchListID;
@@ -136,27 +142,20 @@ async function CreateNewRoom(req, res) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
   }
 
-  // adaugare camera noua in tabela
   var roomResult = await InsertNewRoomData(RoomName, Private, uuidRoom);
 
-  // adaugare participant la camera creata mai sus
-  if (userSearchListID !== null) {
+  if (userSearchListID !== null && userID !== null) {
     await InsertParticipantData(uuidRoom, userSearchListID);
-  }
-
-  if (userID !== null) {
     await InsertParticipantData(uuidRoom, userID);
   }
 
   // TO DO : de trimis rezultat pozitiv
-  return handleResponse(req, res, 200, { "positive-result": "ok" });
+  return handleResponse(req, res, 200, { "Create New Private Conversation - SUCCES": "ok" });
 }
 
+// delete room
 async function DeleteRoom(req, res) {
   const roomID = req.body.roomID;
-
-  console.log("camera care urmeaza sa se stearga este: ");
-  console.log(roomID);
 
   if (roomID === null) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
@@ -169,14 +168,12 @@ async function DeleteRoom(req, res) {
   return handleResponse(req, res, 200, { res_deleteroom });
 }
 
+// Create a new room (group)
 async function CreateNewRoom_Group(req, res) {
   const NewGroupName = req.body.NewGroupName;
   const Type = req.body.Type;
   const userID = req.body.userID;
   const uuidRoom = req.body.uuidRoom;
-
-  console.log("Se va crea noul grup!");
-  console.log(NewGroupName);
 
   if (
     NewGroupName === "" ||
@@ -198,7 +195,38 @@ async function CreateNewRoom_Group(req, res) {
   return handleResponse(req, res, 200, "New Group Created successful");
 }
 
-// list with all users
+// add a new member in a room (group)
+async function AddNewMemberInGroup(req, res) {
+  const roomID = req.body.RoomID;
+  const userSearchListID = req.body.userSearchListID;
+
+  if (roomID === "" || userSearchListID === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  var participantDetails = await GetParticipantByID(userSearchListID, roomID);
+
+  if (!participantDetails.length) {
+    var result = await AddNewMemberInGroupData(roomID, userSearchListID);
+    return handleResponse(req, res, 200, { result });
+  } else {
+    return handleResponse(req, res, 200, "User is Already a member");
+  }
+}
+
+// return participants from a room (group)
+async function GetPartList(req, res) {
+  const roomID = req.body.roomID;
+
+  if (roomID === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  var participantsRoomList = await GetPartListData(roomID);
+  return handleResponse(req, res, 200, { participantsRoomList });
+}
+
+// list with all userss
 async function GetUsers(req, res) {
   const userList = await GetAllUsersDataBase();
   const list = userList.map((x) => {
@@ -218,4 +246,6 @@ module.exports = {
   CreateNewRoom,
   DeleteRoom,
   CreateNewRoom_Group,
+  AddNewMemberInGroup,
+  GetPartList,
 };

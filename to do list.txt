@@ -1,0 +1,81 @@
+TO DO:
+13241dfd-e294-440b-a56f-ec55aa996409
+
+
+{filesList.map((filesList, index) => {
+            return (
+
+
+
+
+
+
+
+
+NOTE: 
+!! Fisiere vor fi incarcate din baza de date, de vazut unde le vom stoca
+-> de definitizat si urmarit procesut GetDocumentFile
+
+!!! DE CREAT PROCEDURI STOCATE
+
+-> pe viitor doar administratorii vor putea crea grupuri
+-> vezi getUserList din getParticipantList pentru tratare erori
+
+
+
+
+-> am ramas la minutul 30:26 pentru google docs clone (Dev Simplified)
+-> de vazut de ce se sterg valorile din react redux pentru chat, iar pentru user nu !!!!!!!! PROBLEM!!
+
+-> creare functionalitate de editare documente in timp real LOADING...
+-> de adaugat timp la mesaj + sortare dupa timp 
+-> de tratat raspunsul de la server pentru inserare in baza de date
+
+
+-> inainte de a incepe o conversatie noua cu o persoana trebuie verificat daca exista deja una...X
+-> de pus useEffect de trimitere token pentru toate ferestrele (finalizat pentru Dashboard, Chat, TextEditor) X
+-> creare fisier de rute separate X
+-> verificat introdus duplicate in tabelul de participants X
+26.04.2022: 
+-> corectare functie GetParticipantByID de pe server (verifica daca exista participantul in tabela, dar trebuie adaugata si conditia pentru camera) X
+-> adaugare participanti intr-un grup X
+-> de terminat functionalitate de afisare participanti pentru grupuri X
+-> implementare creare grup nou X
+-> corectare culori Link din SideBar X
+-> de verificar reload pagina de conversatii X
+-> de deschis fereastra de conversare atunci cand se alege o noua persoana X
+-> de tratat cazul in care nu este selectata nici o conversatie X
+-> implementare functionalitate de golire local storage cu privire la chat X
+-> Implementare functionalitate de stergere room X
+
+NOTA:
+cod pentru receptionare lista cu useri 
+Z2V0QGxsVXNlcnM=
+
+
+Creare Log in 
+https://www.cluemediator.com/implement-login-authentication-in-react-app-using-node-js
+
+Creare Rest Api pentru backend  - > https://www.cluemediator.com/create-rest-api-for-authentication-in-node-js-using-jwt
+	nodemon da restart automat la aplicatie cand detecteaza fisiere care s-au schimbat 
+
+We have to install the following npm packages to create API.
+
+cors – It’s an express middleware for enabling Cross-Origin Resource Sharing requests. Just because of it, We can access the API in different applications.
+body-parser – Node.js request body parsing middleware which parses the incoming request body before your handlers, and make it available under req.body property. In other words, it simplifies the incoming request.
+jsonwebtoken – A JSON web tokens (JWT) is JSON Object which is used to securely transfer information over the web(between two parties). It can be used for an authentication process. We will use this package to create token with the help of user primary data and secret or private key. So when we need it then we can decode it and use the user data to manage application logs.
+dotenv – Dotenv is a zero-dependency module that loads environment variables from a .env file into process.env. We will store the JWT secret key in .env file.
+
+
+pentru CSRF protection - > https://www.cluemediator.com/login-app-with-csrf-protection-understanding-authentication-using-jwt-access-token-and-refresh-token
+
+
+-> detalii organizatorice cu privire la aranjarea fisierelor.
+
+https://www.youtube.com/watch?v=oNlMrpnUSFE&ab_channel=PedroTech -> Folder Structure for API's - Beginner, Intermediate, and Advanced
+
+Arhitectura MVC -> https://towardsdatascience.com/everything-you-need-to-know-about-mvc-architecture-3c827930b4c1
+
+
+de retinut: https://github.com/pgn127/ReactGoogleDocs
+	    https://github.com/ether/etherpad-lite

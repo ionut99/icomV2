@@ -5,15 +5,16 @@ import moment from "moment";
 import {
   verifyTokenAsync,
   userLogoutAsync,
-} from "./../asyncActions/authAsyncActions";
-import { userLogout, verifyTokenEnd } from "./../actions/authActions";
+} from "../../asyncActions/authAsyncActions";
+import { userLogout, verifyTokenEnd } from "../../actions/authActions";
 
-import { setAuthToken } from "./../services/auth";
-import { getUserListService } from "./../services/user";
+import { setAuthToken } from "../../services/auth";
+import { getUserListService } from "../../services/user";
 
+import Navbar from "../../components/Navbar";
+import "./dashboard.css";
 
-import Navbar from "../components/Navbar";
-import "../cssFiles/dashboard.css";
+import UserAvatar from "../../images/userAvatar.png";
 
 function Dashboard() {
   const dispatch = useDispatch();
@@ -55,22 +56,33 @@ function Dashboard() {
     getUserList();
   }, []);
 
+  var teamlist = [];
+  for (let i = 0; i < 20; i++) {
+    teamlist.push("team " + i);
+  }
+
   return (
-    <div>
+    <div className="page">
       <Navbar />
-      <div className="header">
-        Welcome {user.name} {user.surname}!<br />
-        <br />
-      </div>
-      <div className="body">
-        <input type="button" onClick={LogOut} value="Logout" />
-        <input type="button" onClick={getUserList} value="Get Data" />
-        <br />
-        <br />
-        <b>User List:</b>
-        <pre>{JSON.stringify(userList, null, 2)}</pre>
-        <br />
-        <br />
+      <div className="home-page">
+        <div className="teams-content">
+          <div className="videos">
+            {teamlist.map((teamlist, index) => {
+              return (
+                <div className="video" key={index}>
+                  <p>{teamlist}</p>
+                  <div className="thumbnail"></div>
+
+                  <div className="details">
+                    <div className="author">
+                      <img src={UserAvatar} alt="" />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

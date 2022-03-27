@@ -6,6 +6,7 @@ import {
   USER_SET_ROOM_LIST,
   USER_RESET_ROOM_LIST,
   USER_ADD_NEW_MESSAGE,
+  UPDATE_ADD_USER_IN_GROUP,
 } from "../actions/actionTypes";
 
 const ChannelState = {
@@ -14,6 +15,7 @@ const ChannelState = {
   RoomMessages: [],
 
   search_box_content: "",
+  addUserInGroup: "",
   userSearchList: [],
   RoomSearchList: [],
 };
@@ -28,7 +30,7 @@ const chatRedu = (state = ChannelState, action) => {
         channelID,
         currentChannelName,
         RoomMessages,
-      }; 
+      };
 
     // set Chat search box content
     case USER_SET_SEARCH_BOX_CONTENT:
@@ -64,6 +66,14 @@ const chatRedu = (state = ChannelState, action) => {
       return {
         ...state,
         RoomSearchList: [],
+      };
+
+    // update user status
+    case UPDATE_ADD_USER_IN_GROUP:
+      const { addUserInGroup } = action.payload;
+      return {
+        ...state,
+        addUserInGroup: addUserInGroup,
       };
 
     case USER_ADD_NEW_MESSAGE:
