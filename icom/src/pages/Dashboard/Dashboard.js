@@ -11,7 +11,7 @@ import { userLogout, verifyTokenEnd } from "../../actions/authActions";
 import { setAuthToken } from "../../services/auth";
 import { getUserListService } from "../../services/user";
 
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
 import "./dashboard.css";
 
 import UserAvatar from "../../images/userAvatar.png";

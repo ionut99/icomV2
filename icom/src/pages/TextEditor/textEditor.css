@@ -1,18 +1,24 @@
+@import "./../../cssFiles/colors.css";
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-.edit-box {
-  height: 100%;
+.container-page {
+  height: 100vh;
+  width: 100vw;
+  min-width: 750px;
   bottom: 0;
 }
-.container {
-  height: 100%;
-  bottom: 0;
+.edit-window {
+  /* display:inline-flex; */
 }
-.container .ql-editor {
+.edit-window .edit-box {
+  height: calc(100vh - 70px);
+}
+.edit-window .edit-box .ql-editor {
   margin-top: 100px;
   width: 21cm;
   height: 25.5cm;
@@ -22,13 +28,79 @@
   background-color: white;
 }
 
-.container .ql-container.ql-snow {
+.edit-window .changes-list {
+  border: 1px solid red;
+  height: 600px;
+  width: 20%;
+  min-width: 80px;
+  position: absolute;
+  top: 120px;
+  right: 2%;
+  overflow-y: auto;
+}
+
+.edit-window .changes-list .one-change {
+  border: 1px solid blue;
+  width: 100%;
+  height: 40px;
+  display: inline-flex;
+  flex-wrap: wrap;
+}
+
+.edit-window .changes-list .one-change p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.edit-window .online-user-list {
+  height: 95px;
+  width: 16%;
+  min-width: 80px;
+  position: absolute;
+  top: 120px;
+  left: 4%;
+  background-color: var(--bg-color-step-two);
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+  border-color: var(--border-color);
+}
+
+.edit-window .online-user-list .users-box {
+  height: 75px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  
+}
+
+.edit-window .online-user-list .users-box .user-profile .picture-profile {
+  margin: 5px;
+}
+
+.edit-window .online-user-list .users-box .user-profile .picture-profile img {
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  border: 5px solid red;
+  align-self: center !important;
+  cursor: pointer;
+}
+
+.edit-window .online-user-list p {
+  font-size: medium;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  position: static;
+}
+
+.edit-window .edit-box .ql-container.ql-snow {
   border: none;
   display: flex;
   justify-content: center;
 }
 
-.container .ql-toolbar.ql-snow {
+.edit-window .edit-box .ql-toolbar.ql-snow {
   display: flex;
   justify-content: center;
   position: sticky;
@@ -37,12 +109,49 @@
   background-color: white;
 }
 
+@media screen and (max-width: 1400px) {
+  .edit-window .edit-box .ql-editor {
+    margin-top: 100px;
+    width: 70%;
+    height: 25.5cm;
+    padding: 0.5in;
+    margin: 1rem;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+    background-color: white;
+  }
+
+  .edit-window .changes-list {
+    width: 10%;
+    min-width: 70px;
+  }
+
+  .edit-window .online-user-list {
+    width: 10%;
+    min-width: 70px;
+    height: 250px;
+    left: 2%;
+  }
+
+  .edit-window .online-user-list .users-box {
+    height: 220px;
+  }
+}
+
+@media screen and (max-width: 975px) {
+  .edit-window .changes-list {
+    top: 160px;
+  }
+  .edit-window .online-user-list {
+    top: 160px;
+  }
+}
+
 @page {
   margin: 1in;
 }
 
 @media print {
-  .container .ql-editor {
+  .edit-window .edit-box .ql-editor {
     width: 6.5in;
     height: 9in;
     padding: 0;
@@ -50,7 +159,7 @@
     box-shadow: none;
     align-self: flex-start;
   }
-  .container .ql-toolbar.ql-snow {
+  .edit-window .edit-box .ql-toolbar.ql-snow {
     display: none;
   }
 

@@ -1,18 +1,44 @@
 import React, { useState } from "react";
 import * as FaIcons from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { SidebarData } from "./SidebarData";
-import "../cssFiles/Navbar.css";
+import { SidebarData } from "../SidebarData";
+import "./Navbar.css";
 import { IconContext } from "react-icons";
 
-import Applogo from "../images/white-logo.png";
-import UserAvatar from "../images/userAvatar.png";
+import Applogo from "../../images/white-logo.png";
+import UserAvatar from "../../images/userAvatar.png";
 import { useDispatch, useSelector } from "react-redux";
-import { userLogoutAsync } from "./../asyncActions/authAsyncActions";
+import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 
-import { updateCurrentChannel } from "../actions/userActions";
+import { updateCurrentChannel } from "../../actions/userActions";
+
+import ChangePicture from "../ProfilePicture/changePicture";
 
 function Navbar() {
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    title: "",
+    subTitle: "",
+  });
+
+  const handleChangePicture = () => {
+    setdropdownMenu(!dropdownMenu);
+    setConfirmDialog({
+      isOpen: true,
+      title: "Upload new profile photo",
+      subTitle: "You can preview picture below:",
+      onConfirm: () => {
+        // functie care schimba poza de profil
+
+        // pentru inchidere fereastra
+        setConfirmDialog({
+          ...confirmDialog,
+          isOpen: false,
+        });
+        //pentru inchidere fereastra
+      },
+    });
+  };
   // LOG OUT
   const dispatch = useDispatch();
 
@@ -78,16 +104,23 @@ function Navbar() {
           <ul className="drop-menu-items">
             <div className="user-details">Sign in as {user.name}</div>
 
-            <div className="dropdown-options">Profile</div>
-
             <div className="dropdown-options">
-              <div>
-                <input type="button" onClick={LogOut} value="Logout" />
-              </div>
+              <input
+                type="button"
+                onClick={handleChangePicture}
+                value="Change Profile Picture"
+              />
+            </div>
+            <div className="dropdown-options">
+              <input type="button" onClick={LogOut} value="Logout" />
             </div>
           </ul>
         </nav>
       </IconContext.Provider>
+      <ChangePicture
+        confirmDialog={confirmDialog}
+        setConfirmDialog={setConfirmDialog}
+      />
     </>
   );
 }

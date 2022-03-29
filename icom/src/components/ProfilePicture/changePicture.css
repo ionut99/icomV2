@@ -7,7 +7,7 @@
   backdrop-filter: blur(5px);
   position: absolute;
   z-index: 2;
-} 
+}
 
 .dialog-component {
   padding: 25px;
@@ -21,6 +21,13 @@
 
 .dialogContent {
   text-align: center;
+  border: 1px black solid;
+}
+.dialogContent .upload-box {
+  margin: 20px;
+  width: 250px;
+  height: 250px;
+  border: red 2px solid;
 }
 .dialogContent .typography-title {
   font-size: 18px;
@@ -32,6 +39,7 @@
 }
 
 .dialogAction {
+  border: blue 1px solid;
   margin-top: 20px;
   text-align: center;
 }

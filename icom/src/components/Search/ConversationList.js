@@ -20,7 +20,7 @@ const ConversationList = () => {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  const {
+  const { 
     ClickChannel,
     onAddUser,
     onDelete,
