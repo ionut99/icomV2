@@ -20,7 +20,7 @@ const ConversationList = () => {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  const { 
+  const {
     ClickChannel,
     onAddUser,
     onDelete,
@@ -47,6 +47,10 @@ const ConversationList = () => {
           addUserInGroup === "" && RoomSearchList.length ? "block" : "none",
       }}
     >
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        setConfirmDialog={setConfirmDialog}
+      />
       <div className="RoomDelimiter">
         <p>Conversations</p>
       </div>
@@ -140,10 +144,6 @@ const ConversationList = () => {
           </div>
         );
       })}
-      <ConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-      />
     </div>
   );
 };

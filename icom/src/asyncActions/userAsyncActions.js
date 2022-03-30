@@ -10,6 +10,7 @@ import {
   AddNewMemberInRoomDataBase,
   getParticipantsListService,
   GetDocumentFileData,
+  UpdateProfilePictureData,
 } from "../services/user";
 
 import {
@@ -172,3 +173,10 @@ export const GetDocumentFile = (FileName, FilePath) => async (dispatch) => {
   //dispatch(GetFileDocument(string));
   return string;
 };
+
+export const UpdateProfilePicture =
+  (userID, NewPicture) => async (dispatch) => {
+    console.log("hai cu tata");
+    console.log(NewPicture);
+    const varVerify = await UpdateProfilePictureData(userID, NewPicture);
+  };

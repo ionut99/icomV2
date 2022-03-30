@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import * as FaIcons from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { SidebarData } from "../SidebarData";
@@ -12,30 +12,44 @@ import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 
 import { updateCurrentChannel } from "../../actions/userActions";
 
-import ChangePicture from "../ProfilePicture/changePicture";
+import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
+import SendPicture from "../../services/SendPicture";
+
+// const PictureToSend = SendPicture();
+// console.log("s-a initializat obiectul Picture");
 
 function Navbar() {
+  // const { UploadePicture, fileChangeHandler, resizedImage } = SendPicture();
+  const PictureToSend = SendPicture();
   const [confirmDialog, setConfirmDialog] = useState({
+    uploadPicture: false,
     isOpen: false,
     title: "",
     subTitle: "",
   });
 
+  
+
   const handleChangePicture = () => {
     setdropdownMenu(!dropdownMenu);
     setConfirmDialog({
+      uploadPicture: true,
       isOpen: true,
       title: "Upload new profile photo",
       subTitle: "You can preview picture below:",
       onConfirm: () => {
-        // functie care schimba poza de profil
+        console.log("trimitem noua poza");
+        console.log(PictureToSend.resizedImage);
+        PictureToSend.UploadePicture(PictureToSend.resizedImage);
 
-        // pentru inchidere fereastra
+        // GOOD <3
+        //confirmation exit
         setConfirmDialog({
           ...confirmDialog,
+          uploadPicture: false,
           isOpen: false,
         });
-        //pentru inchidere fereastra
+        //confirmation exit
       },
     });
   };
@@ -61,6 +75,12 @@ function Navbar() {
 
   return (
     <>
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        setConfirmDialog={setConfirmDialog}
+        fileChangeHandler={PictureToSend.fileChangeHandler}
+        resizedImage={PictureToSend.resizedImage}
+      />
       <IconContext.Provider value={{ color: "#fff" }}>
         <div className="navbar">
           <div className="left_section">
@@ -117,10 +137,6 @@ function Navbar() {
           </ul>
         </nav>
       </IconContext.Provider>
-      <ChangePicture
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-      />
     </>
   );
 }

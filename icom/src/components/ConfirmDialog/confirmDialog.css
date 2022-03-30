@@ -1,13 +1,14 @@
 .background {
-  top: -60px;
   left: 0;
-  position: absolute;
   height: 100vh;
   width: 100vw;
   backdrop-filter: blur(5px);
-  position: absolute;
+  position: fixed;
+  margin: 0em;
+  left: 0em;
+  top: 0em;
   z-index: 2;
-} 
+}
 
 .dialog-component {
   padding: 25px;
@@ -22,6 +23,49 @@
 .dialogContent {
   text-align: center;
 }
+
+.dialogContent .upload-box {
+  margin: 20px;
+  height: 320px;
+}
+
+.dialogContent .upload-box .image-preview{
+  width: 250px;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  border: 1px solid red;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.dialogContent .upload-box .image-preview img{
+  max-height: 250px;
+  /* border-radius: 50%; */
+  display: block;
+}
+
+.dialogContent .upload-box .upload-action{
+  width: 100%;
+  height: 40px;
+  display: inline-flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  border: 1px solid #ccc;
+  background-color: greenyellow;
+  display: inline-block;
+  padding: 10px 10px;
+  cursor: pointer;
+  margin-left: 0px;
+}
+
 .dialogContent .typography-title {
   font-size: 18px;
 }

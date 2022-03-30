@@ -185,3 +185,18 @@ export const GetDocumentFileData = async (FileName, FilePath) => {
     };
   }
 };
+
+// update user picture
+export const UpdateProfilePictureData = async (userID, NewPicture) => {
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/users/updatePicture`, {
+      userID,
+      NewPicture,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
