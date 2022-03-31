@@ -1,3 +1,4 @@
+const { path } = require("express/lib/application");
 const mysql = require("mysql");
 
 const { DataBaseConfig } = require("../../config/dataBase");
@@ -202,6 +203,32 @@ function GetPartListData(ChannelID) {
   });
 }
 
+// Update User Avatar
+function UpdateAvatarPathData(UserID, Path) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  let promise = new Promise((resolve, reject) => {
+    connection.query(
+      `UPDATE iusers SET  Avatar = '${Path}' WHERE userId = '${UserID}'`,
+      (err, result) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
+      }
+    );
+    connection.end();
+  });
+  promise
+    .then((result) => {
+      console.log("SUCCESS", result.message);
+      return "SUCCESS";
+    })
+    .catch((error) => {
+      console.log("FAILED", error.message);
+      return "FAILED";
+    });
+}
+
 module.exports = {
   GetAllUsersDataBase,
   GetSearchUsersList,
@@ -215,4 +242,5 @@ module.exports = {
   DeleteAllParticipantsFromRoom,
   AddNewMemberInGroupData,
   GetPartListData,
+  UpdateAvatarPathData,
 };

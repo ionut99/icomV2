@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import * as FaIcons from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { SidebarData } from "../SidebarData";
@@ -6,7 +6,7 @@ import "./Navbar.css";
 import { IconContext } from "react-icons";
 
 import Applogo from "../../images/white-logo.png";
-import UserAvatar from "../../images/userAvatar.png";
+// import UserAvatar from "../../images/userAvatar.png";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 
@@ -19,8 +19,8 @@ import SendPicture from "../../services/SendPicture";
 // console.log("s-a initializat obiectul Picture");
 
 function Navbar() {
-  // const { UploadePicture, fileChangeHandler, resizedImage } = SendPicture();
-  const PictureToSend = SendPicture();
+  const [sidebar, setSidebar] = useState(false);
+  const [dropdownMenu, setdropdownMenu] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({
     uploadPicture: false,
     isOpen: false,
@@ -28,7 +28,16 @@ function Navbar() {
     subTitle: "",
   });
 
-  
+  const showSidebar = () => setSidebar(!sidebar);
+  const showdropdownMenu = () => setdropdownMenu(!dropdownMenu);
+
+  const authObj = useSelector((state) => state.auth);
+  const { user, userAvatar } = authObj;
+
+  // console.log("de aici");
+  // console.log(userAvatar);
+  const { UploadePicture, fileChangeHandler } = SendPicture();
+  //const PictureToSend = SendPicture();
 
   const handleChangePicture = () => {
     setdropdownMenu(!dropdownMenu);
@@ -38,11 +47,7 @@ function Navbar() {
       title: "Upload new profile photo",
       subTitle: "You can preview picture below:",
       onConfirm: () => {
-        console.log("trimitem noua poza");
-        console.log(PictureToSend.resizedImage);
-        PictureToSend.UploadePicture(PictureToSend.resizedImage);
-
-        // GOOD <3
+        UploadePicture();
         //confirmation exit
         setConfirmDialog({
           ...confirmDialog,
@@ -62,24 +67,12 @@ function Navbar() {
     dispatch(updateCurrentChannel(null, "", []));
   }
 
-  const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;
-
-  const [sidebar, setSidebar] = useState(false);
-
-  const showSidebar = () => setSidebar(!sidebar);
-
-  const [dropdownMenu, setdropdownMenu] = useState(false);
-
-  const showdropdownMenu = () => setdropdownMenu(!dropdownMenu);
-
   return (
     <>
       <ConfirmDialog
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
-        fileChangeHandler={PictureToSend.fileChangeHandler}
-        resizedImage={PictureToSend.resizedImage}
+        fileChangeHandler={fileChangeHandler}
       />
       <IconContext.Provider value={{ color: "#fff" }}>
         <div className="navbar">
@@ -93,7 +86,7 @@ function Navbar() {
           <div className="right_section">
             <img
               className="user_picture"
-              src={UserAvatar}
+              src={userAvatar}
               alt="userAvatar jmecher"
               onClick={showdropdownMenu}
             />

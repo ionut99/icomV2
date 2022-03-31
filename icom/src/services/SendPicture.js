@@ -4,13 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { UpdateProfilePicture } from "../asyncActions/userAsyncActions";
 import Resizer from "react-image-file-resizer";
 
+import { updateUserAvatar } from "./../actions/authActions";
+
 const SendPicture = () => {
   const dispatch = useDispatch();
-
   const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;
-
-  const [resizedImage, setResizedImage] = useState("");
+  const { user, userAvatar } = authObj;
 
   const fileChangeHandler = (File) => {
     var fileInput = false;
@@ -29,21 +28,20 @@ const SendPicture = () => {
           (uri) => {
             //console.log(uri);
             //this.setState({ newImage: uri });
-            setResizedImage(uri);
+            //setResizedImage(uri);
+            dispatch(updateUserAvatar(uri));
           },
-          "base64",
-          250,
-          250
+          "base64"
         );
       } catch (err) {
         console.log(err);
       }
     }
   };
-  const UploadePicture = (resizedImage) => {
-    dispatch(UpdateProfilePicture(user.userId, resizedImage));
+  const UploadePicture = () => {
+    dispatch(UpdateProfilePicture(user.userId, userAvatar));
   };
-  return { setResizedImage, UploadePicture, fileChangeHandler, resizedImage };
+  return { UploadePicture, fileChangeHandler };
 };
 
 export default SendPicture;

@@ -1,14 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
+import { useSelector } from "react-redux";
 
 import "./confirmDialog.css";
 
 export default function ConfirmDialog(props) {
-  const {
-    confirmDialog,
-    setConfirmDialog,
-    fileChangeHandler,
-    resizedImage,
-  } = props;
+  const { confirmDialog, setConfirmDialog, fileChangeHandler } = props;
+
+  const authObj = useSelector((state) => state.auth);
+  const { userAvatar } = authObj;
 
   const handleUploadFile = (event) => {
     fileChangeHandler(event.target.files[0]);
@@ -30,7 +29,7 @@ export default function ConfirmDialog(props) {
             style={{ display: confirmDialog.uploadPicture ? "block" : "none" }}
           >
             <div className="image-preview">
-              <img alt="Resize Img" src={resizedImage} />
+              <img alt="Resize Img" src={userAvatar} />
             </div>
             <div className="upload-action">
               <label className="custom-file-upload">

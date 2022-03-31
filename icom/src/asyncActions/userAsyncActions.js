@@ -1,4 +1,8 @@
-import { userLogout, verifyTokenEnd } from "./../actions/authActions";
+import {
+  userLogout,
+  verifyTokenEnd,
+  updateUserAvatar,
+} from "./../actions/authActions";
 import {
   getSearchRoomService,
   getSearchPersonService,
@@ -176,7 +180,6 @@ export const GetDocumentFile = (FileName, FilePath) => async (dispatch) => {
 
 export const UpdateProfilePicture =
   (userID, NewPicture) => async (dispatch) => {
-    console.log("hai cu tata");
-    console.log(NewPicture);
     const varVerify = await UpdateProfilePictureData(userID, NewPicture);
+    // dispatch(updateUserAvatar(NewPicture));
   };
