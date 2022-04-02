@@ -6,6 +6,7 @@ import {
   USER_LOGIN_FAILURE,
   USER_LOGOUT,
   USER_UPDATE_AVATAR,
+  USER_UPDATE_AVATAR_PREVIEW,
 } from "./actionTypes";
 import { setAuthToken } from "../services/auth";
 
@@ -63,6 +64,16 @@ export const updateUserAvatar = (userAvatar) => {
     type: USER_UPDATE_AVATAR,
     payload: {
       userAvatar,
+    },
+  };
+};
+
+// update avatar picture preview
+export const updateUserAvatarPreview = (userAvatarPreview) => {
+  return {
+    type: USER_UPDATE_AVATAR_PREVIEW,
+    payload: {
+      userAvatarPreview,
     },
   };
 };

@@ -180,6 +180,8 @@ export const GetDocumentFile = (FileName, FilePath) => async (dispatch) => {
 
 export const UpdateProfilePicture =
   (userID, NewPicture) => async (dispatch) => {
+    console.log("prew");
+    console.log(NewPicture);
     const varVerify = await UpdateProfilePictureData(userID, NewPicture);
-    // dispatch(updateUserAvatar(NewPicture));
+    dispatch(updateUserAvatar(NewPicture));
   };

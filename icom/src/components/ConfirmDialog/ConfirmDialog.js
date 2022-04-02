@@ -1,16 +1,41 @@
-import React from "react";
-import { useSelector } from "react-redux";
-
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUserAvatarPreview } from "../../actions/authActions";
 import "./confirmDialog.css";
 
+import SendPicture from "../../services/sendPicture";
+
 export default function ConfirmDialog(props) {
-  const { confirmDialog, setConfirmDialog, fileChangeHandler } = props;
+  const dispatch = useDispatch();
+
+  const { confirmDialog, setConfirmDialog, discard, setDiscard } = props;
 
   const authObj = useSelector((state) => state.auth);
-  const { userAvatar } = authObj;
+  const { userAvatar, userAvatarPreview } = authObj;
+
+  const { SelectPicture, UpdateAvatar, SaveAvatarPicture } = SendPicture();
 
   const handleUploadFile = (event) => {
-    fileChangeHandler(event.target.files[0]);
+    SelectPicture(event.target.files[0]);
+    setDiscard(true);
+  };
+
+  const handleClose = () => {
+    setConfirmDialog({ ...confirmDialog, isOpen: false });
+    setDiscard(false);
+  };
+
+  const handleConfirmation = () => {
+    if (confirmDialog.uploadPicture) {
+      SaveAvatarPicture(userAvatarPreview);
+      setDiscard(false);
+    }
+
+    setConfirmDialog({
+      ...confirmDialog,
+      uploadPicture: false,
+      isOpen: false,
+    });
   };
   return (
     <div
@@ -29,7 +54,7 @@ export default function ConfirmDialog(props) {
             style={{ display: confirmDialog.uploadPicture ? "block" : "none" }}
           >
             <div className="image-preview">
-              <img alt="Resize Img" src={userAvatar} />
+              <img alt="Resize Img" src={userAvatarPreview} />
             </div>
             <div className="upload-action">
               <label className="custom-file-upload">
@@ -41,25 +66,48 @@ export default function ConfirmDialog(props) {
                 Choose new profile
               </label>
             </div>
-            <div className="typography-subtitle">Save new profile picture?</div>
+            <div
+              style={{
+                display:
+                  discard && confirmDialog.uploadPicture ? "block" : "none",
+              }}
+              className="typography-subtitle"
+            >
+              Save new profile picture?
+            </div>
           </div>
         </div>
         <div className="dialogAction">
+          <div
+            className="choose"
+            style={{
+              display:
+                discard || !confirmDialog.uploadPicture ? "block" : "none",
+            }}
+          >
+            <input
+              className="mybutton-close"
+              type="button"
+              value="No"
+              onClick={handleClose}
+            />
+            <input
+              className="mybutton-yes"
+              type="button"
+              value="Yes"
+              onClick={handleConfirmation}
+            />
+          </div>
+
           <input
-            className="mybutton"
+            style={{
+              display:
+                !discard && confirmDialog.uploadPicture ? "block" : "none",
+            }}
+            className="mybutton-close"
             type="button"
-            style={{ height: "40px", width: "90px" }}
-            value="No"
-            onClick={() =>
-              setConfirmDialog({ ...confirmDialog, isOpen: false })
-            }
-          />
-          <input
-            className="mybutton-yes"
-            type="button"
-            style={{ height: "40px", width: "90px" }}
-            value="Yes"
-            onClick={confirmDialog.onConfirm}
+            value="Close"
+            onClick={handleClose}
           />
         </div>
       </div>

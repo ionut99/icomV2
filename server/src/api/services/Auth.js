@@ -38,12 +38,12 @@ function GetUserByID(userId) {
 
 function GetParticipantByID(participantId, roomID) {
   const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     connection.query(
       `SELECT * FROM participants WHERE UserID = '${participantId}' AND RoomID ='${roomID}'`,
       (err, result) => {
         if (err) {
-          return reject(err);
+          return resolve("FAILED");
         }
         return resolve(result);
       }

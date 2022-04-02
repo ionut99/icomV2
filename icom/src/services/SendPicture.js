@@ -1,17 +1,15 @@
-import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
+import { updateUserAvatarPreview } from "../actions/authActions";
 import { UpdateProfilePicture } from "../asyncActions/userAsyncActions";
+
 import Resizer from "react-image-file-resizer";
 
-import { updateUserAvatar } from "./../actions/authActions";
-
-const SendPicture = () => {
+function SendPicture() {
   const dispatch = useDispatch();
   const authObj = useSelector((state) => state.auth);
   const { user, userAvatar } = authObj;
 
-  const fileChangeHandler = (File) => {
+  const SelectPicture = (File) => {
     var fileInput = false;
     if (File) {
       fileInput = true;
@@ -26,10 +24,7 @@ const SendPicture = () => {
           100,
           0,
           (uri) => {
-            //console.log(uri);
-            //this.setState({ newImage: uri });
-            //setResizedImage(uri);
-            dispatch(updateUserAvatar(uri));
+            dispatch(updateUserAvatarPreview(uri));
           },
           "base64"
         );
@@ -37,11 +32,19 @@ const SendPicture = () => {
         console.log(err);
       }
     }
+    //
   };
-  const UploadePicture = () => {
-    dispatch(UpdateProfilePicture(user.userId, userAvatar));
+
+  const UpdateAvatar = () => {
+    dispatch(updateUserAvatarPreview(userAvatar));
   };
-  return { UploadePicture, fileChangeHandler };
-};
+
+  const SaveAvatarPicture = (NewAvatar) => {
+    console.log("pap");
+    console.log(NewAvatar);
+    dispatch(UpdateProfilePicture(user.userId, NewAvatar));
+  };
+  return { SelectPicture, UpdateAvatar, SaveAvatarPicture };
+}
 
 export default SendPicture;

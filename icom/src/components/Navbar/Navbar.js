@@ -1,24 +1,20 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { SidebarData } from "../SidebarData";
+import { IconContext } from "react-icons";
 import * as FaIcons from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { SidebarData } from "../SidebarData";
-import "./Navbar.css";
-import { IconContext } from "react-icons";
-
-import Applogo from "../../images/white-logo.png";
-// import UserAvatar from "../../images/userAvatar.png";
-import { useDispatch, useSelector } from "react-redux";
 import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
-
 import { updateCurrentChannel } from "../../actions/userActions";
-
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
-import SendPicture from "../../services/SendPicture";
+import Applogo from "../../images/white-logo.png";
+import "./Navbar.css";
 
-// const PictureToSend = SendPicture();
-// console.log("s-a initializat obiectul Picture");
+import SendPicture from "../../services/sendPicture";
 
 function Navbar() {
+  const { SelectPicture, UpdateAvatar, SaveAvatarPicture } = SendPicture();
+
   const [sidebar, setSidebar] = useState(false);
   const [dropdownMenu, setdropdownMenu] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({
@@ -27,17 +23,13 @@ function Navbar() {
     title: "",
     subTitle: "",
   });
+  const [discard, setDiscard] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
   const showdropdownMenu = () => setdropdownMenu(!dropdownMenu);
 
   const authObj = useSelector((state) => state.auth);
   const { user, userAvatar } = authObj;
-
-  // console.log("de aici");
-  // console.log(userAvatar);
-  const { UploadePicture, fileChangeHandler } = SendPicture();
-  //const PictureToSend = SendPicture();
 
   const handleChangePicture = () => {
     setdropdownMenu(!dropdownMenu);
@@ -47,14 +39,7 @@ function Navbar() {
       title: "Upload new profile photo",
       subTitle: "You can preview picture below:",
       onConfirm: () => {
-        UploadePicture();
-        //confirmation exit
-        setConfirmDialog({
-          ...confirmDialog,
-          uploadPicture: false,
-          isOpen: false,
-        });
-        //confirmation exit
+        // de termin
       },
     });
   };
@@ -72,7 +57,8 @@ function Navbar() {
       <ConfirmDialog
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
-        fileChangeHandler={fileChangeHandler}
+        discard={discard}
+        setDiscard={setDiscard}
       />
       <IconContext.Provider value={{ color: "#fff" }}>
         <div className="navbar">
@@ -86,6 +72,7 @@ function Navbar() {
           <div className="right_section">
             <img
               className="user_picture"
+              // user profile
               src={userAvatar}
               alt="userAvatar jmecher"
               onClick={showdropdownMenu}
