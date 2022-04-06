@@ -2,14 +2,16 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 
-import * as Quill from "quill";
-import "quill/dist/quill.snow.css";
+import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
+import Comunication from "../../services/comunication";
+import { setAuthToken } from "../../services/auth";
 import "./textEditor.css";
 
-import Navbar from "../../components/Navbar";
-import { setAuthToken } from "../../services/auth";
-import Comunication from "../../services/comunication";
-import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
+import "quill/dist/quill.snow.css";
+import * as Quill from "quill";
+
+import UserAvatar from "../../images/userAvatar.png";
+
 // import { GetDocumentFileData } from "../../services/user";
 
 const TOOLBAR_OPTIONS = [
@@ -25,6 +27,25 @@ const TOOLBAR_OPTIONS = [
 ];
 
 function TextEditor() {
+  // lista test pentru ultimele schimbari realizate
+  var changeList = [];
+  for (let i = 0; i < 20; i++) {
+    changeList.push({
+      Type: "delete",
+      Author: "Mihai",
+      Time: "21:44 29Mar2022",
+    });
+  }
+
+  // lista test pentru userii online
+
+  var onlineUserList = [];
+  for (let i = 0; i < 30; i++) {
+    onlineUserList.push({
+      ProfilePicture: "pozaBuletin",
+      Nume: "Marian",
+    });
+  }
   const dispatch = useDispatch();
   const [quill, setQuill] = useState();
   // const [documentData, setdocumentData] = useState("");
@@ -99,7 +120,6 @@ function TextEditor() {
   // set timer to renew token
   useEffect(() => {
     setAuthToken(token);
-    console.log("Am reinnoit token ul ");
     const verifyTokenTimer = setTimeout(() => {
       dispatch(verifyTokenAsync(true));
     }, moment(expiredAt).diff() - 10 * 1000);
@@ -109,9 +129,45 @@ function TextEditor() {
   }, [expiredAt, token, dispatch]);
 
   return (
-    <div className="edit-box">
-      <Navbar className="navbar" />
-      <div className="container" ref={wrapperRef}></div>
+    <div className="page">
+      <div className="edit-window">
+        <div className="edit-box" ref={wrapperRef}></div>
+        <div className="changes-list">
+          {changeList.map((changeList, index) => {
+            return (
+              <div className="one-change" key={index}>
+                <div className="change-time">
+                  <p>{changeList.Time}</p>
+                </div>
+                <div className="change-author">
+                  <p>{changeList.Author}</p>
+                </div>
+                <div className="change-type">
+                  <p>{changeList.Type}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="online-user-list">
+          <p>Online Users:</p>
+          <div className="users-box">
+            {onlineUserList.map((onlineUserList, index) => {
+              return (
+                <div className="user-profile" key={index}>
+                  <div className="picture-profile">
+                    <img
+                      src={UserAvatar}
+                      alt="userAvatar jmecher"
+                      // onClick={showdropdownMenu}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

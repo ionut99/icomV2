@@ -12,17 +12,18 @@ import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 
 import { verifyTokenAsync } from "./asyncActions/authAsyncActions";
+import Navbar from "./components/Navbar/Navbar";
+import "./index.css"
 
 function App() {
   const authObj = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
-  const { authLoading, isAuthenticated } = authObj; 
+  const { authLoading, isAuthenticated } = authObj;
 
   // verify token on app load
   useEffect(() => {
     dispatch(verifyTokenAsync());
-  },[dispatch]);
+  }, [dispatch]);
 
   // checking authentication
   if (authLoading) {
@@ -33,6 +34,7 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <div className="content">
+        <Navbar />
           <Switch>
             <PublicRoute
               path="/login"

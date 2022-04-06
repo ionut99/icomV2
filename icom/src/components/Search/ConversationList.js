@@ -15,7 +15,7 @@ const ConversationList = () => {
   const dispatch = useDispatch();
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { RoomSearchList, addUserInGroup } = chatObj;
+  const { RoomSearchList, addUserInGroup, channelID } = chatObj;
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
@@ -32,8 +32,8 @@ const ConversationList = () => {
   const handleAddUserInGroup = (RoomID) => {
     onAddUser(RoomID);
   };
-  const handleDeleteUser = (RoomID) => {
-    onDelete(RoomID);
+  const handleDeleteUser = () => {
+    onDelete(channelID);
   };
 
   const handleShowParticipants = (RoomID) => {
@@ -47,6 +47,11 @@ const ConversationList = () => {
           addUserInGroup === "" && RoomSearchList.length ? "block" : "none",
       }}
     >
+      <ConfirmDialog
+        confirmDialog={confirmDialog}
+        setConfirmDialog={setConfirmDialog}
+        confirmAction={handleDeleteUser}
+      />
       <div className="RoomDelimiter">
         <p>Conversations</p>
       </div>
@@ -74,8 +79,7 @@ const ConversationList = () => {
                   <p>{RoomSearchList.RoomName}</p>
                   <div className="last-message">
                     <p>
-                      How are
-                      youuuuuuuuuuuuuuuuuudddddddddddddddddddddddddddddddd?
+                      Laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaast Messageeeeeeeeeeeee
                     </p>
                   </div>
                 </div>
@@ -94,9 +98,6 @@ const ConversationList = () => {
                             isOpen: true,
                             title: "Are you sure to delete this record?",
                             subTitle: "You can't undo this operation",
-                            onConfirm: () => {
-                              handleDeleteUser(RoomSearchList.RoomID);
-                            },
                           });
                         }}
                       >
@@ -140,10 +141,6 @@ const ConversationList = () => {
           </div>
         );
       })}
-      <ConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-      />
     </div>
   );
 };

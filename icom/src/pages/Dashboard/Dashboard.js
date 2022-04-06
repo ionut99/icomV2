@@ -4,14 +4,13 @@ import moment from "moment";
 
 import {
   verifyTokenAsync,
-  userLogoutAsync,
+  // userLogoutAsync,
 } from "../../asyncActions/authAsyncActions";
 import { userLogout, verifyTokenEnd } from "../../actions/authActions";
 
 import { setAuthToken } from "../../services/auth";
 import { getUserListService } from "../../services/user";
 
-import Navbar from "../../components/Navbar";
 import "./dashboard.css";
 
 import UserAvatar from "../../images/userAvatar.png";
@@ -24,9 +23,9 @@ function Dashboard() {
   const [userList, setUserList] = useState([]);
 
   // handle click event of the logout button
-  function LogOut() {
-    dispatch(userLogoutAsync());
-  }
+  // function LogOut() {
+  //   dispatch(userLogoutAsync());
+  // }
 
   // get user list
   const getUserList = async () => {
@@ -63,7 +62,6 @@ function Dashboard() {
 
   return (
     <div className="page">
-      <Navbar />
       <div className="home-page">
         <div className="teams-content">
           <div className="videos">

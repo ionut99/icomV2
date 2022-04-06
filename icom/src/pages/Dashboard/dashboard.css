@@ -5,14 +5,13 @@
 }
 
 .page {
-  border: 3px solid red;
-  height: 100vh;
+  height: 100%;
   width: 100vw;
 }
 
 .page .home-page {
-  border: solid 3px blue;
-  height: calc(100vh - 70px);
+  /* border: solid 3px blue; */
+  height: calc(100vh - 60px);
 }
 .teams-content {
   background-color: #f9f9f9;

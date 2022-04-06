@@ -47,8 +47,6 @@ const SearchService = (userID) => {
 
   // when click on person tab
   const ClickPerson = (userSearchListName, userSearchListID, userName) => {
-    // console.log("conversatie:");
-    // console.log(RoomSearchList);
     for (let i = 0; i < RoomSearchList.length; i++) {
       if (RoomSearchList[i]["RoomName"].includes(userSearchListName)) {
         dispatch(

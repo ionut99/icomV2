@@ -1,7 +1,11 @@
 import {
-  VERIFY_TOKEN_STARTED, VERIFY_TOKEN_END,
-  USER_LOGIN_STARTED, USER_LOGIN_FAILURE,
-  VERIFY_USER_SUCCESS, USER_LOGOUT
+  VERIFY_TOKEN_STARTED,
+  VERIFY_TOKEN_END,
+  USER_LOGIN_STARTED,
+  USER_LOGIN_FAILURE,
+  VERIFY_USER_SUCCESS,
+  USER_LOGOUT,
+  USER_UPDATE_AVATAR,
 } from "../actions/actionTypes";
 
 // define initial state of auth reducer
@@ -12,8 +16,9 @@ const initialState = {
   authLoading: true, // to indicate that the auth API is in progress
   isAuthenticated: false, // consider as a authentication flag
   userLoginLoading: false, // to indicate that the user signin API is in progress
-  loginError: null // manage the error of the user signin API
-}
+  loginError: null, // manage the error of the user signin API
+  userAvatar: "",
+};
 
 // update store based on type and payload and return the state
 const auth = (state = initialState, action) => {
@@ -21,20 +26,22 @@ const auth = (state = initialState, action) => {
     // verify token - started
     case VERIFY_TOKEN_STARTED:
       const { silentAuth } = action.payload;
-      return silentAuth ? {
-        ...state
-      } : initialState;
+      return silentAuth
+        ? {
+            ...state,
+          }
+        : initialState;
     // verify token - ended/failed
     case VERIFY_TOKEN_END:
-      return { 
+      return {
         ...state,
-        authLoading: false
+        authLoading: false,
       };
     // user login - started
     case USER_LOGIN_STARTED:
       return {
         ...state,
-        userLoginLoading: true
+        userLoginLoading: true,
       };
     // user login - ended/failed
     case USER_LOGIN_FAILURE:
@@ -42,8 +49,16 @@ const auth = (state = initialState, action) => {
       return {
         ...state,
         loginError: error,
-        userLoginLoading: false
+        userLoginLoading: false,
       };
+    // handle update profile picure
+    case USER_UPDATE_AVATAR:
+      const { userAvatar } = action.payload;
+      return {
+        ...state,
+        userAvatar,
+      };
+
     // verify token - success
     case VERIFY_USER_SUCCESS:
       const { token, expiredAt, user } = action.payload;
@@ -54,17 +69,17 @@ const auth = (state = initialState, action) => {
         user,
         isAuthenticated: true,
         authLoading: false,
-        userLoginLoading: false
-      }
+        userLoginLoading: false,
+      };
     // handle user logout
     case USER_LOGOUT:
       return {
         ...initialState,
-        authLoading: false
-      }
+        authLoading: false,
+      };
     default:
-      return state
+      return state;
   }
-}
+};
 
 export default auth;

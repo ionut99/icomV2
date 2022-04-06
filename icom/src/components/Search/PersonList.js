@@ -17,11 +17,10 @@ function PersonList() {
     SearchService(user.userId);
 
   const handleClickPerson = (UserName, PersonID, thisName) => {
-    // if (addUserInGroup === "") {
-    //   console.log(UserName + " " + PersonID);
-    ClickPerson(UserName, PersonID, thisName);
     if (addUserInGroup !== "") {
       ClickAddPersonInGroup(addUserInGroup, PersonID);
+    } else {
+      ClickPerson(UserName, PersonID, thisName);
     }
   };
 

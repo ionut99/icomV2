@@ -15,7 +15,6 @@ import {
 import ConversationList from "../components/Search/ConversationList";
 import PersonList from "../components/Search/PersonList";
 import Room from "../components/Room/Room";
-import Navbar from "../components/Navbar";
 
 import * as BsIcons from "react-icons/bs";
 import * as AiIcons from "react-icons/ai";
@@ -87,8 +86,7 @@ function Chat() {
   };
 
   return (
-    <div className="page-content">
-      <Navbar />
+    <div className="page">
       <div className="chat-page">
         <div className="left-section">
           <div className="search-section">
