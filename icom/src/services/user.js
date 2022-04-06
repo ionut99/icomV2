@@ -188,11 +188,17 @@ export const GetDocumentFileData = async (FileName, FilePath) => {
 
 // update user picture
 export const UpdateProfilePictureData = async (userID, NewPicture) => {
+  const formdata = new FormData();
+  formdata.append("avatar", NewPicture);
+  formdata.append("userID", userID);
   try {
-    return await axios.post(`${REACT_APP_API_URL}/users/updatePicture`, {
-      userID,
-      NewPicture,
-    });
+    return await axios.post(
+      `${REACT_APP_API_URL}/users/updatePicture`,
+      formdata,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
   } catch (err) {
     return {
       error: true,

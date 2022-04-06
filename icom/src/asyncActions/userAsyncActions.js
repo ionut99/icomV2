@@ -1,8 +1,4 @@
-import {
-  userLogout,
-  verifyTokenEnd,
-  updateUserAvatar,
-} from "./../actions/authActions";
+import { userLogout, verifyTokenEnd } from "./../actions/authActions";
 import {
   getSearchRoomService,
   getSearchPersonService,
@@ -102,12 +98,15 @@ export const InsertNewMessage =
       roomID,
       messageBody
     );
+
+    // TO DO - display message
+    console.log(varVerify);
   };
 
 export const CreateNewConversation =
   (RoomName, Private, userSearchListID, userID, uuidRoom) =>
   async (dispatch) => {
-    const varverify = await CreateNewRoomDataBase(
+    const varVerify = await CreateNewRoomDataBase(
       RoomName,
       Private,
       userSearchListID,
@@ -116,36 +115,36 @@ export const CreateNewConversation =
     );
 
     dispatch(userSetRoomListAsync("", userID));
-    //TO DO:
-    // tratare raspuns de la server
+    // TO DO - display message
+    console.log(varVerify);
   };
 
 export const DeleteConversation = (RoomID, userID) => async (dispatch) => {
-  console.log("Camera care se sterge este: ");
+  console.log("Delete Room: ");
   console.log(RoomID);
-  const varverify = await DeleteRoomDataBase(RoomID);
+  const varVerify = await DeleteRoomDataBase(RoomID);
 
   dispatch(userSetRoomListAsync("", userID));
-  //TO DO:
-  // tratare raspuns de la server
+  // TO DO - display message
+  console.log(varVerify);
 };
 
-// functie pentru adaugare grup nou
+// Create new group
 export const CreateNewGroup =
   (NewGroupName, Type, userID, uuiRoom) => async (dispatch) => {
-    console.log("Facem un nou grup: ");
+    console.log("Create new Group: ");
     console.log(NewGroupName, Type, userID, uuiRoom);
 
-    const varverify = await CreateNewGroupDataBase(
+    const varVerify = await CreateNewGroupDataBase(
       NewGroupName,
       Type,
       userID,
       uuiRoom
     );
 
+    // TO DO - display message
+    console.log(varVerify);
     dispatch(userSetRoomListAsync("", userID));
-    //TO DO:
-    // tratare raspuns de la server
   };
 
 // handle add new member in a group
@@ -155,17 +154,15 @@ export const AddNewMemberInGroup =
       RoomID,
       userSearchListID
     );
+    // TO DO - display message
+    console.log(varVerify);
   };
 
 // get participants from room list
 export const getParticipantList = (RoomID) => async (dispatch) => {
   const result = await getParticipantsListService(RoomID);
-  // if (result.error) {
-  //   dispatch(verifyTokenEnd());
-  //   if (result.response && [401, 403].includes(result.response.status))
-  //     dispatch(userLogout());
-  //   return;
-  // }
+  // TO DO - display message
+  console.log(result);
   dispatch(setPersonSearchList(result.data["participantsRoomList"]));
 };
 
@@ -180,8 +177,7 @@ export const GetDocumentFile = (FileName, FilePath) => async (dispatch) => {
 
 export const UpdateProfilePicture =
   (userID, NewPicture) => async (dispatch) => {
-    console.log("prew");
-    console.log(NewPicture);
     const varVerify = await UpdateProfilePictureData(userID, NewPicture);
-    dispatch(updateUserAvatar(NewPicture));
+    // TO DO - display message
+    console.log(varVerify);
   };

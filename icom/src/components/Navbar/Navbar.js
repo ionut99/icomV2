@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SidebarData } from "../SidebarData";
 import { IconContext } from "react-icons";
@@ -10,11 +10,10 @@ import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import Applogo from "../../images/white-logo.png";
 import "./Navbar.css";
 
-import SendPicture from "../../services/sendPicture";
+import { getUserAvatarAsync } from "../../asyncActions/authAsyncActions";
 
 function Navbar() {
-  const { SelectPicture, UpdateAvatar, SaveAvatarPicture } = SendPicture();
-
+  const dispatch = useDispatch();
   const [sidebar, setSidebar] = useState(false);
   const [dropdownMenu, setdropdownMenu] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({
@@ -29,7 +28,13 @@ function Navbar() {
   const showdropdownMenu = () => setdropdownMenu(!dropdownMenu);
 
   const authObj = useSelector((state) => state.auth);
-  const { user, userAvatar } = authObj;
+  const { user } = authObj;
+
+  useEffect(() => {
+    dispatch(getUserAvatarAsync(user.userId));
+  }, [user.userId]);
+
+  const { userAvatar } = authObj;
 
   const handleChangePicture = () => {
     setdropdownMenu(!dropdownMenu);
@@ -38,13 +43,8 @@ function Navbar() {
       isOpen: true,
       title: "Upload new profile photo",
       subTitle: "You can preview picture below:",
-      onConfirm: () => {
-        // de termin
-      },
     });
   };
-  // LOG OUT
-  const dispatch = useDispatch();
 
   // handle click event of the logout button
   function LogOut() {
@@ -66,7 +66,7 @@ function Navbar() {
             <Link to="#" className="menu-bars">
               <FaIcons.FaBars onClick={showSidebar} />
             </Link>
-            <img className="logo_picture" src={Applogo} alt="logo jmecher" />
+            {/* <img className="logo_picture" src={Applogo} alt="logo jmecher" /> */}
           </div>
 
           <div className="right_section">
@@ -74,6 +74,7 @@ function Navbar() {
               className="user_picture"
               // user profile
               src={userAvatar}
+              //src={"data:image/jpeg;base64," + userAvatar}
               alt="userAvatar jmecher"
               onClick={showdropdownMenu}
             />
@@ -85,7 +86,7 @@ function Navbar() {
               <Link to="#" className="menu-bars">
                 <FaIcons.FaBars />
               </Link>
-              <img className="logo_picture" src={Applogo} alt="logo jmecher" />
+              {/* <img className="logo_picture" src={Applogo} alt="logo jmecher" /> */}
             </li>
             <div className="group-nav-text"></div>
             {SidebarData.map((item, index) => {

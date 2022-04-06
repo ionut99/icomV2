@@ -203,7 +203,7 @@ function GetPartListData(ChannelID) {
 // Update User Avatar
 function UpdateAvatarPathData(UserID, Path) {
   const connection = new mysql.createConnection(DataBaseConfig);
-  let promise = new Promise((resolve) => {
+  return new Promise((resolve) => {
     connection.query(
       `UPDATE iusers SET  Avatar = '${Path}' WHERE userId = '${UserID}'`,
       (err, result) => {
@@ -215,15 +215,23 @@ function UpdateAvatarPathData(UserID, Path) {
     );
     connection.end();
   });
-  promise
-    .then((result) => {
-      console.log("SUCCESS", result.message);
-      return "SUCCESS";
-    })
-    .catch((error) => {
-      console.log("FAILED", error.message);
-      return "FAILED";
-    });
+}
+
+// Get User's Avatar Details
+function GetUserDetails(UserID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `SELECT * FROM iusers WHERE iusers.userId = '${UserID}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
 }
 
 module.exports = {
@@ -240,4 +248,5 @@ module.exports = {
   AddNewMemberInGroupData,
   GetPartListData,
   UpdateAvatarPathData,
+  GetUserDetails,
 };

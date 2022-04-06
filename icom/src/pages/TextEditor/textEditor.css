@@ -6,8 +6,8 @@
   box-sizing: border-box;
 }
 
-.container-page {
-  height: 100vh;
+.page {
+  height: 100%;
   width: 100vw;
   min-width: 750px;
   bottom: 0;
@@ -16,12 +16,13 @@
   /* display:inline-flex; */
 }
 .edit-window .edit-box {
-  height: calc(100vh - 70px);
+  height: calc(100vh - 60px);
 }
 .edit-window .edit-box .ql-editor {
   margin-top: 100px;
   width: 21cm;
-  height: 25.5cm;
+  height: 92%;
+  max-height: 21.3cm;
   padding: 0.5in;
   margin: 1rem;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);

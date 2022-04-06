@@ -1,4 +1,5 @@
 var uui = require("uuid");
+
 const {
   GetSearchUsersList,
   GetAllUsersDataBase,
@@ -12,10 +13,7 @@ const {
   DeleteRoomData,
   AddNewMemberInGroupData,
   GetPartListData,
-  UpdateAvatarPathData,
 } = require("../services/User");
-
-const { WriteFileToDisc } = require("../services/Documents");
 
 const { handleResponse } = require("../helpers/utils");
 const { GetUserByID, GetParticipantByID } = require("../services/Auth");
@@ -287,33 +285,6 @@ async function GetUsers(req, res) {
   return handleResponse(req, res, 200, { list });
 }
 
-async function UpdateProfilePicture(req, res) {
-  const userID = req.body.userID;
-  const NewPicture = req.body.NewPicture;
-
-  const path = "./users/" + userID + "/images/avatar/";
-  const fileName = "profile.bin";
-
-  if (userID === null || NewPicture === "" || NewPicture === undefined) {
-    return handleResponse(req, res, 410, "Invalid Request Parameters ");
-  }
-
-  const WriteFileResult = await WriteFileToDisc(path, fileName, NewPicture);
-
-  if (WriteFileResult === "FAILED") {
-    console.log("FAILED - Write File To Disc");
-    return handleResponse(req, res, 413, " Write File Error ");
-  }
-  //update database avatar's path
-  const result = UpdateAvatarPathData(userID, path + fileName);
-  if (result === "FAILED") {
-    console.log("FAILED - update user avatar path!");
-    return handleResponse(req, res, 412, " DataBase Error ");
-  }
-
-  return handleResponse(req, res, 200, { UpdateProfilePicture: "SUCCESS" });
-}
-
 module.exports = {
   GetUserSearchList,
   GetRoomSearchList,
@@ -325,5 +296,4 @@ module.exports = {
   CreateNewRoom_Group,
   AddNewMemberInGroup,
   GetPartList,
-  UpdateProfilePicture,
 };

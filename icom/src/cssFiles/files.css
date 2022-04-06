@@ -1,18 +1,18 @@
 @import "colors.css";
 
 .main-window {
-  border: solid red 1px;
-  height: 100vh;
+  /* border: solid red 1px; */
+  height: 100%;
   width: 100vw;
 }
 .list-files-section {
   border: green solid 2px;
-  height: 100% - 60px;
+  height: calc(100% - 60px);
   width: 76%;
-  bottom: 0px;
   top: 60px;
-  position: absolute;
+  bottom: 0px;
   right: 25px;
+  position: absolute;
   background-color: var(--white-color);
   overflow-y: auto;
 }

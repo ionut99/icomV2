@@ -2,14 +2,13 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 
-import * as Quill from "quill";
-import "quill/dist/quill.snow.css";
+import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
+import Comunication from "../../services/comunication";
+import { setAuthToken } from "../../services/auth";
 import "./textEditor.css";
 
-import Navbar from "../../components/Navbar/Navbar";
-import { setAuthToken } from "../../services/auth";
-import Comunication from "../../services/comunication";
-import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
+import "quill/dist/quill.snow.css";
+import * as Quill from "quill";
 
 import UserAvatar from "../../images/userAvatar.png";
 
@@ -130,8 +129,7 @@ function TextEditor() {
   }, [expiredAt, token, dispatch]);
 
   return (
-    <div className="container-page">
-      <Navbar className="navbar" />
+    <div className="page">
       <div className="edit-window">
         <div className="edit-box" ref={wrapperRef}></div>
         <div className="changes-list">

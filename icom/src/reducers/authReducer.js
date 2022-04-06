@@ -6,7 +6,6 @@ import {
   VERIFY_USER_SUCCESS,
   USER_LOGOUT,
   USER_UPDATE_AVATAR,
-  USER_UPDATE_AVATAR_PREVIEW,
 } from "../actions/actionTypes";
 
 // define initial state of auth reducer
@@ -18,8 +17,7 @@ const initialState = {
   isAuthenticated: false, // consider as a authentication flag
   userLoginLoading: false, // to indicate that the user signin API is in progress
   loginError: null, // manage the error of the user signin API
-  userAvatar: "../images/avatar.png",
-  userAvatarPreview: "test.jpg",
+  userAvatar: "",
 };
 
 // update store based on type and payload and return the state
@@ -61,13 +59,6 @@ const auth = (state = initialState, action) => {
         userAvatar,
       };
 
-    // handle update preview
-    case USER_UPDATE_AVATAR_PREVIEW:
-      const { userAvatarPreview } = action.payload;
-      return {
-        ...state,
-        userAvatarPreview,
-      };
     // verify token - success
     case VERIFY_USER_SUCCESS:
       const { token, expiredAt, user } = action.payload;

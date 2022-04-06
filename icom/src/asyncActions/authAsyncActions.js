@@ -5,11 +5,13 @@ import {
   userLoginStarted,
   userLoginFailure,
   userLogout,
+  updateUserAvatar,
 } from "../actions/authActions";
 import {
   verifyTokenService,
   userLoginService,
   userLogoutService,
+  getAvatarPictureService,
 } from "../services/auth";
 
 // handle verify token
@@ -43,6 +45,18 @@ export const userLoginAsync = (email, password) => async (dispatch) => {
   }
 
   dispatch(verifyUserSuccess(result.data));
+};
+
+// handle user login
+export const getUserAvatarAsync = (userID) => async (dispatch) => {
+  const resultBlob = await getAvatarPictureService(userID);
+  const fileReaderInstance = new FileReader();
+  fileReaderInstance.readAsDataURL(resultBlob.data);
+  fileReaderInstance.onload = () => {
+    const base64data = fileReaderInstance.result;
+    dispatch(updateUserAvatar(base64data));
+  };
+  //const theImage = URL.createObjectURL(result);
 };
 
 // handle user logout

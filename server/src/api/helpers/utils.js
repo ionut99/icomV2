@@ -97,6 +97,11 @@ function handleResponse(req, res, statusCode, data, message) {
   switch (statusCode) {
     case 204:
       return res.sendStatus(204);
+    // case 300:
+    //   res.download(data, function (error) {
+    //     console.log("Error : ", error);
+    //   });
+    //   break;
     case 400:
       isError = true;
       break;
@@ -110,6 +115,7 @@ function handleResponse(req, res, statusCode, data, message) {
       errorMessage = message || "Access to this resource is denied.";
       clearTokens(req, res);
       break;
+
     default:
       break;
   }

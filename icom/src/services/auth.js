@@ -25,7 +25,10 @@ export const verifyTokenService = async () => {
 // user login API to validate the credential
 export const userLoginService = async (email, password) => {
   try {
-    return await axios.post(`${REACT_APP_API_URL}/users/signin`, { email, password });
+    return await axios.post(`${REACT_APP_API_URL}/users/signin`, {
+      email,
+      password,
+    });
   } catch (err) {
     return {
       error: true,
@@ -38,6 +41,26 @@ export const userLoginService = async (email, password) => {
 export const userLogoutService = async () => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/users/logout`);
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+// get profile picture
+export const getAvatarPictureService = async (userID) => {
+  try {
+    const response = await axios.post(
+      `${REACT_APP_API_URL}/document/geprofilepicture`,
+      {
+        userID,
+      },
+      { responseType: "blob" }
+    );
+
+    return response;
   } catch (err) {
     return {
       error: true,
