@@ -5,7 +5,7 @@ import {
   userLoginStarted,
   userLoginFailure,
   userLogout,
-  updateUserAvatar,
+  // updateUserAvatar,
 } from "../actions/authActions";
 import {
   verifyTokenService,
@@ -47,16 +47,28 @@ export const userLoginAsync = (email, password) => async (dispatch) => {
   dispatch(verifyUserSuccess(result.data));
 };
 
-// handle user login
-export const getUserAvatarAsync = (userID) => async (dispatch) => {
-  const resultBlob = await getAvatarPictureService(userID);
-  const fileReaderInstance = new FileReader();
-  fileReaderInstance.readAsDataURL(resultBlob.data);
-  fileReaderInstance.onload = () => {
-    const base64data = fileReaderInstance.result;
-    dispatch(updateUserAvatar(base64data));
-  };
-  //const theImage = URL.createObjectURL(result);
+// handle get Avatar Picture
+export const getAvatarPictureAsync = async (ID, atuhUser, ISroom) => {
+  if (ISroom !== undefined) {
+    const resultBlob = await getAvatarPictureService(ID, atuhUser, ISroom);
+    return new Promise((resolve) => {
+      if (
+        resultBlob.error === true ||
+        ISroom === undefined ||
+        ID === undefined ||
+        atuhUser === undefined
+      ) {
+        return resolve("FAILED");
+      }
+      const fileReaderInstance = new FileReader();
+      fileReaderInstance.readAsDataURL(resultBlob.data);
+      fileReaderInstance.onload = () => {
+        const base64data = fileReaderInstance.result;
+        // dispatch(updateUserAvatar(base64data));
+        return resolve(base64data);
+      };
+    });
+  }
 };
 
 // handle user logout

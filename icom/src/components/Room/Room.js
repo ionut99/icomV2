@@ -11,9 +11,10 @@ import * as BsIcons from "react-icons/bs";
 import * as IoIcons2 from "react-icons/io5";
 import * as AiIcons from "react-icons/ai";
 
-import UserAvatar from "../../images/userAvatar.png";
-import groupAvatar from "../../images/group.png";
+// import UserAvatar from "../../images/userAvatar.png";
+// import groupAvatar from "../../images/group.png";
 import Comunication from "../../services/comunication";
+import Avatar from "../Search/Avatar";
 
 import "./room.css";
 
@@ -51,11 +52,7 @@ function Room() {
         style={{ display: channelID ? "block" : "none" }}
       >
         <div className="conversation-details">
-          <img
-            className="conversation-picture"
-            src={groupAvatar}
-            alt="poza din user details"
-          />
+          <Avatar userID={null} roomID={channelID} atuhUser={user.userId} />
           <div className="room-name">
             <p>{currentChannelName}</p>
           </div>
@@ -82,8 +79,12 @@ function Room() {
                       me: RoomMessages.senderID === user.userId,
                     })}
                   >
-                    <img src={UserAvatar} alt="" />
-
+                    {/* <img src={UserAvatar} alt="" /> */}
+                    <Avatar
+                      userID={RoomMessages.senderID}
+                      roomID={null}
+                      atuhUser={user.userId}
+                    />
                     <div className="message_body">
                       <div className="message_author">
                         {RoomMessages.senderID === user.userId

@@ -12,8 +12,7 @@ import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 
 import { verifyTokenAsync } from "./asyncActions/authAsyncActions";
-import Navbar from "./components/Navbar/Navbar";
-import "./index.css"
+import "./index.css";
 
 function App() {
   const authObj = useSelector((state) => state.auth);
@@ -34,13 +33,14 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <div className="content">
-        <Navbar />
           <Switch>
             <PublicRoute
               path="/login"
               component={Login}
               isAuthenticated={isAuthenticated}
             />
+
+            {/* <Navbar /> */}
             <PrivateRoute
               path="/dashboard"
               component={Dashboard}
@@ -61,6 +61,7 @@ function App() {
               component={TextEditor}
               isAuthenticated={isAuthenticated}
             />
+
             <Redirect to={isAuthenticated ? "/dashboard" : "/login"} />
           </Switch>
         </div>

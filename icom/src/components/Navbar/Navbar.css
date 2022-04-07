@@ -14,17 +14,11 @@
   align-items: center;
 }
 .right_section {
-  height: inherit;
-  width: 100px;
+  position: relative;
+  height: 100%;
   margin-left: auto;
+  right: 50px;
   display: flex;
-}
-.user_picture {
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-  align-self: center !important;
-  cursor: pointer;
 }
 
 .menu-bars {

@@ -10,6 +10,7 @@ import { userLogout, verifyTokenEnd } from "../../actions/authActions";
 
 import { setAuthToken } from "../../services/auth";
 import { getUserListService } from "../../services/user";
+import Navbar from "../../components/Navbar/Navbar";
 
 import "./dashboard.css";
 
@@ -62,6 +63,7 @@ function Dashboard() {
 
   return (
     <div className="page">
+      <Navbar />
       <div className="home-page">
         <div className="teams-content">
           <div className="videos">

@@ -11,6 +11,8 @@ import "quill/dist/quill.snow.css";
 import * as Quill from "quill";
 
 import UserAvatar from "../../images/userAvatar.png";
+import Navbar from "../../components/Navbar/Navbar";
+
 
 // import { GetDocumentFileData } from "../../services/user";
 
@@ -130,6 +132,7 @@ function TextEditor() {
 
   return (
     <div className="page">
+      <Navbar />
       <div className="edit-window">
         <div className="edit-box" ref={wrapperRef}></div>
         <div className="changes-list">

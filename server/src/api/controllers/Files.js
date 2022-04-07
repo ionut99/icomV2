@@ -2,9 +2,20 @@ const multer = require("multer");
 const path = require("path");
 var fs = require("fs");
 
-const { UpdateAvatarPathData, GetUserDetails } = require("../services/User");
+const {
+  UpdateAvatarPathData,
+  GetUserDetails,
+  GetRoomDetails,
+  GetPrivateRoomOtherUserDetails,
+} = require("../services/User");
 const { handleResponse } = require("../helpers/utils");
 const { ReadFile } = require("../services/Files");
+
+const defaultAvatarPicure = path.join(
+  __dirname,
+  "../../../",
+  "users/images/avatar/default.png"
+);
 
 const storage = multer.diskStorage({
   destination: path.join(__dirname, "../../../users/images/", "avatar"),
@@ -55,7 +66,10 @@ async function UpdateProfilePicture(req, res) {
       const results = JSON.parse(JSON.stringify(userDetails));
       const currentAvatarPath = results[0].Avatar;
 
-      if (currentAvatarPath.length > 0) {
+      if (
+        currentAvatarPath !== null &&
+        currentAvatarPath !== defaultAvatarPicure
+      ) {
         fs.unlinkSync(currentAvatarPath, function (err) {
           if (err) throw err;
           // if no error, file has been deleted successfully
@@ -78,54 +92,90 @@ async function UpdateProfilePicture(req, res) {
 }
 
 async function GetProfilePicture(req, res) {
-  const userID = req.body.userID;
+  try {
+    const ID = req.body.ID;
+    const atuhUser = req.body.atuhUser;
+    const ISroom = req.body.ISroom;
 
-  if (userID === null) {
-    return handleResponse(req, res, 410, "Invalid Request Parameters ");
-  }
-
-  const userDetails = await GetUserDetails(userID);
-  const results = JSON.parse(JSON.stringify(userDetails));
-  const currentAvatarPath = results[0].Avatar;
-
-  //   if (currentAvatarPath.length > 0) {
-  //     var extension = path.extname(currentAvatarPath);
-  //     var fileName = path.basename(currentAvatarPath);
-  //     var contentType = "image/" + extension.replace(".", "");
-
-  //     // res.writeHead(200, {
-  //     //   "Content-Type": contentType,
-  //     // });
-
-  //     // read file..
-  //     //const pictureContent = await ReadFile(currentAvatarPath);
-  //     //console.log(pictureContent);
-  //     // if (pictureContent === "FAILED") {
-  //     //   return handleResponse(req, res, 404, " Error Loading Profile Picture ");
-  //     // }
-  //     res.send({
-  //       fileName: fileName,
-  //       contentType: contentType,
-  //       pictureContent: pictureContent,
-  //     });
-  //   }
-
-  var options = {
-    //root: path.join(__dirname, "public"),
-    dotfiles: "deny",
-    headers: {
-      "x-timestamp": Date.now(),
-      "x-sent": true,
-    },
-  };
-
-  res.sendFile(currentAvatarPath, options, function (err) {
-    if (err) {
-      return handleResponse(req, res, 410, " Err send File ");
-    } else {
-      console.log("Sent:", currentAvatarPath);
+    if (
+      ID === null ||
+      ID === undefined ||
+      ISroom === undefined ||
+      ISroom === null ||
+      atuhUser === undefined ||
+      atuhUser === null
+    ) {
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
-  });
+
+    var currentAvatarPath = "";
+
+    if (!ISroom) {
+      const userDetails = await GetUserDetails(ID);
+      if (userDetails === "FAILED") {
+        throw new Error("  Err Get User Details  ");
+      }
+      const results = JSON.parse(JSON.stringify(userDetails));
+      if (results[0].Avatar != undefined) {
+        currentAvatarPath = results[0].Avatar;
+      }
+    } else {
+      // TO DO - find user from Room OR... if is public room we display
+
+      const roomDetails = await GetRoomDetails(ID);
+      if (roomDetails === "FAILED") {
+        throw new Error("  Err Get Room Details  ");
+      }
+      const results = JSON.parse(JSON.stringify(roomDetails));
+      if (results[0].Private > 0) {
+        const theOtherUser = await GetPrivateRoomOtherUserDetails(ID, atuhUser);
+        if (theOtherUser === "FAILED") {
+          throw new Error("  Err Other User Details  ");
+        }
+        const theOtherUserJson = JSON.parse(JSON.stringify(theOtherUser));
+
+        const userDetails = await GetUserDetails(theOtherUserJson[0].UserID);
+        if (userDetails === "FAILED") {
+          throw new Error("  Err Get User Details  ");
+        }
+
+        const results = JSON.parse(JSON.stringify(userDetails));
+        if (results[0].Avatar != undefined) {
+          currentAvatarPath = results[0].Avatar;
+        }
+      } else {
+        // to do pentru grupuri...
+      }
+    }
+
+    if (currentAvatarPath === "") {
+      currentAvatarPath = defaultAvatarPicure;
+    }
+
+    var options = {
+      //root: path.join(__dirname, "public"),
+      dotfiles: "deny",
+      headers: {
+        "x-timestamp": Date.now(),
+        "x-sent": true,
+      },
+    };
+
+    if (currentAvatarPath !== null && currentAvatarPath !== "") {
+      res.sendFile(currentAvatarPath, options, function (err) {
+        if (err) {
+          throw new Error("  Err send File  ");
+          //return handleResponse(req, res, 410, " Err send File ");
+        }
+      });
+    } else {
+      throw new Error(" EmptyAvatar ");
+      //return handleResponse(req, res, 513, "EmptyAvatar");
+    }
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 410, error.message);
+  }
 }
 
 module.exports = {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SidebarData } from "../SidebarData";
 import { IconContext } from "react-icons";
@@ -7,13 +7,19 @@ import { Link } from "react-router-dom";
 import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 import { updateCurrentChannel } from "../../actions/userActions";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
-import Applogo from "../../images/white-logo.png";
+import Avatar from "../Search/Avatar";
 import "./Navbar.css";
 
-import { getUserAvatarAsync } from "../../asyncActions/authAsyncActions";
+// import Applogo from "../../images/white-logo.png";
+// import { updateUserAvatar } from "../../actions/authActions";
+// import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
 
 function Navbar() {
   const dispatch = useDispatch();
+
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
+
   const [sidebar, setSidebar] = useState(false);
   const [dropdownMenu, setdropdownMenu] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({
@@ -26,15 +32,6 @@ function Navbar() {
 
   const showSidebar = () => setSidebar(!sidebar);
   const showdropdownMenu = () => setdropdownMenu(!dropdownMenu);
-
-  const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;
-
-  useEffect(() => {
-    dispatch(getUserAvatarAsync(user.userId));
-  }, [user.userId]);
-
-  const { userAvatar } = authObj;
 
   const handleChangePicture = () => {
     setdropdownMenu(!dropdownMenu);
@@ -70,14 +67,9 @@ function Navbar() {
           </div>
 
           <div className="right_section">
-            <img
-              className="user_picture"
-              // user profile
-              src={userAvatar}
-              //src={"data:image/jpeg;base64," + userAvatar}
-              alt="userAvatar jmecher"
-              onClick={showdropdownMenu}
-            />
+            <div onClick={showdropdownMenu}>
+              <Avatar userID={user.userId} roomID={null} atuhUser={user.userId}/>
+            </div>
           </div>
         </div>
         <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
