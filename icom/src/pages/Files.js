@@ -1,7 +1,7 @@
 import React from "react";
 import "../cssFiles/files.css";
 
-// import Navbar from "../components/Navbar/Navbar";
+import Navbar from "../components/Navbar/Navbar";
 import * as IoIcons from "react-icons/io";
 import * as AiIcons from "react-icons/ai";
 
@@ -18,7 +18,7 @@ function Files() {
   }
   return (
     <div className="main-window">
-      {/* <Navbar /> */}
+      <Navbar />
       <div className="list-files-section">
         <div className="files-details">
           <div className="type-sort">Type</div>

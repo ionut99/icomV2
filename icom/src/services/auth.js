@@ -50,12 +50,14 @@ export const userLogoutService = async () => {
 };
 
 // get profile picture
-export const getAvatarPictureService = async (userID) => {
+export const getAvatarPictureService = async (ID, atuhUser, ISroom) => {
   try {
     const response = await axios.post(
       `${REACT_APP_API_URL}/document/geprofilepicture`,
       {
-        userID,
+        ID,
+        atuhUser,
+        ISroom,
       },
       { responseType: "blob" }
     );

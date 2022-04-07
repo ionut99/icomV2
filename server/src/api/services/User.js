@@ -234,6 +234,40 @@ function GetUserDetails(UserID) {
   });
 }
 
+//Get Room's Avatar Details
+function GetRoomDetails(RoomID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `SELECT * FROM room WHERE ID = '${RoomID}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+//Get Other User Details from Rpivate Room
+function GetPrivateRoomOtherUserDetails(RoomID, atuhUser) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `SELECT * FROM participants INNER JOIN room ON room.ID = participants.RoomID WHERE RoomID = '${RoomID}' and room.Private = 1 and participants.UserID != '${atuhUser}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
 module.exports = {
   GetAllUsersDataBase,
   GetSearchUsersList,
@@ -249,4 +283,6 @@ module.exports = {
   GetPartListData,
   UpdateAvatarPathData,
   GetUserDetails,
+  GetRoomDetails,
+  GetPrivateRoomOtherUserDetails,
 };

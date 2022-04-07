@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { verifyTokenAsync } from "./../asyncActions/authAsyncActions";
 import { setUserSearchBoxContent } from "./../actions/userActions";
 import { setAuthToken } from "./../services/auth";
+import Navbar from "../components/Navbar/Navbar";
 import moment from "moment";
 
 import {
@@ -87,6 +88,7 @@ function Chat() {
 
   return (
     <div className="page">
+      <Navbar />
       <div className="chat-page">
         <div className="left-section">
           <div className="search-section">

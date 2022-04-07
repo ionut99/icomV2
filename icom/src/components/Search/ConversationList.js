@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import groupAvatar from "../../images/group.png";
+// import groupAvatar from "../../images/group.png";
 import "./search.css";
 
 import * as MdIcons from "react-icons/md";
@@ -10,6 +10,8 @@ import * as BsIcons from "react-icons/bs";
 
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import SearchService from "./searchService.js";
+
+import Avatar from "../Search/Avatar";
 
 const ConversationList = () => {
   const dispatch = useDispatch();
@@ -40,6 +42,9 @@ const ConversationList = () => {
     ShowParticipants(RoomID);
   };
 
+  // const handleShowAvatar = () => {
+  //   console.log("se aduce poza..");
+  // };
   return (
     <div
       style={{
@@ -68,10 +73,10 @@ const ConversationList = () => {
               )
             }
           >
-            <img
-              className="conversation-picture"
-              src={groupAvatar}
-              alt="userAvatar jmecher"
+            <Avatar
+              userID={null}
+              roomID={RoomSearchList.RoomID}
+              atuhUser={user.userId}
             />
             <div className="conversation-details-left">
               <div className="conversation-header">
@@ -79,7 +84,8 @@ const ConversationList = () => {
                   <p>{RoomSearchList.RoomName}</p>
                   <div className="last-message">
                     <p>
-                      Laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaast Messageeeeeeeeeeeee
+                      Laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaast
+                      Messageeeeeeeeeeeee
                     </p>
                   </div>
                 </div>

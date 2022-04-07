@@ -1,0 +1,9 @@
+.user_picture {
+  margin: 8px;
+  height: 45px;
+  width: 45px;
+  border-radius: 50%;
+  align-self: center !important;
+  cursor: pointer;
+  top: 10px;
+}

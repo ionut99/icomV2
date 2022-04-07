@@ -1,10 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import groupAvatar from "../../images/group.png";
+// import groupAvatar from "../../images/group.png";
 import "./search.css";
 
 import SearchService from "./searchService.js";
 import * as AiIcons from "react-icons/ai";
+import Avatar from "./Avatar";
 
 function PersonList() {
   const chatObj = useSelector((state) => state.chatRedu);
@@ -54,11 +55,12 @@ function PersonList() {
               )
             }
           >
-            <img
+            {/* <img
               className="conversation-picture"
               src={groupAvatar}
               alt="userAvatar jmecher"
-            />
+            /> */}
+            <Avatar userID={userSearchList.userId} roomID={null} atuhUser={user.userId}/>
             <div className="conversation-details-left">
               <div className="conversation-header">
                 <div className="conversation-user-details">
