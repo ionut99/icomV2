@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SidebarData } from "../SidebarData";
 import { IconContext } from "react-icons";
@@ -9,19 +9,23 @@ import { updateCurrentChannel } from "../../actions/userActions";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import Avatar from "../Search/Avatar";
 import "./Navbar.css";
+import ProfileMenu from "./ProfileMenu";
 
 // import Applogo from "../../images/white-logo.png";
 // import { updateUserAvatar } from "../../actions/authActions";
 // import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
 
 function Navbar() {
+  const ref = useRef();
+
   const dispatch = useDispatch();
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
   const [sidebar, setSidebar] = useState(false);
-  const [dropdownMenu, setdropdownMenu] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const [confirmDialog, setConfirmDialog] = useState({
     uploadPicture: false,
     isOpen: false,
@@ -31,10 +35,9 @@ function Navbar() {
   const [discard, setDiscard] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
-  const showdropdownMenu = () => setdropdownMenu(!dropdownMenu);
 
   const handleChangePicture = () => {
-    setdropdownMenu(!dropdownMenu);
+    setIsMenuOpen(false);
     setConfirmDialog({
       uploadPicture: true,
       isOpen: true,
@@ -49,8 +52,25 @@ function Navbar() {
     dispatch(updateCurrentChannel(null, "", []));
   }
 
+  useEffect(() => {
+    const checkIfClickedOutside = (e) => {
+      // If the menu is open and the clicked target is not within the menu,
+      // then close the menu
+      if (isMenuOpen && ref.current && !ref.current.contains(e.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", checkIfClickedOutside);
+
+    return () => {
+      // Cleanup the event listener
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
+  }, [isMenuOpen]);
+
   return (
-    <>
+    <div className="wrapper" ref={ref}>
       <ConfirmDialog
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
@@ -67,7 +87,10 @@ function Navbar() {
           </div>
 
           <div className="right_section">
-            <div onClick={showdropdownMenu} style={{ cursor: "pointer" }}>
+            <div
+              onClick={() => setIsMenuOpen((oldState) => !oldState)}
+              style={{ cursor: "pointer" }}
+            >
               <Avatar
                 userID={user.userId}
                 roomID={null}
@@ -97,7 +120,7 @@ function Navbar() {
             })}
           </ul>
         </nav>
-        <nav className={dropdownMenu ? "profile-menu active" : "profile-menu"}>
+        <nav className={isMenuOpen ? "profile-menu active" : "profile-menu"}>
           <ul className="drop-menu-items">
             <div className="user-details">Sign in as {user.name}</div>
 
@@ -114,7 +137,7 @@ function Navbar() {
           </ul>
         </nav>
       </IconContext.Provider>
-    </>
+    </div>
   );
 }
 
