@@ -11,8 +11,6 @@ import * as BsIcons from "react-icons/bs";
 import * as IoIcons2 from "react-icons/io5";
 import * as AiIcons from "react-icons/ai";
 
-// import UserAvatar from "../../images/userAvatar.png";
-// import groupAvatar from "../../images/group.png";
 import Comunication from "../../services/comunication";
 import Avatar from "../Search/Avatar";
 
@@ -79,7 +77,6 @@ function Room() {
                       me: RoomMessages.senderID === user.userId,
                     })}
                   >
-                    {/* <img src={UserAvatar} alt="" /> */}
                     <Avatar
                       userID={RoomMessages.senderID}
                       roomID={null}

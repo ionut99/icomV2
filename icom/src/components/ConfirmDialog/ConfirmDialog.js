@@ -15,7 +15,9 @@ export default function ConfirmDialog(props) {
   // Negative
   const handleClose = () => {
     setConfirmDialog({ ...confirmDialog, isOpen: false });
-    setDiscard(false);
+    if (confirmDialog.uploadPicture) {
+      setDiscard(false);
+    }
   };
 
   // Positive

@@ -67,8 +67,12 @@ function Navbar() {
           </div>
 
           <div className="right_section">
-            <div onClick={showdropdownMenu}>
-              <Avatar userID={user.userId} roomID={null} atuhUser={user.userId}/>
+            <div onClick={showdropdownMenu} style={{ cursor: "pointer" }}>
+              <Avatar
+                userID={user.userId}
+                roomID={null}
+                atuhUser={user.userId}
+              />
             </div>
           </div>
         </div>

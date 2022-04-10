@@ -17,6 +17,7 @@ const {
 
 const { handleResponse } = require("../helpers/utils");
 const { GetUserByID, GetParticipantByID } = require("../services/Auth");
+const { is } = require("express/lib/request");
 
 // return list with all users
 async function GetUserSearchList(req, res) {
@@ -57,7 +58,36 @@ async function GetUserSearchList(req, res) {
       }
     }
   }
-  return handleResponse(req, res, 200, { list });
+  console.log("lista care trebuie sortata: ");
+  //const results = JSON.parse(JSON.stringify(list));
+  //console.log(results);
+  let keyword = search_box_text;
+
+  let search_results = list
+    .filter((prof) => {
+      // Filter results by doing case insensitive match on name here
+      return prof.UserName.toLowerCase().includes(keyword.toLowerCase());
+    })
+    .sort((a, b) => {
+      // Sort results by matching name with keyword position in name
+      if (
+        a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) >
+        b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
+      ) {
+        return 1;
+      } else if (
+        a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) <
+        b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
+      ) {
+        return -1;
+      } else {
+        if (a.UserName > b.UserName) return 1;
+        else return -1;
+      }
+    });
+
+  //console.log(search_results);
+  return handleResponse(req, res, 200, { search_results });
 }
 
 // return list with room search
@@ -84,7 +114,35 @@ async function GetRoomSearchList(req, res) {
     }
     return room;
   });
-  return handleResponse(req, res, 200, { list });
+
+  let keyword = search_box_text;
+
+  let search_results = list
+    .filter((prof) => {
+      // Filter results by doing case insensitive match on name here
+      return prof.RoomName.toLowerCase().includes(keyword.toLowerCase());
+    })
+    .sort((a, b) => {
+      // Sort results by matching name with keyword position in name
+      if (
+        a.RoomName.toLowerCase().indexOf(keyword.toLowerCase()) >
+        b.RoomName.toLowerCase().indexOf(keyword.toLowerCase())
+      ) {
+        return 1;
+      } else if (
+        a.RoomName.toLowerCase().indexOf(keyword.toLowerCase()) <
+        b.RoomName.toLowerCase().indexOf(keyword.toLowerCase())
+      ) {
+        return -1;
+      } else {
+        if (a.RoomName > b.RoomName) return 1;
+        else return -1;
+      }
+    });
+
+  //console.log(search_results);
+
+  return handleResponse(req, res, 200, { search_results });
 }
 
 // return messages from a room
