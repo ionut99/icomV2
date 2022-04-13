@@ -9,7 +9,6 @@ import { updateCurrentChannel } from "../../actions/userActions";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import Avatar from "../Search/Avatar";
 import "./Navbar.css";
-import ProfileMenu from "./ProfileMenu";
 
 // import Applogo from "../../images/white-logo.png";
 // import { updateUserAvatar } from "../../actions/authActions";
@@ -56,8 +55,13 @@ function Navbar() {
     const checkIfClickedOutside = (e) => {
       // If the menu is open and the clicked target is not within the menu,
       // then close the menu
-      if (isMenuOpen && ref.current && !ref.current.contains(e.target)) {
+      if (
+        (isMenuOpen || sidebar) &&
+        ref.current &&
+        !ref.current.contains(e.target)
+      ) {
         setIsMenuOpen(false);
+        setSidebar(false);
       }
     };
 
@@ -67,7 +71,7 @@ function Navbar() {
       // Cleanup the event listener
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
-  }, [isMenuOpen]);
+  }, [isMenuOpen, sidebar]);
 
   return (
     <div className="wrapper" ref={ref}>
@@ -78,7 +82,7 @@ function Navbar() {
         setDiscard={setDiscard}
       />
       <IconContext.Provider value={{ color: "#fff" }}>
-        <div className="navbar">
+        <div className="my-my-navbar">
           <div className="left_section">
             <Link to="#" className="menu-bars">
               <FaIcons.FaBars onClick={showSidebar} />
@@ -100,7 +104,7 @@ function Navbar() {
           </div>
         </div>
         <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
-          <ul className="nav-menu-items" onClick={showSidebar}>
+          <ul className="my-nav-menu-items" onClick={showSidebar}>
             <li className="navbar-toggle">
               <Link to="#" className="menu-bars">
                 <FaIcons.FaBars />

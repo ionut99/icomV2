@@ -10,6 +10,7 @@ const {
 } = require("../services/User");
 const { handleResponse } = require("../helpers/utils");
 const { ReadFile } = require("../services/Files");
+const { dir } = require("console");
 
 const defaultAvatarPicure = path.join(
   __dirname,
@@ -77,7 +78,11 @@ async function UpdateProfilePicture(req, res) {
         });
       }
 
-      pathToStore = req.file.path.replace(/\\/g, "\\\\");
+      // pathToStore = req.file.path.replace(/\\/g, "\\\\");
+      var pathToStore = path.join("users/images/avatar/", req.file.filename);
+      pathToStore = pathToStore.replace(/\\/g, "\\\\");
+      // console.log(pathToStore);
+
       const result = await UpdateAvatarPathData(userID, pathToStore);
       if (result === "FAILED") {
         return handleResponse(req, res, 412, " DataBase Error ");
@@ -150,6 +155,8 @@ async function GetProfilePicture(req, res) {
 
     if (currentAvatarPath === "") {
       currentAvatarPath = defaultAvatarPicure;
+    } else {
+      currentAvatarPath = path.join(__dirname, "../../../", currentAvatarPath);
     }
 
     var options = {
@@ -174,7 +181,7 @@ async function GetProfilePicture(req, res) {
     }
   } catch (error) {
     console.error(error);
-    return handleResponse(req, res, 410, error.message);
+    return handleResponse(req, res, 410, "  Err send File  ");
   }
 }
 

@@ -132,10 +132,13 @@
   width: 35px;
 }
 
+.conversation-details .room-instrument svg{
+  vertical-align: 0;
+}
+
 .conversation-details a {
   color: black;
 }
-
 
 .conversation-details .room-instrument:hover {
   cursor: pointer;
@@ -185,6 +188,7 @@
 }
 .messages .one_message .message_body .message_text p {
   word-wrap: break-word;
+  margin: 0;
 }
 
 @media screen and (max-width: 1400px) {

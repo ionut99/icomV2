@@ -83,6 +83,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin: 0;
 }
 
 .last-message {
@@ -110,13 +111,13 @@
 }
 .more_options .css-1cdpoyg-MuiSvgIcon-root:hover {
   color: var(--sender-message-color);
-  transition: 0.2s;
+  transition: 1s;
 }
 
 .conversation-last-seen {
   margin-left: auto;
   font-size: small;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .room-menu {
@@ -138,7 +139,7 @@
 }
 
 .dropdown-content {
-  top: 35px;
+  top: 30px;
   right: 5px;
   display: none;
   position: absolute;
@@ -151,13 +152,14 @@
 
 .dropdown-content .dropdown-instrument {
   color: black;
-  padding: 12px;
+  padding: 10px;
   text-decoration: none;
   display: inline-flex;
   width: 100%;
 }
 
 .dropdown-content p {
+  margin: 0;
   padding-left: 10px;
 }
 

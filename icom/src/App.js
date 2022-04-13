@@ -13,6 +13,7 @@ import PublicRoute from "./routes/PublicRoute";
 
 import { verifyTokenAsync } from "./asyncActions/authAsyncActions";
 import "./index.css";
+import Storage from "./pages/Storage/Storage";
 
 function App() {
   const authObj = useSelector((state) => state.auth);
@@ -52,8 +53,8 @@ function App() {
               isAuthenticated={isAuthenticated}
             />
             <PrivateRoute
-              path="/files"
-              component={Files}
+              path="/storage"
+              component={Storage}
               isAuthenticated={isAuthenticated}
             />
             <PrivateRoute

@@ -58,7 +58,7 @@ async function GetUserSearchList(req, res) {
       }
     }
   }
-  console.log("lista care trebuie sortata: ");
+  // console.log("lista care trebuie sortata: ");
   //const results = JSON.parse(JSON.stringify(list));
   //console.log(results);
   let keyword = search_box_text;

@@ -39,7 +39,7 @@ export const SidebarData = [
   },
   {
     title: "Files",
-    path: "/files",
+    path: "/storage",
     icon: <SiIcons.SiFiles />,
     cName: "nav-text",
   },

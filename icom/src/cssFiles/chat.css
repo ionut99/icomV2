@@ -89,6 +89,9 @@
 .chat-persons .new-group-name .input-section {
   display: inline-flex;
 }
+.chat-persons .new-group-name p {
+  margin: 0;
+}
 .chat-persons .new-group-name input {
   height: 25px;
 }

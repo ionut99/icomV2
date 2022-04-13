@@ -1,12 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
 
-import App from './App';
-import store from './store';
+import App from "./App";
+import store from "./store";
 
-import './index.css';
-import '../node_modules/font-awesome/css/font-awesome.min.css'; 
+import "./index.css";
+import "../node_modules/font-awesome/css/font-awesome.min.css";
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 
 ReactDOM.render(
@@ -15,5 +16,5 @@ ReactDOM.render(
       <App />
     </Provider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
