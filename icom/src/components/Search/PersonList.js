@@ -55,12 +55,11 @@ function PersonList() {
               )
             }
           >
-            {/* <img
-              className="conversation-picture"
-              src={groupAvatar}
-              alt="userAvatar jmecher"
-            /> */}
-            <Avatar userID={userSearchList.userId} roomID={null} atuhUser={user.userId}/>
+            <Avatar
+              userID={userSearchList.userId}
+              roomID={null}
+              atuhUser={user.userId}
+            />
             <div className="conversation-details-left">
               <div className="conversation-header">
                 <div className="conversation-user-details">

@@ -42,9 +42,6 @@ const ConversationList = () => {
     ShowParticipants(RoomID);
   };
 
-  // const handleShowAvatar = () => {
-  //   console.log("se aduce poza..");
-  // };
   return (
     <div
       style={{
@@ -56,6 +53,8 @@ const ConversationList = () => {
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
         confirmAction={handleDeleteUser}
+        // discard={false}
+        // setDiscard={function () {}}
       />
       <div className="RoomDelimiter">
         <p>Conversations</p>

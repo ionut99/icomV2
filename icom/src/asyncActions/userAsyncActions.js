@@ -35,7 +35,7 @@ export const userSetRoomListAsync =
       return;
     }
 
-    dispatch(setRoomList(Roomresult.data["list"]));
+    dispatch(setRoomList(Roomresult.data["search_results"]));
   };
 
 // handle Person Search
@@ -56,7 +56,7 @@ export const userSearchPersonListAsync =
       return;
     }
     if (search_box_content !== "") {
-      dispatch(setPersonSearchList(Personresult.data["list"]));
+      dispatch(setPersonSearchList(Personresult.data["search_results"]));
     } else {
       dispatch(setPersonSearchList([]));
     }

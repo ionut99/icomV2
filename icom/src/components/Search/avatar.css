@@ -4,6 +4,6 @@
   width: 45px;
   border-radius: 50%;
   align-self: center !important;
-  cursor: pointer;
+  /* cursor: pointer; */
   top: 10px;
 }
