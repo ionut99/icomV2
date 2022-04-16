@@ -33,7 +33,7 @@ export const userSetRoomListAsync =
       )
         dispatch(userLogout());
       return;
-    }
+    } 
 
     dispatch(setRoomList(Roomresult.data["search_results"]));
   };

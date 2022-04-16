@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ChatWindow from "./pages/Chat";
 import Files from "./pages/Files";
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
 import TextEditor from "./pages/TextEditor/TextEditor";
 
 import PrivateRoute from "./routes/PrivateRoute";

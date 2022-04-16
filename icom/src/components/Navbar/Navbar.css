@@ -36,7 +36,7 @@
   border: #d1d8df 2px solid;
   background-color: #ffffff;
 
-  width: 180px;
+  width: 190px;
   height: 250px;
 
   display: none;
@@ -53,6 +53,7 @@
 .drop-menu-items {
   display: flex;
   flex-direction: column;
+  padding-left: 0;
   width: 100%;
 }
 .user-details {

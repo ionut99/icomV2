@@ -1,6 +1,7 @@
 const room = require("./api/routes/room");
 const user = require("./api/routes/user");
 const document = require("./api/routes/file");
+const folder = require("./api/routes/folder");
 
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -46,6 +47,8 @@ app.use("/users", user);
 app.use("/room", room);
 
 app.use("/document", document);
+
+app.use("/folder", folder);
 
 // Start server for chat
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";

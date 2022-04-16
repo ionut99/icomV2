@@ -169,15 +169,22 @@ async function GetProfilePicture(req, res) {
     };
 
     if (currentAvatarPath !== null && currentAvatarPath !== "") {
-      res.sendFile(currentAvatarPath, options, function (err) {
-        if (err) {
-          throw new Error("  Err send File  ");
+      // console.log("calea este: ");
+      // console.log(currentAvatarPath);
+
+      res.sendFile(currentAvatarPath, options, function (error) {
+        if (error) {
+          // throw new Error("  Err send File  ");
           //return handleResponse(req, res, 410, " Err send File ");
+          console.error(error);
+          return handleResponse(req, res, 410, "  Err send File  ");
         }
       });
     } else {
-      throw new Error(" EmptyAvatar ");
+      // throw new Error(" EmptyAvatar ");
       //return handleResponse(req, res, 513, "EmptyAvatar");
+      console.error(" Empty Avatar ");
+      return handleResponse(req, res, 410, "  Err send File  ");
     }
   } catch (error) {
     console.error(error);
