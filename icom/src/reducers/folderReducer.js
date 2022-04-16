@@ -1,4 +1,9 @@
 import { useReducer, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { getFolderByID } from "../services/folder";
+
+import { GetFolder } from "../asyncActions/folderAsyncActions";
 
 const ACTIONS = {
   SELECT_FOLDER: "select-folder",
@@ -27,6 +32,9 @@ function reducer(state, { type, payload }) {
 }
 
 export function useFolder(folderId = null, folder = null) {
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
+
   const [state, dispatch] = useReducer(reducer, {
     folderId,
     folder,
@@ -47,7 +55,30 @@ export function useFolder(folderId = null, folder = null) {
     }
 
     // Get Folder from database by ID
+
+    getFolderByID(folderId, user.userId)
+      .then((result) => {
+        console.log("folderul este: ");
+        console.log(result.data["folderObject"][0]);
+
+        const formattedDoc = {
+          id: result.data["folderObject"][0].folderID,
+          ...result.data["folderObject"][0],
+        };
+
+        console.log(formattedDoc);
+
+      })
+      .catch(() => {
+        dispatch({
+          type: ACTIONS.UPDATE_FOLDER,
+          payload: { folder: ROOT_FOLDER },
+        });
+      });
+
+    // console.log("mama");
+    // return dispatch(GetFolder(folderId, user.userId));
   }, [folderId]);
 
-  return state;  
+  return state;
 }

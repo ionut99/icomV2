@@ -8,7 +8,7 @@ import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import { useFolder } from "../../reducers/folderReducer";
 
 function Storage() {
-  const { folder } = useFolder();
+  const { folder } = useFolder("71a9af84-b51a-49be-9656-71abc5b41883");
 
   return (
     <>

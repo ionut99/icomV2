@@ -1,11 +1,17 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Form } from "react-bootstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
-import { SettingsSystemDaydreamRounded } from "@mui/icons-material";
+
+import { AddNewFolder } from "../../asyncActions/folderAsyncActions";
 
 export default function AddFolderButton({ currentFolder }) {
+  const dispatch = useDispatch();
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
+
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
 
@@ -21,12 +27,10 @@ export default function AddFolderButton({ currentFolder }) {
     e.preventDefault();
 
     if (currentFolder == null) {
-      setName("");
-      closeModal();
       return;
     }
 
-    // Create a folder in the data base 
+    // Create a folder in the data base
 
     // const path = [...currentFolder.path];
     // if (currentFolder !== ROOT_FOLDER) {
@@ -40,6 +44,11 @@ export default function AddFolderButton({ currentFolder }) {
     //   path: path,
     //   createdAt: database.getCurrentTimestamp(),
     // });
+    // create a sql date object so we can use it in our INSERT statement
+    const time = new Date().toLocaleString();
+
+    dispatch(AddNewFolder(name, currentFolder.id, user.userId, null, time));
+
     setName("");
     closeModal();
   }
