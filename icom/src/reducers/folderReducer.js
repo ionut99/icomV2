@@ -1,13 +1,15 @@
 import { useReducer, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
-import { getFolderByID } from "../services/folder";
+import { getFolderByID, getChildFolders } from "../services/folder";
 
-import { GetFolder } from "../asyncActions/folderAsyncActions";
+// import { GetFolder } from "../asyncActions/folderAsyncActions";
 
-const ACTIONS = {
+export const ACTIONS = {
   SELECT_FOLDER: "select-folder",
   UPDATE_FOLDER: "update-folder",
+  SET_CHILD_FOLDERS: "set-child-folders",
+  ADD_CHILD_FOLDER: "add-child-folder",
 };
 
 const ROOT_FOLDER = { name: "Root", id: null, path: [] };
@@ -25,6 +27,26 @@ function reducer(state, { type, payload }) {
       return {
         ...state,
         folder: payload.folder,
+      };
+    case ACTIONS.SET_CHILD_FOLDERS:
+      return {
+        ...state,
+        childFolders: payload.childFolders,
+      };
+    case ACTIONS.ADD_CHILD_FOLDER:
+      return {
+        ...state,
+        childFolders: [
+          ...state.childFolders,
+          {
+            folderID: payload.folderID,
+            name: payload.name,
+            parentId: payload.parentId,
+            userId: payload.userId,
+            path: payload.path,
+            createdAt: payload.createdAt,
+          },
+        ],
       };
     default:
       return state;
@@ -58,16 +80,14 @@ export function useFolder(folderId = null, folder = null) {
 
     getFolderByID(folderId, user.userId)
       .then((result) => {
-        console.log("folderul este: ");
-        console.log(result.data["folderObject"][0]);
-
         const formattedDoc = {
-          id: result.data["folderObject"][0].folderID,
           ...result.data["folderObject"][0],
         };
-
-        console.log(formattedDoc);
-
+        //console.log(formattedDoc);
+        dispatch({
+          type: ACTIONS.UPDATE_FOLDER,
+          payload: { folder: formattedDoc },
+        });
       })
       .catch(() => {
         dispatch({
@@ -78,7 +98,30 @@ export function useFolder(folderId = null, folder = null) {
 
     // console.log("mama");
     // return dispatch(GetFolder(folderId, user.userId));
-  }, [folderId]);
+  }, [folderId, user.userId]);
+
+  useEffect(() => {
+    // get childFolderList from Data Base
+    return getChildFolders(folderId, user.userId)
+      .then((result) => {
+        console.log("child folders: ");
+
+        const orderList = result.data["folderList"].sort(function (a, b) {
+          return new Date(b.createdTime) - new Date(a.createdTime);
+        });
+
+        // console.log(result.data["folderList"]);
+        console.log(orderList);
+
+        dispatch({
+          type: ACTIONS.SET_CHILD_FOLDERS,
+          payload: { childFolders: orderList },
+        });
+      })
+      .catch(() => {
+        console.log("error fetch child folders");
+      });
+  }, [folderId, user.userId]);
 
   return state;
 }

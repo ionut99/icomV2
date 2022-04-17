@@ -11,7 +11,7 @@ export const AddNewFolder =
       createdAt
     );
     // TO DO - display message
-    console.log(varVerify);
+    //console.log(varVerify);
   };
 
 // handle Person Search

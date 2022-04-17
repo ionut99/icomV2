@@ -7,6 +7,9 @@ import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { AddNewFolder } from "../../asyncActions/folderAsyncActions";
 
+import { ACTIONS } from "../../reducers/folderReducer";
+import { getFolderByID, getChildFolders } from "../../services/folder";
+
 export default function AddFolderButton({ currentFolder }) {
   const dispatch = useDispatch();
   const authObj = useSelector((state) => state.auth);
@@ -37,17 +40,23 @@ export default function AddFolderButton({ currentFolder }) {
     //   path.push({ name: currentFolder.name, id: currentFolder.id });
     // }
 
-    // database.folders.add({
-    //   name: name,
-    //   parentId: currentFolder.id,
-    //   userId: currentUser.uid,
-    //   path: path,
-    //   createdAt: database.getCurrentTimestamp(),
-    // });
-    // create a sql date object so we can use it in our INSERT statement
     const time = new Date().toLocaleString();
+    const path_proba = null; // TO DO de updatat
+    dispatch(
+      AddNewFolder(name, currentFolder.folderID, user.userId, path_proba, time)
+    );
 
-    dispatch(AddNewFolder(name, currentFolder.id, user.userId, null, time));
+    // dispatch({
+    //   type: ACTIONS.ADD_CHILD_FOLDER,
+    //   payload: {
+    //     folderID: null,
+    //     name: name,
+    //     parentId: currentFolder.folderID,
+    //     userId: user.userId,
+    //     path: path_proba,
+    //     createdAt: time,
+    //   },
+    // });
 
     setName("");
     closeModal();

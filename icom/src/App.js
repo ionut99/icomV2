@@ -63,6 +63,12 @@ function App() {
               isAuthenticated={isAuthenticated}
             />
 
+            <PrivateRoute
+              path="/folder/:folderID"
+              component={Storage}
+              isAuthenticated={isAuthenticated}
+            />
+
             <Redirect to={isAuthenticated ? "/dashboard" : "/login"} />
           </Switch>
         </div>
