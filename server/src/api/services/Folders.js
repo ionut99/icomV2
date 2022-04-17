@@ -43,7 +43,25 @@ function GetFolderDetails(folderId, userId) {
   });
 }
 
+//Get ChildFolders
+function GetChildFolderListService(parentId, userId) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `SELECT * FROM folders WHERE parentID = '${parentId}' AND userID = '${userId}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
 module.exports = {
   InsertNewFolderDataBase,
   GetFolderDetails,
+  GetChildFolderListService,
 };

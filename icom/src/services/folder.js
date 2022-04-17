@@ -34,12 +34,24 @@ export const AddNewFolderInDataBase = async (
 
 // get list of the users
 export const getFolderByID = async (folderId, userId) => {
-  console.log("cauta ");
-  console.log(folderId);
-  console.log(userId);
   try {
     return await axios.post(`${REACT_APP_API_URL}/folder/getfolder`, {
       folderId,
+      userId,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+// get Child Folder List
+export const getChildFolders = async (parentId, userId) => {
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/folder/getchilds`, {
+      parentId,
       userId,
     });
   } catch (err) {
