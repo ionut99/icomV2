@@ -4,7 +4,7 @@ const mysql = require("mysql");
 const { DataBaseConfig } = require("../../config/dataBase");
 
 function InsertNewFolderDataBase(
-  folderID,
+  folderId,
   name,
   parentId,
   userId,
@@ -14,7 +14,7 @@ function InsertNewFolderDataBase(
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
-      `INSERT INTO folders (folderID, Name, parentID, userID, path, createdTime) VALUES ('${folderID}', '${name}', '${parentId}', '${userId}', '${path}', '${createdAt}')`,
+      `INSERT INTO folders (folderId, Name, parentID, userID, path, createdTime) VALUES ('${folderId}', '${name}', '${parentId}', '${userId}', '${path}', '${createdAt}')`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");
@@ -31,7 +31,7 @@ function GetFolderDetails(folderId, userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
-      `SELECT * FROM folders WHERE folderID = '${folderId}' AND userID = '${userId}'`,
+      `SELECT * FROM folders WHERE folderId = '${folderId}' AND userID = '${userId}'`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");

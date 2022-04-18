@@ -43,7 +43,7 @@ export default function AddFolderButton({ currentFolder }) {
     const time = new Date().toLocaleString();
     const path_proba = null; // TO DO de updatat
     dispatch(
-      AddNewFolder(name, currentFolder.folderID, user.userId, path_proba, time)
+      AddNewFolder(name, currentFolder.folderId, user.userId, path_proba, time)
     );
 
     // dispatch({
