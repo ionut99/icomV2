@@ -25,10 +25,10 @@ async function AddNewFolder(req, res) {
   //   console.log(path);
   //   console.log(createdAt);
 
-  const folderID = uui.v4();
+  const folderId = uui.v4();
 
   var result = await InsertNewFolderDataBase(
-    folderID,
+    folderId,
     name,
     parentId,
     userId,
