@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 import { useFolder } from "../../reducers/folderReducer";
+import FolderBreadcrumbs from "./FolderBreadcrumbs";
 
 function Storage() {
   const { folderId } = useParams();
@@ -18,7 +19,10 @@ function Storage() {
     <>
       <Navbar />
       <Container fluid>
-        <AddFolderButton currentFolder={folder} />
+        <div className="d-flex align-items-center">
+          <FolderBreadcrumbs currentFolder={folder} />
+          <AddFolderButton currentFolder={folder} />
+        </div>
         {/* {folder && <Folder folder={folder}></Folder>} */}
         {childFolders.length > 0 && (
           <div className="d-flex flex-wrap">

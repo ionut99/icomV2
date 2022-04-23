@@ -36,7 +36,7 @@ async function AddNewFolder(req, res) {
     createdAt
   );
   if (result === "FAILED") {
-    console.log("Error storage message!");
+    console.log("Error storage folder configuration!");
     return handleResponse(req, res, 412, " DataBase Error ");
   }
 }

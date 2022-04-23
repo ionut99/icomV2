@@ -12,7 +12,7 @@ export const ACTIONS = {
   ADD_CHILD_FOLDER: "add-child-folder",
 };
 
-const ROOT_FOLDER = { name: "Root", folderId: null, path: [] };
+export const ROOT_FOLDER = { name: "Root", folderId: null, path: [] };
 
 function reducer(state, { type, payload }) {
   switch (type) {
@@ -80,10 +80,16 @@ export function useFolder(folderId = null, folder = null) {
 
     getFolderByID(folderId, user.userId)
       .then((result) => {
+        console.log(result.data["folderObject"][0]);
         const formattedDoc = {
-          ...result.data["folderObject"][0],
+          Name: result.data["folderObject"][0].Name,
+          createdTime: result.data["folderObject"][0].createdTime,
+          folderId: result.data["folderObject"][0].folderId,
+          parentID: result.data["folderObject"][0].parentID,
+          path: JSON.parse(result.data["folderObject"][0].path),
+          userID: result.data["folderObject"][0].userID,
         };
-        //console.log(formattedDoc);
+        console.log(formattedDoc);
         dispatch({
           type: ACTIONS.UPDATE_FOLDER,
           payload: { folder: formattedDoc },
