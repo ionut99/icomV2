@@ -3,22 +3,27 @@ import { Container } from "react-bootstrap";
 import AddFolderButton from "./AddFolderButton";
 import Navbar from "../../components/Navbar/Navbar";
 import Folder from "./Folder";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 import { useFolder } from "../../reducers/folderReducer";
+import FolderBreadcrumbs from "./FolderBreadcrumbs";
 
 function Storage() {
   const { folderId } = useParams();
-  const { folder, childFolders } = useFolder(folderId);
+  const { state = {} } = useLocation();
+  const { folder, childFolders } = useFolder(folderId, state.folder);
   //console.log(folder);
 
   return (
     <>
       <Navbar />
       <Container fluid>
-        <AddFolderButton currentFolder={folder} />
+        <div className="d-flex align-items-center">
+          <FolderBreadcrumbs currentFolder={folder} />
+          <AddFolderButton currentFolder={folder} />
+        </div>
         {/* {folder && <Folder folder={folder}></Folder>} */}
         {childFolders.length > 0 && (
           <div className="d-flex flex-wrap">

@@ -7,6 +7,8 @@ import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
 
 import { AddNewFolder } from "../../asyncActions/folderAsyncActions";
 
+import { ROOT_FOLDER } from "../../reducers/folderReducer";
+
 import { ACTIONS } from "../../reducers/folderReducer";
 import { getFolderByID, getChildFolders } from "../../services/folder";
 
@@ -33,30 +35,19 @@ export default function AddFolderButton({ currentFolder }) {
       return;
     }
 
-    // Create a folder in the data base
+    const path = [...currentFolder.path];
 
-    // const path = [...currentFolder.path];
-    // if (currentFolder !== ROOT_FOLDER) {
-    //   path.push({ name: currentFolder.name, id: currentFolder.id });
-    // }
+    console.log("calea din Root folder: ");
+    console.log(path);
+
+    if (currentFolder !== ROOT_FOLDER) {
+      path.push({ Name: currentFolder.Name, folderId: currentFolder.folderId });
+    }
 
     const time = new Date().toLocaleString();
-    const path_proba = null; // TO DO de updatat
     dispatch(
-      AddNewFolder(name, currentFolder.folderId, user.userId, path_proba, time)
+      AddNewFolder(name, currentFolder.folderId, user.userId, path, time)
     );
-
-    // dispatch({
-    //   type: ACTIONS.ADD_CHILD_FOLDER,
-    //   payload: {
-    //     folderID: null,
-    //     name: name,
-    //     parentId: currentFolder.folderID,
-    //     userId: user.userId,
-    //     path: path_proba,
-    //     createdAt: time,
-    //   },
-    // });
 
     setName("");
     closeModal();

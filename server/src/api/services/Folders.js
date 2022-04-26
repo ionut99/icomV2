@@ -11,13 +11,16 @@ function InsertNewFolderDataBase(
   path,
   createdAt
 ) {
+  console.log("Path ul pentru insert este (JSON format): ");
+  let stringPath = JSON.stringify(path);
+  console.log(stringPath);
   const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     connection.query(
-      `INSERT INTO folders (folderId, Name, parentID, userID, path, createdTime) VALUES ('${folderId}', '${name}', '${parentId}', '${userId}', '${path}', '${createdAt}')`,
+      `INSERT INTO folders (folderId, Name, parentID, userID, path, createdTime) VALUES ('${folderId}', '${name}', '${parentId}', '${userId}', '${stringPath}', '${createdAt}')`,
       (err, result) => {
         if (err) {
-          return resolve("FAILED");
+          return reject(err);
         }
         return resolve(result);
       }

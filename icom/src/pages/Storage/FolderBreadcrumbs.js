@@ -1,11 +1,19 @@
-import React from "react"
-import { Breadcrumb } from "react-bootstrap"
-import { Link } from "react-router-dom"
-import { ROOT_FOLDER } from "../../reducers/"
+import React from "react";
+import { Breadcrumb } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { ROOT_FOLDER } from "../../reducers/folderReducer";
 
 export default function FolderBreadcrumbs({ currentFolder }) {
-  let path = currentFolder === ROOT_FOLDER ? [] : [ROOT_FOLDER]
-  if (currentFolder) path = [...path, ...currentFolder.path]
+  let path = currentFolder === ROOT_FOLDER ? [] : [ROOT_FOLDER];
+  // console.log("path:");
+  // console.log(path);
+
+  if (currentFolder && typeof currentFolder.path !== "string") {
+    path = [...path, ...currentFolder.path];
+  }
+  // console.log(typeof currentFolder.path);
+  // console.log("currentFolder:");
+  // console.log(currentFolder.path);
 
   return (
     <Breadcrumb
@@ -14,18 +22,20 @@ export default function FolderBreadcrumbs({ currentFolder }) {
     >
       {path.map((folder, index) => (
         <Breadcrumb.Item
-          key={folder.folderId}
+          key={index}
           linkAs={Link}
           linkProps={{
             to: {
-              pathname: folder.folderId ? `/folder/${folder.folderId}` : "/",
+              pathname: folder.folderId
+                ? `/folder/${folder.folderId}`
+                : "/storage",
               state: { folder: { ...folder, path: path.slice(1, index) } },
             },
           }}
           className="text-truncate d-inline-block"
           style={{ maxWidth: "150px" }}
         >
-          {folder.name}
+          {folder.Name}
         </Breadcrumb.Item>
       ))}
       {currentFolder && (
@@ -34,9 +44,9 @@ export default function FolderBreadcrumbs({ currentFolder }) {
           style={{ maxWidth: "200px" }}
           active
         >
-          {currentFolder.name}
+          {currentFolder.Name}
         </Breadcrumb.Item>
       )}
     </Breadcrumb>
-  )
+  );
 }
