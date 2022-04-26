@@ -12,7 +12,7 @@ export const ACTIONS = {
   ADD_CHILD_FOLDER: "add-child-folder",
 };
 
-export const ROOT_FOLDER = { name: "Root", folderId: null, path: [] };
+export const ROOT_FOLDER = { Name: "Root", folderId: null, path: [] };
 
 function reducer(state, { type, payload }) {
   switch (type) {
@@ -80,7 +80,7 @@ export function useFolder(folderId = null, folder = null) {
 
     getFolderByID(folderId, user.userId)
       .then((result) => {
-        console.log(result.data["folderObject"][0]);
+        // console.log(result.data["folderObject"][0]);
         const formattedDoc = {
           Name: result.data["folderObject"][0].Name,
           createdTime: result.data["folderObject"][0].createdTime,
@@ -89,7 +89,7 @@ export function useFolder(folderId = null, folder = null) {
           path: JSON.parse(result.data["folderObject"][0].path),
           userID: result.data["folderObject"][0].userID,
         };
-        console.log(formattedDoc);
+        // console.log(formattedDoc);
         dispatch({
           type: ACTIONS.UPDATE_FOLDER,
           payload: { folder: formattedDoc },
@@ -110,14 +110,14 @@ export function useFolder(folderId = null, folder = null) {
     // get childFolderList from Data Base
     return getChildFolders(folderId, user.userId)
       .then((result) => {
-        console.log("child folders: ");
+        // console.log("child folders: ");
 
         const orderList = result.data["folderList"].sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
         });
 
         // console.log(result.data["folderList"]);
-        console.log(orderList);
+        // console.log(orderList);
 
         dispatch({
           type: ACTIONS.SET_CHILD_FOLDERS,

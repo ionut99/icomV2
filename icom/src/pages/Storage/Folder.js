@@ -7,7 +7,10 @@ import { faFolder } from "@fortawesome/free-solid-svg-icons";
 function Folder({ folder }) {
   return (
     <Button
-      to={`/folder/${folder.folderId}`}
+      to={{
+        pathname: `/folder/${folder.folderId}`,
+        state: { folder: folder },
+      }}
       variant="outline-dark"
       className="text-truncate w-100"
       as={Link}

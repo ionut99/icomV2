@@ -36,6 +36,10 @@ export default function AddFolderButton({ currentFolder }) {
     }
 
     const path = [...currentFolder.path];
+
+    console.log("calea din Root folder: ");
+    console.log(path);
+
     if (currentFolder !== ROOT_FOLDER) {
       path.push({ Name: currentFolder.Name, folderId: currentFolder.folderId });
     }
