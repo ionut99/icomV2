@@ -22,6 +22,7 @@ function Folder({ folder }) {
     >
       <FontAwesomeIcon icon={faFolder} className="mr-5" />
       {`  ${folder.Name}`}
+      {` ${folder.createdTime}`}
     </Button>
   );
 }

@@ -104,10 +104,10 @@ function Navbar() {
           </div>
         </div>
         <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
-          <ul className="my-nav-menu-items" onClick={showSidebar}>
+          <ul className="my-nav-menu-items">
             <li className="navbar-toggle">
               <Link to="#" className="menu-bars">
-                <FaIcons.FaBars />
+                <FaIcons.FaBars onClick={showSidebar} />
               </Link>
               {/* <img className="logo_picture" src={Applogo} alt="logo jmecher" /> */}
             </li>

@@ -20,9 +20,9 @@ function Storage() {
   //console.log(folder);
 
   return (
-    <>
+    <div className="storage-content">
       <Navbar />
-      <Container fluid>
+      <Container fluid className="containerforSize">
         <div className="d-flex align-items-center">
           <FolderBreadcrumbs currentFolder={folder} />
           <AddFileButton currentFolder={folder} />
@@ -30,7 +30,7 @@ function Storage() {
         </div>
         {/* {folder && <Folder folder={folder}></Folder>} */}
         {childFolders.length > 0 && (
-          <div className="d-flex flex-wrap">
+          <div className="content-folder">
             {childFolders.map((childFolder, index) => (
               <div
                 // key={folder.folderID}
@@ -44,7 +44,7 @@ function Storage() {
           </div>
         )}
       </Container>
-    </>
+    </div>
   );
 }
 
