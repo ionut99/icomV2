@@ -14,7 +14,7 @@ export const AddNewFolder =
     //console.log(varVerify);
   };
 
-// handle Person Search
+// handle search folder
 export const GetFolder = (folderId, userId) => async (dispatch) => {
   const folderObject = await getFolderByID(folderId, userId);
 

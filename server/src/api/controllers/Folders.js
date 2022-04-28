@@ -4,9 +4,11 @@ var uui = require("uuid");
 const { handleResponse } = require("../helpers/utils");
 
 const {
+  InsertFolderUserRelationDataBase,
   InsertNewFolderDataBase,
   GetFolderDetails,
   GetChildFolderListService,
+  GetSharedFolders,
 } = require("../services/Folders");
 
 async function AddNewFolder(req, res) {
@@ -39,6 +41,14 @@ async function AddNewFolder(req, res) {
     console.log("Error storage folder configuration!");
     return handleResponse(req, res, 412, " DataBase Error ");
   }
+
+  result = await InsertFolderUserRelationDataBase(folderId, userId);
+  if (result === "FAILED") {
+    console.log("Error storage folder configuration!");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  return handleResponse(req, res, 200, "Add New Private User Folder Succed");
 }
 
 // Get Folder
@@ -72,14 +82,38 @@ async function GetChildFolderList(req, res) {
   const userId = req.body.userId;
 
   // verificare parametrii
+  if (parentId === undefined || userId === undefined) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
 
-  var folderList = await GetChildFolderListService(parentId, userId);
+  //lista cu toate folderele curente ale utilizatorului
+  var userFolderList = await GetChildFolderListService(parentId, userId);
 
-  if (folderList === "FAILED") {
+  //console.log(userFolderList);
+  if (userFolderList === "FAILED") {
     return handleResponse(req, res, 412, " DataBase Error ");
   }
 
-  return handleResponse(req, res, 200, { folderList });
+  // lista cu folderele share-uite de alti utilizatori cu utilizatorul curent
+  if (parentId == null) {
+    // aici returnam lista..
+    var sharedFoldersList = await GetSharedFolders(userId);
+
+    if (sharedFoldersList === "FAILED") {
+      return handleResponse(req, res, 412, " DataBase Error ");
+    }
+
+    sharedFoldersList.map((x) => {
+      const sharedFolder = { ...x };
+      sharedFolder.parentID = null;
+      sharedFolder.path = "[]";
+      userFolderList.push(sharedFolder);
+    });
+  }
+
+  // aici se va returna lista finala a folderelor
+  console.log(userFolderList);
+  return handleResponse(req, res, 200, { userFolderList });
 }
 
 module.exports = {
