@@ -1,7 +1,0 @@
-Mobilizare android :
-			- laboratorul 10 la android
-
-Sisteme biometrice:
-	-> cu albastru este spectrul semnalului vocal
-	-> cea cu portocaliu este o anvelopa 
-!! de trimis lab 2 
