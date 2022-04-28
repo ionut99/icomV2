@@ -64,7 +64,7 @@ function App() {
             />
 
             <PrivateRoute
-              exact path="/folder/:folderId"
+              exact path="/storage/folder/:folderId"
               component={Storage}
               isAuthenticated={isAuthenticated}
             />

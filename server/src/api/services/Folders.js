@@ -29,12 +29,28 @@ function InsertNewFolderDataBase(
   });
 }
 
+function InsertFolderUserRelationDataBase(folderId, userId) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `INSERT INTO foldersusers (ID, folderIdResource, userIdBeneficiary) VALUES (NULL, '${folderId}', '${userId}')`,
+      (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
 //Get FolderDetails
 function GetFolderDetails(folderId, userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
-      `SELECT * FROM folders WHERE folderId = '${folderId}' AND userID = '${userId}'`,
+      `SELECT * FROM folders WHERE folderId = '${folderId}'`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");
@@ -48,6 +64,7 @@ function GetFolderDetails(folderId, userId) {
 
 //Get ChildFolders
 function GetChildFolderListService(parentId, userId) {
+  console.log(parentId);
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
@@ -63,8 +80,27 @@ function GetChildFolderListService(parentId, userId) {
   });
 }
 
+//Get SharedFolders
+function GetSharedFolders(userId) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `SELECT folders.folderId, folders.Name, folders.parentID, folders.userID, folders.createdTime, folders.path FROM folders INNER JOIN foldersusers ON folders.folderId = foldersusers.folderIdResource WHERE folders.userID != foldersusers.userIdBeneficiary AND foldersusers.userIdBeneficiary = '${userId}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
 module.exports = {
   InsertNewFolderDataBase,
   GetFolderDetails,
   GetChildFolderListService,
+  InsertFolderUserRelationDataBase,
+  GetSharedFolders,
 };

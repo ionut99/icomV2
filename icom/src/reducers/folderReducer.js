@@ -112,7 +112,7 @@ export function useFolder(folderId = null, folder = null) {
       .then((result) => {
         // console.log("child folders: ");
 
-        const orderList = result.data["folderList"].sort(function (a, b) {
+        const orderList = result.data["userFolderList"].sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
         });
 

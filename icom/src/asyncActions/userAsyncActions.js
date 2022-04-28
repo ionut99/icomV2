@@ -11,6 +11,7 @@ import {
   getParticipantsListService,
   GetDocumentFileData,
   UpdateProfilePictureData,
+  UploadNewStoringFile,
 } from "../services/user";
 
 import {
@@ -33,7 +34,7 @@ export const userSetRoomListAsync =
       )
         dispatch(userLogout());
       return;
-    } 
+    }
 
     dispatch(setRoomList(Roomresult.data["search_results"]));
   };
@@ -181,3 +182,4 @@ export const UpdateProfilePicture =
     // TO DO - display message
     console.log(varVerify);
   };
+

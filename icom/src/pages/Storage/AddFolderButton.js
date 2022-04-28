@@ -9,8 +9,8 @@ import { AddNewFolder } from "../../asyncActions/folderAsyncActions";
 
 import { ROOT_FOLDER } from "../../reducers/folderReducer";
 
-import { ACTIONS } from "../../reducers/folderReducer";
-import { getFolderByID, getChildFolders } from "../../services/folder";
+// import { ACTIONS } from "../../reducers/folderReducer";
+// import { getFolderByID, getChildFolders } from "../../services/folder";
 
 export default function AddFolderButton({ currentFolder }) {
   const dispatch = useDispatch();
@@ -53,9 +53,11 @@ export default function AddFolderButton({ currentFolder }) {
     closeModal();
   }
   return (
-    <>
-      <Button onClick={openModal} variant="outline-success" size="sm">
-        <FontAwesomeIcon icon={faFolderPlus} />
+    <div className="drive-button">
+      <Button onClick={openModal} variant="outline-success">
+        <div className="button-icon">
+          <FontAwesomeIcon icon={faFolderPlus} className="w-100 h-100"/>
+        </div>
       </Button>
       <Modal show={open} onHide={closeModal}>
         <Form onSubmit={handleSubmit}>
@@ -80,6 +82,6 @@ export default function AddFolderButton({ currentFolder }) {
           </Modal.Footer>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 }

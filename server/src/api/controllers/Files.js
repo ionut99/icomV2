@@ -18,7 +18,7 @@ const defaultAvatarPicure = path.join(
   "users/images/avatar/default.png"
 );
 
-const storage = multer.diskStorage({
+const storageAvatar = multer.diskStorage({
   destination: path.join(__dirname, "../../../users/images/", "avatar"),
   filename: function (req, file, cb) {
     // null as first argument means no error
@@ -41,7 +41,7 @@ async function GetDocument(req, res) {
 
 async function UpdateProfilePicture(req, res) {
   try {
-    let upload = multer({ storage: storage }).single("avatar");
+    let upload = multer({ storage: storageAvatar }).single("avatar");
     upload(req, res, async (err) => {
       if (!req.file) {
         return handleResponse(
@@ -88,6 +88,58 @@ async function UpdateProfilePicture(req, res) {
         return handleResponse(req, res, 412, " DataBase Error ");
       }
 
+      return handleResponse(req, res, 200, { UpdateProfilePicture: "SUCCESS" });
+    });
+  } catch (err) {
+    //console.log(err);
+    return handleResponse(req, res, 190, { UpdateProfilePicture: "FAILED" });
+  }
+}
+
+// handle Upload New File
+async function UploadNewStoredFile(req, res) {
+  try {
+    var storageFile = multer.diskStorage({
+      destination: function (req, file, cb) {
+        cb(null, "../tempDir/");
+      },
+      filename: function (req, file, cb) {
+        cb(null, file.originalname);
+      },
+    });
+
+    let upload = multer({ storage: storageAvatar }).single("storedfile");
+
+    upload(req, res, async (err) => {
+      if (!req.file) {
+        console.log(req.file);
+        return handleResponse(
+          req,
+          res,
+          413,
+          "Please select a real file to upload"
+        );
+      } else if (err instanceof multer.MulterError) {
+        return handleResponse(req, res, 415, "Multer Error");
+      } else if (err) {
+        return handleResponse(req, res, 413, "Error when try to upload a file");
+      }
+
+      const fileName = req.body.fileName;
+      const filePath = req.body.filePath;
+      const folderId = req.body.folderId;
+      const userId = req.body.userId;
+      const createdAt = req.body.createdAt;
+
+      console.log(
+        "fisierul pe care vrem sa l incarcam are urmatoarele caractaristici: "
+      );
+      console.log(fileName);
+      console.log(filePath);
+      console.log(folderId);
+      console.log(userId);
+      console.log(createdAt);
+      
       return handleResponse(req, res, 200, { UpdateProfilePicture: "SUCCESS" });
     });
   } catch (err) {
@@ -196,4 +248,5 @@ module.exports = {
   GetDocument,
   UpdateProfilePicture,
   GetProfilePicture,
+  UploadNewStoredFile,
 };
