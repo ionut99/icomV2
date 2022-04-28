@@ -1,7 +1,7 @@
 .storage-content {
   height: 100vh;
   width: 100vw;
-  border: solid red;
+  /* border: solid red; */
   min-width: 700px;
 }
 
@@ -16,6 +16,7 @@
   flex-direction: column;
   overflow-y: scroll;
   border: solid blue;
+  align-items: flex-end;
 }
 .drive-button {
   margin: 8px;
@@ -26,4 +27,47 @@
   height: 30px;
   width: 30px;
   margin: 4px;
+}
+
+.folder-details {
+  display: inline-flex;
+  /* align-items: center; */
+  /* margin-left: 0px; */
+}
+
+.folder-element {
+  margin-right: 3%;
+  width: 40%;
+  min-width: 500px;
+}
+
+.folder-button {
+  /* align-items: flex-start; */
+  display: inline-flex;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.folder-icon {
+  height: 25px;
+  width: 25px;
+  margin: 4px;
+  margin-left: 0px;
+}
+
+.folder-name{
+  width: 25%;
+  min-width: 100px;
+  font-size: large;
+}
+
+.folder-date{
+  margin-left: 40px;
+  width: 30%;
+  min-width: 200px;
+}
+
+.folder-author{
+  width: 25%;
+  min-width: 100px;
 }

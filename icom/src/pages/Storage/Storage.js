@@ -35,8 +35,7 @@ function Storage() {
               <div
                 // key={folder.folderID}
                 key={index}
-                style={{ maxWidth: "250px" }}
-                className="p-2"
+                className="folder-element"
               >
                 <Folder folder={childFolder} />
               </div>
