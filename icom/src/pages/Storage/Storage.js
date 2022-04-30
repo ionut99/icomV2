@@ -11,8 +11,12 @@ import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 import { useFolder } from "../../reducers/folderReducer";
 import FolderBreadcrumbs from "./FolderBreadcrumbs";
-import "./storage.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import "./storage.css";
+import filedetailsicon from "../../images/filedetailsicon.svg";
+import SubFolder from "./SubFolder";
+import { ROOT_FOLDER } from "../../reducers/folderReducer";
 function Storage() {
   const { folderId } = useParams();
   const { state = {} } = useLocation();
@@ -23,25 +27,64 @@ function Storage() {
     <div className="storage-content">
       <Navbar />
       <Container fluid className="containerforSize">
-        <div className="d-flex align-items-center">
+        <div className="f-nav-bar">
           <FolderBreadcrumbs currentFolder={folder} />
           <AddFileButton currentFolder={folder} />
           <AddFolderButton currentFolder={folder} />
         </div>
         {/* {folder && <Folder folder={folder}></Folder>} */}
-        {childFolders.length > 0 && (
-          <div className="content-folder">
-            {childFolders.map((childFolder, index) => (
-              <div
-                // key={folder.folderID}
-                key={index}
-                className="folder-element"
-              >
-                <Folder folder={childFolder} />
-              </div>
-            ))}
+        <div className="content-drive">
+          <div className="folder-tree">
+            <SubFolder folder={ROOT_FOLDER} />
           </div>
-        )}
+          <div className="content-folder-list">
+            <table>
+              <tbody>
+                <tr className="details-bar">
+                  <th className="type-column">
+                    <p>Type</p>
+                  </th>
+                  <th className="name-column">
+                    <p>Name</p>
+                  </th>
+                  <th className="name-column">
+                    <p>Modified</p>
+                  </th>
+                  <th className="name-column">
+                    <p>Modified By</p>
+                  </th>
+                  <th className="name-column">
+                    <p>Options</p>
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+
+            {childFolders.length > 0 && (
+              <div className="folder-list">
+                {childFolders.map((childFolder, index) => (
+                  <div
+                    // key={folder.folderID}
+                    key={index}
+                    className="folder-element"
+                  >
+                    <Folder folder={childFolder} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div
+            className={true ? "file__details empty__details" : "file__details"}
+          >
+            <div className="file__details--inner">
+              <span>
+                <img src={filedetailsicon} alt="filedetailsicon" />
+              </span>
+              <p>Select a file or folder to view it’s details</p>
+            </div>
+          </div>
+        </div>
       </Container>
     </div>
   );

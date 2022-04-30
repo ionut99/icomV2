@@ -28,6 +28,10 @@
   background: none;
 }
 
+.menu-bars:hover {
+  cursor: pointer;
+}
+
 .profile-menu {
   border: #d1d8df 2px solid;
   background-color: #ffffff;

@@ -8,11 +8,7 @@ import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 import { updateCurrentChannel } from "../../actions/userActions";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import Avatar from "../Search/Avatar";
-import "./Navbar.css";
-
-// import Applogo from "../../images/white-logo.png";
-// import { updateUserAvatar } from "../../actions/authActions";
-// import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
+import "./navbar.css";
 
 function Navbar() {
   const ref = useRef();
@@ -84,9 +80,9 @@ function Navbar() {
       <IconContext.Provider value={{ color: "#fff" }}>
         <div className="my-my-navbar">
           <div className="left_section">
-            <Link to="#" className="menu-bars">
+            <div className="menu-bars">
               <FaIcons.FaBars onClick={showSidebar} />
-            </Link>
+            </div>
             {/* <img className="logo_picture" src={Applogo} alt="logo jmecher" /> */}
           </div>
 
@@ -106,16 +102,16 @@ function Navbar() {
         <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
           <ul className="my-nav-menu-items">
             <li className="navbar-toggle">
-              <Link to="#" className="menu-bars">
+              <div className="menu-bars">
                 <FaIcons.FaBars onClick={showSidebar} />
-              </Link>
+              </div>
               {/* <img className="logo_picture" src={Applogo} alt="logo jmecher" /> */}
             </li>
             <div className="group-nav-text"></div>
             {SidebarData.map((item, index) => {
               return (
                 <li key={index} className={item.cName}>
-                  <Link to={item.path}>
+                  <Link to={item.path} onClick={showSidebar}>
                     {item.icon}
                     <span>{item.title}</span>
                   </Link>

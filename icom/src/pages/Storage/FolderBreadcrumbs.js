@@ -1,3 +1,4 @@
+import { fontSize } from "@mui/system";
 import React from "react";
 import { Breadcrumb } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -27,13 +28,16 @@ export default function FolderBreadcrumbs({ currentFolder }) {
           linkProps={{
             to: {
               pathname: folder.folderId
-                ? `/folder/${folder.folderId}`
+                ? `/storage/folder/${folder.folderId}`
                 : "/storage",
               state: { folder: { ...folder, path: path.slice(1, index) } },
             },
           }}
           className="text-truncate d-inline-block"
-          style={{ maxWidth: "150px" }}
+          style={{
+            maxWidth: "150px",
+            fontSize: "25px",
+          }}
         >
           {folder.Name}
         </Breadcrumb.Item>
@@ -41,7 +45,7 @@ export default function FolderBreadcrumbs({ currentFolder }) {
       {currentFolder && (
         <Breadcrumb.Item
           className="text-truncate d-inline-block"
-          style={{ maxWidth: "200px" }}
+          style={{ maxWidth: "200px", fontSize: "25px" }}
           active
         >
           {currentFolder.Name}
