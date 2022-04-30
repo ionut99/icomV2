@@ -2,6 +2,20 @@ import axios from "axios";
 
 const { REACT_APP_API_URL } = process.env;
 
+// get user Details
+export const getUserDetails = async (userId) => {
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/users/details`, {
+      userId,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
 // get list of the users
 export const getUserListService = async () => {
   try {

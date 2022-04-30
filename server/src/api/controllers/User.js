@@ -13,6 +13,7 @@ const {
   DeleteRoomData,
   AddNewMemberInGroupData,
   GetPartListData,
+  GetUserDetailsData,
 } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
@@ -343,6 +344,22 @@ async function GetUsers(req, res) {
   return handleResponse(req, res, 200, { list });
 }
 
+async function GetUserDetails(req, res) {
+  const userId = req.body.userId;
+
+  if (userId === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  const userDetails = await GetUserDetailsData(userId);
+  if (userDetails === "FAILED") {
+    console.log("FAILED - get user Details ");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  return handleResponse(req, res, 200, { userDetails });
+}
+
 module.exports = {
   GetUserSearchList,
   GetRoomSearchList,
@@ -354,4 +371,5 @@ module.exports = {
   CreateNewRoom_Group,
   AddNewMemberInGroup,
   GetPartList,
+  GetUserDetails,
 };

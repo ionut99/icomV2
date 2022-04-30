@@ -12,7 +12,7 @@ export const ACTIONS = {
   ADD_CHILD_FOLDER: "add-child-folder",
 };
 
-export const ROOT_FOLDER = { Name: "Root", folderId: null, path: [] };
+export const ROOT_FOLDER = { Name: "My Drive", folderId: null, path: [] };
 
 function reducer(state, { type, payload }) {
   switch (type) {

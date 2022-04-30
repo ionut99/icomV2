@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { SignInUser, LogOutUser, VerifyToken } = require("../controllers/Auth");
-const { GetUserSearchList, GetUsers } = require("../controllers/User");
+const { GetUserSearchList, GetUsers, GetUserDetails } = require("../controllers/User");
 const { UpdateProfilePicture } = require("../controllers/Files");
 const { authMiddleware } = require("../middlewares/Auth");
 
@@ -16,5 +16,6 @@ router.post("/verifyToken", VerifyToken);
 router.post("/search", GetUserSearchList);
 router.get("/getList", GetUsers);
 router.post("/updatePicture", UpdateProfilePicture);
+router.post("/details", GetUserDetails);
 
 module.exports = router;

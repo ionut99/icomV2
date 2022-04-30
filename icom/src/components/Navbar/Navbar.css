@@ -12,6 +12,7 @@
   height: inherit;
   display: flex;
   align-items: center;
+  padding-bottom: 10px;
 }
 .right_section {
   position: relative;
@@ -27,11 +28,10 @@
   background: none;
 }
 
-.menu-bars {
-  margin-left: 2rem;
-  font-size: 2rem;
-  background: none;
+.menu-bars:hover {
+  cursor: pointer;
 }
+
 .profile-menu {
   border: #d1d8df 2px solid;
   background-color: #ffffff;

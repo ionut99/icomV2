@@ -268,6 +268,23 @@ function GetPrivateRoomOtherUserDetails(RoomID, atuhUser) {
   });
 }
 
+//Get Other User Details from Rpivate Room
+function GetUserDetailsData(userId) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `SELECT iusers.Surname, iusers.Name, iusers.Email, iusers.IsAdmin FROM iusers WHERE userId = '${userId}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
 module.exports = {
   GetAllUsersDataBase,
   GetSearchUsersList,
@@ -285,4 +302,5 @@ module.exports = {
   GetUserDetails,
   GetRoomDetails,
   GetPrivateRoomOtherUserDetails,
+  GetUserDetailsData,
 };
