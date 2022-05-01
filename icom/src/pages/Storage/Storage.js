@@ -22,7 +22,7 @@ function Storage() {
   const { state = {} } = useLocation();
   const { folder, childFolders } = useFolder(folderId, state.folder);
 
-  console.log(state.folder);
+  // console.log(state.folder);
   //console.log(folder);
 
   return (
