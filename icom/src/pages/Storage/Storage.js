@@ -11,7 +11,7 @@ import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 import { useFolder } from "../../reducers/folderReducer";
 import FolderBreadcrumbs from "./FolderBreadcrumbs";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import "./storage.css";
 import filedetailsicon from "../../images/filedetailsicon.svg";
@@ -21,6 +21,8 @@ function Storage() {
   const { folderId } = useParams();
   const { state = {} } = useLocation();
   const { folder, childFolders } = useFolder(folderId, state.folder);
+
+  console.log(state.folder);
   //console.log(folder);
 
   return (
@@ -35,7 +37,7 @@ function Storage() {
         {/* {folder && <Folder folder={folder}></Folder>} */}
         <div className="content-drive">
           <div className="folder-tree">
-            <SubFolder folder={ROOT_FOLDER} />
+            <SubFolder currentFolder={ROOT_FOLDER} />
           </div>
           <div className="content-folder-list">
             <table>
