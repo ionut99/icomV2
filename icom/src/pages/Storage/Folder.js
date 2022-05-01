@@ -20,25 +20,37 @@ function Folder({ folder }) {
   const [optionButton, setOptionButton] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     if (folder.userID == null) {
       return;
     }
     getUserDetails(folder.userID)
       .then((result) => {
-        setauthName(
-          result.data["userDetails"][0].Name +
-            " " +
-            result.data["userDetails"][0].Surname
-        );
+        if (isMounted) {
+          setauthName(
+            result.data["userDetails"][0].Name +
+              " " +
+              result.data["userDetails"][0].Surname
+          );
+        }
       })
       .catch(() => {
         console.log("Error when try to retriev data about user");
       });
+    return () => {
+      isMounted = false;
+    };
   }, [folder.userID]);
 
   useEffect(() => {
+    let isMounted = true;
     const checkIfClickedOutside = (e) => {
-      if (optionButton && ref.current && !ref.current.contains(e.target)) {
+      if (
+        isMounted &&
+        optionButton &&
+        ref.current &&
+        !ref.current.contains(e.target)
+      ) {
         setOptionButton(false);
       }
     };
@@ -46,6 +58,7 @@ function Folder({ folder }) {
     document.addEventListener("mousedown", checkIfClickedOutside);
 
     return () => {
+      isMounted = false;
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
   }, [optionButton]);

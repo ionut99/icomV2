@@ -11,13 +11,10 @@ import * as BiIcons from "react-icons/bi";
 import { ROOT_FOLDER } from "../../reducers/folderReducer";
 
 function SubFolder({ currentFolder }) {
-  //console.log(currentFolder);
   let path = currentFolder === ROOT_FOLDER ? [] : [ROOT_FOLDER];
   const myPath = eval(currentFolder.path);
   if (currentFolder && typeof myPath !== "string") {
     path = [...path, ...myPath];
-    //console.log("mama");
-    //console.log(path);
   }
 
   const [viewSubFolderButton, setviewSubFolderButton] = useState(false);
@@ -47,26 +44,6 @@ function SubFolder({ currentFolder }) {
     <div className="folder-tree-subfolders">
       <div className="folder-tree-main-folder">
         <div className="folder-tree-image-view">
-          {/* <img
-            style={{
-              display: !viewSubFolderButton ? "none" : "block",
-            }}
-            className="folder-tree-image-view-subfolders"
-            src={arrowstructure}
-            onClick={() => {
-              setviewSubFolderButton(!viewSubFolderButton);
-            }}
-          /> */}
-          {/* <img
-            style={{
-              display: viewSubFolderButton ? "none" : "block",
-            }}
-            className="folder-tree-image-hide-subfolders"
-            src={menudown}
-            onClick={() => {
-              setviewSubFolderButton(!viewSubFolderButton);
-            }}
-          /> */}
           <BiIcons.BiRightArrow
             size={18}
             style={{
@@ -87,22 +64,7 @@ function SubFolder({ currentFolder }) {
             }}
           />
         </div>
-        {/* <div
-          className={
-            !viewSubFolderButton
-              ? "folder-tree-main-folder-name"
-              : "folder-tree-main-folder-name folder-open"
-          }
-          linkas={Link}
-          linkprops={{
-            to: {
-              pathname: folder.folderId
-                ? `/storage/folder/${folder.folderId}`
-                : "/storage",
-              state: { folder: { ...folder, path: folder.path } },
-            },
-          }}
-        >{`  ${folder.Name}`}</div> */}
+
         <Breadcrumb
           style={{
             color: !viewSubFolderButton ? "none" : "#0969da",
