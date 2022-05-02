@@ -11,6 +11,21 @@ import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 import * as FaIcons from "react-icons/fa";
 
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 function Folder({ folder }) {
   const ref = useRef();
   const authObj = useSelector((state) => state.auth);
@@ -19,6 +34,9 @@ function Folder({ folder }) {
   const [authName, setauthName] = useState("");
   const [optionButton, setOptionButton] = useState(false);
 
+  const CreateFolderDate = new Date(Date.parse(folder.createdTime));
+
+  console.log(CreateFolderDate);
   useEffect(() => {
     let isMounted = true;
     if (folder.userID == null) {
@@ -82,7 +100,17 @@ function Folder({ folder }) {
             <p>{`  ${folder.Name}`}</p>
           </div>
           <div className="folder-date">
-            <p>{` ${folder.createdTime}`}</p>
+            <p>{` ${
+              monthNames[CreateFolderDate.getMonth()] +
+              " " +
+              CreateFolderDate.getDate() +
+              " " +
+              CreateFolderDate.getHours() +
+              ":" +
+              CreateFolderDate.getMinutes() +
+              ":" +
+              CreateFolderDate.getSeconds()
+            }`}</p>
           </div>
           <div className="folder-author">{` ${authName}`}</div>
         </div>
