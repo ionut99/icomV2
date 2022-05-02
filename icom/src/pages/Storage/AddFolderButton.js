@@ -44,11 +44,7 @@ export default function AddFolderButton({ currentFolder }) {
       path.push({ Name: currentFolder.Name, folderId: currentFolder.folderId });
     }
 
-    const time = new Date();
-    console.log(time);
-    dispatch(
-      AddNewFolder(name, currentFolder.folderId, user.userId, path, time)
-    );
+    dispatch(AddNewFolder(name, currentFolder.folderId, user.userId, path));
 
     setName("");
     closeModal();

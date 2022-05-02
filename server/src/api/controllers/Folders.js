@@ -16,7 +16,7 @@ async function AddNewFolder(req, res) {
   const parentId = req.body.parentId;
   const userId = req.body.userId;
   const path = req.body.path;
-  const createdAt = req.body.createdAt;
+  const createdAt = new Date();
 
   // TO DO: - verify req param to be different from null/undefined
 
