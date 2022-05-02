@@ -4,19 +4,9 @@ import { getChildFolders } from "../../services/folder";
 import { Link } from "react-router-dom";
 import { Breadcrumb } from "react-bootstrap";
 
-// import arrowstructure from "../../images/arrowstructure.svg";
-// import menudown from "../../images/menudown.svg";
-
 import * as BiIcons from "react-icons/bi";
-import { ROOT_FOLDER } from "../../reducers/folderReducer";
 
 function SubFolder({ currentFolder }) {
-  let path = currentFolder === ROOT_FOLDER ? [] : [ROOT_FOLDER];
-  const myPath = eval(currentFolder.path);
-  if (currentFolder && typeof myPath !== "string") {
-    path = [...path, ...myPath];
-  }
-
   const [viewSubFolderButton, setviewSubFolderButton] = useState(false);
   const [childList, setChildList] = useState([]);
   const authObj = useSelector((state) => state.auth);
@@ -24,7 +14,6 @@ function SubFolder({ currentFolder }) {
 
   useEffect(() => {
     // get childFolderList from Data Base
-    if (path.length === 0 && currentFolder.Name !== "My Drive") return;
     return getChildFolders(currentFolder.folderId, user.userId)
       .then((result) => {
         const orderList = result.data["userFolderList"].sort(function (a, b) {
@@ -78,7 +67,6 @@ function SubFolder({ currentFolder }) {
                   pathname: currentFolder.folderId
                     ? `/storage/folder/${currentFolder.folderId}`
                     : "/storage",
-                  state: { folder: { ...currentFolder, path: path.slice(1) } },
                 },
               }}
               className={
