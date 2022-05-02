@@ -11,8 +11,8 @@ function InsertNewFolderDataBase(
   path,
   createdAt
 ) {
-  // console.log("Path ul pentru insert este (JSON format): ");
   let stringPath = JSON.stringify(path);
+  // console.log("Path ul pentru insert este (JSON format): ");
   // console.log(stringPath);
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {

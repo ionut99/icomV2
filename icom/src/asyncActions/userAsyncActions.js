@@ -141,7 +141,7 @@ export const CreateNewConversation =
 
     dispatch(userSetRoomListAsync("", userID));
     // TO DO - display message
-    console.log(varVerify);
+    // console.log(varVerify);
   };
 
 export const DeleteConversation = (RoomID, userID) => async (dispatch) => {
