@@ -13,6 +13,7 @@ const {
   DeleteRoomData,
   AddNewMemberInGroupData,
   GetPartListData,
+  GetNOTPartListData,
   GetUserDetailsData,
 } = require("../services/User");
 
@@ -29,12 +30,9 @@ async function GetUserSearchList(req, res) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
   }
 
-  if (search_box_text === "Z2V0QGxsVXNlcnM=") {
-    var list = await GetAllUsersDataBase();
-    return handleResponse(req, res, 200, { list });
-  }
+  const list = await GetSearchUsersList(search_box_text, userId);
 
-  var list = await GetSearchUsersList(search_box_text, userId);
+  // var list = await GetSearchUsersList(search_box_text, userId);
 
   var userRoomList = [];
 
@@ -333,6 +331,23 @@ async function GetPartList(req, res) {
   return handleResponse(req, res, 200, { participantsRoomList });
 }
 
+async function GetNOTPartList(req, res) {
+  const roomID = req.body.roomID;
+  const userId = req.body.userId;
+
+  if (roomID === null || userId === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  const NOTparticipantsRoomList = await GetNOTPartListData(roomID, userId);
+  if (NOTparticipantsRoomList === "FAILED") {
+    console.log("FAILED - get NOT participants list! ");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  return handleResponse(req, res, 200, { NOTparticipantsRoomList });
+}
+
 // list with all userss
 async function GetUsers(req, res) {
   const userList = await GetAllUsersDataBase();
@@ -371,5 +386,6 @@ module.exports = {
   CreateNewRoom_Group,
   AddNewMemberInGroup,
   GetPartList,
+  GetNOTPartList,
   GetUserDetails,
 };

@@ -64,7 +64,7 @@ async function GetFolderDataBase(req, res) {
 
   var folderObject = await GetFolderDetails(folderId, userId);
 
-  console.log(folderObject);
+  // console.log(folderObject);
 
   if (folderObject === "FAILED") {
     return handleResponse(req, res, 412, " DataBase Error ");
@@ -112,7 +112,7 @@ async function GetChildFolderList(req, res) {
   }
 
   // aici se va returna lista finala a folderelor
-  console.log(userFolderList);
+  // console.log(userFolderList);
   return handleResponse(req, res, 200, { userFolderList });
 }
 

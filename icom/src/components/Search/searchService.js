@@ -12,10 +12,11 @@ import {
   updateChannelDetails,
   DeleteConversation,
   userSetRoomListAsync,
-  userSearchPersonListAsync,
+  // userSearchPersonListAsync,
   CreateNewConversation,
   AddNewMemberInGroup,
   getParticipantList,
+  userAddNewPersonInGroup,
 } from "../../asyncActions/userAsyncActions";
 
 import { v4 as uuidv4 } from "uuid";
@@ -34,7 +35,8 @@ const SearchService = (userID) => {
 
   const onAddUser = async (RoomID) => {
     dispatch(UpdateAddUserInGroup(RoomID));
-    dispatch(userSearchPersonListAsync("Z2V0QGxsVXNlcnM=", userID));
+    //dispatch(userSearchPersonListAsync("Z2V0QGxsVXNlcnM=", userID));
+    dispatch(userAddNewPersonInGroup(RoomID, userID));
   };
 
   const ClickChannel = async (roomID, selectedRoomName, dispatch) => {
