@@ -11,14 +11,15 @@ import {
   getParticipantsListService,
   GetDocumentFileData,
   UpdateProfilePictureData,
-  UploadNewStoringFile,
+  getPersonToAddInGroup,
+  // UploadNewStoringFile,
 } from "../services/user";
 
 import {
   setRoomList,
   setPersonSearchList,
   updateCurrentChannel,
-  GetFileDocument,
+  // GetFileDocument,
 } from "./../actions/userActions";
 
 // handle RoomList Search
@@ -62,6 +63,29 @@ export const userSearchPersonListAsync =
       dispatch(setPersonSearchList([]));
     }
   };
+
+// handle List Person to add in group
+export const userAddNewPersonInGroup = (RoomID, userId) => async (dispatch) => {
+  const Personresult = await getPersonToAddInGroup(RoomID, userId);
+
+  console.log(Personresult);
+  console.log(Personresult.data["NOTparticipantsRoomList"]);
+
+  if (Personresult.error) {
+    dispatch(verifyTokenEnd());
+    if (
+      Personresult.response &&
+      [401, 403].includes(Personresult.response.status)
+    )
+      dispatch(userLogout());
+    return;
+  }
+  if (Personresult.data["NOTparticipantsRoomList"].length > 0) {
+    dispatch(setPersonSearchList(Personresult.data["NOTparticipantsRoomList"]));
+  } else {
+    dispatch(setPersonSearchList([]));
+  }
+};
 
 // handle to select channel and fetch messages from data-base
 export const updateChannelDetails =
@@ -117,7 +141,7 @@ export const CreateNewConversation =
 
     dispatch(userSetRoomListAsync("", userID));
     // TO DO - display message
-    console.log(varVerify);
+    // console.log(varVerify);
   };
 
 export const DeleteConversation = (RoomID, userID) => async (dispatch) => {
@@ -182,4 +206,3 @@ export const UpdateProfilePicture =
     // TO DO - display message
     console.log(varVerify);
   };
-

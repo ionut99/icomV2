@@ -43,6 +43,20 @@ export const getSearchPersonService = async (search_box_text, userId) => {
   }
 };
 
+export const getPersonToAddInGroup = async (RoomID, userId) => {
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/users/toadd`, {
+      RoomID,
+      userId,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
 // Room Search Person API to return Room Names -> channels that is open
 export const getSearchRoomService = async (search_box_text, userId) => {
   try {

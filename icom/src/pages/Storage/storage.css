@@ -148,6 +148,7 @@ a {
   width: 100%;
   max-width: 70px;
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
   align-content: center;
 }
@@ -156,6 +157,7 @@ a {
   width: 30%;
   min-width: 200px;
   font-size: large;
+  white-space: nowrap;
 }
 
 .folder-author {

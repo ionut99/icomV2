@@ -37,17 +37,14 @@ export default function AddFolderButton({ currentFolder }) {
 
     const path = [...currentFolder.path];
 
-    console.log("calea din Root folder: ");
-    console.log(path);
+    // console.log("calea din Root folder: ");
+    // console.log(path);
 
     if (currentFolder !== ROOT_FOLDER) {
       path.push({ Name: currentFolder.Name, folderId: currentFolder.folderId });
     }
 
-    const time = new Date().toLocaleString();
-    dispatch(
-      AddNewFolder(name, currentFolder.folderId, user.userId, path, time)
-    );
+    dispatch(AddNewFolder(name, currentFolder.folderId, user.userId, path));
 
     setName("");
     closeModal();
@@ -56,7 +53,7 @@ export default function AddFolderButton({ currentFolder }) {
     <div className="drive-button">
       <Button onClick={openModal} variant="outline-success">
         <div className="button-icon">
-          <FontAwesomeIcon icon={faFolderPlus} className="w-100 h-100"/>
+          <FontAwesomeIcon icon={faFolderPlus} className="w-100 h-100" />
         </div>
       </Button>
       <Modal show={open} onHide={closeModal}>

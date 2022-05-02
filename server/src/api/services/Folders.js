@@ -11,9 +11,9 @@ function InsertNewFolderDataBase(
   path,
   createdAt
 ) {
-  console.log("Path ul pentru insert este (JSON format): ");
   let stringPath = JSON.stringify(path);
-  console.log(stringPath);
+  // console.log("Path ul pentru insert este (JSON format): ");
+  // console.log(stringPath);
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
@@ -64,7 +64,7 @@ function GetFolderDetails(folderId, userId) {
 
 //Get ChildFolders
 function GetChildFolderListService(parentId, userId) {
-  console.log(parentId);
+  // console.log(parentId);
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(

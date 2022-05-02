@@ -2,13 +2,12 @@ import { AddNewFolderInDataBase, getFolderByID } from "../services/folder";
 
 // handle add new folder in system
 export const AddNewFolder =
-  (name, parentId, userId, path, createdAt) => async (dispatch) => {
+  (name, parentId, userId, path) => async (dispatch) => {
     const varVerify = await AddNewFolderInDataBase(
       name,
       parentId,
       userId,
-      path,
-      createdAt
+      path
     );
     // TO DO - display message
     //console.log(varVerify);

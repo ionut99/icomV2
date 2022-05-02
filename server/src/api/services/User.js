@@ -83,40 +83,6 @@ function InsertNewMessageData(ID_message, senderID, roomID, messageBody) {
   });
 }
 
-function InsertNewRoomData(RoomName, Private, uuidRoom) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-
-  return new Promise((resolve) => {
-    connection.query(
-      `INSERT INTO room (ID, Name, Private) VALUES ('${uuidRoom}', '${RoomName}', '${Private}');`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
-      }
-    );
-    connection.end();
-  });
-}
-
-function InsertParticipantData(uuidRoom, userID) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-
-  return new Promise((resolve) => {
-    connection.query(
-      `INSERT INTO participants (ID, UserID, RoomID) VALUES (NULL, '${userID}', '${uuidRoom}');`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
-      }
-    );
-    connection.end();
-  });
-}
-
 function DeleteAllMessageFromRoom(RoomID) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
@@ -166,9 +132,9 @@ function DeleteRoomData(RoomID) {
 }
 
 function AddNewMemberInGroupData(roomID, userSearchListID) {
-  console.log(
-    "se introduce in camera : " + roomID + " utilizatorul : " + userSearchListID
-  );
+  // console.log(
+  //   "se introduce in camera : " + roomID + " utilizatorul : " + userSearchListID
+  // );
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
@@ -189,6 +155,22 @@ function GetPartListData(ChannelID) {
   return new Promise((resolve) => {
     connection.query(
       `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM participants INNER JOIN iusers ON participants.UserID = iusers.userId WHERE RoomID = '${ChannelID}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+function GetNOTPartListData(ChannelID, userId) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM participants INNER JOIN iusers ON participants.UserID = iusers.userId WHERE RoomID != '${ChannelID}' and iusers.userId != '${userId}'`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");
@@ -291,13 +273,12 @@ module.exports = {
   GetUserRoomsList,
   GetRoomMessagesData,
   InsertNewMessageData,
-  InsertNewRoomData,
-  InsertParticipantData,
   DeleteRoomData,
   DeleteAllMessageFromRoom,
   DeleteAllParticipantsFromRoom,
   AddNewMemberInGroupData,
   GetPartListData,
+  GetNOTPartListData,
   UpdateAvatarPathData,
   GetUserDetails,
   GetRoomDetails,
