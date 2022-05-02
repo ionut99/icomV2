@@ -23,7 +23,7 @@ function Storage() {
   const { folder, childFolders } = useFolder(folderId, state.folder);
 
   // console.log(state.folder);
-  //console.log(folder);
+  // console.log(folder);
 
   return (
     <div className="storage-content">
