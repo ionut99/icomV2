@@ -6,12 +6,15 @@ const {
   GetRoomSearchList,
   GetRoomMessages,
   InsertNewMessage,
+} = require("../controllers/User");
+
+const {
   CreateNewRoom,
   DeleteRoom,
   CreateNewRoom_Group,
   AddNewMemberInGroup,
   GetPartList,
-} = require("../controllers/User");
+} = require("../controllers/Room");
 
 // router.post("/newroom", authMiddleware, CreateNewRoom);
 // router.post("/deleteroom", authMiddleware, DeleteRoom);

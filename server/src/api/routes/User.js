@@ -2,7 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const { SignInUser, LogOutUser, VerifyToken } = require("../controllers/Auth");
-const { GetUserSearchList, GetUsers, GetUserDetails, GetNOTPartList } = require("../controllers/User");
+const {
+  GetUserSearchList,
+  GetUsers,
+  GetUserDetails,
+} = require("../controllers/User");
+const { GetNOTPartList } = require("../controllers/Room");
 const { UpdateProfilePicture } = require("../controllers/Files");
 const { authMiddleware } = require("../middlewares/Auth");
 
