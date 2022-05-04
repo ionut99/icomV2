@@ -105,6 +105,15 @@ async function UpdateProfilePicture(req, res) {
   }
 }
 
+// returns a promise which resolves true if file exists:
+function checkFileExists(filepath) {
+  return new Promise((resolve, reject) => {
+    fs.access(filepath, fs.constants.F_OK, (error) => {
+      resolve(!error);
+    });
+  });
+}
+
 // handle Upload New File
 async function UploadNewStoredFile(req, res) {
   try {
@@ -134,69 +143,36 @@ async function UploadNewStoredFile(req, res) {
       // var StoreFilePath = userId + "/" + fileName;
 
       const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
-      const newPath = path.join(
-        __dirname,
-        "../../../users/",
-        userId + "/" + fileName
-      );
+      const newPath = path.join(__dirname, "../../../users/", userId);
 
-      // const oldPath = "../../../users/tempDir/" + fileName;
-      // const newPath = "../../../users/" ;
+      // console.log(oldPath);
+      // console.log(newPath);
 
-      console.log(oldPath);
-      console.log(newPath);
-      console.log(__dirname);
+      try {
+        if (!(await checkFileExists(newPath))) {
+          console.log("Nu exista folderr...");
+          fs.mkdir(newPath, { recursive: true }, (err) => {
+            if (err) {
+              return console.error(err);
+            }
+            console.log("Directory created successfully!");
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
 
-      // var readStream = fs.createReadStream(oldPath);
-      // var writeStream = fs.createWriteStream(newPath);
-
-      // readStream.on("error", function (err) {
-      //   if (err) {
-      //     throw err;
-      //   } else {
-      //     console.log("Successfully moved the file!");
-      //   }
-      // });
-      // writeStream.on("error", function (err) {
-      //   if (err) {
-      //     throw err;
-      //   } else {
-      //     console.log("Successfully moved the file!");
-      //   }
-      // });
-
-      // readStream.on("close", function () {
-      //   fs.unlink(oldPath, function (err) {
-      //     if (err) {
-      //       throw err;
-      //     } else {
-      //       console.log("Successfully moved the file!");
-      //     }
-      //   });
-      // });
-
-      // readStream.pipe(writeStream);
-
-      // try {
-      //   if (!fs.existsSync(newPath)) {
-      //     fs.mkdirSync(newPath);
-      //   }
-      // } catch (err) {
-      //   console.error(err);
-      // }
-
-      fs.rename(oldPath, newPath, function (err) {
+      fs.rename(oldPath, newPath + "/" + fileName, function (err) {
         if (err) {
           throw err;
         } else {
-          console.log("Successfully moved the file!");
+          console.log("Successfully storage the file!");
+          return handleResponse(req, res, 190, { StorageFile: "SUCCESS" });
         }
       });
-
-      
     });
   } catch (err) {
-    return handleResponse(req, res, 190, { UpdateProfilePicture: "FAILED" });
+    return handleResponse(req, res, 190, { UpdateProfilePicture: "SUCCESS" });
   }
 }
 
