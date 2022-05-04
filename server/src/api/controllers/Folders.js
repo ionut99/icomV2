@@ -8,10 +8,11 @@ const {
   InsertFolderUserRelationDataBase,
   InsertNewFolderDataBase,
   GetFolderDetails,
-  GetChildFolderListService,
   GetSharedPrivateFolders,
   GetSharedGroupFolders,
 } = require("../services/Folders");
+
+const { GetUserByID } = require("../services/Auth");
 
 async function AddNewFolder(req, res) {
   const name = req.body.name;
@@ -19,13 +20,6 @@ async function AddNewFolder(req, res) {
   const userId = req.body.userId;
   const path = req.body.path;
   const createdAt = new Date();
-
-  //   console.log("Se va introduce un nou folder:");
-  //   console.log(name);
-  //   console.log(parentId);
-  //   console.log(userId);
-  // console.log(typeof path);
-  // console.log(path.length);
 
   if (name === undefined || userId === undefined)
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
@@ -67,6 +61,12 @@ async function AddNewFolder(req, res) {
         console.log("Error storage folder configuration!");
         return handleResponse(req, res, 412, " DataBase Error ");
       }
+    } else {
+      result = await InsertFolderUserRelationDataBase(folderId, userId, null);
+      if (result === "FAILED") {
+        console.log("Error storage folder configuration!");
+        return handleResponse(req, res, 412, " DataBase Error ");
+      }
     }
   } else {
     result = await InsertFolderUserRelationDataBase(folderId, userId, null);
@@ -101,49 +101,39 @@ async function GetChildFolderList(req, res) {
   const parentId = req.body.parentId;
   const userId = req.body.userId;
 
-  // verificare parametrii
+  var userDetails = await GetUserByID(userId);
+  var userName = userDetails[0].Surname + " " + userDetails[0].Name;
+
   if (parentId === undefined || userId === undefined) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
   }
 
   var userFolderList = [];
 
-  //lista cu toate folderele curente ale utilizatorului
-  var userFolderList = await GetChildFolderListService(parentId, userId);
-  //console.log(userFolderList);
-  if (userFolderList === "FAILED") {
-    return handleResponse(req, res, 412, " DataBase Error ");
-  }
-
   var sharedGroupFoldersList = await GetSharedGroupFolders(userId, parentId);
-  console.log(sharedGroupFoldersList);
   if (sharedGroupFoldersList === "FAILED") {
     return handleResponse(req, res, 412, " DataBase Error ");
   }
 
   sharedGroupFoldersList.map((x) => {
     const sharedGroupFolder = { ...x };
-    // sharedFolder.parentID = null;
-    // sharedFolder.path = "[]";
-    if (userFolderList.indexOf(sharedGroupFolder) === -1) {
-      userFolderList.push(sharedGroupFolder);
-      //console.log(sharedGroupFolder);
-    }
+
+    sharedGroupFolder.Name = sharedGroupFolder.Name.replace(userName, "");
+    sharedGroupFolder.Name = sharedGroupFolder.Name.replace("#", "");
+
+    userFolderList.push(sharedGroupFolder);
   });
-  
-  // var sharedPrivateFoldersList = await GetSharedPrivateFolders(userId);
 
-  // //console.log(sharedPrivateFoldersList);
-  // if (sharedPrivateFoldersList === "FAILED") {
-  //   return handleResponse(req, res, 412, " DataBase Error ");
-  // }
+  // private folders
+  var userPrivateFolderList = await GetSharedPrivateFolders(userId, parentId);
+  if (userPrivateFolderList === "FAILED") {
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
 
-  // sharedPrivateFoldersList.map((x) => {
-  //   const sharedFolder = { ...x };
-  //   sharedFolder.parentID = null;
-  //   sharedFolder.path = "[]";
-  //   //userFolderList.push(sharedFolder);
-  // });
+  userPrivateFolderList.map((x) => {
+    const sharedFolder = { ...x };
+    userFolderList.push(sharedFolder);
+  });
 
   return handleResponse(req, res, 200, { userFolderList });
 }

@@ -93,30 +93,12 @@ function GetFolderDetails(folderId) {
   });
 }
 
-//Get ChildFolders
-function GetChildFolderListService(parentId, userId) {
-  // console.log(parentId);
-  const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
-    connection.query(
-      `SELECT * FROM folders INNER JOIN foldersusers ON folders.folderId = foldersusers.folderIdResource WHERE foldersusers.userIdBeneficiary = '${userId}' AND folders.parentID = '${parentId}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
-      }
-    );
-    connection.end();
-  });
-}
-
 //Get SharedPrivateFolders
-function GetSharedPrivateFolders(userId) {
+function GetSharedPrivateFolders(userId, parentId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
-      `SELECT folders.folderId, folders.Name, folders.parentID, folders.userID, folders.createdTime, folders.path FROM folders INNER JOIN foldersusers ON folders.folderId = foldersusers.folderIdResource WHERE folders.userID != foldersusers.userIdBeneficiary AND foldersusers.userIdBeneficiary = '${userId}'`,
+      `SELECT folders.folderId, folders.Name, folders.parentID, folders.userID, folders.createdTime, folders.path FROM folders INNER JOIN foldersusers ON folders.folderId = foldersusers.folderIdResource INNER JOIN iusers ON iusers.userId = foldersusers.userIdBeneficiary WHERE foldersusers.userIdBeneficiary = '${userId}' AND folders.parentID = '${parentId}' AND foldersusers.RoomIdBeneficiary IS NULL`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");
@@ -197,7 +179,6 @@ function DeleteRoomFolderAndUserRelation(roomID) {
 module.exports = {
   InsertNewFolderDataBase,
   GetFolderDetails,
-  GetChildFolderListService,
   InsertFolderUserRelationDataBase,
   GetSharedPrivateFolders,
   GetSharedGroupFolders,

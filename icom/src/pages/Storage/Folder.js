@@ -130,10 +130,10 @@ function Folder({ folder }) {
             className="f-dropdown-content"
             style={{ display: optionButton ? "block" : "none" }}
           >
-            <div className="dropdown-instrument" onClick={() => {}}>
+            {/* <div className="dropdown-instrument" onClick={() => {}}>
               <FaIcons.FaShare size={20} />
               <p>Share</p>
-            </div>
+            </div> */}
             <div className="dropdown-instrument" onClick={() => {}}>
               <AiIcons.AiOutlineCloudDownload size={20} />
               <p>Download</p>
