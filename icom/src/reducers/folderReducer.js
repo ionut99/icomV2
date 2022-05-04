@@ -102,7 +102,6 @@ export function useFolder(folderId = null, folder = null) {
         });
       });
 
-    // console.log("mama");
     // return dispatch(GetFolder(folderId, user.userId));
   }, [folderId, user.userId]);
 
@@ -111,8 +110,7 @@ export function useFolder(folderId = null, folder = null) {
     return getChildFolders(folderId, user.userId)
       .then((result) => {
         // console.log("child folders: ");
-
-        console.log(result.data["userFolderList"]);
+        // console.log(result.data["userFolderList"]);
         const orderList = result.data["userFolderList"].sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
         });

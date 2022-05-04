@@ -241,7 +241,6 @@ export const UploadNewStoringFile = async (
   filePath,
   folderId,
   userId,
-  createdAt,
   FILE
 ) => {
   const formdata = new FormData();
@@ -250,7 +249,6 @@ export const UploadNewStoringFile = async (
   formdata.append("filePath", filePath);
   formdata.append("folderId", folderId);
   formdata.append("userId", userId);
-  formdata.append("createdAt", createdAt);
   try {
     return await axios.post(
       `${REACT_APP_API_URL}/document/newStoragefile`,
