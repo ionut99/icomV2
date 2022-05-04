@@ -37,7 +37,59 @@ function InsertParticipantData(uuidRoom, userID) {
   });
 }
 
+function DeleteAllMessageFromRoom(RoomID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `DELETE FROM messages WHERE messages.RoomID = '${RoomID}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+function DeleteAllParticipantsFromRoom(RoomID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `DELETE FROM participants WHERE participants.RoomID = '${RoomID}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+function DeleteRoomData(RoomID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `DELETE FROM room WHERE room.ID = '${RoomID}'`,
+      (err, result) => {
+        if (err) {
+          //   return resolve("FAILED");
+          return reject(err);
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
 module.exports = {
   InsertNewRoomData,
   InsertParticipantData,
+  DeleteAllMessageFromRoom,
+  DeleteAllParticipantsFromRoom,
+  DeleteRoomData,
 };
