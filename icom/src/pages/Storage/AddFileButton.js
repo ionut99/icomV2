@@ -30,15 +30,12 @@ export default function AddFileButton({ currentFolder }) {
     // 1. incarca fisierul !
     // 2. retine in baza de date datele despre fisier
 
-    const fileName = file.name;
-    const time = new Date().toLocaleString();
     dispatch(
       UploadFileForStoring(
-        fileName,
+        file.name,
         filePath,
         currentFolder.folderId,
         user.userId,
-        time,
         file
       )
     );

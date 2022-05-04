@@ -1,6 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 var fs = require("fs");
+const dayjs = require("dayjs");
 
 const {
   UpdateAvatarPathData,
@@ -23,6 +24,14 @@ const storageAvatar = multer.diskStorage({
   filename: function (req, file, cb) {
     // null as first argument means no error
     cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const storageFile = multer.diskStorage({
+  destination: path.join(__dirname, "../../../users/tempDir/"),
+  filename: function (req, file, cb) {
+    // null as first argument means no error
+    cb(null, file.originalname);
   },
 });
 
@@ -96,19 +105,19 @@ async function UpdateProfilePicture(req, res) {
   }
 }
 
+// returns a promise which resolves true if file exists:
+function checkFileExists(filepath) {
+  return new Promise((resolve, reject) => {
+    fs.access(filepath, fs.constants.F_OK, (error) => {
+      resolve(!error);
+    });
+  });
+}
+
 // handle Upload New File
 async function UploadNewStoredFile(req, res) {
   try {
-    var storageFile = multer.diskStorage({
-      destination: function (req, file, cb) {
-        cb(null, "../tempDir/");
-      },
-      filename: function (req, file, cb) {
-        cb(null, file.originalname);
-      },
-    });
-
-    let upload = multer({ storage: storageAvatar }).single("storedfile");
+    let upload = multer({ storage: storageFile }).single("storedfile");
 
     upload(req, res, async (err) => {
       if (!req.file) {
@@ -129,22 +138,41 @@ async function UploadNewStoredFile(req, res) {
       const filePath = req.body.filePath;
       const folderId = req.body.folderId;
       const userId = req.body.userId;
-      const createdAt = req.body.createdAt;
+      let createdAt = dayjs();
 
-      console.log(
-        "fisierul pe care vrem sa l incarcam are urmatoarele caractaristici: "
-      );
-      console.log(fileName);
-      console.log(filePath);
-      console.log(folderId);
-      console.log(userId);
-      console.log(createdAt);
-      
-      return handleResponse(req, res, 200, { UpdateProfilePicture: "SUCCESS" });
+      // var StoreFilePath = userId + "/" + fileName;
+
+      const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
+      const newPath = path.join(__dirname, "../../../users/", userId);
+
+      // console.log(oldPath);
+      // console.log(newPath);
+
+      try {
+        if (!(await checkFileExists(newPath))) {
+          console.log("Nu exista folderr...");
+          fs.mkdir(newPath, { recursive: true }, (err) => {
+            if (err) {
+              return console.error(err);
+            }
+            console.log("Directory created successfully!");
+          });
+        }
+      } catch (err) {
+        console.error(err);
+      }
+
+      fs.rename(oldPath, newPath + "/" + fileName, function (err) {
+        if (err) {
+          throw err;
+        } else {
+          console.log("Successfully storage the file!");
+          return handleResponse(req, res, 190, { StorageFile: "SUCCESS" });
+        }
+      });
     });
   } catch (err) {
-    //console.log(err);
-    return handleResponse(req, res, 190, { UpdateProfilePicture: "FAILED" });
+    return handleResponse(req, res, 190, { UpdateProfilePicture: "SUCCESS" });
   }
 }
 
