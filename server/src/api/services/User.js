@@ -83,53 +83,7 @@ function InsertNewMessageData(ID_message, senderID, roomID, messageBody) {
   });
 }
 
-function DeleteAllMessageFromRoom(RoomID) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
-    connection.query(
-      `DELETE FROM messages WHERE messages.RoomID = '${RoomID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
-      }
-    );
-    connection.end();
-  });
-}
 
-function DeleteAllParticipantsFromRoom(RoomID) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
-    connection.query(
-      `DELETE FROM participants WHERE participants.RoomID = '${RoomID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
-      }
-    );
-    connection.end();
-  });
-}
-
-function DeleteRoomData(RoomID) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
-    connection.query(
-      `DELETE FROM room WHERE room.ID = '${RoomID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
-      }
-    );
-    connection.end();
-  });
-}
 
 function AddNewMemberInGroupData(roomID, userSearchListID) {
   // console.log(
@@ -170,7 +124,7 @@ function GetNOTPartListData(ChannelID, userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
-      `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM participants INNER JOIN iusers ON participants.UserID = iusers.userId WHERE RoomID != '${ChannelID}' and iusers.userId != '${userId}'`,
+      `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers WHERE iusers.userId != '${userId}'`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");
@@ -273,9 +227,6 @@ module.exports = {
   GetUserRoomsList,
   GetRoomMessagesData,
   InsertNewMessageData,
-  DeleteRoomData,
-  DeleteAllMessageFromRoom,
-  DeleteAllParticipantsFromRoom,
   AddNewMemberInGroupData,
   GetPartListData,
   GetNOTPartListData,

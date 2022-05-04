@@ -36,7 +36,6 @@ function Folder({ folder }) {
 
   const CreateFolderDate = new Date(Date.parse(folder.createdTime));
 
-  console.log(CreateFolderDate);
   useEffect(() => {
     let isMounted = true;
     if (folder.userID == null) {

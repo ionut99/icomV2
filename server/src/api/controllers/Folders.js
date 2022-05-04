@@ -1,4 +1,5 @@
 // return messages from a room
+const { NULL } = require("mysql/lib/protocol/constants/types");
 var uui = require("uuid");
 
 const { handleResponse } = require("../helpers/utils");
@@ -8,7 +9,8 @@ const {
   InsertNewFolderDataBase,
   GetFolderDetails,
   GetChildFolderListService,
-  GetSharedFolders,
+  GetSharedPrivateFolders,
+  GetSharedGroupFolders,
 } = require("../services/Folders");
 
 async function AddNewFolder(req, res) {
@@ -18,14 +20,15 @@ async function AddNewFolder(req, res) {
   const path = req.body.path;
   const createdAt = new Date();
 
-  // TO DO: - verify req param to be different from null/undefined
-
   //   console.log("Se va introduce un nou folder:");
   //   console.log(name);
   //   console.log(parentId);
   //   console.log(userId);
-  //   console.log(path);
-  //   console.log(createdAt);
+  // console.log(typeof path);
+  // console.log(path.length);
+
+  if (name === undefined || userId === undefined)
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
 
   const folderId = uui.v4();
 
@@ -42,10 +45,35 @@ async function AddNewFolder(req, res) {
     return handleResponse(req, res, 412, " DataBase Error ");
   }
 
-  result = await InsertFolderUserRelationDataBase(folderId, userId);
-  if (result === "FAILED") {
-    console.log("Error storage folder configuration!");
-    return handleResponse(req, res, 412, " DataBase Error ");
+  // de adaugat si roomId pentru folderele care sunt create la comun
+  // adica verificam parentId
+  if (parentId !== null && typeof path === "object" && path.length > 0) {
+    const parentFolder = await GetFolderDetails(parentId);
+    if (parentFolder === "FAILED") {
+      console.log("Error get details about folder!");
+      return handleResponse(req, res, 412, " DataBase Error ");
+    }
+
+    console.log(parentFolder[0].userIdBeneficiary);
+    console.log(parentFolder[0].RoomIdBeneficiary);
+    if (parentFolder[0].RoomIdBeneficiary !== null) {
+      console.log("inseram");
+      result = await InsertFolderUserRelationDataBase(
+        folderId,
+        userId,
+        parentFolder[0].RoomIdBeneficiary
+      );
+      if (result === "FAILED") {
+        console.log("Error storage folder configuration!");
+        return handleResponse(req, res, 412, " DataBase Error ");
+      }
+    }
+  } else {
+    result = await InsertFolderUserRelationDataBase(folderId, userId, null);
+    if (result === "FAILED") {
+      console.log("Error storage folder configuration!");
+      return handleResponse(req, res, 412, " DataBase Error ");
+    }
   }
 
   return handleResponse(req, res, 200, "Add New Private User Folder Succed");
@@ -56,24 +84,16 @@ async function GetFolderDataBase(req, res) {
   const folderId = req.body.folderId;
   const userId = req.body.userId;
 
-  //   console.log("cautam folderul cu caracteristicile:");
-  //   console.log(folderId);
-  //   console.log(userId);
+  if (folderId === undefined || userId === undefined)
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
 
-  // verificare parametrii
-
-  var folderObject = await GetFolderDetails(folderId, userId);
-
-  // console.log(folderObject);
+  var folderObject = await GetFolderDetails(folderId);
 
   if (folderObject === "FAILED") {
     return handleResponse(req, res, 412, " DataBase Error ");
   }
 
   return handleResponse(req, res, 200, { folderObject });
-
-  //   var messageRoomList = await GetRoomMessagesData(roomID);
-  //   return handleResponse(req, res, 200, { messageRoomList });
 }
 
 // Get Child Folder List
@@ -86,33 +106,45 @@ async function GetChildFolderList(req, res) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
   }
 
+  var userFolderList = [];
+
   //lista cu toate folderele curente ale utilizatorului
   var userFolderList = await GetChildFolderListService(parentId, userId);
-
   //console.log(userFolderList);
   if (userFolderList === "FAILED") {
     return handleResponse(req, res, 412, " DataBase Error ");
   }
 
-  // lista cu folderele share-uite de alti utilizatori cu utilizatorul curent
-  if (parentId == null) {
-    // aici returnam lista..
-    var sharedFoldersList = await GetSharedFolders(userId);
-
-    if (sharedFoldersList === "FAILED") {
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
-
-    sharedFoldersList.map((x) => {
-      const sharedFolder = { ...x };
-      sharedFolder.parentID = null;
-      sharedFolder.path = "[]";
-      userFolderList.push(sharedFolder);
-    });
+  var sharedGroupFoldersList = await GetSharedGroupFolders(userId, parentId);
+  console.log(sharedGroupFoldersList);
+  if (sharedGroupFoldersList === "FAILED") {
+    return handleResponse(req, res, 412, " DataBase Error ");
   }
 
-  // aici se va returna lista finala a folderelor
-  // console.log(userFolderList);
+  sharedGroupFoldersList.map((x) => {
+    const sharedGroupFolder = { ...x };
+    // sharedFolder.parentID = null;
+    // sharedFolder.path = "[]";
+    if (userFolderList.indexOf(sharedGroupFolder) === -1) {
+      userFolderList.push(sharedGroupFolder);
+      //console.log(sharedGroupFolder);
+    }
+  });
+  
+  // var sharedPrivateFoldersList = await GetSharedPrivateFolders(userId);
+
+  // //console.log(sharedPrivateFoldersList);
+  // if (sharedPrivateFoldersList === "FAILED") {
+  //   return handleResponse(req, res, 412, " DataBase Error ");
+  // }
+
+  // sharedPrivateFoldersList.map((x) => {
+  //   const sharedFolder = { ...x };
+  //   sharedFolder.parentID = null;
+  //   sharedFolder.path = "[]";
+  //   //userFolderList.push(sharedFolder);
+  // });
+
   return handleResponse(req, res, 200, { userFolderList });
 }
 

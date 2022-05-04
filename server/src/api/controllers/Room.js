@@ -1,9 +1,6 @@
 var uui = require("uuid");
 
 const {
-  DeleteAllMessageFromRoom,
-  DeleteAllParticipantsFromRoom,
-  DeleteRoomData,
   AddNewMemberInGroupData,
   GetPartListData,
   GetNOTPartListData,
@@ -12,14 +9,17 @@ const {
 const {
   InsertNewRoomData,
   InsertParticipantData,
+  DeleteAllMessageFromRoom,
+  DeleteAllParticipantsFromRoom,
+  DeleteRoomData,
 } = require("../services/Room");
 
 const {
   InsertFolderUserRelationDataBase,
   InsertNewFolderDataBase,
-  GetFolderDetails,
-  GetChildFolderListService,
-  GetSharedFolders,
+  DeleteFolderUserRelation,
+  DeleteRoomFolderAndUserRelation,
+  // DeleteFolder,
 } = require("../services/Folders");
 
 const { handleResponse } = require("../helpers/utils");
@@ -28,7 +28,7 @@ const { is } = require("express/lib/request");
 
 // --------------------- // -----------------------
 
-// create new group
+// create new conversation (private group) - folders functions was updated
 async function CreateNewRoom(req, res) {
   const RoomName = req.body.RoomName;
   const Private = req.body.Private;
@@ -58,6 +58,7 @@ async function CreateNewRoom(req, res) {
   if (partResult === "FAILED")
     return handleResponse(req, res, 412, " DataBase Error ");
 
+  // folder Creation
   const folderId = uui.v4();
   const path = [];
   const createdAt = new Date();
@@ -77,14 +78,11 @@ async function CreateNewRoom(req, res) {
   }
 
   // add folder relation for user whicj initiate conversation
-  folderResult = await InsertFolderUserRelationDataBase(folderId, userID);
-  if (folderResult === "FAILED") {
-    console.log("Error storage folder configuration!");
-    return handleResponse(req, res, 412, " DataBase Error ");
-  }
-
-  // add folder relation for the other user private conversation
-  folderResult = await InsertFolderUserRelationDataBase(folderId, userSearchListID);
+  folderResult = await InsertFolderUserRelationDataBase(
+    folderId,
+    null,
+    uuidRoom
+  );
   if (folderResult === "FAILED") {
     console.log("Error storage folder configuration!");
     return handleResponse(req, res, 412, " DataBase Error ");
@@ -117,16 +115,39 @@ async function DeleteRoom(req, res) {
     return handleResponse(req, res, 412, " DataBase Error ");
   }
 
+  // delete room folder
+  // var res_deleteFolder = await DeleteFolder(roomID);
+  // if (res_deleteFolder === "FAILED") {
+  //   console.log("FAILED to delete room Relation!");
+  //   return handleResponse(req, res, 412, " DataBase Error ");
+  // }
+
+  // // delete room folder - User Relation
+  // var res_deleteFolderRelation = await DeleteFolderUserRelation(roomID);
+  // if (res_deleteFolderRelation === "FAILED") {
+  //   console.log("FAILED to delete room folder!");
+  //   return handleResponse(req, res, 412, " DataBase Error ");
+  // }
+
+  // delete folder and relation
+  var res_del_room_folder = await DeleteRoomFolderAndUserRelation(roomID);
+  if (res_del_room_folder === "FAILED") {
+    console.log("FAILED to delete room Relation and FolderRoom!");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  // delete subfolders??
+
   var res_deleteroom = await DeleteRoomData(roomID);
   if (res_deleteroom === "FAILED") {
-    console.log("FAILED to delete room!");
+    console.log("FAILED to delete room Relation!");
     return handleResponse(req, res, 412, " DataBase Error ");
   }
 
   return handleResponse(req, res, 200, { DeleteRoom: "SUCCESS" });
 }
 
-// Create a new room (group)
+// Create a new room (group) - folders functions was updated
 async function CreateNewRoom_Group(req, res) {
   const NewGroupName = req.body.NewGroupName;
   const Type = req.body.Type;
@@ -158,10 +179,40 @@ async function CreateNewRoom_Group(req, res) {
     }
   }
 
+  // folder Creation for new group
+  const folderId = uui.v4();
+  const path = [];
+  const createdAt = new Date();
+  const parentID = null;
+
+  var folderResult = await InsertNewFolderDataBase(
+    folderId,
+    NewGroupName,
+    parentID,
+    userID,
+    path,
+    createdAt
+  );
+  if (folderResult === "FAILED") {
+    console.log("Error storage folder configuration!");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  // add folder relation for user whicj initiate conversation
+  folderResult = await InsertFolderUserRelationDataBase(
+    folderId,
+    null,
+    uuidRoom
+  );
+  if (folderResult === "FAILED") {
+    console.log("Error storage folder configuration!");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
   return handleResponse(req, res, 200, "New Group Created successful");
 }
 
-// add a new member in a room (group)
+// add a new member in a room (group) - without folder functions (use sql tables)
 async function AddNewMemberInGroup(req, res) {
   const roomID = req.body.RoomID;
   const userSearchListID = req.body.userSearchListID;
