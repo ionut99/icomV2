@@ -14,18 +14,16 @@ export const AddNewFile =
     //console.log(varVerify);
   };
 
-    // handle upload new file
+// handle upload new file
 export const UploadFileForStoring =
-(fileName, filePath, folderId, userId, createdAt, FILE) =>
-async (dispatch) => {
-  const varVerify = await UploadNewStoringFile(
-    fileName,
-    filePath,
-    folderId,
-    userId,
-    createdAt,
-    FILE
-  );
-  // TO DO - display message
-  console.log(varVerify);
-};
+  (fileName, folderId, userId, createdTime, FILE) => async (dispatch) => {
+    const varVerify = await UploadNewStoringFile(
+      fileName,
+      folderId,
+      userId,
+      createdTime,
+      FILE
+    );
+    // TO DO - display message
+    console.log(varVerify);
+  };

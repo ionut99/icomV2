@@ -12,7 +12,7 @@ export const ACTIONS = {
   ADD_CHILD_FOLDER: "add-child-folder",
 };
 
-export const ROOT_FOLDER = { Name: "My Drive", folderId: null, path: [] };
+export const ROOT_FOLDER = { Name: "My Drive", folderId: "root", path: [] };
 
 function reducer(state, { type, payload }) {
   switch (type) {
@@ -53,7 +53,7 @@ function reducer(state, { type, payload }) {
   }
 }
 
-export function useFolder(folderId = null, folder = null) {
+export function useFolder(folderId = "root", folder = null) {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
