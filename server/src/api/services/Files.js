@@ -1,23 +1,71 @@
-var fs = require("fs");
+const { path } = require("express/lib/application");
+const mysql = require("mysql");
 
-function ReadFile(currentPath) {
+const { DataBaseConfig } = require("../../config/dataBase");
+
+function InsertNewFolderDataBase(
+  folderId,
+  name,
+  parentId,
+  userId,
+  path,
+  createdAt
+) {
+  let stringPath = JSON.stringify(path);
+  // console.log("Path ul pentru insert este (JSON format): ");
+  // console.log(stringPath);
+  const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
-    fs.access(currentPath, (err) => {
-      if (err) {
-        return resolve("FAILED");
-      }
-      // Reading the file
-      fs.readFile(currentPath, {encoding: 'base64'}, function (err, contentFile) {
+    connection.query(
+      `INSERT INTO folders (folderId, Name, parentID, userID, path, createdTime) VALUES ('${folderId}', '${name}', '${parentId}', '${userId}', '${stringPath}', '${createdAt}')`,
+      (err, result) => {
         if (err) {
-          return resolve("FAILED");
+          return reject(err);
         }
-        // Serving the image
-        return resolve(contentFile);
-      });
-    });
+        return resolve(result);
+      }
+    );
+    connection.end();
   });
 }
 
+function InsertNewFileDataBase(
+  fileId,
+  fileName,
+  folderId,
+  createdTime,
+  userId
+) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  if (folderId === null) {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `INSERT INTO file (fileId, fIleName, folderId, createdTime, userId) VALUES ('${fileId}', '${fileName}', NULL, '${createdTime}', '${userId}')`,
+        (err, result) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(result);
+        }
+      );
+      connection.end();
+    });
+  } else {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `INSERT INTO file (fileId, fIleName, folderId, createdTime, userId) VALUES ('${fileId}', '${fileName}', '${folderId}', '${createdTime}', '${userId}')`,
+        (err, result) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(result);
+        }
+      );
+      connection.end();
+    });
+  }
+}
+
 module.exports = {
-  ReadFile,
+  InsertNewFileDataBase,
 };

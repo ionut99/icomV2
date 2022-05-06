@@ -1,7 +1,8 @@
 const multer = require("multer");
 const path = require("path");
 var fs = require("fs");
-const dayjs = require("dayjs");
+// const dayjs = require("dayjs");
+var uui = require("uuid");
 
 const {
   UpdateAvatarPathData,
@@ -10,7 +11,7 @@ const {
   GetPrivateRoomOtherUserDetails,
 } = require("../services/User");
 const { handleResponse } = require("../helpers/utils");
-const { ReadFile } = require("../services/Files");
+const { InsertNewFileDataBase } = require("../services/Files");
 const { dir } = require("console");
 
 const defaultAvatarPicure = path.join(
@@ -134,19 +135,14 @@ async function UploadNewStoredFile(req, res) {
         return handleResponse(req, res, 413, "Error when try to upload a file");
       }
 
+      const fileId = uui.v4();
       const fileName = req.body.fileName;
-      const filePath = req.body.filePath;
       const folderId = req.body.folderId;
       const userId = req.body.userId;
-      let createdAt = dayjs();
-
-      // var StoreFilePath = userId + "/" + fileName;
+      const createdTime = req.body.createdTime;
 
       const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
       const newPath = path.join(__dirname, "../../../users/", userId);
-
-      // console.log(oldPath);
-      // console.log(newPath);
 
       try {
         if (!(await checkFileExists(newPath))) {
@@ -162,11 +158,26 @@ async function UploadNewStoredFile(req, res) {
         console.error(err);
       }
 
-      fs.rename(oldPath, newPath + "/" + fileName, function (err) {
+      fs.rename(oldPath, newPath + "/" + fileName, async function (err) {
         if (err) {
           throw err;
         } else {
           console.log("Successfully storage the file!");
+
+          //Store File details in database
+          const result = await InsertNewFileDataBase(
+            fileId,
+            fileName,
+            folderId,
+            createdTime,
+            userId
+          );
+
+          if (result === "FAILED") {
+            console.log("Error storage folder configuration!");
+            return handleResponse(req, res, 412, " DataBase Error ");
+          }
+
           return handleResponse(req, res, 190, { StorageFile: "SUCCESS" });
         }
       });

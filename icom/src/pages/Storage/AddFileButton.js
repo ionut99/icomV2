@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { ROOT_FOLDER } from "../../reducers/folderReducer";
 import { UploadFileForStoring } from "../../asyncActions/fileAsyncActions";
 
+const dayjs = require("dayjs");
+
 export default function AddFileButton({ currentFolder }) {
   //   const [selectedFile, setSelectedFile] = useState();
 
@@ -25,17 +27,15 @@ export default function AddFileButton({ currentFolder }) {
         ? `${currentFolder.path.join("/")}/${file.name}`
         : `${currentFolder.path.join("/")}/${currentFolder.Name}/${file.name}`;
 
-    console.log(filePath);
-
-    // 1. incarca fisierul !
-    // 2. retine in baza de date datele despre fisier
+    // console.log(filePath);
+    const createdTime = dayjs();
 
     dispatch(
       UploadFileForStoring(
         file.name,
-        filePath,
         currentFolder.folderId,
         user.userId,
+        createdTime,
         file
       )
     );
