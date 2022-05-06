@@ -190,7 +190,7 @@ function GetUserDetailsData(userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
-      `SELECT iusers.Surname, iusers.Name, iusers.Email, iusers.IsAdmin FROM iusers WHERE userId = '${userId}'`,
+      `SELECT iusers.Surname, iusers.Name, iusers.Email, iusers.IsAdmin, iusers.Avatar FROM iusers WHERE userId = '${userId}'`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");

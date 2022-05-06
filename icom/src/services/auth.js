@@ -53,7 +53,7 @@ export const userLogoutService = async () => {
 export const getAvatarPictureService = async (ID, atuhUser, ISroom) => {
   try {
     const response = await axios.post(
-      `${REACT_APP_API_URL}/document/geprofilepicture`,
+      `${REACT_APP_API_URL}/document/getprofilepicture`,
       {
         ID,
         atuhUser,

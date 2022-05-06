@@ -205,7 +205,7 @@ async function GetUserDetails(req, res) {
   return handleResponse(req, res, 200, { userDetails });
 }
 
-// insert new User Accoutn
+// insert new User Account
 async function InserNewUserAccount(req, res) {
   const userSurname = req.body.userSurname;
   const userName = req.body.userName;
@@ -230,12 +230,6 @@ async function InserNewUserAccount(req, res) {
   ) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
   }
-
-  // const userDetails = await GetUserDetailsData(userId);
-  // if (userDetails === "FAILED") {
-  //   console.log("FAILED - get user Details ");
-  //   return handleResponse(req, res, 412, " DataBase Error ");
-  // }
 
   var isAdminInt = 0;
   if (isAdmin) isAdminInt = 1;

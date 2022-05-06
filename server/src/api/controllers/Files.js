@@ -75,6 +75,8 @@ async function UpdateProfilePicture(req, res) {
 
       const userDetails = await GetUserDetailsData(userID);
       const results = JSON.parse(JSON.stringify(userDetails));
+      // console.log("Detalii despre useri:");
+      // console.log(results);
       const currentAvatarPath = results[0].Avatar;
 
       if (
@@ -230,7 +232,9 @@ async function GetProfilePicture(req, res) {
         }
         const theOtherUserJson = JSON.parse(JSON.stringify(theOtherUser));
 
-        const userDetails = await GetUserDetailsData(theOtherUserJson[0].UserID);
+        const userDetails = await GetUserDetailsData(
+          theOtherUserJson[0].UserID
+        );
         if (userDetails === "FAILED") {
           throw new Error("  Err Get User Details  ");
         }
