@@ -6,6 +6,7 @@ const {
   GetUserSearchList,
   GetUsers,
   GetUserDetails,
+  InserNewUserAccount,
 } = require("../controllers/User");
 const { GetNOTPartList } = require("../controllers/Room");
 const { UpdateProfilePicture } = require("../controllers/Files");
@@ -23,5 +24,6 @@ router.post("/toadd", GetNOTPartList);
 router.get("/getList", GetUsers);
 router.post("/updatePicture", UpdateProfilePicture);
 router.post("/details", GetUserDetails);
+router.post("/newuser", InserNewUserAccount);
 
 module.exports = router;

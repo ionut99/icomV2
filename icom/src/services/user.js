@@ -264,3 +264,24 @@ export const UploadNewStoringFile = async (
     };
   }
 };
+
+export const AddUserAccountDataBase = async (
+  userSurname,
+  userName,
+  email,
+  isAdmin
+) => {
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/users/newuser`, {
+      userSurname,
+      userName,
+      email,
+      isAdmin,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};

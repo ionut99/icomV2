@@ -6,7 +6,7 @@ var uui = require("uuid");
 
 const {
   UpdateAvatarPathData,
-  GetUserDetails,
+  GetUserDetailsData,
   GetRoomDetails,
   GetPrivateRoomOtherUserDetails,
 } = require("../services/User");
@@ -73,8 +73,10 @@ async function UpdateProfilePicture(req, res) {
       const userID = req.body.userID;
       //must to delete old avatar photo befor upload next one
 
-      const userDetails = await GetUserDetails(userID);
+      const userDetails = await GetUserDetailsData(userID);
       const results = JSON.parse(JSON.stringify(userDetails));
+      // console.log("Detalii despre useri:");
+      // console.log(results);
       const currentAvatarPath = results[0].Avatar;
 
       if (
@@ -207,7 +209,7 @@ async function GetProfilePicture(req, res) {
     var currentAvatarPath = "";
 
     if (!ISroom) {
-      const userDetails = await GetUserDetails(ID);
+      const userDetails = await GetUserDetailsData(ID);
       if (userDetails === "FAILED") {
         throw new Error("  Err Get User Details  ");
       }
@@ -230,7 +232,9 @@ async function GetProfilePicture(req, res) {
         }
         const theOtherUserJson = JSON.parse(JSON.stringify(theOtherUser));
 
-        const userDetails = await GetUserDetails(theOtherUserJson[0].UserID);
+        const userDetails = await GetUserDetailsData(
+          theOtherUserJson[0].UserID
+        );
         if (userDetails === "FAILED") {
           throw new Error("  Err Get User Details  ");
         }

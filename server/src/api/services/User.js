@@ -23,7 +23,7 @@ function GetSearchUsersList(search_box_text, userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers WHERE ( Email LIKE N'%${search_box_text}%' or Name LIKE N'%${search_box_text}%' or Surname LIKE N'%${search_box_text}%') and NOT userId = ${userId}`,
+      `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers WHERE ( Email LIKE N'%${search_box_text}%' or Name LIKE N'%${search_box_text}%' or Surname LIKE N'%${search_box_text}%') and NOT userId = '${userId}'`,
       (err, result) => {
         if (err) {
           return reject(err);
@@ -82,8 +82,6 @@ function InsertNewMessageData(ID_message, senderID, roomID, messageBody) {
     connection.end();
   });
 }
-
-
 
 function AddNewMemberInGroupData(roomID, userSearchListID) {
   // console.log(
@@ -153,23 +151,6 @@ function UpdateAvatarPathData(UserID, Path) {
   });
 }
 
-// Get User's Avatar Details
-function GetUserDetails(UserID) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
-    connection.query(
-      `SELECT * FROM iusers WHERE iusers.userId = '${UserID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
-      }
-    );
-    connection.end();
-  });
-}
-
 //Get Room's Avatar Details
 function GetRoomDetails(RoomID) {
   const connection = new mysql.createConnection(DataBaseConfig);
@@ -209,7 +190,31 @@ function GetUserDetailsData(userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
-      `SELECT iusers.Surname, iusers.Name, iusers.Email, iusers.IsAdmin FROM iusers WHERE userId = '${userId}'`,
+      `SELECT iusers.Surname, iusers.Name, iusers.Email, iusers.IsAdmin, iusers.Avatar FROM iusers WHERE userId = '${userId}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+// Insert New User Account
+function InsertNewUserAccountData(
+  userId,
+  userSurname,
+  userName,
+  email,
+  password,
+  isAdmin
+) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `INSERT INTO iusers (userId, Surname, Name, Email, Password, IsAdmin, Avatar) VALUES ('${userId}', '${userSurname}', '${userName}', '${email}', '${password}', '${isAdmin}', NULL)`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");
@@ -231,8 +236,8 @@ module.exports = {
   GetPartListData,
   GetNOTPartListData,
   UpdateAvatarPathData,
-  GetUserDetails,
   GetRoomDetails,
   GetPrivateRoomOtherUserDetails,
   GetUserDetailsData,
+  InsertNewUserAccountData,
 };

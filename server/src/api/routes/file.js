@@ -8,7 +8,7 @@ const { GetDocument, GetProfilePicture, UploadNewStoredFile } = require("../cont
 // router.post("/geprofilepicture", authMiddleware, GetProfilePicture);
 
 router.post("/getdocument", GetDocument);
-router.post("/geprofilepicture", GetProfilePicture);
+router.post("/getprofilepicture", GetProfilePicture);
 router.post("/newStoragefile", UploadNewStoredFile)
 
 module.exports = router;

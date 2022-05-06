@@ -9,6 +9,8 @@ const {
   GetUserDetailsData,
 } = require("../services/User");
 
+const { InsertNewUserAccountData } = require("../services/User");
+
 const { handleResponse } = require("../helpers/utils");
 const { GetUserByID } = require("../services/Auth");
 const { is } = require("express/lib/request");
@@ -203,6 +205,52 @@ async function GetUserDetails(req, res) {
   return handleResponse(req, res, 200, { userDetails });
 }
 
+// insert new User Account
+async function InserNewUserAccount(req, res) {
+  const userSurname = req.body.userSurname;
+  const userName = req.body.userName;
+  const email = req.body.email;
+  const isAdmin = req.body.isAdmin;
+
+  const userId = uui.v4();
+  const password = "parola";
+
+  console.log("User role:");
+  console.log(isAdmin);
+
+  if (
+    userSurname === null ||
+    userSurname === undefined ||
+    userName === null ||
+    userName === undefined ||
+    email === null ||
+    email === undefined ||
+    isAdmin === null ||
+    isAdmin === undefined
+  ) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  var isAdminInt = 0;
+  if (isAdmin) isAdminInt = 1;
+
+  const res_add_user = await InsertNewUserAccountData(
+    userId,
+    userSurname,
+    userName,
+    email,
+    password,
+    isAdminInt
+  );
+
+  if (res_add_user === "FAILED") {
+    console.log("FAILED - Add New User Account ");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  return handleResponse(req, res, 200, { AddNewUserAccount: "SUCCESS" });
+}
+
 module.exports = {
   GetUserSearchList,
   GetRoomSearchList,
@@ -210,4 +258,5 @@ module.exports = {
   GetRoomMessages,
   InsertNewMessage,
   GetUserDetails,
+  InserNewUserAccount,
 };
