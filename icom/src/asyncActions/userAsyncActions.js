@@ -22,6 +22,8 @@ import {
   // GetFileDocument,
 } from "./../actions/userActions";
 
+import { AddUserAccountDataBase } from "../services/user";
+
 // handle RoomList Search
 export const userSetRoomListAsync =
   (search_box_content, userId) => async (dispatch) => {
@@ -191,7 +193,7 @@ export const getParticipantList = (RoomID) => async (dispatch) => {
   dispatch(setPersonSearchList(result.data["participantsRoomList"]));
 };
 
-// handle insert new message in database
+// handle getDocument
 export const GetDocumentFile = (FileName, FilePath) => async (dispatch) => {
   const documentData = await GetDocumentFileData(FileName, FilePath);
   // aici avem nevoie de verificari...
@@ -203,6 +205,18 @@ export const GetDocumentFile = (FileName, FilePath) => async (dispatch) => {
 export const UpdateProfilePicture =
   (userID, NewPicture) => async (dispatch) => {
     const varVerify = await UpdateProfilePictureData(userID, NewPicture);
+    // TO DO - display message
+    console.log(varVerify);
+  };
+
+export const AddNewUserAccount =
+  (userSurname, userName, email, isAdmin) => async (dispatch) => {
+    const varVerify = await AddUserAccountDataBase(
+      userSurname,
+      userName,
+      email,
+      isAdmin
+    );
     // TO DO - display message
     console.log(varVerify);
   };

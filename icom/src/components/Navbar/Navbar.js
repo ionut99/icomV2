@@ -8,6 +8,7 @@ import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 import { updateCurrentChannel } from "../../actions/userActions";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import Avatar from "../Search/Avatar";
+import AddUser from "../AddUserAccount/AddUserAccount";
 import "./navbar.css";
 
 function Navbar() {
@@ -18,8 +19,9 @@ function Navbar() {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  const [sidebar, setSidebar] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [sidebar, setSidebar] = useState(false);
+  const [discard, setDiscard] = useState(false);
 
   const [confirmDialog, setConfirmDialog] = useState({
     uploadPicture: false,
@@ -27,7 +29,6 @@ function Navbar() {
     title: "",
     subTitle: "",
   });
-  const [discard, setDiscard] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
 
@@ -41,7 +42,6 @@ function Navbar() {
     });
   };
 
-  // handle click event of the logout button
   function LogOut() {
     dispatch(userLogoutAsync());
     dispatch(updateCurrentChannel(null, "", []));
@@ -130,6 +130,19 @@ function Navbar() {
                 onClick={handleChangePicture}
                 value="Change Profile Picture"
               />
+            </div>
+            <div
+              className="dropdown-options"
+              style={{
+                display: user.isAdmin ? "flex" : "none",
+              }}
+            >
+              <AddUser />
+              {/* <input
+                type="button"
+                onClick={AddUserAccount}
+                value="Add New User"
+              /> */}
             </div>
             <div className="dropdown-options">
               <input type="button" onClick={LogOut} value="Logout" />
