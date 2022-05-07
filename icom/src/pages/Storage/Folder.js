@@ -10,20 +10,7 @@ import { getUserDetails } from "../../services/user";
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
+import { monthNames } from "./FileIcons";
 
 function Folder({ folder }) {
   const ref = useRef();
@@ -93,7 +80,13 @@ function Folder({ folder }) {
         as={Link}
       >
         <div className="folder-details">
-          <FontAwesomeIcon icon={faFolder} className="folder-icon" />
+          <FontAwesomeIcon
+            icon={faFolder}
+            className="folder-icon"
+            style={{
+              color: " #F8D775",
+            }}
+          />
           <div className="folder-name">
             <p>{`  ${folder.Name}`}</p>
           </div>

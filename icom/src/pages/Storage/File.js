@@ -1,4 +1,3 @@
-import { faFile } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 
@@ -6,24 +5,11 @@ import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { getUserDetails } from "../../services/user";
+import { monthNames, handleReturnFileIcon } from "./FileIcons";
 
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
-
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
+import * as FaIcons from "react-icons/fa";
 
 function File({ file }) {
   const ref = useRef();
@@ -68,6 +54,27 @@ function File({ file }) {
     };
   }, [file.userId]);
 
+  useEffect(() => {
+    let isMounted = true;
+    const checkIfClickedOutside = (e) => {
+      if (
+        isMounted &&
+        optionButton &&
+        ref.current &&
+        !ref.current.contains(e.target)
+      ) {
+        setOptionButton(false);
+      }
+    };
+
+    document.addEventListener("mousedown", checkIfClickedOutside);
+
+    return () => {
+      isMounted = false;
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
+  }, [optionButton]);
+
   return (
     <div className="f-component" ref={ref}>
       <Button
@@ -82,7 +89,10 @@ function File({ file }) {
         // as={Link}
       >
         <div className="folder-details">
-          <FontAwesomeIcon icon={faFile} className="folder-icon" />
+          <FontAwesomeIcon
+            icon={handleReturnFileIcon(file.type)}
+            className="folder-icon"
+          />
           <div className="folder-name">
             <p>{`  ${file.fileName}`}</p>
           </div>
@@ -108,6 +118,10 @@ function File({ file }) {
             className="f-dropdown-content"
             style={{ display: optionButton ? "block" : "none" }}
           >
+            <div className="dropdown-instrument" onClick={() => {}}>
+              <FaIcons.FaShare size={20} />
+              <p>Share</p>
+            </div>
             <div className="dropdown-instrument" onClick={() => {}}>
               <AiIcons.AiOutlineCloudDownload size={20} />
               <p>Download</p>

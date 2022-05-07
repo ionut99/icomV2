@@ -5,15 +5,17 @@ const { DataBaseConfig } = require("../../config/dataBase");
 
 function InsertNewFileDataBase(
   fileId,
+  type,
   fileName,
   folderId,
   createdTime,
-  userId
+  userId,
+  size
 ) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      `INSERT INTO file (fileId, fIleName, folderId, createdTime, userId) VALUES ('${fileId}', '${fileName}', '${folderId}', '${createdTime}', '${userId}')`,
+      `INSERT INTO file (fileId, type, fileName, folderId, createdTime, userId, size) VALUES ('${fileId}', '${type}', '${fileName}', '${folderId}', '${createdTime}', '${userId}', '${size}')`,
       (err, result) => {
         if (err) {
           return reject(err);
@@ -46,7 +48,7 @@ function GetSharedPrivateFiles(folderId, userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT file.fileId, file.fileName, file.folderId, file.createdTime, file.userId FROM file INNER JOIN filesusers ON file.fileId = filesusers.fileResourceId WHERE file.folderId = '${folderId}' and filesusers.userBeneficiaryId = '${userId}'`,
+      `SELECT file.fileId, file.fileName, file.folderId, file.createdTime, file.userId, file.type, file.size FROM file INNER JOIN filesusers ON file.fileId = filesusers.fileResourceId WHERE file.folderId = '${folderId}' and filesusers.userBeneficiaryId = '${userId}'`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");

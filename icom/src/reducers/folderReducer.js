@@ -137,9 +137,6 @@ export function useFolder(folderId = "root", folder = null) {
         const orderList = result.data["userFileList"].sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
         });
-        console.log("fisierele din folderul " + folderId + " sunt :");
-        console.log(orderList);
-        // console.log(orderList);
 
         dispatch({
           type: ACTIONS.SET_CHILD_FILES,

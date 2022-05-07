@@ -23,6 +23,8 @@ const defaultAvatarPicure = path.join(
   "users/images/avatar/default.png"
 );
 
+const { mimeTypes } = require("../helpers/mimeType");
+
 const storageAvatar = multer.diskStorage({
   destination: path.join(__dirname, "../../../users/images/", "avatar"),
   filename: function (req, file, cb) {
@@ -113,6 +115,10 @@ async function UploadNewStoredFile(req, res) {
     let upload = multer({ storage: storageFile }).single("storedfile");
 
     upload(req, res, async (err) => {
+      // detalii despre fisier:
+      console.log("fisier:");
+      console.log(req.file);
+
       if (!req.file) {
         console.log(req.file);
         return handleResponse(
@@ -127,8 +133,13 @@ async function UploadNewStoredFile(req, res) {
         return handleResponse(req, res, 413, "Error when try to upload a file");
       }
 
+      // file details
+      const fileName = req.file.originalname;
+      const fileType = req.file.mimetype;
+      const fileSize = req.file.size;
+
+      // server details
       const fileId = uui.v4();
-      const fileName = req.body.fileName;
       const folderId = req.body.folderId;
       const userId = req.body.userId;
       const createdTime = req.body.createdTime;
@@ -159,10 +170,12 @@ async function UploadNewStoredFile(req, res) {
           //Store File details in database
           const result = await InsertNewFileDataBase(
             fileId,
+            mimeTypes[fileType],
             fileName,
             folderId,
             createdTime,
-            userId
+            userId,
+            fileSize
           );
 
           if (result === "FAILED") {

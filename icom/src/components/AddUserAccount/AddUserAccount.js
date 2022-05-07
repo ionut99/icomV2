@@ -1,15 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Button, Modal, Form } from "react-bootstrap";
 
 import { AddNewUserAccount } from "../../asyncActions/userAsyncActions";
-// const newUser = {
-//   Surname: "",
-//   Name: "",
-//   Email: "",
-//   // Password:"", (o setez default la nivel de server)
-//   IsAdmin: 0,
-// };
 
 function AddUser() {
   const dispatch = useDispatch();
@@ -31,15 +24,6 @@ function AddUser() {
 
   function handleSubmit(e) {
     e.preventDefault();
-
-    // aici functie pentru adaugare user nou
-    //dispatch(AddNewFolder(name, currentFolder.folderId, user.userId, path));
-    // setName("");
-
-    console.log(userSurname);
-    console.log(userName);
-    console.log(email);
-    console.log(isAdmin);
 
     // send data for create new user Accoutn
     dispatch(AddNewUserAccount(userSurname, userName, email, isAdmin));

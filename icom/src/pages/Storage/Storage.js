@@ -1,23 +1,21 @@
 import React from "react";
 import { Container } from "react-bootstrap";
-import AddFolderButton from "./AddFolderButton";
-import AddFileButton from "./AddFileButton";
-
-import Navbar from "../../components/Navbar/Navbar";
-import Folder from "./Folder";
 import { useParams, useLocation } from "react-router-dom";
-
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
-
 import { useFolder } from "../../reducers/folderReducer";
 import FolderBreadcrumbs from "./FolderBreadcrumbs";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AddFolderButton from "./AddFolderButton";
+import AddFileButton from "./AddFileButton";
+import Navbar from "../../components/Navbar/Navbar";
+
+import SubFolder from "./SubFolder";
+import Folder from "./Folder";
+import File from "./File";
 
 import "./storage.css";
 import filedetailsicon from "../../images/filedetailsicon.svg";
-import SubFolder from "./SubFolder";
 import { ROOT_FOLDER } from "../../reducers/folderReducer";
-import File from "./File";
+
 function Storage() {
   const { folderId } = useParams();
   const { state = {} } = useLocation();
@@ -25,9 +23,6 @@ function Storage() {
     folderId,
     state.folder
   );
-
-  // console.log(state.folder);
-  // console.log(folder);
 
   return (
     <div className="storage-content">
@@ -77,9 +72,18 @@ function Storage() {
                     <Folder folder={childFolder} />
                   </div>
                 ))}
+                {childFiles.map((childFile, index) => (
+                  <div
+                    // key={folder.folderID}
+                    key={index}
+                    className="file-element"
+                  >
+                    <File file={childFile} />
+                  </div>
+                ))}
               </div>
             )}
-            {childFolders.length > 0 && childFiles.length > 0 && <hr />}
+            {/* {childFolders.length > 0 && childFiles.length > 0 && <hr />}
             {childFiles.length > 0 && (
               <div className="file-list">
                 {childFiles.map((childFile, index) => (
@@ -92,7 +96,7 @@ function Storage() {
                   </div>
                 ))}
               </div>
-            )}
+            )} */}
           </div>
           <div
             className={true ? "file__details empty__details" : "file__details"}
