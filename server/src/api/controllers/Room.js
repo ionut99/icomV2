@@ -183,7 +183,7 @@ async function CreateNewRoom_Group(req, res) {
   const folderId = uui.v4();
   const path = [];
   const createdAt = new Date();
-  const parentID = null;
+  const parentID = "root";
 
   var folderResult = await InsertNewFolderDataBase(
     folderId,

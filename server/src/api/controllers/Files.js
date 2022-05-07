@@ -307,9 +307,7 @@ async function GetProfilePicture(req, res) {
     };
 
     if (currentAvatarPath !== null && currentAvatarPath !== "") {
-      // console.log("calea este: ");
-      // console.log(currentAvatarPath);
-
+      
       res.sendFile(currentAvatarPath, options, function (error) {
         if (error) {
           // throw new Error("  Err send File  ");

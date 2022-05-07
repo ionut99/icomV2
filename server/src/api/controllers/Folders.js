@@ -173,8 +173,6 @@ async function GetChildFilesList(req, res) {
     userFileList.push(file);
   });
 
-  console.log(userFileList);
-
   return handleResponse(req, res, 200, { userFileList });
 }
 
