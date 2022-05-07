@@ -11,7 +11,10 @@ const {
   GetPrivateRoomOtherUserDetails,
 } = require("../services/User");
 const { handleResponse } = require("../helpers/utils");
-const { InsertNewFileDataBase } = require("../services/Files");
+const {
+  InsertNewFileDataBase,
+  InsertNewFileRelationDataBase,
+} = require("../services/Files");
 const { dir } = require("console");
 
 const defaultAvatarPicure = path.join(
@@ -19,6 +22,8 @@ const defaultAvatarPicure = path.join(
   "../../../",
   "users/images/avatar/default.png"
 );
+
+const { mimeTypes } = require("../helpers/mimeType");
 
 const storageAvatar = multer.diskStorage({
   destination: path.join(__dirname, "../../../users/images/", "avatar"),
@@ -35,19 +40,6 @@ const storageFile = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-
-// return messages from a room
-async function GetDocument(req, res) {
-  // const roomID = req.body.ChannelID;
-
-  // if (roomID === null) {
-  //   return handleResponse(req, res, 410, "Invalid Request Parameters ");
-  // }
-
-  // var messageRoomList = await GetRoomMessagesData(roomID);
-  // console.log("Buna aici este un docuemnt de trimis");
-  return handleResponse(req, res, 200, "de aici incepe sesiunea");
-}
 
 async function UpdateProfilePicture(req, res) {
   try {
@@ -123,6 +115,10 @@ async function UploadNewStoredFile(req, res) {
     let upload = multer({ storage: storageFile }).single("storedfile");
 
     upload(req, res, async (err) => {
+      // detalii despre fisier:
+      console.log("fisier:");
+      console.log(req.file);
+
       if (!req.file) {
         console.log(req.file);
         return handleResponse(
@@ -137,8 +133,13 @@ async function UploadNewStoredFile(req, res) {
         return handleResponse(req, res, 413, "Error when try to upload a file");
       }
 
+      // file details
+      const fileName = req.file.originalname;
+      const fileType = req.file.mimetype;
+      const fileSize = req.file.size;
+
+      // server details
       const fileId = uui.v4();
-      const fileName = req.body.fileName;
       const folderId = req.body.folderId;
       const userId = req.body.userId;
       const createdTime = req.body.createdTime;
@@ -169,13 +170,26 @@ async function UploadNewStoredFile(req, res) {
           //Store File details in database
           const result = await InsertNewFileDataBase(
             fileId,
+            mimeTypes[fileType],
             fileName,
             folderId,
             createdTime,
-            userId
+            userId,
+            fileSize
           );
 
           if (result === "FAILED") {
+            console.log("Error storage folder configuration!");
+            return handleResponse(req, res, 412, " DataBase Error ");
+          }
+
+          const res_relation = await InsertNewFileRelationDataBase(
+            fileId,
+            userId,
+            null
+          );
+
+          if (res_relation === "FAILED") {
             console.log("Error storage folder configuration!");
             return handleResponse(req, res, 412, " DataBase Error ");
           }
@@ -185,7 +199,7 @@ async function UploadNewStoredFile(req, res) {
       });
     });
   } catch (err) {
-    return handleResponse(req, res, 190, { UpdateProfilePicture: "SUCCESS" });
+    return handleResponse(req, res, 190, { StorageFile: "FAILED" });
   }
 }
 
@@ -288,7 +302,6 @@ async function GetProfilePicture(req, res) {
 }
 
 module.exports = {
-  GetDocument,
   UpdateProfilePicture,
   GetProfilePicture,
   UploadNewStoredFile,

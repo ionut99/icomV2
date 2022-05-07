@@ -12,8 +12,6 @@ function InsertNewFolderDataBase(
   createdAt
 ) {
   let stringPath = JSON.stringify(path);
-  // console.log("Path ul pentru insert este (JSON format): ");
-  // console.log(stringPath);
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
@@ -76,7 +74,6 @@ function InsertFolderUserRelationDataBase(folderId, userId, uuidRoom) {
   }
 }
 
-//Get FolderDetails
 function GetFolderDetails(folderId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
@@ -93,7 +90,6 @@ function GetFolderDetails(folderId) {
   });
 }
 
-//Get SharedPrivateFolders
 function GetSharedPrivateFolders(userId, parentId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
@@ -110,39 +106,22 @@ function GetSharedPrivateFolders(userId, parentId) {
   });
 }
 
-//Get SharedGroupFolders
 function GetSharedGroupFolders(userId, parentId) {
   const connection = new mysql.createConnection(DataBaseConfig);
-  if (parentId === null) {
-    return new Promise((resolve) => {
-      connection.query(
-        `SELECT DISTINCT folders.folderId, folders.Name, folders.parentID, folders.userID, folders.createdTime, folders.path FROM iusers INNER JOIN participants ON iusers.userId = participants.UserID INNER JOIN foldersusers ON participants.RoomID = foldersusers.RoomIdBeneficiary INNER JOIN folders ON foldersusers.folderIdResource = folders.folderId WHERE folders.parentId = 'NULL' AND iusers.userId = '${userId}'`,
-        (err, result) => {
-          if (err) {
-            return resolve("FAILED");
-          }
-          return resolve(result);
+  return new Promise((resolve) => {
+    connection.query(
+      `SELECT DISTINCT folders.folderId, folders.Name, folders.parentID, folders.userID, folders.createdTime, folders.path FROM iusers INNER JOIN participants ON iusers.userId = participants.UserID INNER JOIN foldersusers ON participants.RoomID = foldersusers.RoomIdBeneficiary INNER JOIN folders ON foldersusers.folderIdResource = folders.folderId WHERE folders.parentID = '${parentId}' AND iusers.userId = '${userId}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
         }
-      );
-      connection.end();
-    });
-  } else {
-    return new Promise((resolve) => {
-      connection.query(
-        `SELECT DISTINCT folders.folderId, folders.Name, folders.parentID, folders.userID, folders.createdTime, folders.path FROM iusers INNER JOIN participants ON iusers.userId = participants.UserID INNER JOIN foldersusers ON participants.RoomID = foldersusers.RoomIdBeneficiary INNER JOIN folders ON foldersusers.folderIdResource = folders.folderId WHERE folders.parentID = '${parentId}' AND iusers.userId = '${userId}'`,
-        (err, result) => {
-          if (err) {
-            return resolve("FAILED");
-          }
-          return resolve(result);
-        }
-      );
-      connection.end();
-    });
-  }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
 }
 
-//Delete Room Folder Relation
 function DeleteFolderUserRelation(roomID) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
@@ -159,7 +138,6 @@ function DeleteFolderUserRelation(roomID) {
   });
 }
 
-// Delete Folder
 function DeleteRoomFolderAndUserRelation(roomID) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {

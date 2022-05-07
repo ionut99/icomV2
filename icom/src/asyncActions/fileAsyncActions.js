@@ -16,9 +16,8 @@ export const AddNewFile =
 
 // handle upload new file
 export const UploadFileForStoring =
-  (fileName, folderId, userId, createdTime, FILE) => async (dispatch) => {
+  (folderId, userId, createdTime, FILE) => async (dispatch) => {
     const varVerify = await UploadNewStoringFile(
-      fileName,
       folderId,
       userId,
       createdTime,

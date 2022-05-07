@@ -1,17 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { faFileUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { ROOT_FOLDER } from "../../reducers/folderReducer";
 import { UploadFileForStoring } from "../../asyncActions/fileAsyncActions";
 
 const dayjs = require("dayjs");
 
 export default function AddFileButton({ currentFolder }) {
-  //   const [selectedFile, setSelectedFile] = useState();
-
   const dispatch = useDispatch();
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
@@ -22,17 +19,10 @@ export default function AddFileButton({ currentFolder }) {
 
     if (currentFolder == null || file == null) return;
 
-    const filePath =
-      currentFolder === ROOT_FOLDER
-        ? `${currentFolder.path.join("/")}/${file.name}`
-        : `${currentFolder.path.join("/")}/${currentFolder.Name}/${file.name}`;
-
-    // console.log(filePath);
     const createdTime = dayjs();
 
     dispatch(
       UploadFileForStoring(
-        file.name,
         currentFolder.folderId,
         user.userId,
         createdTime,

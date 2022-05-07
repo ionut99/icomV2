@@ -12,6 +12,8 @@ const {
   GetSharedGroupFolders,
 } = require("../services/Folders");
 
+const { GetSharedPrivateFiles } = require("../services/Files");
+
 const { GetUserByID } = require("../services/Auth");
 
 async function AddNewFolder(req, res) {
@@ -138,8 +140,30 @@ async function GetChildFolderList(req, res) {
   return handleResponse(req, res, 200, { userFolderList });
 }
 
+// Get Child Folder List
+async function GetChildFilesList(req, res) {
+  const folderId = req.body.folderId;
+  const userId = req.body.userId;
+
+  var userFileList = [];
+
+  // private folders
+  var userPrivateFileList = await GetSharedPrivateFiles(folderId, userId);
+  if (userPrivateFileList === "FAILED") {
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  userPrivateFileList.map((x) => {
+    const file = { ...x };
+    userFileList.push(file);
+  });
+
+  return handleResponse(req, res, 200, { userFileList });
+}
+
 module.exports = {
   AddNewFolder,
   GetFolderDataBase,
   GetChildFolderList,
+  GetChildFilesList,
 };

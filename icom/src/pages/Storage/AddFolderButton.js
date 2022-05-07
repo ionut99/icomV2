@@ -9,9 +9,6 @@ import { AddNewFolder } from "../../asyncActions/folderAsyncActions";
 
 import { ROOT_FOLDER } from "../../reducers/folderReducer";
 
-// import { ACTIONS } from "../../reducers/folderReducer";
-// import { getFolderByID, getChildFolders } from "../../services/folder";
-
 export default function AddFolderButton({ currentFolder }) {
   const dispatch = useDispatch();
   const authObj = useSelector((state) => state.auth);

@@ -1,18 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { getUserDetails } from "../../services/user";
+import { monthNames, handleReturnFileIcon } from "./FileIcons";
 
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
+import * as FaIcons from "react-icons/fa";
 
-import { monthNames } from "./FileIcons";
-
-function Folder({ folder }) {
+function File({ file }) {
   const ref = useRef();
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
@@ -20,14 +19,24 @@ function Folder({ folder }) {
   const [authName, setauthName] = useState("");
   const [optionButton, setOptionButton] = useState(false);
 
-  const CreateFolderDate = new Date(Date.parse(folder.createdTime));
+  const CreateFileDate = new Date(Date.parse(file.createdTime));
+  const finalFileDate =
+    monthNames[CreateFileDate.getMonth()] +
+    " " +
+    CreateFileDate.getDate() +
+    " " +
+    CreateFileDate.getHours() +
+    ":" +
+    CreateFileDate.getMinutes() +
+    ":" +
+    CreateFileDate.getSeconds();
 
   useEffect(() => {
     let isMounted = true;
-    if (folder.userID == null) {
+    if (file.userId == null) {
       return;
     }
-    getUserDetails(folder.userID)
+    getUserDetails(file.userId)
       .then((result) => {
         if (isMounted) {
           setauthName(
@@ -43,7 +52,7 @@ function Folder({ folder }) {
     return () => {
       isMounted = false;
     };
-  }, [folder.userID]);
+  }, [file.userId]);
 
   useEffect(() => {
     let isMounted = true;
@@ -69,39 +78,26 @@ function Folder({ folder }) {
   return (
     <div className="f-component" ref={ref}>
       <Button
-        to={{
-          pathname: `/storage/folder/${folder.folderId}`,
-          state: { folder: folder },
-        }}
+        // to={{
+        //   pathname: `/storage/folder/${folder.folderId}`,
+        //   state: { folder: folder },
+        // }}
         variant={
-          folder.userID === user.userId ? "outline-dark" : "outline-primary"
+          file.userId === user.userId ? "outline-success" : "outline-primary"
         }
         className="folder-button"
-        as={Link}
+        // as={Link}
       >
         <div className="folder-details">
           <FontAwesomeIcon
-            icon={faFolder}
+            icon={handleReturnFileIcon(file.type)}
             className="folder-icon"
-            style={{
-              color: " #F8D775",
-            }}
           />
           <div className="folder-name">
-            <p>{`  ${folder.Name}`}</p>
+            <p>{`  ${file.fileName}`}</p>
           </div>
           <div className="folder-date">
-            <p>{` ${
-              monthNames[CreateFolderDate.getMonth()] +
-              " " +
-              CreateFolderDate.getDate() +
-              " " +
-              CreateFolderDate.getHours() +
-              ":" +
-              CreateFolderDate.getMinutes() +
-              ":" +
-              CreateFolderDate.getSeconds()
-            }`}</p>
+            <p>{` ${finalFileDate}`}</p>
           </div>
           <div className="folder-author">{` ${authName}`}</div>
         </div>
@@ -122,10 +118,10 @@ function Folder({ folder }) {
             className="f-dropdown-content"
             style={{ display: optionButton ? "block" : "none" }}
           >
-            {/* <div className="dropdown-instrument" onClick={() => {}}>
+            <div className="dropdown-instrument" onClick={() => {}}>
               <FaIcons.FaShare size={20} />
               <p>Share</p>
-            </div> */}
+            </div>
             <div className="dropdown-instrument" onClick={() => {}}>
               <AiIcons.AiOutlineCloudDownload size={20} />
               <p>Download</p>
@@ -149,4 +145,4 @@ function Folder({ folder }) {
   );
 }
 
-export default Folder;
+export default File;

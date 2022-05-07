@@ -237,7 +237,6 @@ export const UpdateProfilePictureData = async (userID, NewPicture) => {
 
 // uploading File for Storing
 export const UploadNewStoringFile = async (
-  fileName,
   folderId,
   userId,
   createdTime,
@@ -245,7 +244,6 @@ export const UploadNewStoringFile = async (
 ) => {
   const formdata = new FormData();
   formdata.append("storedfile", FILE);
-  formdata.append("fileName", fileName);
   formdata.append("folderId", folderId);
   formdata.append("userId", userId);
   formdata.append("createdTime", createdTime);

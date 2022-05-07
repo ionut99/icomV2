@@ -2,6 +2,7 @@ import { useReducer, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { getFolderByID, getChildFolders } from "../services/folder";
+import { getFileList } from "../services/file";
 
 // import { GetFolder } from "../asyncActions/folderAsyncActions";
 
@@ -10,6 +11,7 @@ export const ACTIONS = {
   UPDATE_FOLDER: "update-folder",
   SET_CHILD_FOLDERS: "set-child-folders",
   ADD_CHILD_FOLDER: "add-child-folder",
+  SET_CHILD_FILES: "add-child-files",
 };
 
 export const ROOT_FOLDER = { Name: "My Drive", folderId: "root", path: [] };
@@ -32,6 +34,11 @@ function reducer(state, { type, payload }) {
       return {
         ...state,
         childFolders: payload.childFolders,
+      };
+    case ACTIONS.SET_CHILD_FILES:
+      return {
+        ...state,
+        childFiles: payload.childFiles,
       };
     case ACTIONS.ADD_CHILD_FOLDER:
       return {
@@ -68,19 +75,17 @@ export function useFolder(folderId = "root", folder = null) {
     dispatch({ type: ACTIONS.SELECT_FOLDER, payload: { folderId, folder } });
   }, [folderId, folder]);
 
+  // get folder details
   useEffect(() => {
-    if (folderId == null) {
+    if (folderId === "root") {
       return dispatch({
         type: ACTIONS.UPDATE_FOLDER,
         payload: { folder: ROOT_FOLDER },
       });
     }
 
-    // Get Folder from database by ID
-
     getFolderByID(folderId, user.userId)
       .then((result) => {
-        // console.log(result.data["folderObject"][0]);
         const formattedDoc = {
           Name: result.data["folderObject"][0].Name,
           createdTime: result.data["folderObject"][0].createdTime,
@@ -89,7 +94,6 @@ export function useFolder(folderId = "root", folder = null) {
           path: JSON.parse(result.data["folderObject"][0].path),
           userID: result.data["folderObject"][0].userID,
         };
-        // console.log(formattedDoc);
         dispatch({
           type: ACTIONS.UPDATE_FOLDER,
           payload: { folder: formattedDoc },
@@ -101,12 +105,10 @@ export function useFolder(folderId = "root", folder = null) {
           payload: { folder: ROOT_FOLDER },
         });
       });
-
-    // return dispatch(GetFolder(folderId, user.userId));
   }, [folderId, user.userId]);
 
+  // get childFolderList from Data Base
   useEffect(() => {
-    // get childFolderList from Data Base
     return getChildFolders(folderId, user.userId)
       .then((result) => {
         // console.log("child folders: ");
@@ -121,6 +123,24 @@ export function useFolder(folderId = "root", folder = null) {
         dispatch({
           type: ACTIONS.SET_CHILD_FOLDERS,
           payload: { childFolders: orderList },
+        });
+      })
+      .catch(() => {
+        console.log("error fetch child folders");
+      });
+  }, [folderId, user.userId]);
+
+  // get FileList from Data Base
+  useEffect(() => {
+    return getFileList(folderId, user.userId)
+      .then((result) => {
+        const orderList = result.data["userFileList"].sort(function (a, b) {
+          return new Date(b.createdTime) - new Date(a.createdTime);
+        });
+
+        dispatch({
+          type: ACTIONS.SET_CHILD_FILES,
+          payload: { childFiles: orderList },
         });
       })
       .catch(() => {

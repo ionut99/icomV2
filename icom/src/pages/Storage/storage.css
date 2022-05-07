@@ -50,9 +50,25 @@ a {
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  overflow-x: hidden;
+}
+
+.file-list p {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .folder-list {
+  width: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  align-items: center;
+}
+
+.file-list {
   width: auto;
   height: 100%;
   display: flex;
@@ -116,6 +132,13 @@ a {
 }
 
 .folder-element {
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 93%;
+  min-width: 400px;
+}
+
+.file-element {
   margin-right: 10px;
   margin-left: 10px;
   width: 93%;
@@ -258,11 +281,24 @@ a {
   height: 16px;
   width: 16px;
 }
+.folder-tree-main-file-name {
+  margin-left: 24px;
+  font-size: 18px;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+}
+
+.folder-tree-file-element{
+  margin-top: 3px;
+}
 
 .folder-tree-main-folder-name {
   margin-left: 8px;
   font-size: 18px;
-  max-width: 100px;
+  max-width: 150px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -286,11 +322,11 @@ a {
   transition: 0.7s;
 }
 
-.form-check{
+.form-check {
   margin-top: 5px;
 }
 
-.custom-form-label{
+.custom-form-label {
   margin-top: 5px;
 }
 

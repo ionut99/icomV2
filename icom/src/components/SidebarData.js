@@ -4,7 +4,6 @@ import * as AiIcons from "react-icons/ai";
 import * as IoIcons from "react-icons/io";
 import * as SiIcons from "react-icons/si";
 
-
 export const SidebarData = [
   {
     title: "Home",
@@ -12,25 +11,6 @@ export const SidebarData = [
     icon: <AiIcons.AiFillHome />,
     cName: "nav-text",
   },
-
-  // {
-  //   title: 'Reports',
-  //   path: '/reports',
-  //   icon: <IoIcons.IoIosPaper />,
-  //   cName: 'nav-text'
-  // },
-  // {
-  //   title: 'Products',
-  //   path: '/products',
-  //   icon: <FaIcons.FaCartPlus />,
-  //   cName: 'nav-text'
-  // },
-  // {
-  //   title: 'Team',
-  //   path: '/team',
-  //   icon: <IoIcons.IoMdPeople />,
-  //   cName: 'nav-text'
-  // },
   {
     title: "Messages",
     path: "/chat",
