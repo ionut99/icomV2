@@ -12,7 +12,10 @@ const {
   GetSharedGroupFolders,
 } = require("../services/Folders");
 
-const { GetSharedPrivateFiles } = require("../services/Files");
+const {
+  GetSharedPrivateFiles,
+  GetSharedGroupFiles,
+} = require("../services/Files");
 
 const { GetUserByID } = require("../services/Auth");
 
@@ -43,7 +46,7 @@ async function AddNewFolder(req, res) {
 
   // de adaugat si roomId pentru folderele care sunt create la comun
   // adica verificam parentId
-  if (parentId !== null && typeof path === "object" && path.length > 0) {
+  if (parentId !== "root" && typeof path === "object" && path.length > 0) {
     const parentFolder = await GetFolderDetails(parentId);
     if (parentFolder === "FAILED") {
       console.log("Error get details about folder!");
@@ -53,7 +56,6 @@ async function AddNewFolder(req, res) {
     console.log(parentFolder[0].userIdBeneficiary);
     console.log(parentFolder[0].RoomIdBeneficiary);
     if (parentFolder[0].RoomIdBeneficiary !== null) {
-      console.log("inseram");
       result = await InsertFolderUserRelationDataBase(
         folderId,
         userId,
@@ -147,7 +149,20 @@ async function GetChildFilesList(req, res) {
 
   var userFileList = [];
 
-  // private folders
+  // group files
+
+  var sharedGroupFileList = await GetSharedGroupFiles(folderId, userId);
+  if (sharedGroupFileList === "FAILED") {
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  sharedGroupFileList.map((x) => {
+    const sharedGroupFile = { ...x };
+
+    userFileList.push(sharedGroupFile);
+  });
+
+  // private files
   var userPrivateFileList = await GetSharedPrivateFiles(folderId, userId);
   if (userPrivateFileList === "FAILED") {
     return handleResponse(req, res, 412, " DataBase Error ");
@@ -157,6 +172,8 @@ async function GetChildFilesList(req, res) {
     const file = { ...x };
     userFileList.push(file);
   });
+
+  console.log(userFileList);
 
   return handleResponse(req, res, 200, { userFileList });
 }

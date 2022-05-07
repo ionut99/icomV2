@@ -73,19 +73,21 @@ function SubFolder({ currentFolder }) {
           )}
         </Breadcrumb>
       </div>
-      {childFolders.length > 0 && (
-        <div
-          className="folder-list"
-          style={{
-            display: !viewSubFolderButton ? "none" : "block",
-          }}
-        >
-          {childFolders.map((childFolder, index) => (
+
+      <div
+        className="folder-list"
+        style={{
+          display: !viewSubFolderButton ? "none" : "block",
+        }}
+      >
+        {childFolders.length > 0 &&
+          childFolders.map((childFolder, index) => (
             <div key={index}>
               <SubFolder currentFolder={childFolder} />
             </div>
           ))}
-          {childFiles.map((childFile, index) => (
+        {childFiles.length > 0 &&
+          childFiles.map((childFile, index) => (
             <div key={index} className="folder-tree-file-element">
               <div className="folder-tree-main-file-name">
                 <FontAwesomeIcon
@@ -100,8 +102,7 @@ function SubFolder({ currentFolder }) {
               </div>
             </div>
           ))}
-        </div>
-      )}
+      </div>
     </div>
   );
 }

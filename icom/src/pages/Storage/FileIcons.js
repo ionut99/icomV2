@@ -7,7 +7,8 @@ import {
   faFilePowerpoint,
   faFileExcel,
   faFileCsv,
-  faFileZipper
+  faFileZipper,
+  faFilePdf,
 } from "@fortawesome/free-solid-svg-icons";
 
 export const monthNames = [
@@ -71,6 +72,8 @@ export const handleReturnFileIcon = (fileType) => {
       return faFileExcel;
     case 36:
       return faFileZipper;
+    case 37:
+      return faFilePdf;
     case 39:
       return faFileZipper;
     case 41:

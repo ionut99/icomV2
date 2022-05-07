@@ -109,22 +109,25 @@ export function useFolder(folderId = "root", folder = null) {
 
   // get childFolderList from Data Base
   useEffect(() => {
+    let isMounted = true;
     return getChildFolders(folderId, user.userId)
       .then((result) => {
-        // console.log("child folders: ");
-        // console.log(result.data["userFolderList"]);
         const orderList = result.data["userFolderList"].sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
         });
 
         // console.log(result.data["folderList"]);
         // console.log(orderList);
-
-        dispatch({
-          type: ACTIONS.SET_CHILD_FOLDERS,
-          payload: { childFolders: orderList },
-        });
+        if (isMounted)
+          dispatch({
+            type: ACTIONS.SET_CHILD_FOLDERS,
+            payload: { childFolders: orderList },
+          });
+        return () => {
+          isMounted = false;
+        };
       })
+
       .catch(() => {
         console.log("error fetch child folders");
       });
@@ -132,16 +135,20 @@ export function useFolder(folderId = "root", folder = null) {
 
   // get FileList from Data Base
   useEffect(() => {
+    let isMounted = true;
     return getFileList(folderId, user.userId)
       .then((result) => {
         const orderList = result.data["userFileList"].sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
         });
-
-        dispatch({
-          type: ACTIONS.SET_CHILD_FILES,
-          payload: { childFiles: orderList },
-        });
+        if (isMounted)
+          dispatch({
+            type: ACTIONS.SET_CHILD_FILES,
+            payload: { childFiles: orderList },
+          });
+        return () => {
+          isMounted = false;
+        };
       })
       .catch(() => {
         console.log("error fetch child folders");

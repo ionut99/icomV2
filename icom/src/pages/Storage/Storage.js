@@ -61,9 +61,9 @@ function Storage() {
               </tbody>
             </table>
 
-            {childFolders.length > 0 && (
-              <div className="folder-list">
-                {childFolders.map((childFolder, index) => (
+            <div className="folder-list">
+              {childFolders.length > 0 &&
+                childFolders.map((childFolder, index) => (
                   <div
                     // key={folder.folderID}
                     key={index}
@@ -72,7 +72,8 @@ function Storage() {
                     <Folder folder={childFolder} />
                   </div>
                 ))}
-                {childFiles.map((childFile, index) => (
+              {childFiles.length > 0 &&
+                childFiles.map((childFile, index) => (
                   <div
                     // key={folder.folderID}
                     key={index}
@@ -81,8 +82,8 @@ function Storage() {
                     <File file={childFile} />
                   </div>
                 ))}
-              </div>
-            )}
+            </div>
+
             {/* {childFolders.length > 0 && childFiles.length > 0 && <hr />}
             {childFiles.length > 0 && (
               <div className="file-list">

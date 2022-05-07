@@ -48,7 +48,23 @@ function GetSharedPrivateFiles(folderId, userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT file.fileId, file.fileName, file.folderId, file.createdTime, file.userId, file.type, file.size FROM file INNER JOIN filesusers ON file.fileId = filesusers.fileResourceId WHERE file.folderId = '${folderId}' and filesusers.userBeneficiaryId = '${userId}'`,
+      `SELECT file.fileId, file.fileName, file.folderId, file.createdTime, file.userId, file.type, file.size FROM file INNER JOIN filesusers ON file.fileId = filesusers.fileResourceId WHERE file.folderId = '${folderId}' and filesusers.userBeneficiaryId = '${userId}'  AND filesusers.roomBeneficiaryId = 'NULL'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+function GetSharedGroupFiles(folderId, userId) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT DISTINCT file.fileId, file.fileName, file.folderId, file.createdTime, file.userId, file.type, file.size FROM file INNER JOIN filesusers ON file.fileId = filesusers.fileResourceId INNER JOIN participants ON filesusers.roomBeneficiaryId = participants.RoomID WHERE file.folderId = '${folderId}' AND participants.UserID = '${userId}'`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");
@@ -64,4 +80,5 @@ module.exports = {
   InsertNewFileDataBase,
   InsertNewFileRelationDataBase,
   GetSharedPrivateFiles,
+  GetSharedGroupFiles,
 };
