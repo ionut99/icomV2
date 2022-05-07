@@ -1,20 +1,20 @@
-import { fontSize } from "@mui/system";
 import React from "react";
+import { useSelector } from "react-redux";
 import { Breadcrumb } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { ROOT_FOLDER } from "../../reducers/folderReducer";
 
 export default function FolderBreadcrumbs({ currentFolder }) {
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
+
+  const userDetails = user.surname + " " + user.name;
+
   let path = currentFolder === ROOT_FOLDER ? [] : [ROOT_FOLDER];
-  // console.log("path:");
-  // console.log(path);
 
   if (currentFolder && typeof currentFolder.path !== "string") {
     path = [...path, ...currentFolder.path];
   }
-  // console.log(typeof currentFolder.path);
-  // console.log("currentFolder:");
-  // console.log(currentFolder.path);
 
   return (
     <Breadcrumb
@@ -39,7 +39,7 @@ export default function FolderBreadcrumbs({ currentFolder }) {
             fontSize: "25px",
           }}
         >
-          {folder.Name}
+          {folder.Name.replace(userDetails, "").replace(" # ", " ")}
         </Breadcrumb.Item>
       ))}
       {currentFolder && (
@@ -48,7 +48,7 @@ export default function FolderBreadcrumbs({ currentFolder }) {
           style={{ maxWidth: "200px", fontSize: "25px" }}
           active
         >
-          {currentFolder.Name}
+          {currentFolder.Name.replace(userDetails, "").replace(" # ", " ")}
         </Breadcrumb.Item>
       )}
     </Breadcrumb>

@@ -17,10 +17,14 @@ import "./storage.css";
 import filedetailsicon from "../../images/filedetailsicon.svg";
 import SubFolder from "./SubFolder";
 import { ROOT_FOLDER } from "../../reducers/folderReducer";
+import File from "./File";
 function Storage() {
   const { folderId } = useParams();
   const { state = {} } = useLocation();
-  const { folder, childFolders } = useFolder(folderId, state.folder);
+  const { folder, childFolders, childFiles } = useFolder(
+    folderId,
+    state.folder
+  );
 
   // console.log(state.folder);
   // console.log(folder);
@@ -71,6 +75,20 @@ function Storage() {
                     className="folder-element"
                   >
                     <Folder folder={childFolder} />
+                  </div>
+                ))}
+              </div>
+            )}
+            {childFolders.length > 0 && childFiles.length > 0 && <hr />}
+            {childFiles.length > 0 && (
+              <div className="file-list">
+                {childFiles.map((childFile, index) => (
+                  <div
+                    // key={folder.folderID}
+                    key={index}
+                    className="file-element"
+                  >
+                    <File file={childFile} />
                   </div>
                 ))}
               </div>

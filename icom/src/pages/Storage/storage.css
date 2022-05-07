@@ -52,6 +52,12 @@ a {
   text-overflow: ellipsis;
 }
 
+.file-list p {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .folder-list {
   width: auto;
   height: 100%;
@@ -60,6 +66,16 @@ a {
   overflow-y: scroll;
   align-items: center;
 }
+
+.file-list {
+  width: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  align-items: center;
+}
+
 
 .details-bar {
   border-bottom: solid #dadde0;
@@ -122,11 +138,22 @@ a {
   min-width: 400px;
 }
 
+.file-element {
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 93%;
+  min-width: 400px;
+}
+
 .folder-button {
   background-color: #fff;
   display: inline-flex;
   width: 100%;
   margin-top: 10px;
+}
+
+.folder-button:hover{
+  variant: "outline-primary";
 }
 
 .folder-icon {

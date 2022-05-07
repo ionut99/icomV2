@@ -1,4 +1,6 @@
 var uui = require("uuid");
+const { handleResponse } = require("../helpers/utils");
+const { is } = require("express/lib/request");
 
 const {
   GetSearchUsersList,
@@ -9,11 +11,10 @@ const {
   GetUserDetailsData,
 } = require("../services/User");
 
-const { InsertNewUserAccountData } = require("../services/User");
+// const { InsertNewFolderDataBase } = require("../services/Folders");
 
-const { handleResponse } = require("../helpers/utils");
+const { InsertNewUserAccountData } = require("../services/User");
 const { GetUserByID } = require("../services/Auth");
-const { is } = require("express/lib/request");
 
 // return list with all users
 async function GetUserSearchList(req, res) {
@@ -25,8 +26,6 @@ async function GetUserSearchList(req, res) {
   }
 
   const list = await GetSearchUsersList(search_box_text, userId);
-
-  // var list = await GetSearchUsersList(search_box_text, userId);
 
   var userRoomList = [];
 
@@ -130,8 +129,6 @@ async function GetRoomSearchList(req, res) {
       }
     });
 
-  //console.log(search_results);
-
   return handleResponse(req, res, 200, { search_results });
 }
 
@@ -145,6 +142,8 @@ async function GetRoomMessages(req, res) {
 
   var messageRoomList = await GetRoomMessagesData(roomID);
   return handleResponse(req, res, 200, { messageRoomList });
+
+  // need to sort messages 
 }
 
 // insert new message in a room
@@ -247,6 +246,26 @@ async function InserNewUserAccount(req, res) {
     console.log("FAILED - Add New User Account ");
     return handleResponse(req, res, 412, " DataBase Error ");
   }
+
+  // const rootFolderId = uui.v4();
+  // const RootFolderName = "My Drive" + " # " + userName + " " + userSurname;
+  // const path = [];
+  // const createdAt = new Date();
+
+  // create root folder
+  // const res_add_root_folder = await InsertNewFolderDataBase(
+  //   rootFolderId,
+  //   RootFolderName,
+  //   null,
+  //   userId,
+  //   path,
+  //   createdAt
+  // );
+
+  // if (res_add_root_folder === "FAILED") {
+  //   console.log("Error storage folder configuration!");
+  //   return handleResponse(req, res, 412, " DataBase Error ");
+  // }
 
   return handleResponse(req, res, 200, { AddNewUserAccount: "SUCCESS" });
 }

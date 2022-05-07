@@ -6,6 +6,7 @@ const {
   AddNewFolder,
   GetFolderDataBase,
   GetChildFolderList,
+  GetChildFilesList,
 } = require("../controllers/Folders");
 
 // router.post("/newfolder", authMiddleware, AddNewFolder);
@@ -13,5 +14,6 @@ const {
 router.post("/newfolder", AddNewFolder);
 router.post("/getfolder", GetFolderDataBase);
 router.post("/getchilds", GetChildFolderList);
+router.post("/getfiles", GetChildFilesList);
 
 module.exports = router;

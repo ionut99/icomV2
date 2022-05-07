@@ -11,7 +11,10 @@ const {
   GetPrivateRoomOtherUserDetails,
 } = require("../services/User");
 const { handleResponse } = require("../helpers/utils");
-const { InsertNewFileDataBase } = require("../services/Files");
+const {
+  InsertNewFileDataBase,
+  InsertNewFileRelationDataBase,
+} = require("../services/Files");
 const { dir } = require("console");
 
 const defaultAvatarPicure = path.join(
@@ -35,19 +38,6 @@ const storageFile = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-
-// return messages from a room
-async function GetDocument(req, res) {
-  // const roomID = req.body.ChannelID;
-
-  // if (roomID === null) {
-  //   return handleResponse(req, res, 410, "Invalid Request Parameters ");
-  // }
-
-  // var messageRoomList = await GetRoomMessagesData(roomID);
-  // console.log("Buna aici este un docuemnt de trimis");
-  return handleResponse(req, res, 200, "de aici incepe sesiunea");
-}
 
 async function UpdateProfilePicture(req, res) {
   try {
@@ -180,12 +170,23 @@ async function UploadNewStoredFile(req, res) {
             return handleResponse(req, res, 412, " DataBase Error ");
           }
 
+          const res_relation = await InsertNewFileRelationDataBase(
+            fileId,
+            userId,
+            null
+          );
+
+          if (res_relation === "FAILED") {
+            console.log("Error storage folder configuration!");
+            return handleResponse(req, res, 412, " DataBase Error ");
+          }
+
           return handleResponse(req, res, 190, { StorageFile: "SUCCESS" });
         }
       });
     });
   } catch (err) {
-    return handleResponse(req, res, 190, { UpdateProfilePicture: "SUCCESS" });
+    return handleResponse(req, res, 190, { StorageFile: "FAILED" });
   }
 }
 
@@ -288,7 +289,6 @@ async function GetProfilePicture(req, res) {
 }
 
 module.exports = {
-  GetDocument,
   UpdateProfilePicture,
   GetProfilePicture,
   UploadNewStoredFile,
