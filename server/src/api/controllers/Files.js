@@ -1,7 +1,6 @@
 const multer = require("multer");
 const path = require("path");
 var fs = require("fs");
-// const dayjs = require("dayjs");
 var uui = require("uuid");
 
 const {
@@ -10,11 +9,15 @@ const {
   GetRoomDetails,
   GetPrivateRoomOtherUserDetails,
 } = require("../services/User");
-const { handleResponse } = require("../helpers/utils");
+
 const {
   InsertNewFileDataBase,
   InsertNewFileRelationDataBase,
 } = require("../services/Files");
+
+const { GetFolderDetails } = require("../services/Folders");
+const { handleResponse } = require("../helpers/utils");
+
 const { dir } = require("console");
 
 const defaultAvatarPicure = path.join(
@@ -168,7 +171,7 @@ async function UploadNewStoredFile(req, res) {
           console.log("Successfully storage the file!");
 
           //Store File details in database
-          const result = await InsertNewFileDataBase(
+          var result = await InsertNewFileDataBase(
             fileId,
             mimeTypes[fileType],
             fileName,
@@ -183,15 +186,41 @@ async function UploadNewStoredFile(req, res) {
             return handleResponse(req, res, 412, " DataBase Error ");
           }
 
-          const res_relation = await InsertNewFileRelationDataBase(
-            fileId,
-            userId,
-            null
-          );
+          if (folderId !== "root") {
+            const parentFolder = await GetFolderDetails(folderId);
 
-          if (res_relation === "FAILED") {
-            console.log("Error storage folder configuration!");
-            return handleResponse(req, res, 412, " DataBase Error ");
+            if (parentFolder === "FAILED") {
+              console.log("Error get details about folder!");
+              return handleResponse(req, res, 412, " DataBase Error ");
+            }
+            console.log(parentFolder[0].RoomIdBeneficiary);
+            if (parentFolder[0].RoomIdBeneficiary !== null) {
+              result = await InsertNewFileRelationDataBase(
+                fileId,
+                userId,
+                parentFolder[0].RoomIdBeneficiary
+              );
+              if (result === "FAILED") {
+                console.log("Error storage folder configuration!");
+                return handleResponse(req, res, 412, " DataBase Error ");
+              }
+            } else {
+              result = await InsertNewFileRelationDataBase(
+                fileId,
+                userId,
+                null
+              );
+              if (result === "FAILED") {
+                console.log("Error storage folder configuration!");
+                return handleResponse(req, res, 412, " DataBase Error ");
+              }
+            }
+          } else {
+            result = await InsertNewFileRelationDataBase(fileId, userId, null);
+            if (result === "FAILED") {
+              console.log("Error storage folder configuration!");
+              return handleResponse(req, res, 412, " DataBase Error ");
+            }
           }
 
           return handleResponse(req, res, 190, { StorageFile: "SUCCESS" });
@@ -278,9 +307,7 @@ async function GetProfilePicture(req, res) {
     };
 
     if (currentAvatarPath !== null && currentAvatarPath !== "") {
-      // console.log("calea este: ");
-      // console.log(currentAvatarPath);
-
+      
       res.sendFile(currentAvatarPath, options, function (error) {
         if (error) {
           // throw new Error("  Err send File  ");
