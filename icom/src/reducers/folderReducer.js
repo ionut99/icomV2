@@ -16,7 +16,15 @@ export const ACTIONS = {
 
 export const ROOT_FOLDER = { Name: "My Drive", folderId: "root", path: [] };
 
-function reducer(state, { type, payload }) {
+
+const SystemState = {
+  folderId: "root",
+  folder: ROOT_FOLDER,
+  childFolders: [],
+  childFiles: [],
+};
+
+function folderRedu(state = SystemState, { type, payload }) {
   switch (type) {
     case ACTIONS.SELECT_FOLDER:
       return {
@@ -64,7 +72,7 @@ export function useFolder(folderId = "root", folder = null) {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  const [state, dispatch] = useReducer(reducer, {
+  const [state, dispatch] = useReducer(folderRedu, {
     folderId,
     folder,
     childFolders: [],
@@ -157,3 +165,5 @@ export function useFolder(folderId = "root", folder = null) {
 
   return state;
 }
+
+export default folderRedu;

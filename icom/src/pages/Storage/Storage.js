@@ -19,10 +19,15 @@ import { ROOT_FOLDER } from "../../reducers/folderReducer";
 function Storage() {
   const { folderId } = useParams();
   const { state = {} } = useLocation();
+
   const { folder, childFolders, childFiles } = useFolder(
     folderId,
     state.folder
   );
+
+  // useEffect(() => {
+  //   useFolder(folderId, state.folder);
+  // }, [folderId, folder]);
 
   return (
     <div className="storage-content">
