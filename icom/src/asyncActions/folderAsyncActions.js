@@ -1,16 +1,30 @@
 import { AddNewFolderInDataBase, getFolderByID } from "../services/folder";
+import { addChildFolder } from "../actions/userActions";
 
 // handle add new folder in system
 export const AddNewFolder =
   (name, parentId, userId, path) => async (dispatch) => {
-    const varVerify = await AddNewFolderInDataBase(
+    const res_addFolder = await AddNewFolderInDataBase(
       name,
       parentId,
       userId,
       path
     );
-    // TO DO - display message
-    //console.log(varVerify);
+    // if folder addded with succes then add it to folderList
+    if (res_addFolder.status === 200) {
+      dispatch(
+        addChildFolder(
+          res_addFolder.data["folderId"],
+          name,
+          res_addFolder.data["createdTime"],
+          parentId,
+          path,
+          userId
+        )
+      );
+    }
+    // console.log(res_addFolder.data["AddNewFolder"]);
+    // de adaugat noul folder in lista
   };
 
 // handle search folder

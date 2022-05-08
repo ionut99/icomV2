@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Breadcrumb } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,12 +7,52 @@ import { faFolder } from "@fortawesome/free-solid-svg-icons";
 import { useFolder } from "../../reducers/folderReducer";
 import * as BiIcons from "react-icons/bi";
 
+import { getChildFolders } from "../../services/folder";
+import { getFileList } from "../../services/file";
 import { handleReturnFileIcon } from "./FileIcons";
 
 function SubFolder({ currentFolder }) {
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
   const [viewSubFolderButton, setviewSubFolderButton] = useState(true);
 
-  const { childFolders, childFiles } = useFolder(currentFolder.folderId);
+  const [childFolders, setchildFolders] = useState([]);
+  const [childFiles, setchildFiles] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    return getChildFolders(currentFolder.folderId, user.userId)
+      .then((result) => {
+        const orderList = result.data["userFolderList"].sort(function (a, b) {
+          return new Date(b.createdTime) - new Date(a.createdTime);
+        });
+
+        if (isMounted) setchildFolders(orderList);
+        return () => {
+          isMounted = false;
+        };
+      })
+      .catch(() => {
+        console.log("Error fetch child folders for folder tree!");
+      });
+  }, [currentFolder.folderId, user.userId]);
+
+  useEffect(() => {
+    let isMounted = true;
+    return getFileList(currentFolder.folderId, user.userId)
+      .then((result) => {
+        const orderList = result.data["userFileList"].sort(function (a, b) {
+          return new Date(b.createdTime) - new Date(a.createdTime);
+        });
+        if (isMounted) setchildFiles(orderList);
+        return () => {
+          isMounted = false;
+        };
+      })
+      .catch(() => {
+        console.log("error fetch child folders");
+      });
+  }, [currentFolder.folderId, user.userId]);
 
   return (
     <div className="folder-tree-subfolders">

@@ -23,6 +23,68 @@ import {
 } from "./../actions/userActions";
 
 import { AddUserAccountDataBase } from "../services/user";
+import { getChildFolders, getFolderByID } from "../services/folder";
+import { getFileList } from "../services/file";
+import {
+  setChildFolderList,
+  setChildFileList,
+  updateFolder,
+} from "./../actions/userActions";
+
+import { ROOT_FOLDER } from "../reducers/folderReducer";
+
+// handle get ChildFolderList
+export const userGetFolderDetails = (folderId, userId) => async (dispatch) => {
+  if (folderId === "root") {
+    return dispatch(updateFolder(ROOT_FOLDER));
+  }
+  const result = await getFolderByID(folderId, userId);
+
+  const formattedDoc = {
+    Name: result.data["folderObject"][0].Name,
+    createdTime: result.data["folderObject"][0].createdTime,
+    folderId: result.data["folderObject"][0].folderId,
+    parentID: result.data["folderObject"][0].parentID,
+    path: JSON.parse(result.data["folderObject"][0].path),
+    userID: result.data["folderObject"][0].userID,
+  };
+
+  dispatch(updateFolder(formattedDoc));
+};
+
+//
+
+//
+
+// handle get ChildFolderList
+export const userSetFolderList = (folderId, userId) => async (dispatch) => {
+  const result = await getChildFolders(folderId, userId);
+
+  const orderList = result.data["userFolderList"].sort(function (a, b) {
+    return new Date(b.createdTime) - new Date(a.createdTime);
+  });
+
+  dispatch(setChildFolderList(orderList));
+};
+
+//
+
+//
+
+// handle get ChildFolderList
+export const userSetFileList = (folderId, userId) => async (dispatch) => {
+  const result = await getFileList(folderId, userId);
+
+  const orderList = result.data["userFileList"].sort(function (a, b) {
+    return new Date(b.createdTime) - new Date(a.createdTime);
+  });
+
+  dispatch(setChildFileList(orderList));
+};
+
+//
+
+//
 
 // handle RoomList Search
 export const userSetRoomListAsync =
