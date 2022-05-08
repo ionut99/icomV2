@@ -80,7 +80,11 @@ async function AddNewFolder(req, res) {
     }
   }
 
-  return handleResponse(req, res, 200, "Add New Private User Folder Succed");
+  return handleResponse(req, res, 200, {
+    AddNewFolder: "SUCCESS",
+    folderId: folderId,
+    createdTime: createdAt,
+  });
 }
 
 // Get Folder

@@ -1,28 +1,69 @@
-import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect } from "react";
+
 import { Container } from "react-bootstrap";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import { useFolder } from "../../reducers/folderReducer";
+
 import FolderBreadcrumbs from "./FolderBreadcrumbs";
 import AddFolderButton from "./AddFolderButton";
 import AddFileButton from "./AddFileButton";
 import Navbar from "../../components/Navbar/Navbar";
-
 import SubFolder from "./SubFolder";
 import Folder from "./Folder";
 import File from "./File";
 
 import "./storage.css";
 import filedetailsicon from "../../images/filedetailsicon.svg";
+import { selectFolder } from "../../actions/userActions";
+
+import {
+  userSetFolderList,
+  userSetFileList,
+  userGetFolderDetails,
+} from "../../asyncActions/userAsyncActions";
+
 import { ROOT_FOLDER } from "../../reducers/folderReducer";
 
 function Storage() {
+  const dispatch = useDispatch();
+
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
+
+  const folderObj = useSelector((state) => state.folderRedu);
+  const { folder, childFolders, childFiles } = folderObj;
+
+  // console.log(childFolders);
+  // console.log(childFiles);
   const { folderId } = useParams();
-  const { state = {} } = useLocation();
-  const { folder, childFolders, childFiles } = useFolder(
-    folderId,
-    state.folder
-  );
+  // const { state = {} } = useLocation();
+
+  // const { folder, childFiles } = useFolder(folderId, state.folder);
+
+  // -------------
+  // select folder
+  useEffect(() => {
+    dispatch(selectFolder(folderId, folder));
+  }, [folderId, folder, dispatch]);
+
+  // -------------------
+  // update folder details
+  useEffect(() => {
+    dispatch(userGetFolderDetails(folderId, user.userId));
+  }, [folderId, user.userId, dispatch]);
+
+  // ---------------------
+  // get childFolderList and childFileList from Data Base
+  useEffect(() => {
+    if (folderId === undefined || folderId === null) {
+      dispatch(userSetFolderList("root", user.userId));
+      dispatch(userSetFileList("root", user.userId));
+    } else {
+      dispatch(userSetFolderList(folderId, user.userId));
+      dispatch(userSetFileList(folderId, user.userId));
+    }
+  }, [folderId, user.userId, dispatch]);
 
   return (
     <div className="storage-content">
@@ -33,7 +74,6 @@ function Storage() {
           <AddFileButton currentFolder={folder} />
           <AddFolderButton currentFolder={folder} />
         </div>
-        {/* {folder && <Folder folder={folder}></Folder>} */}
         <div className="content-drive">
           <div className="folder-tree">
             <SubFolder currentFolder={ROOT_FOLDER} />

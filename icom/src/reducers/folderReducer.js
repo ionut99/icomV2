@@ -1,159 +1,96 @@
-import { useReducer, useEffect } from "react";
-import { useSelector } from "react-redux";
-
-import { getFolderByID, getChildFolders } from "../services/folder";
-import { getFileList } from "../services/file";
-
-// import { GetFolder } from "../asyncActions/folderAsyncActions";
-
-export const ACTIONS = {
-  SELECT_FOLDER: "select-folder",
-  UPDATE_FOLDER: "update-folder",
-  SET_CHILD_FOLDERS: "set-child-folders",
-  ADD_CHILD_FOLDER: "add-child-folder",
-  SET_CHILD_FILES: "add-child-files",
-};
+import {
+  SELECT_FOLDER,
+  UPDATE_FOLDER,
+  SET_CHILD_FOLDERS,
+  ADD_CHILD_FOLDER,
+  SET_CHILD_FILES,
+  ADD_CHILD_FILE,
+} from "../actions/actionTypes";
 
 export const ROOT_FOLDER = { Name: "My Drive", folderId: "root", path: [] };
 
-function reducer(state, { type, payload }) {
-  switch (type) {
-    case ACTIONS.SELECT_FOLDER:
-      return {
-        folderId: payload.folderId,
-        folder: payload.folder,
-        childFiles: [],
-        childFolders: [],
-      };
-    case ACTIONS.UPDATE_FOLDER:
-      return {
-        ...state,
-        folder: payload.folder,
-      };
-    case ACTIONS.SET_CHILD_FOLDERS:
+const SystemState = {
+  folderId: "root",
+  folder: ROOT_FOLDER,
+  childFolders: [],
+  childFiles: [],
+};
+
+const folderRedu = (state = SystemState, action) => {
+  switch (action.type) {
+    case SELECT_FOLDER:
+      const { folderId, folder } = action.payload;
       return {
         ...state,
-        childFolders: payload.childFolders,
+        folderId,
+        folder,
       };
-    case ACTIONS.SET_CHILD_FILES:
+
+    case UPDATE_FOLDER:
+      const { newfolder } = action.payload;
       return {
         ...state,
-        childFiles: payload.childFiles,
+        folder: newfolder,
       };
-    case ACTIONS.ADD_CHILD_FOLDER:
+
+    case SET_CHILD_FOLDERS:
+      const { folderList } = action.payload;
+      return {
+        ...state,
+        childFolders: folderList,
+      };
+
+    case SET_CHILD_FILES:
+      const { fileList } = action.payload;
+      return {
+        ...state,
+        childFiles: fileList,
+      };
+    case ADD_CHILD_FOLDER:
+      const { folderID, folderName, createdAt, parentID, path, userID } =
+        action.payload;
       return {
         ...state,
         childFolders: [
           ...state.childFolders,
           {
-            folderID: payload.folderID,
-            name: payload.name,
-            parentId: payload.parentId,
-            userId: payload.userId,
-            path: payload.path,
-            createdAt: payload.createdAt,
+            Name: folderName,
+            createdTime: createdAt,
+            folderId: folderID,
+            parentID: parentID,
+            path: path,
+            userID: userID,
+          },
+        ],
+      };
+    case ADD_CHILD_FILE:
+      const {
+        fileId,
+        fileName,
+        createdAtFile,
+        folderIdFile,
+        type,
+        userIdFile,
+        sizeFile,
+      } = action.payload;
+      return {
+        ...state,
+        childFiles: [
+          ...state.childFiles,
+          {
+            createdTime: createdAtFile,
+            fileId: fileId,
+            fileName: fileName,
+            folderId: folderIdFile,
+            size: sizeFile,
+            type: type,
+            userId: userIdFile,
           },
         ],
       };
     default:
       return state;
   }
-}
+};
 
-export function useFolder(folderId = "root", folder = null) {
-  const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;
-
-  const [state, dispatch] = useReducer(reducer, {
-    folderId,
-    folder,
-    childFolders: [],
-    childFiles: [],
-  });
-
-  useEffect(() => {
-    dispatch({ type: ACTIONS.SELECT_FOLDER, payload: { folderId, folder } });
-  }, [folderId, folder]);
-
-  // get folder details
-  useEffect(() => {
-    if (folderId === "root") {
-      return dispatch({
-        type: ACTIONS.UPDATE_FOLDER,
-        payload: { folder: ROOT_FOLDER },
-      });
-    }
-
-    getFolderByID(folderId, user.userId)
-      .then((result) => {
-        const formattedDoc = {
-          Name: result.data["folderObject"][0].Name,
-          createdTime: result.data["folderObject"][0].createdTime,
-          folderId: result.data["folderObject"][0].folderId,
-          parentID: result.data["folderObject"][0].parentID,
-          path: JSON.parse(result.data["folderObject"][0].path),
-          userID: result.data["folderObject"][0].userID,
-        };
-        dispatch({
-          type: ACTIONS.UPDATE_FOLDER,
-          payload: { folder: formattedDoc },
-        });
-      })
-      .catch(() => {
-        dispatch({
-          type: ACTIONS.UPDATE_FOLDER,
-          payload: { folder: ROOT_FOLDER },
-        });
-      });
-  }, [folderId, user.userId]);
-
-  // get childFolderList from Data Base
-  useEffect(() => {
-    let isMounted = true;
-    return getChildFolders(folderId, user.userId)
-      .then((result) => {
-        const orderList = result.data["userFolderList"].sort(function (a, b) {
-          return new Date(b.createdTime) - new Date(a.createdTime);
-        });
-
-        // console.log(result.data["folderList"]);
-        // console.log(orderList);
-        if (isMounted)
-          dispatch({
-            type: ACTIONS.SET_CHILD_FOLDERS,
-            payload: { childFolders: orderList },
-          });
-        return () => {
-          isMounted = false;
-        };
-      })
-
-      .catch(() => {
-        console.log("error fetch child folders");
-      });
-  }, [folderId, user.userId]);
-
-  // get FileList from Data Base
-  useEffect(() => {
-    let isMounted = true;
-    return getFileList(folderId, user.userId)
-      .then((result) => {
-        const orderList = result.data["userFileList"].sort(function (a, b) {
-          return new Date(b.createdTime) - new Date(a.createdTime);
-        });
-        if (isMounted)
-          dispatch({
-            type: ACTIONS.SET_CHILD_FILES,
-            payload: { childFiles: orderList },
-          });
-        return () => {
-          isMounted = false;
-        };
-      })
-      .catch(() => {
-        console.log("error fetch child folders");
-      });
-  }, [folderId, user.userId]);
-
-  return state;
-}
+export default folderRedu;
