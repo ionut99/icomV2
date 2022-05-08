@@ -118,9 +118,8 @@ async function UploadNewStoredFile(req, res) {
     let upload = multer({ storage: storageFile }).single("storedfile");
 
     upload(req, res, async (err) => {
-      // detalii despre fisier:
-      console.log("fisier:");
-      console.log(req.file);
+      // console.log("fisier:");
+      // console.log(req.file);
 
       if (!req.file) {
         console.log(req.file);
@@ -223,7 +222,10 @@ async function UploadNewStoredFile(req, res) {
             }
           }
 
-          return handleResponse(req, res, 190, { StorageFile: "SUCCESS" });
+          return handleResponse(req, res, 200, {
+            StorageFile: "SUCCESS",
+            fileId: fileId,
+          });
         }
       });
     });
@@ -307,7 +309,6 @@ async function GetProfilePicture(req, res) {
     };
 
     if (currentAvatarPath !== null && currentAvatarPath !== "") {
-      
       res.sendFile(currentAvatarPath, options, function (error) {
         if (error) {
           // throw new Error("  Err send File  ");

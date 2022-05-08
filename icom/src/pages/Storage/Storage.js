@@ -34,7 +34,8 @@ function Storage() {
   const folderObj = useSelector((state) => state.folderRedu);
   const { folder, childFolders, childFiles } = folderObj;
 
-  console.log(childFolders);
+  // console.log(childFolders);
+  // console.log(childFiles);
   const { folderId } = useParams();
   // const { state = {} } = useLocation();
 

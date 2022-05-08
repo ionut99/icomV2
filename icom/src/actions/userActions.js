@@ -11,8 +11,9 @@ import {
   SELECT_FOLDER,
   UPDATE_FOLDER,
   SET_CHILD_FOLDERS,
-  ADD_CHILD_FOLDER,
   SET_CHILD_FILES,
+  ADD_CHILD_FOLDER,
+  ADD_CHILD_FILE,
 } from "./actionTypes";
 
 //file system
@@ -34,6 +35,30 @@ export const addChildFolder = (
       parentID,
       path,
       userID,
+    },
+  };
+};
+
+export const addChildFile = (
+  fileId,
+  fileName,
+  createdAtFile,
+  folderIdFile,
+  type,
+  userIdFile,
+  sizeFile
+) => {
+  console.log(fileId);
+  return {
+    type: ADD_CHILD_FILE,
+    payload: {
+      fileId,
+      fileName,
+      createdAtFile,
+      folderIdFile,
+      type,
+      userIdFile,
+      sizeFile,
     },
   };
 };

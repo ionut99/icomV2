@@ -35,29 +35,45 @@ import { ROOT_FOLDER } from "../reducers/folderReducer";
 
 // handle get ChildFolderList
 export const userGetFolderDetails = (folderId, userId) => async (dispatch) => {
-  if (folderId === "root") {
+  if (
+    folderId === "root" ||
+    folderId === null ||
+    folderId === undefined ||
+    userId === null ||
+    userId === undefined
+  ) {
     return dispatch(updateFolder(ROOT_FOLDER));
   }
+
   const result = await getFolderByID(folderId, userId);
 
-  const formattedDoc = {
-    Name: result.data["folderObject"][0].Name,
-    createdTime: result.data["folderObject"][0].createdTime,
-    folderId: result.data["folderObject"][0].folderId,
-    parentID: result.data["folderObject"][0].parentID,
-    path: JSON.parse(result.data["folderObject"][0].path),
-    userID: result.data["folderObject"][0].userID,
-  };
+  if (result.data !== undefined) {
+    const formattedDoc = {
+      Name: result.data["folderObject"][0].Name,
+      createdTime: result.data["folderObject"][0].createdTime,
+      folderId: result.data["folderObject"][0].folderId,
+      parentID: result.data["folderObject"][0].parentID,
+      path: JSON.parse(result.data["folderObject"][0].path),
+      userID: result.data["folderObject"][0].userID,
+    };
 
-  dispatch(updateFolder(formattedDoc));
+    dispatch(updateFolder(formattedDoc));
+  }
 };
-
-//
 
 //
 
 // handle get ChildFolderList
 export const userSetFolderList = (folderId, userId) => async (dispatch) => {
+  if (
+    folderId === null ||
+    folderId === undefined ||
+    userId === null ||
+    userId === undefined
+  ) {
+    return dispatch(updateFolder(ROOT_FOLDER));
+  }
+
   const result = await getChildFolders(folderId, userId);
 
   const orderList = result.data["userFolderList"].sort(function (a, b) {
@@ -73,6 +89,15 @@ export const userSetFolderList = (folderId, userId) => async (dispatch) => {
 
 // handle get ChildFolderList
 export const userSetFileList = (folderId, userId) => async (dispatch) => {
+  if (
+    folderId === null ||
+    folderId === undefined ||
+    userId === null ||
+    userId === undefined
+  ) {
+    return dispatch(updateFolder(ROOT_FOLDER));
+  }
+
   const result = await getFileList(folderId, userId);
 
   const orderList = result.data["userFileList"].sort(function (a, b) {

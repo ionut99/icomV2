@@ -4,6 +4,7 @@ import {
   SET_CHILD_FOLDERS,
   ADD_CHILD_FOLDER,
   SET_CHILD_FILES,
+  ADD_CHILD_FILE,
 } from "../actions/actionTypes";
 
 export const ROOT_FOLDER = { Name: "My Drive", folderId: "root", path: [] };
@@ -59,6 +60,31 @@ const folderRedu = (state = SystemState, action) => {
             parentID: parentID,
             path: path,
             userID: userID,
+          },
+        ],
+      };
+    case ADD_CHILD_FILE:
+      const {
+        fileId,
+        fileName,
+        createdAtFile,
+        folderIdFile,
+        type,
+        userIdFile,
+        sizeFile,
+      } = action.payload;
+      return {
+        ...state,
+        childFiles: [
+          ...state.childFiles,
+          {
+            createdTime: createdAtFile,
+            fileId: fileId,
+            fileName: fileName,
+            folderId: folderIdFile,
+            size: sizeFile,
+            type: type,
+            userId: userIdFile,
           },
         ],
       };
