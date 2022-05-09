@@ -25,7 +25,7 @@
 }
 
 .right-section .test-scrollbar {
-  border: solid green;
+  /* border: solid green; */
   max-height: 710px;
   height: 81%;
   /* min-height: 50%; */
@@ -88,31 +88,29 @@
   height: 18%;
   min-height: 75px;
   width: 68%;
-  border: solid blue;
+  /* border: solid blue; */
   position: relative;
 }
 
 .right-section .messenger_input .text_input {
   width: 100%;
-
   max-height: 100%;
-  border: solid red;
   position: absolute;
   bottom: 0px;
   display: flex;
 }
 
 .right-section .messenger_input .text_input .custom-textarea {
-  border: solid red;
   border: 0 none;
   border: 2px solid var(--border-color-less-intense);
-  border-radius: 2px;
+  border-radius: 10px;
   font-size: 18px;
   padding-left: 20px;
   padding-top: 10px;
   width: 100%;
   height: 100%;
   max-height: 120px;
+  margin-top: 3px;
 }
 
 .right-section .messenger_input .toolbar-send {
@@ -136,16 +134,10 @@
 }
 
 .right-section .messenger_input .actions {
-  width: 40px;
-  height: 40px;
+  /* width: 40px;
+  height: 40px; */
   margin: 3px;
   margin-top: auto;
-}
-
-.right-section .messenger_input .actions button {
-  width: 100%;
-  height: 100%;
-  background-color: var(--me-message-color);
 }
 
 .right-section .messenger_input .actions button:hover {

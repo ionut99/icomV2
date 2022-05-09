@@ -6,7 +6,13 @@ import Textarea from "react-expanding-textarea";
 import * as MdIcons from "react-icons/md";
 import * as IoIcons from "react-icons/io";
 import * as BsIcons from "react-icons/bs";
-
+import { Button, Modal, Form } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faImage,
+  faPaperPlane,
+  faPaperclip,
+} from "@fortawesome/free-solid-svg-icons";
 import Comunication from "../../services/comunication";
 
 function SendMessage() {
@@ -23,10 +29,6 @@ function SendMessage() {
   const { sendMessage } = Comunication(channelID, user.userId);
   const [newMessage, setNewMessage] = useState("");
 
-  //   const handleNewMessageChange = (event) => {
-  //     setNewMessage(event.target.value);
-  //   };
-
   const handleSendMessage = () => {
     if (newMessage !== "") {
       sendMessage(newMessage);
@@ -35,8 +37,14 @@ function SendMessage() {
   };
 
   const handleChange = useCallback((e) => {
-    console.log("Changed value to: ", e.target.value);
+    if (e.key !== "Enter") setNewMessage(e.target.value.replace("\n", ""));
   }, []);
+
+  function SendEnter(event) {
+    if (event.key === "Enter") {
+      handleSendMessage();
+    }
+  }
 
   useEffect(() => {
     textareaRef.current.focus();
@@ -45,24 +53,49 @@ function SendMessage() {
   return (
     <div className="messenger_input">
       <div className="text_input">
-        <div className="actions" onClick={() => {}}>
-          <button>fis</button>
+        <div className="actions">
+          <Button variant="outline-light">
+            <FontAwesomeIcon
+              icon={faPaperclip}
+              size="5x"
+              className="folder-icon"
+              style={{
+                color: "#6f6f6f",
+              }}
+            />
+          </Button>
         </div>
-
-        <div className="actions" onClick={() => {}}>
-          <button>Img</button>
+        <div className="actions">
+          <Button variant="outline-light">
+            <FontAwesomeIcon
+              icon={faImage}
+              size="5x"
+              className="folder-icon"
+              style={{
+                color: "#6f6f6f",
+              }}
+            />
+          </Button>
         </div>
         <Textarea
-          // value={newMsg.body}
-          // onChange={GetMessageText}
-          // value={newMessage}
           className="custom-textarea"
           onChange={handleChange}
-          defaultValue=" Write your message..."
+          onKeyDown={SendEnter}
+          value={newMessage}
+          placeholder=" Write your message..."
           ref={textareaRef}
         />
         <div className="actions" onClick={handleSendMessage}>
-          <button>Send</button>
+          <Button variant="outline-light">
+            <FontAwesomeIcon
+              icon={faPaperPlane}
+              size="5x"
+              className="folder-icon"
+              style={{
+                color: "#0969da",
+              }}
+            />
+          </Button>
         </div>
       </div>
       {/* <div className="toolbar-send">
