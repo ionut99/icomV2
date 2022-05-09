@@ -60,7 +60,13 @@ function Avatar(props) {
   }, [userID, roomID, atuhUser]);
 
   return (
-    <img className="user_picture" src={actualSrc} alt="userAvatar jmecher" />
+    <div className="user_picture">
+      <img
+        className="user_picture_img"
+        src={actualSrc}
+        alt="userAvatar jmecher"
+      />
+    </div>
   );
 }
 

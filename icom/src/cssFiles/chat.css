@@ -34,6 +34,8 @@
   background-color: var(--white-color);
   display: flex;
   flex-direction: column;
+  border-bottom-left-radius: 1.4rem;
+  border-bottom-right-radius: 1.4rem;
   border-right: 2px solid var(--color-element-hover);
 }
 

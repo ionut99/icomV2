@@ -143,7 +143,7 @@ async function GetRoomMessages(req, res) {
   var messageRoomList = await GetRoomMessagesData(roomID);
   return handleResponse(req, res, 200, { messageRoomList });
 
-  // need to sort messages 
+  // need to sort messages
 }
 
 // insert new message in a room
@@ -152,6 +152,7 @@ async function InsertNewMessage(req, res) {
   const roomID = req.body.roomID;
   const messageBody = req.body.messageBody;
   const ID_message = req.body.ID_message;
+  const createdTime = new Date();
 
   if (
     roomID === null ||
@@ -167,7 +168,8 @@ async function InsertNewMessage(req, res) {
     ID_message,
     senderID,
     roomID,
-    messageBody
+    messageBody,
+    createdTime
   );
   if (result === "FAILED") {
     console.log("Error storage message!");

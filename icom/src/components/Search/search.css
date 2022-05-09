@@ -35,12 +35,15 @@
 }
 
 .conversation {
+  margin-top: 5px;
   width: 99%;
-  height: 60px;
+  height: 65px;
   margin-left: 2px;
   display: flex;
   flex-direction: row;
-  border-bottom: 2px solid var(--color-element-hover);
+  /* border: solid black; */
+  border-radius: 10px;
+  border: 2px solid var(--color-element-hover);
 }
 
 .conversation:hover {
@@ -57,7 +60,7 @@
 .conversation-details-left {
   display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 75%;
   height: 100%;
 }
 
@@ -73,12 +76,15 @@
   margin-right: 5px;
   font-size: medium;
   height: 50px;
+  min-width: 100px;
   width: 78%;
   display: flex;
   flex-direction: column;
 }
 
-.conversation-user-details p {
+.conversation-user-details .name p {
+  font-size: large;
+  font-family: Arial, Helvetica, sans-serif;
   width: inherit;
   white-space: nowrap;
   overflow: hidden;
@@ -157,7 +163,7 @@
   display: inline-flex;
   width: 100%;
 }
- 
+
 .dropdown-content p {
   margin: 0;
   padding-left: 10px;

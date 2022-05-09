@@ -72,15 +72,20 @@ const ConversationList = () => {
               )
             }
           >
-            <Avatar
-              userID={null}
-              roomID={RoomSearchList.RoomID}
-              atuhUser={user.userId}
-            />
+            <div>
+              <Avatar
+                userID={null}
+                roomID={RoomSearchList.RoomID}
+                atuhUser={user.userId}
+              />
+            </div>
+
             <div className="conversation-details-left">
               <div className="conversation-header">
                 <div className="conversation-user-details">
-                  <p>{RoomSearchList.RoomName}</p>
+                  <div className="name">
+                    <p>{RoomSearchList.RoomName}</p>
+                  </div>
                   <div className="last-message">
                     <p>
                       Laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaast

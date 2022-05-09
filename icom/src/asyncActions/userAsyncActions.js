@@ -214,7 +214,7 @@ export const InsertNewMessage =
     );
 
     // TO DO - display message
-    console.log(varVerify);
+    //console.log(varVerify);
   };
 
 export const CreateNewConversation =
