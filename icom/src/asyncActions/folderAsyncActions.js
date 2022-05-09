@@ -36,3 +36,4 @@ export const GetFolder = (folderId, userId) => async (dispatch) => {
 
   return folderObject;
 };
+
