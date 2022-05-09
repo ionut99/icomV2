@@ -4,7 +4,7 @@
 .chat-page .right-section {
   bottom: 0;
   width: 70%;
-  height: 100%;
+  height: 98%;
   display: block;
   text-align: center;
   background-color: var(--bg-color-step-two);
@@ -25,7 +25,17 @@
 }
 
 .right-section .test-scrollbar {
+  /* border: solid green; */
+  max-height: 710px;
   height: 81%;
+  /* min-height: 50%; */
+}
+
+.right-section .messages {
+  max-height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .right-section .messages .one_message {
@@ -42,39 +52,65 @@
   justify-content: flex-end;
 }
 
-.right-section .messages .one_message img {
-  width: 20px;
-  height: 20px;
+.right-section .messages .one_message .user_picture {
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
 }
 
+.right-section .messages .one_message .message_body {
+  padding-left: 10px;
+  max-width: 90%;
+}
+
+.right-section .messages .one_message .message_author {
+  padding-left: 10px;
+  text-align: left;
+}
+
+.right-section .messages .one_message.me .message_body .message_text {
+  background-color: var(--me-message-color);
+}
+
+.right-section .messages .one_message .message_body .message_text {
+  background: var(--sender-message-color);
+  color: var(--white-color);
+  padding: 10px;
+  border-radius: 10px;
+}
+.right-section .messages .one_message .message_body .message_text p {
+  word-wrap: break-word;
+  margin: 0;
+}
+
 .right-section .messenger_input {
-  margin-top: 20px;
-  height: 75px;
+  margin: 15px auto;
+  height: 18%;
+  min-height: 75px;
   width: 68%;
-  flex-direction: column;
-  /* position: sticky; */
-  margin: 0 auto;
-  display: flex;
-  bottom: 0px;
-  margin-top: 12px;
+  /* border: solid blue; */
+  position: relative;
 }
 
 .right-section .messenger_input .text_input {
-  bottom: 0;
   width: 100%;
-  display: inline-flex;
+  max-height: 100%;
+  position: absolute;
+  bottom: 0px;
+  display: flex;
 }
 
-.right-section .messenger_input .text_input textarea {
+.right-section .messenger_input .text_input .custom-textarea {
   border: 0 none;
   border: 2px solid var(--border-color-less-intense);
-  border-radius: 2px;
+  border-radius: 10px;
   font-size: 18px;
   padding-left: 20px;
   padding-top: 10px;
-  height: 40px;
   width: 100%;
+  height: 100%;
+  max-height: 120px;
+  margin-top: 3px;
 }
 
 .right-section .messenger_input .toolbar-send {
@@ -98,14 +134,10 @@
 }
 
 .right-section .messenger_input .actions {
-  width: 40px;
-  height: 40px;
-}
-
-.right-section .messenger_input .actions button {
-  width: 100%;
-  height: 100%;
-  background-color: var(--me-message-color);
+  /* width: 40px;
+  height: 40px; */
+  margin: 3px;
+  margin-top: auto;
 }
 
 .right-section .messenger_input .actions button:hover {
@@ -117,6 +149,7 @@
   width: 100%;
   display: inline-flex;
   background-color: var(--white-color);
+  border-bottom-right-radius: 1.4rem;
   /* border: 2px var(--border-color-less-intense) solid; */
   padding-right: 15px;
 }
@@ -132,7 +165,7 @@
   width: 35px;
 }
 
-.conversation-details .room-instrument svg{
+.conversation-details .room-instrument svg {
   vertical-align: 0;
 }
 
@@ -160,37 +193,6 @@
   margin-right: auto;
 }
 
-.messages {
-  height: 100%;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.messages .one_message .message_body {
-  padding-left: 10px;
-  max-width: 90%;
-}
-
-.messages .one_message .message_author {
-  padding-left: 10px;
-  text-align: left;
-}
-
-.messages .one_message.me .message_body .message_text {
-  background-color: var(--me-message-color);
-}
-.messages .one_message .message_body .message_text {
-  background: var(--sender-message-color);
-  color: var(--white-color);
-  padding: 10px;
-  border-radius: 10px;
-}
-.messages .one_message .message_body .message_text p {
-  word-wrap: break-word;
-  margin: 0;
-}
-
 @media screen and (max-width: 1400px) {
   .messages .one_message {
     margin-left: 12px;
@@ -215,5 +217,17 @@
   .right-section {
     max-width: 64%;
     margin-right: 0%;
+  }
+}
+
+@media screen and (max-height: 900px) {
+  .right-section .test-scrollbar {
+    max-height: 500px;
+  }
+}
+
+@media screen and (max-height: 760px) {
+  .right-section .test-scrollbar {
+    max-height: 480px;
   }
 }

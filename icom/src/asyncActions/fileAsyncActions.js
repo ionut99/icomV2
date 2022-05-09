@@ -17,7 +17,7 @@ export const UploadFileForStoring =
           FILE.name,
           createdTime,
           folderId,
-          FILE.type,
+          res_addFile.data["type"],
           userId,
           FILE.type
         )

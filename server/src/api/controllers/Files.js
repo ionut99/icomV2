@@ -192,7 +192,7 @@ async function UploadNewStoredFile(req, res) {
               console.log("Error get details about folder!");
               return handleResponse(req, res, 412, " DataBase Error ");
             }
-            console.log(parentFolder[0].RoomIdBeneficiary);
+            // console.log(parentFolder[0].RoomIdBeneficiary);
             if (parentFolder[0].RoomIdBeneficiary !== null) {
               result = await InsertNewFileRelationDataBase(
                 fileId,
@@ -225,6 +225,7 @@ async function UploadNewStoredFile(req, res) {
           return handleResponse(req, res, 200, {
             StorageFile: "SUCCESS",
             fileId: fileId,
+            type: mimeTypes[fileType],
           });
         }
       });

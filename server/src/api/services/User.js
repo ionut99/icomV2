@@ -67,11 +67,17 @@ function GetRoomMessagesData(ChannelID) {
   });
 }
 
-function InsertNewMessageData(ID_message, senderID, roomID, messageBody) {
+function InsertNewMessageData(
+  ID_message,
+  senderID,
+  roomID,
+  messageBody,
+  createdTime
+) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
-      `INSERT INTO messages (ID_message, RoomID, senderID, Body) VALUES ('${ID_message}', '${roomID}', '${senderID}', '${messageBody}');`,
+      `INSERT INTO messages (ID_message, RoomID, senderID, Body, createdTime) VALUES ('${ID_message}', '${roomID}', '${senderID}', '${messageBody}', '${createdTime}');`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");
