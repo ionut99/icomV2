@@ -76,9 +76,28 @@ function GetSharedGroupFiles(folderId, userId) {
   });
 }
 
+function GetDocumentContentService(fileId, userId) {
+  // if (fileId == null) {
+  //   return "fileId IS NULL";
+  // } else {
+  //   return "Content de la document...";
+  // }
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve, reject) => {
+    connection.query(`SELECT * from file`, (err, result) => {
+      if (err) {
+        return resolve("fileId IS NULL");
+      }
+      return resolve("Content de la document...");
+    });
+    connection.end();
+  });
+}
+
 module.exports = {
   InsertNewFileDataBase,
   InsertNewFileRelationDataBase,
   GetSharedPrivateFiles,
   GetSharedGroupFiles,
+  GetDocumentContentService,
 };

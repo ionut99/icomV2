@@ -16,6 +16,8 @@ import SaveButton from "./SaveButton";
 
 import { v4 as uuidv4 } from "uuid";
 
+import { getDocumentContentById } from "../../services/file";
+
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
   [{ font: [] }],
@@ -62,9 +64,19 @@ function TextEditor() {
   //
 
   useEffect(() => {
-    if (quill == null || socketRef.current == null) return;
-
+    if (quill == null || socketRef.current == null || fileId == null) return;
+    console.log("loading content:");
     // loading document!
+    return getDocumentContentById(fileId, user.userId)
+      .then((result) => {
+        console.log("Contentul paginii este:");
+        console.log(result.data["ContentFile"]);
+        quill.setContents(result.data["ContentFile"]);
+        quill.enable();
+      })
+      .catch(() => {
+        console.log("Error fetch Document Content!");
+      });
   }, [quill, fileId]);
 
   //
@@ -124,8 +136,8 @@ function TextEditor() {
       theme: "snow",
       modules: { toolbar: TOOLBAR_OPTIONS },
     });
-    // q.disable();
-    // q.setText(" Loading...");
+    q.disable();
+    q.setText(" Loading...");
     setQuill(q);
   }, []);
 

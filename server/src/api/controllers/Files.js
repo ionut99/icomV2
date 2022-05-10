@@ -18,6 +18,8 @@ const {
 const { GetFolderDetails } = require("../services/Folders");
 const { handleResponse } = require("../helpers/utils");
 
+const { GetDocumentContentService } = require("../services/Files");
+
 const { dir } = require("console");
 
 const defaultAvatarPicure = path.join(
@@ -330,8 +332,28 @@ async function GetProfilePicture(req, res) {
   }
 }
 
+// Get Child Folder List
+async function GetDocumentContent(req, res) {
+  const fileId = req.body.fileId;
+  const userId = req.body.userId;
+
+  // var ContentFile = await GetDocumentContentService(fileId, userId);
+  // if (ContentFile === "FAILED") {
+  //   return handleResponse(req, res, 412, " DataBase Error ");
+  // }
+
+  ContentFile = [
+    { insert: "Hello " },
+    { insert: "World!", attributes: { bold: true } },
+    { insert: "\n" },
+  ];
+
+  return handleResponse(req, res, 200, { ContentFile });
+}
+
 module.exports = {
   UpdateProfilePicture,
   GetProfilePicture,
   UploadNewStoredFile,
+  GetDocumentContent,
 };
