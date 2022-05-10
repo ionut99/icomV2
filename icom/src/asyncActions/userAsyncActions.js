@@ -198,7 +198,8 @@ export const updateChannelDetails =
       updateCurrentChannel(
         channelID,
         currentChannelName,
-        messageList.data["messageRoomList"]
+        messageList.data["messageRoomList"],
+        messageList.data["folderId"]
       )
     );
   };

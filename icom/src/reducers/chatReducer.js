@@ -13,6 +13,7 @@ const ChannelState = {
   channelID: null,
   currentChannelName: "",
   RoomMessages: [],
+  channelFolderId: null,
 
   search_box_content: "",
   addUserInGroup: "",
@@ -24,12 +25,14 @@ const chatRedu = (state = ChannelState, action) => {
   switch (action.type) {
     // update chat room ID
     case USER_UPDATE_CHAT:
-      const { channelID, currentChannelName, RoomMessages } = action.payload;
+      const { channelID, currentChannelName, RoomMessages, channelFolderId } =
+        action.payload;
       return {
         ...state,
         channelID,
         currentChannelName,
         RoomMessages,
+        channelFolderId,
       };
 
     // set Chat search box content

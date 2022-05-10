@@ -9,7 +9,7 @@
 .page {
   height: 100%;
   width: 100vw;
-  min-width: 750px;
+  min-width: 900px;
   bottom: 0;
 }
 .edit-window {
@@ -38,6 +38,12 @@
   top: 120px;
   right: 2%;
   overflow-y: auto;
+}
+
+.edit-window .save-doc-state {
+  position: absolute;
+  top: 120px;
+  right: 40px;
 }
 
 .edit-window .changes-list .one-change {
@@ -71,7 +77,6 @@
   display: inline-flex;
   flex-wrap: wrap;
   overflow-y: auto;
-  
 }
 
 .edit-window .online-user-list .users-box .user-profile .picture-profile {

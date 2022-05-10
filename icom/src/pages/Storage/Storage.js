@@ -8,6 +8,7 @@ import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import FolderBreadcrumbs from "./FolderBreadcrumbs";
 import AddFolderButton from "./AddFolderButton";
 import AddFileButton from "./AddFileButton";
+import CreateDocButton from "./CreateDocButton";
 import Navbar from "../../components/Navbar/Navbar";
 import SubFolder from "./SubFolder";
 import Folder from "./Folder";
@@ -37,12 +38,7 @@ function Storage() {
   // console.log(childFolders);
   // console.log(childFiles);
   const { folderId } = useParams();
-  // const { state = {} } = useLocation();
 
-  // const { folder, childFiles } = useFolder(folderId, state.folder);
-
-  // -------------
-  // select folder
   useEffect(() => {
     dispatch(selectFolder(folderId, folder));
   }, [folderId, folder, dispatch]);
@@ -71,6 +67,7 @@ function Storage() {
       <Container fluid className="containerforSize">
         <div className="f-nav-bar">
           <FolderBreadcrumbs currentFolder={folder} />
+          <CreateDocButton />
           <AddFileButton currentFolder={folder} />
           <AddFolderButton currentFolder={folder} />
         </div>

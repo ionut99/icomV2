@@ -53,18 +53,20 @@ function App() {
               isAuthenticated={isAuthenticated}
             />
             <PrivateRoute
-              exact path="/storage"
+              exact
+              path="/storage"
               component={Storage}
               isAuthenticated={isAuthenticated}
             />
             <PrivateRoute
-              path="/newdocument/:roomID"
+              path="/newdocument/:folderId/:fileId"
               component={TextEditor}
               isAuthenticated={isAuthenticated}
             />
 
             <PrivateRoute
-              exact path="/storage/folder/:folderId"
+              exact
+              path="/storage/folder/:folderId"
               component={Storage}
               isAuthenticated={isAuthenticated}
             />

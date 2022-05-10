@@ -6,10 +6,11 @@ const {
   GetSearchUsersList,
   GetAllUsersDataBase,
   GetUserRoomsList,
-  GetRoomMessagesData,
   InsertNewMessageData,
   GetUserDetailsData,
 } = require("../services/User");
+
+const { GetRoomMessagesData, GetRoomFolderID } = require("../services/Room");
 
 // const { InsertNewFolderDataBase } = require("../services/Folders");
 
@@ -141,7 +142,23 @@ async function GetRoomMessages(req, res) {
   }
 
   var messageRoomList = await GetRoomMessagesData(roomID);
-  return handleResponse(req, res, 200, { messageRoomList });
+
+  if (messageRoomList === "FAILED") {
+    console.log("Error get room messages!");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+  // id pentru folderul grupului !!!
+
+  var res_roomId = await GetRoomFolderID(roomID);
+  if (res_roomId === "FAILED") {
+    console.log("Error get room folder Id!");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  return handleResponse(req, res, 200, {
+    messageRoomList: messageRoomList,
+    folderId: res_roomId[0].folderId,
+  });
 
   // need to sort messages
 }
