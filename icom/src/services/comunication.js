@@ -3,12 +3,11 @@ import { useDispatch } from "react-redux";
 import socketIOClient from "socket.io-client";
 // var CryptoJs = require("crypto-js");
 import { InsertNewMessage } from "../asyncActions/userAsyncActions";
-import { InsertNewMessageLocal, UpdateDeltaFile } from "../actions/userActions";
+import { InsertNewMessageLocal } from "../actions/userActions";
 
 import { v4 as uuidv4 } from "uuid";
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
-const NEW_CHANGE_DOCUMENT_EVENT = "newEventDocument";
 
 const { REACT_APP_WEBSOCKET_URL } = process.env;
 const Comunication = (roomID, userID) => {
@@ -38,15 +37,6 @@ const Comunication = (roomID, userID) => {
       }
     });
     // receive document changes
-    socketRef.current.on(NEW_CHANGE_DOCUMENT_EVENT, (newDocChange) => {
-      if (newDocChange.roomID != null) {
-        console.log("ce am primit");
-        console.log(newDocChange);
-        if (newDocChange.roomID != null) {
-          dispatch(UpdateDeltaFile(newDocChange.body, newDocChange.senderID));
-        }
-      }
-    });
 
     return () => {
       socketRef.current.disconnect();
@@ -68,17 +58,7 @@ const Comunication = (roomID, userID) => {
     socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
   };
 
-  const sendDocumentChanges = (changeDocument) => {
-    //console.log(changeDocument);
-    var dataToSend = {
-      body: changeDocument,
-      senderID: userID,
-      roomID: roomID,
-      change_ID: uuidv4(),
-    };
-    socketRef.current.emit(NEW_CHANGE_DOCUMENT_EVENT, dataToSend);
-  };
-  return { sendMessage, sendDocumentChanges };
+  return { sendMessage };
 };
 
 export default Comunication;
