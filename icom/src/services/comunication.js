@@ -51,7 +51,7 @@ const Comunication = (roomID, userID) => {
     return () => {
       socketRef.current.disconnect();
     };
-  }, [roomID]);
+  }, [roomID, dispatch]);
 
   const sendMessage = (messageBody) => {
     var dataToSend = {

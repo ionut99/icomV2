@@ -1,19 +1,20 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import moment from "moment";
+import socketIOClient from "socket.io-client";
 
 import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
-import Comunication from "../../services/comunication";
 import { setAuthToken } from "../../services/auth";
 import "./textEditor.css";
 
 import "quill/dist/quill.snow.css";
 import * as Quill from "quill";
 
-import UserAvatar from "../../images/userAvatar.png";
 import Navbar from "../../components/Navbar/Navbar";
+import SaveButton from "./SaveButton";
 
-// import { GetDocumentFileData } from "../../services/user";
+import { v4 as uuidv4 } from "uuid";
 
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -30,83 +31,90 @@ const TOOLBAR_OPTIONS = [
   ["clean"],
 ];
 
+const SEND_DOCUMENT_CHANGES = "SEND_DOCUMENT_CHANGES";
+const RECEIVE_DOCUMENT_CHANGES = "RECEIVE_DOCUMENT_CHANGES";
+const { REACT_APP_WEBSOCKET_URL } = process.env;
+
+//
+
 function TextEditor() {
-  // lista test pentru ultimele schimbari realizate
-  // var changeList = [];
-  // for (let i = 0; i < 20; i++) {
-  //   changeList.push({
-  //     Type: "delete",
-  //     Author: "Mihai",
-  //     Time: "21:44 29Mar2022",
-  //   });
-  // }
-
-  // lista test pentru userii online
-
-  // var onlineUserList = [];
-  // for (let i = 0; i < 30; i++) {
-  //   onlineUserList.push({
-  //     ProfilePicture: "pozaBuletin",
-  //     Nume: "Marian",
-  //   });
-  // }
+  const { folderId, fileId } = useParams();
+  const socketRef = useRef();
   const dispatch = useDispatch();
+
   const [quill, setQuill] = useState();
-  // const [documentData, setdocumentData] = useState("");
 
   const authObj = useSelector((state) => state.auth);
   const { user, expiredAt, token } = authObj;
 
-  const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID } = chatObj;
+  useEffect(() => {
+    console.log(fileId);
+    if (fileId === null || fileId === undefined) return;
+    socketRef.current = socketIOClient(REACT_APP_WEBSOCKET_URL, {
+      query: { fileId },
+    });
 
-  const fileObj = useSelector((state) => state.fileRedu);
-  const { delta, senderID } = fileObj;
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [fileId]);
 
-  const { sendDocumentChanges } = Comunication(channelID, user.userId);
-
-  // get file data
-  // const getDocumentContent = async (FileName, FilePath) => {
-  //   const result = await GetDocumentFileData(FileName, FilePath);
-
-  //   //console.log(result.data);
-  //   setdocumentData(result.data);
-
-  //   quill.setContents(result.data);
-  //   quill.enable();
-  // };
-
-  // useEffect(() => {
-  //   console.log("aducem documentul de pe server...");
-  //   getDocumentContent("AnyFileName", "any/path/file");
-
-  //   console.log("Am adus data:");
-  //   console.log(documentData);
-  //   if (documentData !== "") {
-  //     console.log("haida");
-  //     quill.setContents(documentData);
-  //     quill.enable();
-  //   }
-  // }, [quill]);
+  //
 
   useEffect(() => {
-    if (quill == null) return;
+    if (quill == null || socketRef.current == null) return;
+
+    // loading document!
+  }, [quill, fileId]);
+
+  //
+
+  //
+
+  // RECEIVE document changes useEffect()
+  useEffect(() => {
+    if (quill == null || socketRef.current == null) return;
+
+    const handler = (delta) => {
+      if (delta.senderID !== user.userId) {
+        quill.updateContents(delta.body);
+      }
+    };
+    socketRef.current.on(RECEIVE_DOCUMENT_CHANGES, handler);
+
+    return () => {
+      socketRef.current.off(RECEIVE_DOCUMENT_CHANGES, handler);
+    };
+  }, [quill, user.userId]);
+
+  //
+
+  //
+
+  // send document changes useEffect()
+  useEffect(() => {
+    if (quill == null || socketRef.current == null) return;
 
     const handler = (delta, oldDelta, source) => {
       if (source !== "user") return;
-      sendDocumentChanges(delta);
+      var dataToSend = {
+        body: delta,
+        senderID: user.userId,
+        fileID: fileId,
+        change_ID: uuidv4(),
+      };
+      socketRef.current.emit(SEND_DOCUMENT_CHANGES, dataToSend);
     };
     quill.on("text-change", handler);
-
-    if (user.userId !== senderID) {
-      quill.updateContents(delta);
-    }
 
     return () => {
       quill.off("text-change", handler);
     };
-  }, [quill, delta]);
+  }, [quill, fileId, user.userId]);
 
+  //
+
+  // quill
   const wrapperRef = useCallback((wrapper) => {
     if (wrapper == null) return;
     wrapper.innerHTML = "";
@@ -117,9 +125,11 @@ function TextEditor() {
       modules: { toolbar: TOOLBAR_OPTIONS },
     });
     // q.disable();
-    // q.setText("Loading...");
+    // q.setText(" Loading...");
     setQuill(q);
   }, []);
+
+  //
 
   // set timer to renew token
   useEffect(() => {
@@ -137,41 +147,7 @@ function TextEditor() {
       <Navbar />
       <div className="edit-window">
         <div className="edit-box" ref={wrapperRef}></div>
-        {/* <div className="changes-list">
-          {changeList.map((changeList, index) => {
-            return (
-              <div className="one-change" key={index}>
-                <div className="change-time">
-                  <p>{changeList.Time}</p>
-                </div>
-                <div className="change-author">
-                  <p>{changeList.Author}</p>
-                </div>
-                <div className="change-type">
-                  <p>{changeList.Type}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div> */}
-        {/* <div className="online-user-list">
-          <p>Online Users:</p>
-          <div className="users-box">
-            {onlineUserList.map((onlineUserList, index) => {
-              return (
-                <div className="user-profile" key={index}>
-                  <div className="picture-profile">
-                    <img
-                      src={UserAvatar}
-                      alt="userAvatar jmecher"
-                      // onClick={showdropdownMenu}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div> */}
+        <SaveButton />
       </div>
     </div>
   );

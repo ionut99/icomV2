@@ -41,6 +41,7 @@ function Room() {
             <p>{currentChannelName}</p>
           </div>
           <div className="room-instrument">
+          {/* <Link to={`/newdocument/${channelID}`}> */}
             <Link to={`/storage/folder/${channelFolderId}`}>
               {<AiIcons.AiOutlineFile />}
             </Link>

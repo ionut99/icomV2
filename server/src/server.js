@@ -52,14 +52,17 @@ app.use("/folder", folder);
 
 // Start server for chat
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
-const NEW_CHANGE_DOCUMENT_EVENT = "newEventDocument";
+const SEND_DOCUMENT_CHANGES = "SEND_DOCUMENT_CHANGES";
+const RECEIVE_DOCUMENT_CHANGES = "RECEIVE_DOCUMENT_CHANGES";
 
 io.on("connection", (socket) => {
   // Join a conversation
   const { roomID } = socket.handshake.query;
+  const { fileId } = socket.handshake.query;
   //console.log("incercare roomID: " + roomID);
   //console.log("New connection established for chat part: ", roomID);
   socket.join(roomID);
+  socket.join(fileId);
 
   // Listen for new messages
   socket.on(NEW_CHAT_MESSAGE_EVENT, (data) => {
@@ -70,11 +73,9 @@ io.on("connection", (socket) => {
   });
 
   // Listen for new document changes
-  socket.on(NEW_CHANGE_DOCUMENT_EVENT, (data) => {
-    io.in(roomID).emit(NEW_CHANGE_DOCUMENT_EVENT, data);
-    console.log("New document changes was sent:  ");
-    console.log(data);
-    console.log("On channel: " + roomID);
+  socket.on(SEND_DOCUMENT_CHANGES, (delta) => {
+    io.in(fileId).emit("RECEIVE_DOCUMENT_CHANGES", delta);
+    console.log(delta);
   });
 
   // Leave the room if the user closes the socket

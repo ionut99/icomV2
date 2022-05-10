@@ -40,6 +40,12 @@
   overflow-y: auto;
 }
 
+.edit-window .save-doc-state {
+  position: absolute;
+  top: 120px;
+  right: 40px;
+}
+
 .edit-window .changes-list .one-change {
   border: 1px solid blue;
   width: 100%;
@@ -71,7 +77,6 @@
   display: inline-flex;
   flex-wrap: wrap;
   overflow-y: auto;
-  
 }
 
 .edit-window .online-user-list .users-box .user-profile .picture-profile {
