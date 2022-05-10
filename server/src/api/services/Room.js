@@ -118,6 +118,38 @@ function GetRoomFolderID(ChannelID) {
   });
 }
 
+function GetPartListData(ChannelID) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM participants INNER JOIN iusers ON participants.UserID = iusers.userId WHERE RoomID = '${ChannelID}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
+function GetNOTPartListData(ChannelID, userId) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve) => {
+    connection.query(
+      `SELECT DISTINCT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers INNER JOIN participants ON iusers.userId = participants.UserID WHERE participants.RoomID != '${ChannelID}' AND iusers.userId != '${userId}'`,
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
 module.exports = {
   InsertNewRoomData,
   InsertParticipantData,
@@ -126,4 +158,6 @@ module.exports = {
   DeleteRoomData,
   GetRoomMessagesData,
   GetRoomFolderID,
+  GetPartListData,
+  GetNOTPartListData,
 };
