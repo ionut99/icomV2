@@ -157,9 +157,6 @@ export const userSearchPersonListAsync =
 export const userAddNewPersonInGroup = (RoomID, userId) => async (dispatch) => {
   const Personresult = await getPersonToAddInGroup(RoomID, userId);
 
-  console.log(Personresult);
-  console.log(Personresult.data["NOTparticipantsRoomList"]);
-
   if (Personresult.error) {
     dispatch(verifyTokenEnd());
     if (

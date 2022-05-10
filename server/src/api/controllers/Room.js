@@ -20,6 +20,8 @@ const {
   // DeleteFolder,
 } = require("../services/Folders");
 
+const { GetAllUsersDataBase } = require("../services/User");
+
 const { handleResponse } = require("../helpers/utils");
 const { GetParticipantByID } = require("../services/Auth");
 const { is } = require("express/lib/request");
@@ -244,7 +246,7 @@ async function GetPartList(req, res) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
   }
 
-  var participantsRoomList = await GetPartListData(roomID);
+  const participantsRoomList = await GetPartListData(roomID);
   if (participantsRoomList === "FAILED") {
     console.log("FAILED - get participants list! ");
     return handleResponse(req, res, 412, " DataBase Error ");
@@ -254,18 +256,38 @@ async function GetPartList(req, res) {
 }
 
 async function GetNOTPartList(req, res) {
-  const roomID = req.body.roomID;
+  const RoomID = req.body.RoomID;
   const userId = req.body.userId;
 
-  if (roomID === null || userId === null) {
+  if (RoomID === null || userId === null) {
     return handleResponse(req, res, 410, "Invalid Request Parameters ");
   }
 
-  const NOTparticipantsRoomList = await GetNOTPartListData(roomID, userId);
+  // participants
+  const participantsRoomList = await GetPartListData(RoomID);
+  if (participantsRoomList === "FAILED") {
+    console.log("FAILED - get participants list! ");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  // all users
+  var NOTparticipantsRoomList = await GetAllUsersDataBase();
   if (NOTparticipantsRoomList === "FAILED") {
     console.log("FAILED - get NOT participants list! ");
     return handleResponse(req, res, 412, " DataBase Error ");
   }
+
+  NOTparticipantsRoomList = NOTparticipantsRoomList.filter(function (item) {
+    for (var p in participantsRoomList) {
+      if (
+        participantsRoomList[p].userId == undefined ||
+        participantsRoomList[p].userId === item.userId ||
+        item.userId == undefined
+      )
+        return false;
+    }
+    return true;
+  });
 
   return handleResponse(req, res, 200, { NOTparticipantsRoomList });
 }
