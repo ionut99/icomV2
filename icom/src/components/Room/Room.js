@@ -20,7 +20,8 @@ function Room() {
   const { user } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID, currentChannelName, RoomMessages } = chatObj;
+  const { channelID, currentChannelName, RoomMessages, channelFolderId } =
+    chatObj;
 
   return (
     <>
@@ -40,8 +41,8 @@ function Room() {
             <p>{currentChannelName}</p>
           </div>
           <div className="room-instrument">
-            <Link to={`/newdocument/${channelID}`}>
-              {<AiIcons.AiOutlineEdit />}
+            <Link to={`/storage/folder/${channelFolderId}`}>
+              {<AiIcons.AiOutlineFile />}
             </Link>
           </div>
           <div className="room-instrument">

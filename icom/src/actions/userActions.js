@@ -105,7 +105,8 @@ export const setChildFileList = (fileList) => {
 export const updateCurrentChannel = (
   channelID,
   currentChannelName,
-  RoomMessages
+  RoomMessages,
+  channelFolderId
 ) => {
   return {
     type: USER_UPDATE_CHAT,
@@ -113,6 +114,7 @@ export const updateCurrentChannel = (
       channelID,
       currentChannelName,
       RoomMessages,
+      channelFolderId,
     },
   };
 };

@@ -51,21 +51,7 @@ function GetUserRoomsList(search_box_text, userId) {
   });
 }
 
-function GetRoomMessagesData(ChannelID) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve, reject) => {
-    connection.query(
-      `SELECT * FROM messages INNER JOIN room ON messages.RoomID = room.ID WHERE room.ID = '${ChannelID}'`,
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(result);
-      }
-    );
-    connection.end();
-  });
-}
+
 
 function InsertNewMessageData(
   ID_message,
@@ -236,7 +222,6 @@ module.exports = {
   GetAllUsersDataBase,
   GetSearchUsersList,
   GetUserRoomsList,
-  GetRoomMessagesData,
   InsertNewMessageData,
   AddNewMemberInGroupData,
   GetPartListData,

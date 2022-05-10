@@ -13,16 +13,18 @@ import * as Quill from "quill";
 import UserAvatar from "../../images/userAvatar.png";
 import Navbar from "../../components/Navbar/Navbar";
 
-
 // import { GetDocumentFileData } from "../../services/user";
 
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
   [{ font: [] }],
   [{ list: "ordered" }, { list: "bullet" }],
-  ["bold", "italic", "underline"],
+  ["bold", "italic", "underline", "strike"],
+  ["blockquote", "code-block"],
   [{ color: [] }, { background: [] }],
   [{ script: "sub" }, { script: "super" }],
+  [{ indent: "-1" }, { indent: "+1" }],
+  [{ direction: "rtl" }],
   [{ align: [] }],
   ["image", "blockquote", "code-block"],
   ["clean"],
@@ -30,24 +32,24 @@ const TOOLBAR_OPTIONS = [
 
 function TextEditor() {
   // lista test pentru ultimele schimbari realizate
-  var changeList = [];
-  for (let i = 0; i < 20; i++) {
-    changeList.push({
-      Type: "delete",
-      Author: "Mihai",
-      Time: "21:44 29Mar2022",
-    });
-  }
+  // var changeList = [];
+  // for (let i = 0; i < 20; i++) {
+  //   changeList.push({
+  //     Type: "delete",
+  //     Author: "Mihai",
+  //     Time: "21:44 29Mar2022",
+  //   });
+  // }
 
   // lista test pentru userii online
 
-  var onlineUserList = [];
-  for (let i = 0; i < 30; i++) {
-    onlineUserList.push({
-      ProfilePicture: "pozaBuletin",
-      Nume: "Marian",
-    });
-  }
+  // var onlineUserList = [];
+  // for (let i = 0; i < 30; i++) {
+  //   onlineUserList.push({
+  //     ProfilePicture: "pozaBuletin",
+  //     Nume: "Marian",
+  //   });
+  // }
   const dispatch = useDispatch();
   const [quill, setQuill] = useState();
   // const [documentData, setdocumentData] = useState("");
@@ -135,7 +137,7 @@ function TextEditor() {
       <Navbar />
       <div className="edit-window">
         <div className="edit-box" ref={wrapperRef}></div>
-        <div className="changes-list">
+        {/* <div className="changes-list">
           {changeList.map((changeList, index) => {
             return (
               <div className="one-change" key={index}>
@@ -151,8 +153,8 @@ function TextEditor() {
               </div>
             );
           })}
-        </div>
-        <div className="online-user-list">
+        </div> */}
+        {/* <div className="online-user-list">
           <p>Online Users:</p>
           <div className="users-box">
             {onlineUserList.map((onlineUserList, index) => {
@@ -169,7 +171,7 @@ function TextEditor() {
               );
             })}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
