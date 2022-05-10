@@ -5,6 +5,7 @@ const { authMiddleware } = require("../middlewares/Auth");
 const {
   GetProfilePicture,
   UploadNewStoredFile,
+  GetDocumentContent,
 } = require("../controllers/Files");
 
 // router.post("/getdocument", authMiddleware, GetDocument);
@@ -12,5 +13,6 @@ const {
 
 router.post("/getprofilepicture", GetProfilePicture);
 router.post("/newStoragefile", UploadNewStoredFile);
+router.post("/getdocumentcontent", GetDocumentContent);
 
 module.exports = router;

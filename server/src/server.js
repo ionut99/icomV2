@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
 
   // Listen for new document changes
   socket.on(SEND_DOCUMENT_CHANGES, (delta) => {
-    io.in(fileId).emit("RECEIVE_DOCUMENT_CHANGES", delta);
+    io.in(fileId).emit(RECEIVE_DOCUMENT_CHANGES, delta);
     console.log(delta);
   });
 
