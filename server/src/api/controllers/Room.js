@@ -1,10 +1,6 @@
 var uui = require("uuid");
 
-const {
-  AddNewMemberInGroupData,
-  GetPartListData,
-  GetNOTPartListData,
-} = require("../services/User");
+const { AddNewMemberInGroupData } = require("../services/User");
 
 const {
   InsertNewRoomData,
@@ -12,6 +8,8 @@ const {
   DeleteAllMessageFromRoom,
   DeleteAllParticipantsFromRoom,
   DeleteRoomData,
+  GetPartListData,
+  GetNOTPartListData,
 } = require("../services/Room");
 
 const {
