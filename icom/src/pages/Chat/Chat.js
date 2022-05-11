@@ -1,27 +1,27 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 
-import { verifyTokenAsync } from "./../asyncActions/authAsyncActions";
-import { setUserSearchBoxContent } from "./../actions/userActions";
-import { setAuthToken } from "./../services/auth";
-import Navbar from "../components/Navbar/Navbar";
+import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
+import { setUserSearchBoxContent } from "../../actions/userActions";
+import { setAuthToken } from "../../services/auth";
+import Navbar from "../../components/Navbar/Navbar";
 import moment from "moment";
 
 import {
   userSetRoomListAsync,
   userSearchPersonListAsync,
   CreateNewGroup,
-} from "../asyncActions/userAsyncActions";
+} from "../../asyncActions/userAsyncActions";
 
-import ConversationList from "../components/Search/ConversationList";
-import PersonList from "../components/Search/PersonList";
-import Room from "../components/Room/Room";
+import ConversationList from "../../components/Search/ConversationList";
+import PersonList from "../../components/Search/PersonList";
+import Room from "../../components/Room/Room";
 
 import * as BsIcons from "react-icons/bs";
 import * as AiIcons from "react-icons/ai";
 import { v4 as uuidv4 } from "uuid";
 
-import "../cssFiles/chat.css";
+import "./chat.css";
 
 function setSearchBoxContent(search_box_content, dispatch) {
   dispatch(setUserSearchBoxContent(search_box_content));

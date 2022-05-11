@@ -12,6 +12,7 @@ import * as AiIcons from "react-icons/ai";
 import Avatar from "../Search/Avatar";
 
 import SendMessage from "./SendMessage";
+import Message from "./Message";
 
 import "./room.css";
 
@@ -29,7 +30,7 @@ function Room() {
         className="right-section-empty"
         style={{ display: channelID ? "none" : "block" }}
       >
-        <p>Choose a channel or create a new one</p>
+        {/* <p>Choose a channel or create a new one</p> */}
       </div>
       <div
         className="right-section"
@@ -41,7 +42,7 @@ function Room() {
             <p>{currentChannelName}</p>
           </div>
           <div className="room-instrument">
-          {/* <Link to={`/newdocument/${channelID}`}> */}
+            {/* <Link to={`/newdocument/${channelID}`}> */}
             <Link to={`/storage/folder/${channelFolderId}`}>
               {<AiIcons.AiOutlineFile />}
             </Link>
@@ -64,21 +65,7 @@ function Room() {
                       me: RoomMessages.senderID === user.userId,
                     })}
                   >
-                    <Avatar
-                      userID={RoomMessages.senderID}
-                      roomID={null}
-                      atuhUser={user.userId}
-                    />
-                    <div className="message_body">
-                      <div className="message_author">
-                        {RoomMessages.senderID === user.userId
-                          ? "Aici punem data "
-                          : RoomMessages.senderID}
-                      </div>
-                      <div className="message_text">
-                        <p>{RoomMessages.Body}</p>
-                      </div>
-                    </div>
+                    <Message RoomMessages={RoomMessages} />
                   </div>
                 );
               })}
