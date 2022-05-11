@@ -239,25 +239,17 @@ async function UploadNewStoredFile(req, res) {
 
 async function GetProfilePicture(req, res) {
   try {
-    const ID = req.body.ID;
-    const atuhUser = req.body.atuhUser;
-    const ISroom = req.body.ISroom;
+    const userId = req.body.userId;
+    const roomId = req.body.roomId;
 
-    if (
-      ID === null ||
-      ID === undefined ||
-      ISroom === undefined ||
-      ISroom === null ||
-      atuhUser === undefined ||
-      atuhUser === null
-    ) {
+    if (userId === null || userId === undefined) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
     var currentAvatarPath = "";
 
-    if (!ISroom) {
-      const userDetails = await GetUserDetailsData(ID);
+    if (roomId == null || roomId == undefined) {
+      const userDetails = await GetUserDetailsData(userId);
       if (userDetails === "FAILED") {
         throw new Error("  Err Get User Details  ");
       }
@@ -265,35 +257,8 @@ async function GetProfilePicture(req, res) {
       if (results[0].Avatar != undefined) {
         currentAvatarPath = results[0].Avatar;
       }
-    } else {
-      // TO DO - find user from Room OR... if is public room we display
-
-      const roomDetails = await GetRoomDetails(ID);
-      if (roomDetails === "FAILED") {
-        throw new Error("  Err Get Room Details  ");
-      }
-      const results = JSON.parse(JSON.stringify(roomDetails));
-      if (results[0].Private > 0) {
-        const theOtherUser = await GetPrivateRoomOtherUserDetails(ID, atuhUser);
-        if (theOtherUser === "FAILED") {
-          throw new Error("  Err Other User Details  ");
-        }
-        const theOtherUserJson = JSON.parse(JSON.stringify(theOtherUser));
-
-        const userDetails = await GetUserDetailsData(
-          theOtherUserJson[0].UserID
-        );
-        if (userDetails === "FAILED") {
-          throw new Error("  Err Get User Details  ");
-        }
-
-        const results = JSON.parse(JSON.stringify(userDetails));
-        if (results[0].Avatar != undefined) {
-          currentAvatarPath = results[0].Avatar;
-        }
-      } else {
-        // to do pentru grupuri...
-      }
+    } else if (userId != null && roomId != null) {
+      currentAvatarPath = "";
     }
 
     if (currentAvatarPath === "") {

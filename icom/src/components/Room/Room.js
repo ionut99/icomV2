@@ -37,7 +37,7 @@ function Room() {
         style={{ display: channelID ? "block" : "none" }}
       >
         <div className="conversation-details">
-          <Avatar userID={null} roomID={channelID} atuhUser={user.userId} />
+          <Avatar userId={user.userId} roomId={channelID} />
           <div className="room-name">
             <p>{currentChannelName}</p>
           </div>

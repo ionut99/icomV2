@@ -27,3 +27,4 @@ router.post("/details", GetUserDetails);
 router.post("/newuser", InserNewUserAccount);
 
 module.exports = router;
+ 

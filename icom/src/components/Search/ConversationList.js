@@ -73,11 +73,7 @@ const ConversationList = () => {
             }
           >
             <div>
-              <Avatar
-                userID={null}
-                roomID={RoomSearchList.RoomID}
-                atuhUser={user.userId}
-              />
+              <Avatar userId={user.userId} roomId={RoomSearchList.RoomID} />
             </div>
 
             <div className="conversation-details-left">

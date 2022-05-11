@@ -157,7 +157,7 @@ async function GetRoomMessages(req, res) {
 
   return handleResponse(req, res, 200, {
     messageRoomList: messageRoomList,
-    folderId: res_roomId[0].folderId,
+    folderId: res_roomId,
   });
 
   // need to sort messages

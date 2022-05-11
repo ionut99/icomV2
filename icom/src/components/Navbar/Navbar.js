@@ -91,11 +91,7 @@ function Navbar() {
               onClick={() => setIsMenuOpen((oldState) => !oldState)}
               style={{ cursor: "pointer" }}
             >
-              <Avatar
-                userID={user.userId}
-                roomID={null}
-                atuhUser={user.userId}
-              />
+              <Avatar userId={user.userId} roomId={null} />
             </div>
           </div>
         </div>

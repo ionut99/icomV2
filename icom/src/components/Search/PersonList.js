@@ -55,11 +55,7 @@ function PersonList() {
               )
             }
           >
-            <Avatar
-              userID={userSearchList.userId}
-              roomID={null}
-              atuhUser={user.userId}
-            />
+            <Avatar userId={userSearchList.userId} roomId={null} />
             <div className="conversation-details-left">
               <div className="conversation-header">
                 <div className="conversation-user-details">

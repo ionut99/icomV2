@@ -45,7 +45,7 @@ function Message({ RoomMessages }) {
       <div className="message_body">
         <div className="message_author">
           {RoomMessages.senderID === user.userId ? (
-            <p>{` ${
+            <>{` ${
               monthNames[CreateMessageDate.getMonth()] +
               " " +
               CreateMessageDate.getDate() +
@@ -55,7 +55,7 @@ function Message({ RoomMessages }) {
               CreateMessageDate.getMinutes() +
               ":" +
               CreateMessageDate.getSeconds()
-            }`}</p>
+            }`}</>
           ) : (
             senderDetails.Surname + " " + senderDetails.Name
           )}
