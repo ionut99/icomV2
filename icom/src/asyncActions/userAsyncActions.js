@@ -191,11 +191,18 @@ export const updateChannelDetails =
       return;
     }
 
+    const messageOrderList = messageList.data["messageRoomList"].sort(function (
+      a,
+      b
+    ) {
+      return new Date(a.createdTime) - new Date(b.createdTime);
+    });
+
     dispatch(
       updateCurrentChannel(
         channelID,
         currentChannelName,
-        messageList.data["messageRoomList"],
+        messageOrderList,
         messageList.data["folderId"]
       )
     );
@@ -305,3 +312,4 @@ export const AddNewUserAccount =
     // TO DO - display message
     console.log(varVerify);
   };
+

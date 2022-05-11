@@ -16,7 +16,7 @@ function Folder({ folder }) {
   const ref = useRef();
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
-
+ 
   const [authName, setauthName] = useState("");
   const [optionButton, setOptionButton] = useState(false);
 

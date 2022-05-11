@@ -24,14 +24,15 @@ const Comunication = (roomID, userID) => {
       //var secret = CryptoJs.SHA256(roomId);
       //var bytes = CryptoJs.AES.decrypt(message, secret.toString().substring(0,18));
       //var decryptedData = JSON.parse(bytes.toString(CryptoJs.enc.Utf8));
-
+      const createdTime = new Date();
       if (message.roomID != null) {
         dispatch(
           InsertNewMessageLocal(
             message.ID_message,
             message.roomID,
             message.senderID,
-            message.body
+            message.body,
+            createdTime
           )
         );
       }

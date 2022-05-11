@@ -1,4 +1,4 @@
-@import "../../cssFiles/chat.css";
+@import "../../pages/Chat/chat.css";
 @import "../../cssFiles/colors.css";
 
 .chat-page .right-section {
@@ -7,7 +7,10 @@
   height: 98%;
   display: block;
   text-align: center;
-  background-color: var(--bg-color-step-two);
+  background-image: url("../../images/chat_background.png");
+  background-position: center;
+  border-bottom-left-radius: 1.4rem;
+  border-bottom-right-radius: 1.4rem;
 }
 
 .chat-page .right-section-empty {
@@ -16,7 +19,6 @@
   height: 100%;
   display: block;
   text-align: center;
-  background-color: var(--bg-color-step-two);
 }
 
 .chat-page .right-section-empty p {
@@ -25,10 +27,8 @@
 }
 
 .right-section .test-scrollbar {
-  /* border: solid green; */
   max-height: 710px;
   height: 81%;
-  /* min-height: 50%; */
 }
 
 .right-section .messages {
@@ -88,7 +88,6 @@
   max-height: 18%;
   min-height: 75px;
   width: 68%;
-  /* border: solid blue; */
   position: relative;
 }
 
@@ -134,8 +133,6 @@
 }
 
 .right-section .messenger_input .actions {
-  /* width: 40px;
-  height: 40px; */
   margin: 3px;
   margin-top: auto;
 }
@@ -150,8 +147,8 @@
   display: inline-flex;
   background-color: var(--white-color);
   border-bottom-right-radius: 1.4rem;
-  /* border: 2px var(--border-color-less-intense) solid; */
   padding-right: 15px;
+  border-bottom: 2px solid var(--color-element-hover);
 }
 
 .conversation-details .room-instrument {

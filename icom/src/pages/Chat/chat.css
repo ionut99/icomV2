@@ -1,4 +1,4 @@
-@import "colors.css";
+@import "../../cssFiles/colors.css";
 
 /* .page-content_1 {
   width: 100vw;
@@ -22,8 +22,7 @@
   top: 60px;
   display: inline-flex;
   position: absolute;
-  /* border: solid blue; */
-  background-color: var(--bg-color-step-two);
+  background-image: url("../../images/loginBackground.jpg");
 }
 
 .page .chat-page .left-section {
@@ -47,7 +46,6 @@
 }
 
 .search-box {
-  /* padding-left: 20px; */
   width: 88%;
   height: 35px;
   border-radius: 5px;
@@ -116,7 +114,6 @@
   cursor: pointer;
 }
 
-/* custom scrollbar -- start */
 ::-webkit-scrollbar {
   width: 18px;
 }
@@ -136,7 +133,6 @@
   background-color: var(--skroll-bar-hover);
 }
 
-/* custom scrollbar --end */
 
 @media screen and (max-width: 1400px) {
   .left-section {

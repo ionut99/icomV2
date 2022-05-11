@@ -153,10 +153,16 @@ export const resetRoomList = () => {
   };
 };
 
-export const InsertNewMessageLocal = (ID_message, RoomID, senderID, Body) => {
+export const InsertNewMessageLocal = (
+  ID_message,
+  RoomID,
+  senderID,
+  Body,
+  createdTime
+) => {
   return {
     type: USER_ADD_NEW_MESSAGE,
-    payload: { ID_message, RoomID, senderID, Body },
+    payload: { ID_message, RoomID, senderID, Body, createdTime },
   };
 };
 
