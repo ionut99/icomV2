@@ -17,6 +17,10 @@ function AddUser() {
     setOpen(true);
   }
   function closeModal() {
+    // delete old data
+    setUserSurname("");
+    setUserName("");
+    setEmail("");
     setOpen(false);
   }
 
@@ -61,7 +65,7 @@ function AddUser() {
               />
               <div className="form-check">
                 <Form.Check
-                  type="checkbox"
+                  type="radio"
                   required
                   checked={isAdmin}
                   onChange={toggleAdminValue}

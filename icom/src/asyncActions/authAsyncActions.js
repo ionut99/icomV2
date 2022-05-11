@@ -48,27 +48,19 @@ export const userLoginAsync = (email, password) => async (dispatch) => {
 };
 
 // handle get Avatar Picture
-export const getAvatarPictureAsync = async (ID, atuhUser, ISroom) => {
-  if (ISroom !== undefined) {
-    const resultBlob = await getAvatarPictureService(ID, atuhUser, ISroom);
-    return new Promise((resolve) => {
-      if (
-        resultBlob.error === true ||
-        ISroom === undefined ||
-        ID === undefined ||
-        atuhUser === undefined
-      ) {
-        return resolve("FAILED");
-      }
-      const fileReaderInstance = new FileReader();
-      fileReaderInstance.readAsDataURL(resultBlob.data);
-      fileReaderInstance.onload = () => {
-        const base64data = fileReaderInstance.result;
-        // dispatch(updateUserAvatar(base64data));
-        return resolve(base64data);
-      };
-    });
-  }
+export const getAvatarPictureAsync = async (userId, roomId) => {
+  const resultBlob = await getAvatarPictureService(userId, roomId);
+  return new Promise((resolve) => {
+    if (resultBlob.error === true || userId === undefined) {
+      return resolve("FAILED");
+    }
+    const fileReaderInstance = new FileReader();
+    fileReaderInstance.readAsDataURL(resultBlob.data);
+    fileReaderInstance.onload = () => {
+      const base64data = fileReaderInstance.result;
+      return resolve(base64data);
+    };
+  });
 };
 
 // handle user logout

@@ -4,7 +4,7 @@ import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
 // import { useDispatch, useSelector } from "react-redux";
 import "./avatar.css";
 function Avatar(props) {
-  const { userID, roomID, atuhUser } = props;
+  const { userId, roomId } = props;
 
   //   const dispatch = useDispatch();
   //   const authObj = useSelector((state) => state.auth);
@@ -12,52 +12,24 @@ function Avatar(props) {
 
   const [actualSrc, setActualSrc] = useState("placeholder image link");
   useEffect(() => {
-    // const ac = new AbortController();
+    if (userId == null && userId === undefined) return;
     let isMounted = true;
 
-    const avatarSrc = async (userID, atuhUser) => {
-      const ISroom = false;
-      const avatarSrc = await getAvatarPictureAsync(userID, atuhUser, ISroom);
+    const avatarSrc = async (userId) => {
+      const avatarSrc = await getAvatarPictureAsync(userId, roomId);
       if (avatarSrc !== "FAILED") {
         return avatarSrc;
       }
     };
 
-    const avatarRoom = async (roomID, atuhUser) => {
-      const ISroom = true;
-      const avatarSrc = await getAvatarPictureAsync(roomID, atuhUser, ISroom);
-      if (avatarSrc !== "FAILED") {
-        return avatarSrc;
-      }
-    };
-
-    if (
-      roomID !== null &&
-      roomID !== undefined &&
-      atuhUser !== null &&
-      atuhUser !== undefined
-    ) {
-      avatarRoom(roomID, atuhUser).then((result) => {
-        if (isMounted) setActualSrc(result);
-      });
-    }
-
-    if (
-      userID !== null &&
-      userID !== undefined &&
-      atuhUser !== null &&
-      atuhUser !== undefined
-    ) {
-      avatarSrc(userID, atuhUser).then((result) => {
-        if (isMounted) setActualSrc(result);
-      });
-    }
+    avatarSrc(userId).then((result) => {
+      if (isMounted) setActualSrc(result);
+    });
 
     return () => {
       isMounted = false;
     };
-    // return () => ac.abort(); // Abort both fetches on unmount
-  }, [userID, roomID, atuhUser]);
+  }, [userId, roomId]);
 
   return (
     <div className="user_picture">

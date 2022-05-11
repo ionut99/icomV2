@@ -127,14 +127,14 @@ function GetRoomDetails(RoomID) {
 }
 
 //Get Other User Details from Rpivate Room
-function GetPrivateRoomOtherUserDetails(RoomID, atuhUser) {
+function GetPrivateRoomOtherUserDetails(roomId, userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM participants INNER JOIN room ON room.ID = participants.RoomID WHERE RoomID = '${RoomID}' and room.Private = 1 and participants.UserID != '${atuhUser}'`,
+      `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers INNER JOIN participants ON iusers.userId = participants.UserID INNER JOIN room ON participants.RoomID = room.ID WHERE room.Private = 1 AND participants.RoomID = '${roomId}' AND iusers.userId != '${userId}'`,
       (err, result) => {
         if (err) {
-          return resolve("FAILED");
+          return reject(err);
         }
         return resolve(result);
       }
