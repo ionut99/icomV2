@@ -53,8 +53,6 @@ const ConversationList = () => {
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
         confirmAction={handleDeleteUser}
-        // discard={false}
-        // setDiscard={function () {}}
       />
       <div className="RoomDelimiter">
         <p>Conversations</p>
@@ -72,7 +70,7 @@ const ConversationList = () => {
               )
             }
           >
-            <div>
+            <div className="user_picture">
               <Avatar userId={user.userId} roomId={RoomSearchList.RoomID} />
             </div>
 

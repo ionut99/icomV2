@@ -53,8 +53,6 @@ async function AddNewFolder(req, res) {
       return handleResponse(req, res, 412, " DataBase Error ");
     }
 
-    console.log(parentFolder[0].userIdBeneficiary);
-    console.log(parentFolder[0].RoomIdBeneficiary);
     if (parentFolder[0].RoomIdBeneficiary !== null) {
       result = await InsertFolderUserRelationDataBase(
         folderId,

@@ -1,48 +1,20 @@
 import { useDispatch, useSelector } from "react-redux";
-import React, { useState, useEffect } from "react";
-
-import { updateUserAvatar } from "../../actions/authActions";
+import React, { useState } from "react";
+// import { updateUserAvatar } from "../../actions/authActions";
 import { UpdateProfilePicture } from "../../asyncActions/userAsyncActions";
-import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
-// import Avatar from "../Search/Avatar";
+import Avatar from "../Search/Avatar";
 
 function UploadAvatar(props) {
   const { open, discard, setDiscard, handleClose } = props;
 
   const dispatch = useDispatch();
   const authObj = useSelector((state) => state.auth);
-  const { user, userAvatar } = authObj;
+  const { user } = authObj;
 
   const [userInfo, setuserInfo] = useState({
     file: [],
-    filepreview: userAvatar,
+    filepreview: "",
   });
-
-  // load preview photo
-  useEffect(() => {
-    let isMounted = true;
-
-    const avatarSrc = async (userID) => {
-      const avatarSrc = await getAvatarPictureAsync(userID, userID, false);
-      if (avatarSrc !== "FAILED") {
-        return avatarSrc;
-      }
-    };
-    if (user.userId !== null && user.userId !== undefined) {
-      avatarSrc(user.userId).then((result) => {
-        if (isMounted) {
-          setuserInfo({
-            file: [],
-            filepreview: result,
-          });
-          dispatch(updateUserAvatar(result));
-        }
-      });
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [user.userId, dispatch]);
 
   const [invalidImage, setinvalidImage] = useState(null);
   let reader = new FileReader();
@@ -109,7 +81,6 @@ function UploadAvatar(props) {
         setinvalidImage("Invalid image content.");
         return false;
       };
-      //debugger
       img.src = e.target.result;
     };
     reader.readAsDataURL(imageFile);
@@ -117,7 +88,7 @@ function UploadAvatar(props) {
 
   const handleConfirmation = () => {
     dispatch(UpdateProfilePicture(user.userId, userInfo.file));
-    dispatch(updateUserAvatar(userInfo.filepreview));
+    // dispatch(updateUserAvatar(userInfo.filepreview));
     setDiscard(false);
     handleClose();
   };
@@ -126,8 +97,14 @@ function UploadAvatar(props) {
     <div>
       <div className="upload-box" style={{ display: open ? "block" : "none" }}>
         <div className="image-preview">
-          <img alt="Resize Img" src={userInfo.filepreview} />
-          {/* <Avatar userID={user.userId} /> */}
+          <img
+            style={{ display: !userInfo.filepreview ? "none" : "flex" }}
+            alt="Resize Img"
+            src={userInfo.filepreview}
+          />
+          <div style={{ display: userInfo.filepreview ? "none" : "flex" }}>
+            <Avatar userId={user.userId} roomId={null} />
+          </div>
         </div>
         <div className="upload-action">
           <label className="custom-file-upload">

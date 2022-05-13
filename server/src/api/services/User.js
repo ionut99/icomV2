@@ -127,14 +127,14 @@ function GetRoomDetails(RoomID) {
 }
 
 //Get Other User Details from Rpivate Room
-function GetPrivateRoomOtherUserDetails(roomId, userId) {
+function GetParticipantFromPrivateConversation(roomId, userId) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers INNER JOIN participants ON iusers.userId = participants.UserID INNER JOIN room ON participants.RoomID = room.ID WHERE room.Private = 1 AND participants.RoomID = '${roomId}' AND iusers.userId != '${userId}'`,
+      `SELECT iusers.userId FROM participants INNER JOIN iusers ON participants.UserID = iusers.userId WHERE participants.RoomID = '${roomId}' AND participants.UserID != '${userId}'`,
       (err, result) => {
         if (err) {
-          return reject(err);
+          return resolve("FAILED");
         }
         return resolve(result);
       }
@@ -192,7 +192,7 @@ module.exports = {
   AddNewMemberInGroupData,
   UpdateAvatarPathData,
   GetRoomDetails,
-  GetPrivateRoomOtherUserDetails,
+  GetParticipantFromPrivateConversation,
   GetUserDetailsData,
   InsertNewUserAccountData,
 };
