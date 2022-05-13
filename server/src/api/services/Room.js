@@ -8,7 +8,7 @@ function InsertNewRoomData(RoomName, Private, uuidRoom) {
 
   return new Promise((resolve) => {
     connection.query(
-      `INSERT INTO room (ID, Name, Private) VALUES ('${uuidRoom}', '${RoomName}', '${Private}');`,
+      `INSERT INTO room (ID, Name, Private, Avatar) VALUES ('${uuidRoom}', '${RoomName}', '${Private}', NULL);`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");

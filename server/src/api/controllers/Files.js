@@ -242,6 +242,10 @@ async function GetProfilePicture(req, res) {
     const userId = req.body.userId;
     const roomId = req.body.roomId;
 
+    console.log("parametrii sunt:");
+    console.log(userId);
+    console.log(roomId);
+
     if (userId === null || userId === undefined) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
@@ -258,6 +262,12 @@ async function GetProfilePicture(req, res) {
         currentAvatarPath = results[0].Avatar;
       }
     } else if (userId != null && roomId != null) {
+      const roomDetails = await GetRoomDetails(roomId);
+      if (roomDetails === "FAILED") {
+        throw new Error("  Err Get Room Details  ");
+      }
+      const results = JSON.parse(JSON.stringify(roomDetails));
+      console.log(results);
       currentAvatarPath = "";
     }
 

@@ -17,6 +17,11 @@
   /* z-index: 1; */
 }
 
+.user_picture {
+  width: 48px;
+  height: 48px;
+}
+
 .close-person-list {
   width: 30px;
   height: 30px;

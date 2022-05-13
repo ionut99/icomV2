@@ -1,14 +1,8 @@
 .user_picture {
   margin: 8px;
-  width: 48px;
-  height: 48px;
   display: flex;
   justify-content: center;
   border-radius: 50%;
   overflow: hidden;
   box-shadow: 8px 8px 16px 0px rgb(0 0 0 / 20%);
 }
-
-/* .user_picture .user_picture_img {
-  border: red solid;
-} */

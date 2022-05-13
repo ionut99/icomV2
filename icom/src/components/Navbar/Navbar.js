@@ -11,13 +11,16 @@ import Avatar from "../Search/Avatar";
 import AddUser from "../AddUserAccount/AddUserAccount";
 import "./navbar.css";
 
+import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
+import { updateUserAvatar } from "../../actions/authActions";
+
 function Navbar() {
   const ref = useRef();
 
   const dispatch = useDispatch();
 
   const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;
+  const { user, userAvatar } = authObj;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [sidebar, setSidebar] = useState(false);
@@ -91,7 +94,9 @@ function Navbar() {
               onClick={() => setIsMenuOpen((oldState) => !oldState)}
               style={{ cursor: "pointer" }}
             >
-              <Avatar userId={user.userId} roomId={null} />
+              <div className="user_picture">
+                <Avatar userId={user.userId} roomId={null} />
+              </div>
             </div>
           </div>
         </div>

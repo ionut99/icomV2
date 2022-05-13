@@ -37,11 +37,9 @@ function Message({ RoomMessages }) {
 
   return (
     <>
-      <Avatar
-        userID={RoomMessages.senderID}
-        roomID={null}
-        atuhUser={user.userId}
-      />
+      <div className="user_picture">
+        <Avatar userId={RoomMessages.senderID} roomId={null} />
+      </div>
       <div className="message_body">
         <div className="message_author">
           {RoomMessages.senderID === user.userId ? (

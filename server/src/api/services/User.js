@@ -134,7 +134,7 @@ function GetPrivateRoomOtherUserDetails(roomId, userId) {
       `SELECT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers INNER JOIN participants ON iusers.userId = participants.UserID INNER JOIN room ON participants.RoomID = room.ID WHERE room.Private = 1 AND participants.RoomID = '${roomId}' AND iusers.userId != '${userId}'`,
       (err, result) => {
         if (err) {
-          return reject(err);
+          return resolve("FAILED");
         }
         return resolve(result);
       }

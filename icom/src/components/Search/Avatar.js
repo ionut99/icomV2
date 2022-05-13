@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
-
+import { useSelector } from "react-redux";
 import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
 // import { useDispatch, useSelector } from "react-redux";
 import "./avatar.css";
 function Avatar(props) {
   const { userId, roomId } = props;
 
-  //   const dispatch = useDispatch();
-  //   const authObj = useSelector((state) => state.auth);
-  //   const { user } = authObj;
-
-  const [actualSrc, setActualSrc] = useState("placeholder image link");
+  const [actualSrc, setActualSrc] = useState("");
   useEffect(() => {
-    if (userId == null && userId === undefined) return;
+    if (userId === null) return;
     let isMounted = true;
 
     const avatarSrc = async (userId) => {
@@ -31,15 +27,7 @@ function Avatar(props) {
     };
   }, [userId, roomId]);
 
-  return (
-    <div className="user_picture">
-      <img
-        className="user_picture_img"
-        src={actualSrc}
-        alt="userAvatar jmecher"
-      />
-    </div>
-  );
+  return <img src={actualSrc} alt="userAvatar jmecher" />;
 }
 
 export default Avatar;
