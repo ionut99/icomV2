@@ -6,49 +6,39 @@ var uui = require("uuid");
 const {
   UpdateAvatarPathData,
   GetUserDetailsData,
-  GetRoomDetails,
-  GetPrivateRoomOtherUserDetails,
-} = require("../services/User");
-
+} = require("../../services/User");
+//
 const {
   InsertNewFileDataBase,
   InsertNewFileRelationDataBase,
-} = require("../services/Files");
+} = require("../../services/Files");
+//
+const { handleResponse } = require("../../helpers/utils");
+const { GetFolderDetails } = require("../../services/Folders");
+const { checkFileExists, extractProfilePicturePath } = require("./files_utils");
 
-const { GetFolderDetails } = require("../services/Folders");
-const { handleResponse } = require("../helpers/utils");
-
-const { GetDocumentContentService } = require("../services/Files");
-
-const { dir } = require("console");
+// const { GetDocumentContentService } = require("../../services/Files");
 
 const defaultAvatarPicure = path.join(
   __dirname,
-  "../../../",
-  "users/images/avatar/default.png"
+  "../../../../",
+  "users/default/default_avatar.png"
 );
 
-const { mimeTypes } = require("../helpers/mimeType");
-
-const storageAvatar = multer.diskStorage({
-  destination: path.join(__dirname, "../../../users/images/", "avatar"),
-  filename: function (req, file, cb) {
-    // null as first argument means no error
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
+const { mimeTypes } = require("../../helpers/mimeType");
 
 const storageFile = multer.diskStorage({
-  destination: path.join(__dirname, "../../../users/tempDir/"),
+  destination: path.join(__dirname, "../../../../users/tempDir/"),
   filename: function (req, file, cb) {
     // null as first argument means no error
     cb(null, file.originalname);
   },
 });
 
+// change profile picture //
 async function UpdateProfilePicture(req, res) {
   try {
-    let upload = multer({ storage: storageAvatar }).single("avatar");
+    let upload = multer({ storage: storageFile }).single("avatar");
     upload(req, res, async (err) => {
       if (!req.file) {
         return handleResponse(
@@ -67,35 +57,57 @@ async function UpdateProfilePicture(req, res) {
           "Please select an image to upload"
         );
       }
-      const userID = req.body.userID;
-      //must to delete old avatar photo befor upload next one
+      // file details
+      const fileName = req.file.originalname;
 
+      const userID = req.body.userID;
       const userDetails = await GetUserDetailsData(userID);
       const results = JSON.parse(JSON.stringify(userDetails));
-      // console.log("Detalii despre useri:");
-      // console.log(results);
-      const currentAvatarPath = results[0].Avatar;
 
-      if (
-        currentAvatarPath !== null &&
-        currentAvatarPath !== defaultAvatarPicure
-      ) {
-        fs.unlinkSync(currentAvatarPath, function (err) {
-          if (err) throw err;
-          // if no error, file has been deleted successfully
-          console.log("File deleted!");
-        });
+      // verific daca exista folderul unde se va salva avatarul
+      const oldPath = path.join(
+        __dirname,
+        "../../../../users/tempDir/",
+        fileName
+      );
+      const newPath = path.join(__dirname, "../../../../users/", userID);
+
+      try {
+        if (!(await checkFileExists(newPath))) {
+          console.log("Nu exista folderr...");
+          fs.mkdir(newPath, { recursive: true }, (err) => {
+            if (err) {
+              return console.error(err);
+            }
+            console.log("Directory created successfully!");
+          });
+        }
+      } catch (err) {
+        console.error(err);
       }
+      const createdTime = Date.now();
+      fs.rename(
+        oldPath,
+        newPath + "/" + createdTime + " " + fileName,
+        async function (err) {
+          if (err) {
+            throw err;
+          } else {
+            console.log("Successfully stored new avatar");
+          }
+        }
+      );
 
-      // pathToStore = req.file.path.replace(/\\/g, "\\\\");
-      var pathToStore = path.join("users/images/avatar/", req.file.filename);
+      // var pathToStore = newPath + "/" + createdTime + " " + fileName;
+      var pathToStore = path.join(
+        "users/" + userID + "/",
+        createdTime + " " + fileName
+      );
       pathToStore = pathToStore.replace(/\\/g, "\\\\");
-      // console.log(pathToStore);
 
       const result = await UpdateAvatarPathData(userID, pathToStore);
-      if (result === "FAILED") {
+      if (result === "FAILED")
         return handleResponse(req, res, 412, " DataBase Error ");
-      }
 
       return handleResponse(req, res, 200, { UpdateProfilePicture: "SUCCESS" });
     });
@@ -105,24 +117,12 @@ async function UpdateProfilePicture(req, res) {
   }
 }
 
-// returns a promise which resolves true if file exists:
-function checkFileExists(filepath) {
-  return new Promise((resolve, reject) => {
-    fs.access(filepath, fs.constants.F_OK, (error) => {
-      resolve(!error);
-    });
-  });
-}
-
 // handle Upload New File
 async function UploadNewStoredFile(req, res) {
   try {
     let upload = multer({ storage: storageFile }).single("storedfile");
 
     upload(req, res, async (err) => {
-      // console.log("fisier:");
-      // console.log(req.file);
-
       if (!req.file) {
         console.log(req.file);
         return handleResponse(
@@ -148,8 +148,8 @@ async function UploadNewStoredFile(req, res) {
       const userId = req.body.userId;
       const createdTime = req.body.createdTime;
 
-      const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
-      const newPath = path.join(__dirname, "../../../users/", userId);
+      const oldPath = path.join(__dirname, "../../../../users/tempDir/", fileName);
+      const newPath = path.join(__dirname, "../../../../users/", userId);
 
       try {
         if (!(await checkFileExists(newPath))) {
@@ -242,39 +242,16 @@ async function GetProfilePicture(req, res) {
     const userId = req.body.userId;
     const roomId = req.body.roomId;
 
-    console.log("parametrii sunt:");
-    console.log(userId);
-    console.log(roomId);
-
-    if (userId === null || userId === undefined) {
+    if (userId === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    var currentAvatarPath = "";
-
-    if (roomId == null || roomId == undefined) {
-      const userDetails = await GetUserDetailsData(userId);
-      if (userDetails === "FAILED") {
-        throw new Error("  Err Get User Details  ");
-      }
-      const results = JSON.parse(JSON.stringify(userDetails));
-      if (results[0].Avatar != undefined) {
-        currentAvatarPath = results[0].Avatar;
-      }
-    } else if (userId != null && roomId != null) {
-      const roomDetails = await GetRoomDetails(roomId);
-      if (roomDetails === "FAILED") {
-        throw new Error("  Err Get Room Details  ");
-      }
-      const results = JSON.parse(JSON.stringify(roomDetails));
-      console.log(results);
-      currentAvatarPath = "";
-    }
+    var currentAvatarPath = await extractProfilePicturePath(userId, roomId);
 
     if (currentAvatarPath === "") {
       currentAvatarPath = defaultAvatarPicure;
     } else {
-      currentAvatarPath = path.join(__dirname, "../../../", currentAvatarPath);
+      currentAvatarPath = path.join(__dirname, "../../../../", currentAvatarPath);
     }
 
     var options = {
@@ -289,15 +266,11 @@ async function GetProfilePicture(req, res) {
     if (currentAvatarPath !== null && currentAvatarPath !== "") {
       res.sendFile(currentAvatarPath, options, function (error) {
         if (error) {
-          // throw new Error("  Err send File  ");
-          //return handleResponse(req, res, 410, " Err send File ");
           console.error(error);
           return handleResponse(req, res, 410, "  Err send File  ");
         }
       });
     } else {
-      // throw new Error(" EmptyAvatar ");
-      //return handleResponse(req, res, 513, "EmptyAvatar");
       console.error(" Empty Avatar ");
       return handleResponse(req, res, 410, "  Err send File  ");
     }
@@ -311,11 +284,6 @@ async function GetProfilePicture(req, res) {
 async function GetDocumentContent(req, res) {
   const fileId = req.body.fileId;
   const userId = req.body.userId;
-
-  // var ContentFile = await GetDocumentContentService(fileId, userId);
-  // if (ContentFile === "FAILED") {
-  //   return handleResponse(req, res, 412, " DataBase Error ");
-  // }
 
   ContentFile = [
     { insert: "Hello " },

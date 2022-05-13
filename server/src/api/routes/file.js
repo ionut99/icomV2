@@ -6,7 +6,7 @@ const {
   GetProfilePicture,
   UploadNewStoredFile,
   GetDocumentContent,
-} = require("../controllers/Files");
+} = require("../controllers/Files/Files");
 
 // router.post("/getdocument", authMiddleware, GetDocument);
 // router.post("/geprofilepicture", authMiddleware, GetProfilePicture);
