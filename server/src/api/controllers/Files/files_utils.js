@@ -62,23 +62,6 @@ function jsonStringParse(dataBaseResponse) {
   return result[0];
 }
 
-// function deleteOldFileIfExist(pathTofile){
-// const currentAvatarPath = results[0].Avatar;
-
-//     if (
-//       currentAvatarPath !== null &&
-//       currentAvatarPath !== defaultAvatarPicure
-//     ) {
-//       fs.unlinkSync(currentAvatarPath, function (err) {
-//         if (err) throw err;
-//         // if no error, file has been deleted successfully
-//         console.log("File deleted!");
-//       });
-//     }
-
-// pathToStore = req.file.path.replace(/\\/g, "\\\\");
-// }
-
 module.exports = {
   checkFileExists,
   extractProfilePicturePath,

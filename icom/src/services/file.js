@@ -52,14 +52,16 @@ export const UploadNewStoringFile = async (
 // download file from server
 export const DownloadFileService = async (fileId, userId) => {
   try {
-    return await axios
-      .get(`${REACT_APP_API_URL}/document/download`, {
+    const response = await axios.post(
+      `${REACT_APP_API_URL}/document/download`,
+      {
         fileId,
         userId,
-      })
-      .then((resp) => {
-        download(resp.data, "test-download.jpg");
-      });
+      },
+      { responseType: "blob" }
+    );
+
+    return response;
   } catch (err) {
     return {
       error: true,
