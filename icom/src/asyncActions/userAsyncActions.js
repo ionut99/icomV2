@@ -61,8 +61,6 @@ export const userGetFolderDetails = (folderId, userId) => async (dispatch) => {
   }
 };
 
-//
-
 // handle get ChildFolderList
 export const userSetFolderList = (folderId, userId) => async (dispatch) => {
   if (
@@ -312,4 +310,3 @@ export const AddNewUserAccount =
     // TO DO - display message
     console.log(varVerify);
   };
-

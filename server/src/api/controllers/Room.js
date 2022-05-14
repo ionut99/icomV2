@@ -20,6 +20,8 @@ const {
   // DeleteFolder,
 } = require("../services/Folders");
 
+const { GetRoomMessagesData, GetRoomFolderID } = require("../services/Room");
+
 const { GetAllUsersDataBase } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
@@ -292,6 +294,35 @@ async function GetNOTPartList(req, res) {
   return handleResponse(req, res, 200, { NOTparticipantsRoomList });
 }
 
+// return messages from a room
+async function GetRoomMessages(req, res) {
+  const roomID = req.body.ChannelID;
+
+  if (roomID === null) {
+    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+  }
+
+  var messageRoomList = await GetRoomMessagesData(roomID);
+
+  if (messageRoomList === "FAILED") {
+    console.log("Error get room messages!");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+  // id pentru folderul grupului !!!
+
+  var res_roomId = await GetRoomFolderID(roomID);
+  if (res_roomId === "FAILED") {
+    console.log("Error get room folder Id!");
+    return handleResponse(req, res, 412, " DataBase Error ");
+  }
+
+  const roomId_folder = JSON.parse(JSON.stringify(res_roomId));
+  return handleResponse(req, res, 200, {
+    messageRoomList: messageRoomList,
+    folderId: roomId_folder[0].folderId,
+  });
+}
+
 module.exports = {
   CreateNewRoom,
   DeleteRoom,
@@ -299,4 +330,5 @@ module.exports = {
   AddNewMemberInGroup,
   GetPartList,
   GetNOTPartList,
+  GetRoomMessages,
 };

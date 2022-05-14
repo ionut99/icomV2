@@ -2,11 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const { authMiddleware } = require("../middlewares/Auth");
-const {
-  GetRoomSearchList,
-  GetRoomMessages,
-  InsertNewMessage,
-} = require("../controllers/User");
+const { GetRoomSearchList, InsertNewMessage } = require("../controllers/User");
 
 const {
   CreateNewRoom,
@@ -14,6 +10,7 @@ const {
   CreateNewRoom_Group,
   AddNewMemberInGroup,
   GetPartList,
+  GetRoomMessages,
 } = require("../controllers/Room");
 
 // router.post("/newroom", authMiddleware, CreateNewRoom);

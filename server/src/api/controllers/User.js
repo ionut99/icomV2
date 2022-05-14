@@ -10,8 +10,6 @@ const {
   GetUserDetailsData,
 } = require("../services/User");
 
-const { GetRoomMessagesData, GetRoomFolderID } = require("../services/Room");
-
 // const { InsertNewFolderDataBase } = require("../services/Folders");
 
 const { InsertNewUserAccountData } = require("../services/User");
@@ -131,36 +129,6 @@ async function GetRoomSearchList(req, res) {
     });
 
   return handleResponse(req, res, 200, { search_results });
-}
-
-// return messages from a room
-async function GetRoomMessages(req, res) {
-  const roomID = req.body.ChannelID;
-
-  if (roomID === null) {
-    return handleResponse(req, res, 410, "Invalid Request Parameters ");
-  }
-
-  var messageRoomList = await GetRoomMessagesData(roomID);
-
-  if (messageRoomList === "FAILED") {
-    console.log("Error get room messages!");
-    return handleResponse(req, res, 412, " DataBase Error ");
-  }
-  // id pentru folderul grupului !!!
-
-  var res_roomId = await GetRoomFolderID(roomID);
-  if (res_roomId === "FAILED") {
-    console.log("Error get room folder Id!");
-    return handleResponse(req, res, 412, " DataBase Error ");
-  }
-
-  return handleResponse(req, res, 200, {
-    messageRoomList: messageRoomList,
-    folderId: res_roomId,
-  });
-
-  // need to sort messages
 }
 
 // insert new message in a room
@@ -293,7 +261,6 @@ module.exports = {
   GetUserSearchList,
   GetRoomSearchList,
   GetUsers,
-  GetRoomMessages,
   InsertNewMessage,
   GetUserDetails,
   InserNewUserAccount,
