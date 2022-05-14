@@ -15,6 +15,6 @@ const {
 router.post("/getprofilepicture", GetProfilePicture);
 router.post("/newStoragefile", UploadNewStoredFile);
 router.post("/getdocumentcontent", GetDocumentContent);
-router.get("/download", DownLoadFile);
+router.post("/download", DownLoadFile);
 
 module.exports = router;

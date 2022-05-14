@@ -235,33 +235,7 @@ export const UpdateProfilePictureData = async (userID, NewPicture) => {
   }
 };
 
-// uploading File for Storing
-export const UploadNewStoringFile = async (
-  folderId,
-  userId,
-  createdTime,
-  FILE
-) => {
-  const formdata = new FormData();
-  formdata.append("storedfile", FILE);
-  formdata.append("folderId", folderId);
-  formdata.append("userId", userId);
-  formdata.append("createdTime", createdTime);
-  try {
-    return await axios.post(
-      `${REACT_APP_API_URL}/document/newStoragefile`,
-      formdata,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
-  } catch (err) {
-    return {
-      error: true,
-      response: err.response,
-    };
-  }
-};
+
 
 export const AddUserAccountDataBase = async (
   userSurname,

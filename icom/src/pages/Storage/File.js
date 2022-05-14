@@ -10,6 +10,8 @@ import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 import * as FaIcons from "react-icons/fa";
 
+import moment from "moment";
+
 import { DownloadFileFromServer } from "../../asyncActions/fileAsyncActions";
 
 function File({ file }) {
@@ -20,18 +22,30 @@ function File({ file }) {
 
   const [authName, setauthName] = useState("");
   const [optionButton, setOptionButton] = useState(false);
+  console.log(file);
 
-  const CreateFileDate = new Date(Date.parse(file.createdTime));
-  const finalFileDate =
-    monthNames[CreateFileDate.getMonth()] +
-    " " +
-    CreateFileDate.getDate() +
-    " " +
-    CreateFileDate.getHours() +
-    ":" +
-    CreateFileDate.getMinutes() +
-    ":" +
-    CreateFileDate.getSeconds();
+  // const CreateFileDate = Date.parse(file.createdTime);
+  // const CreateFileDate = moment(Date.parse(file.CreateFileDate)).format(
+  //   "MM/DD/YYYY hh:MM"
+  // );
+  const CreateFileDate = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+  }).format(file.CreateFileDate);
+  // const finalFileDate =
+  //   monthNames[CreateFileDate.getMonth()] +
+  //   " " +
+  //   CreateFileDate.getDate() +
+  //   " " +
+  //   CreateFileDate.getHours() +
+  //   ":" +
+  //   CreateFileDate.getMinutes() +
+  //   ":" +
+  //   CreateFileDate.getSeconds();
 
   useEffect(() => {
     let isMounted = true;
@@ -101,7 +115,7 @@ function File({ file }) {
             <p>{`  ${file.fileName}`}</p>
           </div>
           <div className="folder-date">
-            <p>{` ${finalFileDate}`}</p>
+            <p>{` ${CreateFileDate}`}</p>
           </div>
           <div className="folder-author">{` ${authName}`}</div>
         </div>
