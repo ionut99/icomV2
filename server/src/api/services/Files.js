@@ -10,12 +10,13 @@ function InsertNewFileDataBase(
   folderId,
   createdTime,
   userId,
-  size
+  size,
+  systemPath
 ) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      `INSERT INTO file (fileId, type, fileName, folderId, createdTime, userId, size) VALUES ('${fileId}', '${type}', '${fileName}', '${folderId}', '${createdTime}', '${userId}', '${size}')`,
+      `INSERT INTO file (fileId, type, fileName, folderId, createdTime, userId, size, systemPath) VALUES ('${fileId}', '${type}', '${fileName}', '${folderId}', '${createdTime}', '${userId}', '${size}', '${systemPath}')`,
       (err, result) => {
         if (err) {
           return reject(err);
@@ -94,10 +95,28 @@ function GetDocumentContentService(fileId, userId) {
   });
 }
 
+function GetFileDetailsFromDataBase(fileId, userId) {
+  const connection = new mysql.createConnection(DataBaseConfig);
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM file WHERE file.fileId = '${fileId}'`,
+      // to verify if user have acces at that file
+      (err, result) => {
+        if (err) {
+          return resolve("FAILED");
+        }
+        return resolve(result);
+      }
+    );
+    connection.end();
+  });
+}
+
 module.exports = {
   InsertNewFileDataBase,
   InsertNewFileRelationDataBase,
   GetSharedPrivateFiles,
   GetSharedGroupFiles,
   GetDocumentContentService,
+  GetFileDetailsFromDataBase,
 };

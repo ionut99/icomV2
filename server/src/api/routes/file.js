@@ -6,6 +6,7 @@ const {
   GetProfilePicture,
   UploadNewStoredFile,
   GetDocumentContent,
+  DownLoadFile,
 } = require("../controllers/Files/Files");
 
 // router.post("/getdocument", authMiddleware, GetDocument);
@@ -14,5 +15,6 @@ const {
 router.post("/getprofilepicture", GetProfilePicture);
 router.post("/newStoragefile", UploadNewStoredFile);
 router.post("/getdocumentcontent", GetDocumentContent);
+router.get("/download", DownLoadFile);
 
 module.exports = router;

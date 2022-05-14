@@ -1,4 +1,4 @@
-import { UploadNewStoringFile } from "../services/user";
+import { UploadNewStoringFile, DownloadFileService } from "../services/file";
 import { addChildFile } from "../actions/userActions";
 
 // handle upload new file
@@ -26,3 +26,14 @@ export const UploadFileForStoring =
       console.log("Erro add File to database");
     }
   };
+
+//
+
+//
+
+// handle download file
+export const DownloadFileFromServer = (fileId, userId) => async (dispatch) => {
+  const res_addFile = await DownloadFileService(fileId, userId);
+  console.log(res_addFile);
+  // verificare raspuns
+};
