@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gazdă: 127.0.0.1
--- Timp de generare: mai 07, 2022 la 07:41 PM
+-- Timp de generare: mai 14, 2022 la 12:23 PM
 -- Versiune server: 10.4.18-MariaDB
 -- Versiune PHP: 8.0.3
 
@@ -34,17 +34,16 @@ CREATE TABLE `file` (
   `folderId` varchar(255) DEFAULT NULL,
   `createdTime` varchar(255) NOT NULL,
   `userId` varchar(255) NOT NULL,
-  `size` int(11) NOT NULL
+  `size` int(11) NOT NULL,
+  `systemPath` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Eliminarea datelor din tabel `file`
 --
 
-INSERT INTO `file` (`fileId`, `type`, `fileName`, `folderId`, `createdTime`, `userId`, `size`) VALUES
-('3eaad642-2e1d-475f-99a0-0b514d8d4281', 1, 'ft-cartoonnetwork.jpg', 'root', 'Sat, 07 May 2022 17:30:52 GMT', '780ef1c3-280a-437b-ad23-e1cae38605ec', 266343),
-('515a7fec-0714-435a-8916-f2e7cbe8899d', 1, 'cover.jpg', '4aae8b8e-3ca2-4ca5-ba18-e1d6606c39fd', 'Sat, 07 May 2022 17:34:33 GMT', '780ef1c3-280a-437b-ad23-e1cae38605ec', 963371),
-('b4519ac9-9ce9-4cb2-857e-d0d3c2051816', 37, 'Anexa II.35 - Plan invatamant master IAAS 2022-2024.pdf', '4aae8b8e-3ca2-4ca5-ba18-e1d6606c39fd', 'Sat, 07 May 2022 17:35:13 GMT', 'a7cded9d-38b2-49fe-bf16-103891a2d5f3', 507234);
+INSERT INTO `file` (`fileId`, `type`, `fileName`, `folderId`, `createdTime`, `userId`, `size`, `systemPath`) VALUES
+('731b9251-d79a-4143-bd58-f1bcabb0db70', 8, 'model_homepage.png', '62ba3064-7346-4dd9-b1eb-4ea4637b36d4', '1652521111914', 'a7cded9d-38b2-49fe-bf16-103891a2d5f3', 56472, 'users\\a7cded9d-38b2-49fe-bf16-103891a2d5f3\\1652521111914 model_homepage.png');
 
 -- --------------------------------------------------------
 
@@ -64,9 +63,7 @@ CREATE TABLE `filesusers` (
 --
 
 INSERT INTO `filesusers` (`ID`, `fileResourceId`, `userBeneficiaryId`, `roomBeneficiaryId`) VALUES
-(30, '3eaad642-2e1d-475f-99a0-0b514d8d4281', '780ef1c3-280a-437b-ad23-e1cae38605ec', 'null'),
-(31, '515a7fec-0714-435a-8916-f2e7cbe8899d', '780ef1c3-280a-437b-ad23-e1cae38605ec', '4183db19-3f4e-4ecb-94c5-25855d4f391a'),
-(32, 'b4519ac9-9ce9-4cb2-857e-d0d3c2051816', 'a7cded9d-38b2-49fe-bf16-103891a2d5f3', '4183db19-3f4e-4ecb-94c5-25855d4f391a');
+(57, '731b9251-d79a-4143-bd58-f1bcabb0db70', 'a7cded9d-38b2-49fe-bf16-103891a2d5f3', 'd12ca86c-a732-46c5-9833-76dadafed460');
 
 -- --------------------------------------------------------
 
@@ -88,10 +85,10 @@ CREATE TABLE `folders` (
 --
 
 INSERT INTO `folders` (`folderId`, `Name`, `parentID`, `userID`, `createdTime`, `path`) VALUES
-('30132a75-2c70-49ed-b45c-cfe3bc831fe4', 'grup Nou 2', 'root', '780ef1c3-280a-437b-ad23-e1cae38605ec', 'Sat May 07 2022 20:39:58 GMT+0300 (Eastern European Summer Time)', '[]'),
-('4aae8b8e-3ca2-4ca5-ba18-e1d6606c39fd', 'Miu Adriana # Pavel Ionut', 'root', '780ef1c3-280a-437b-ad23-e1cae38605ec', 'Sat May 07 2022 20:29:12 GMT+0300 (Eastern European Summer Time)', '[]'),
-('54ec1108-1ca5-4ef9-bfc2-0bfc97bec01a', 'grup Nou', 'root', '780ef1c3-280a-437b-ad23-e1cae38605ec', 'Sat May 07 2022 20:37:08 GMT+0300 (Eastern European Summer Time)', '[]'),
-('fd2ba102-bbba-4baf-9bb8-1865cf97d6f9', 'folderas', '4aae8b8e-3ca2-4ca5-ba18-e1d6606c39fd', '780ef1c3-280a-437b-ad23-e1cae38605ec', 'Sat May 07 2022 20:34:55 GMT+0300 (Eastern European Summer Time)', '[{\"Name\":\"Miu Adriana # Pavel Ionut\",\"folderId\":\"4aae8b8e-3ca2-4ca5-ba18-e1d6606c39fd\"}]');
+('13a29ca1-060c-45b2-af4e-2596b9f065a8', 'Neagoe Donia # Pavel Ionut', 'root', '780ef1c3-280a-437b-ad23-e1cae38605ec', 'Fri May 13 2022 16:08:22 GMT+0300 (Eastern European Summer Time)', '[]'),
+('1e0e8535-ede7-40cd-81d8-ff8b0eb897a6', 'poze', '13a29ca1-060c-45b2-af4e-2596b9f065a8', '780ef1c3-280a-437b-ad23-e1cae38605ec', 'Fri May 13 2022 20:46:41 GMT+0300 (Eastern European Summer Time)', '[{\"Name\":\"Neagoe Donia # Pavel Ionut\",\"folderId\":\"13a29ca1-060c-45b2-af4e-2596b9f065a8\"}]'),
+('62ba3064-7346-4dd9-b1eb-4ea4637b36d4', 'Miu Adriana # Pavel Ionut', 'root', '780ef1c3-280a-437b-ad23-e1cae38605ec', 'Thu May 12 2022 22:23:10 GMT+0300 (Eastern European Summer Time)', '[]'),
+('91f10841-8355-4639-87e8-ee810127f946', 'fisiere', '13a29ca1-060c-45b2-af4e-2596b9f065a8', '780ef1c3-280a-437b-ad23-e1cae38605ec', 'Fri May 13 2022 20:45:42 GMT+0300 (Eastern European Summer Time)', '[{\"Name\":\"Neagoe Donia # Pavel Ionut\",\"folderId\":\"13a29ca1-060c-45b2-af4e-2596b9f065a8\"}]');
 
 -- --------------------------------------------------------
 
@@ -111,10 +108,10 @@ CREATE TABLE `foldersusers` (
 --
 
 INSERT INTO `foldersusers` (`ID`, `folderIdResource`, `userIdBeneficiary`, `RoomIdBeneficiary`) VALUES
-(142, '4aae8b8e-3ca2-4ca5-ba18-e1d6606c39fd', NULL, '4183db19-3f4e-4ecb-94c5-25855d4f391a'),
-(143, 'fd2ba102-bbba-4baf-9bb8-1865cf97d6f9', '780ef1c3-280a-437b-ad23-e1cae38605ec', '4183db19-3f4e-4ecb-94c5-25855d4f391a'),
-(144, '54ec1108-1ca5-4ef9-bfc2-0bfc97bec01a', NULL, '5bc521be-a692-4ac7-9994-b79b5096c835'),
-(145, '30132a75-2c70-49ed-b45c-cfe3bc831fe4', NULL, '3e32aa4d-4d17-4601-9cf1-5b22c76bb5ac');
+(171, '62ba3064-7346-4dd9-b1eb-4ea4637b36d4', NULL, 'd12ca86c-a732-46c5-9833-76dadafed460'),
+(172, '13a29ca1-060c-45b2-af4e-2596b9f065a8', NULL, '5f12e5e5-b1bf-4758-968a-0e4f8c4d3a42'),
+(173, '91f10841-8355-4639-87e8-ee810127f946', '780ef1c3-280a-437b-ad23-e1cae38605ec', '5f12e5e5-b1bf-4758-968a-0e4f8c4d3a42'),
+(174, '1e0e8535-ede7-40cd-81d8-ff8b0eb897a6', '780ef1c3-280a-437b-ad23-e1cae38605ec', '5f12e5e5-b1bf-4758-968a-0e4f8c4d3a42');
 
 -- --------------------------------------------------------
 
@@ -137,8 +134,18 @@ CREATE TABLE `iusers` (
 --
 
 INSERT INTO `iusers` (`userId`, `Surname`, `Name`, `Email`, `Password`, `IsAdmin`, `Avatar`) VALUES
-('780ef1c3-280a-437b-ad23-e1cae38605ec', 'Pavel', 'Ionut', 'ionut.pavel@mta.ro', 'parola', 1, 'users\\images\\avatar\\1651905335141-AEBD8603.JPG'),
-('a7cded9d-38b2-49fe-bf16-103891a2d5f3', 'Miu', 'Adriana', 'adriana.miu@mta.ro', 'parola', 1, 'users\\images\\avatar\\1651937437531-IMG_33.JPG');
+('3565f250-f5d2-4de3-beea-7ee9efb2a587', 'Cazamir', 'Teodor', 'teodor.cazamir@mta.ro', 'parola', 1, NULL),
+('780ef1c3-280a-437b-ad23-e1cae38605ec', 'Pavel', 'Ionut', 'ionut.pavel@mta.ro', 'parola', 1, 'users\\780ef1c3-280a-437b-ad23-e1cae38605ec\\1652463504436 profil-pisica.jpg'),
+('913166e3-cd4c-4ec5-9fd0-fda16c4cb0ab', 'Fuiorea', 'Daniela', 'daniela.fuiorea@mta.ro', 'parola', 0, NULL),
+('94a1ff1c-ac1e-4ef2-9e75-9b1d5e486e53', 'Popa', 'Cosmin', 'cosmin.popa@mta.ro', 'parola', 0, NULL),
+('a7cded9d-38b2-49fe-bf16-103891a2d5f3', 'Miu', 'Adriana', 'adriana.miu@mta.ro', 'parola', 1, 'users\\a7cded9d-38b2-49fe-bf16-103891a2d5f3\\1652464238559 IMG_33.JPG'),
+('aa2f78cc-4117-4c3d-808d-75774ce732d0', 'Petruse', 'Anamaria', 'ana.petruse@mta.ro', 'parola', 1, NULL),
+('ac6849f7-216f-48bb-a629-ea7b95b2dfab', 'Bursuc', 'Alex', 'bursuc.alex@mta.ro', 'parola', 1, NULL),
+('c217d7bd-491d-4d74-ae1d-dea2e4af6f3e', 'Pilipautan', 'Denissa', 'denissa.pilipautan@mta.ro', 'parola', 1, NULL),
+('d9192493-e340-4f05-a302-f7e9438bd3e1', 'Cazamir', 'Teodor', 'teodor.cazamir@mta.ro', 'parola', 1, NULL),
+('dadacd16-0f5b-42f1-9c45-e2a3a06dcc29', 'Neagoe', 'Donia', 'donia.neagoe@mta.ro', 'parola', 1, NULL),
+('ec68cc69-8a41-455e-88d8-dd84ed548861', 'Marghescu', 'Bogdan', 'bogdan.marghescu@mta.ro', 'parola', 1, NULL),
+('fddb0e4b-0239-4d84-85a6-14cbd782c16a', 'Cojocaru', 'Marian', 'marian.cojocaru@mta.ro', 'parola', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -150,8 +157,17 @@ CREATE TABLE `messages` (
   `ID_message` varchar(100) NOT NULL,
   `RoomID` varchar(100) NOT NULL,
   `senderID` varchar(255) NOT NULL,
-  `Body` longtext NOT NULL
+  `Body` longtext NOT NULL,
+  `createdTime` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Eliminarea datelor din tabel `messages`
+--
+
+INSERT INTO `messages` (`ID_message`, `RoomID`, `senderID`, `Body`, `createdTime`) VALUES
+('95c035ab-d2a7-453b-be5f-8a6f1312bb55', 'd12ca86c-a732-46c5-9833-76dadafed460', '780ef1c3-280a-437b-ad23-e1cae38605ec', 'buna', 'Thu May 12 2022 22:23:17 GMT+0300 (Eastern European Summer Time)'),
+('c9e7648e-40ed-400b-9974-925d336a68af', 'd12ca86c-a732-46c5-9833-76dadafed460', 'a7cded9d-38b2-49fe-bf16-103891a2d5f3', 'buna si tie ', 'Thu May 12 2022 22:26:36 GMT+0300 (Eastern European Summer Time)');
 
 -- --------------------------------------------------------
 
@@ -170,11 +186,10 @@ CREATE TABLE `participants` (
 --
 
 INSERT INTO `participants` (`ID`, `UserID`, `RoomID`) VALUES
-(585, 'a7cded9d-38b2-49fe-bf16-103891a2d5f3', '4183db19-3f4e-4ecb-94c5-25855d4f391a'),
-(586, '780ef1c3-280a-437b-ad23-e1cae38605ec', '4183db19-3f4e-4ecb-94c5-25855d4f391a'),
-(587, '780ef1c3-280a-437b-ad23-e1cae38605ec', '5bc521be-a692-4ac7-9994-b79b5096c835'),
-(588, 'a7cded9d-38b2-49fe-bf16-103891a2d5f3', '5bc521be-a692-4ac7-9994-b79b5096c835'),
-(589, '780ef1c3-280a-437b-ad23-e1cae38605ec', '3e32aa4d-4d17-4601-9cf1-5b22c76bb5ac');
+(605, 'a7cded9d-38b2-49fe-bf16-103891a2d5f3', 'd12ca86c-a732-46c5-9833-76dadafed460'),
+(606, '780ef1c3-280a-437b-ad23-e1cae38605ec', 'd12ca86c-a732-46c5-9833-76dadafed460'),
+(607, 'dadacd16-0f5b-42f1-9c45-e2a3a06dcc29', '5f12e5e5-b1bf-4758-968a-0e4f8c4d3a42'),
+(608, '780ef1c3-280a-437b-ad23-e1cae38605ec', '5f12e5e5-b1bf-4758-968a-0e4f8c4d3a42');
 
 -- --------------------------------------------------------
 
@@ -185,17 +200,17 @@ INSERT INTO `participants` (`ID`, `UserID`, `RoomID`) VALUES
 CREATE TABLE `room` (
   `ID` varchar(100) NOT NULL,
   `Name` varchar(300) NOT NULL,
-  `Private` tinyint(1) NOT NULL
+  `Private` tinyint(1) NOT NULL,
+  `Avatar` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Eliminarea datelor din tabel `room`
 --
 
-INSERT INTO `room` (`ID`, `Name`, `Private`) VALUES
-('3e32aa4d-4d17-4601-9cf1-5b22c76bb5ac', 'grup Nou 2', 0),
-('4183db19-3f4e-4ecb-94c5-25855d4f391a', 'Miu Adriana # Pavel Ionut', 1),
-('5bc521be-a692-4ac7-9994-b79b5096c835', 'grup Nou', 0);
+INSERT INTO `room` (`ID`, `Name`, `Private`, `Avatar`) VALUES
+('5f12e5e5-b1bf-4758-968a-0e4f8c4d3a42', 'Neagoe Donia # Pavel Ionut', 1, NULL),
+('d12ca86c-a732-46c5-9833-76dadafed460', 'Miu Adriana # Pavel Ionut', 1, NULL);
 
 --
 -- Indexuri pentru tabele eliminate
@@ -271,19 +286,19 @@ ALTER TABLE `room`
 -- AUTO_INCREMENT pentru tabele `filesusers`
 --
 ALTER TABLE `filesusers`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT pentru tabele `foldersusers`
 --
 ALTER TABLE `foldersusers`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=175;
 
 --
 -- AUTO_INCREMENT pentru tabele `participants`
 --
 ALTER TABLE `participants`
-  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=590;
+  MODIFY `ID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=609;
 
 --
 -- Constrângeri pentru tabele eliminate
