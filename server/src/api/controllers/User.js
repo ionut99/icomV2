@@ -3,6 +3,11 @@ const { handleResponse } = require("../helpers/utils");
 const { is } = require("express/lib/request");
 
 const {
+  generateOfuscatedPassword,
+  generateRandomSalt,
+} = require("../helpers/user_utils");
+
+const {
   GetSearchUsersList,
   GetAllUsersDataBase,
   GetUserRoomsList,
@@ -199,7 +204,8 @@ async function InserNewUserAccount(req, res) {
   const isAdmin = req.body.isAdmin;
 
   const userId = uui.v4();
-  const password = "parola";
+  const newsalt = generateRandomSalt(64);
+  const ofuscatedPassword = generateOfuscatedPassword("parola", newsalt);
 
   console.log("User role:");
   console.log(isAdmin);
@@ -225,7 +231,8 @@ async function InserNewUserAccount(req, res) {
     userSurname,
     userName,
     email,
-    password,
+    ofuscatedPassword,
+    newsalt,
     isAdminInt
   );
 
@@ -233,26 +240,6 @@ async function InserNewUserAccount(req, res) {
     console.log("FAILED - Add New User Account ");
     return handleResponse(req, res, 412, " DataBase Error ");
   }
-
-  // const rootFolderId = uui.v4();
-  // const RootFolderName = "My Drive" + " # " + userName + " " + userSurname;
-  // const path = [];
-  // const createdAt = new Date();
-
-  // create root folder
-  // const res_add_root_folder = await InsertNewFolderDataBase(
-  //   rootFolderId,
-  //   RootFolderName,
-  //   null,
-  //   userId,
-  //   path,
-  //   createdAt
-  // );
-
-  // if (res_add_root_folder === "FAILED") {
-  //   console.log("Error storage folder configuration!");
-  //   return handleResponse(req, res, 412, " DataBase Error ");
-  // }
 
   return handleResponse(req, res, 200, { AddNewUserAccount: "SUCCESS" });
 }

@@ -9,7 +9,7 @@ const {
   InserNewUserAccount,
 } = require("../controllers/User");
 const { GetNOTPartList } = require("../controllers/Room");
-const { UpdateProfilePicture } = require("../controllers/Files/Files");
+const { UpdateProfilePicture } = require("../controllers/Files");
 const { authMiddleware } = require("../middlewares/Auth");
 
 router.post("/signin", SignInUser);

@@ -92,9 +92,8 @@ function File({ file }) {
   }, [optionButton]);
 
   const handleDownloadFile = () => {
-    console.log(file.fileId);
     // function for download File
-    dispatch(DownloadFileFromServer(file.fileId, user.userId));
+    dispatch(DownloadFileFromServer(file, user.userId));
   };
 
   return (
