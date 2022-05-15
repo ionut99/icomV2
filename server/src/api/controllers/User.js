@@ -207,9 +207,6 @@ async function InserNewUserAccount(req, res) {
   const newsalt = generateRandomSalt(64);
   const ofuscatedPassword = generateOfuscatedPassword("parola", newsalt);
 
-  console.log("User role:");
-  console.log(isAdmin);
-
   if (
     userSurname === null ||
     userSurname === undefined ||

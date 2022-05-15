@@ -296,31 +296,36 @@ async function GetNOTPartList(req, res) {
 
 // return messages from a room
 async function GetRoomMessages(req, res) {
-  const roomID = req.body.ChannelID;
+  try {
+    const roomID = req.body.ChannelID;
 
-  if (roomID === null) {
-    return handleResponse(req, res, 410, "Invalid Request Parameters ");
-  }
+    if (roomID === null) {
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    }
 
-  var messageRoomList = await GetRoomMessagesData(roomID);
+    var messageRoomList = await GetRoomMessagesData(roomID);
 
-  if (messageRoomList === "FAILED") {
-    console.log("Error get room messages!");
+    if (messageRoomList === "FAILED") {
+      console.log("Error get room messages!");
+      return handleResponse(req, res, 412, " DataBase Error ");
+    }
+    // id pentru folderul grupului !!!
+
+    var res_roomId = await GetRoomFolderID(roomID);
+    if (res_roomId === "FAILED") {
+      console.log("Error get room folder Id!");
+      return handleResponse(req, res, 412, " DataBase Error ");
+    }
+
+    const roomId_folder = JSON.parse(JSON.stringify(res_roomId));
+    return handleResponse(req, res, 200, {
+      messageRoomList: messageRoomList,
+      folderId: roomId_folder[0].folderId,
+    });
+  } catch (err) {
+    console.error(err);
     return handleResponse(req, res, 412, " DataBase Error ");
   }
-  // id pentru folderul grupului !!!
-
-  var res_roomId = await GetRoomFolderID(roomID);
-  if (res_roomId === "FAILED") {
-    console.log("Error get room folder Id!");
-    return handleResponse(req, res, 412, " DataBase Error ");
-  }
-
-  const roomId_folder = JSON.parse(JSON.stringify(res_roomId));
-  return handleResponse(req, res, 200, {
-    messageRoomList: messageRoomList,
-    folderId: roomId_folder[0].folderId,
-  });
 }
 
 module.exports = {

@@ -12,6 +12,11 @@ const {
   handleResponse,
 } = require("../helpers/utils");
 
+const {
+  generateOfuscatedPassword,
+  generateRandomSalt,
+} = require("../helpers/user_utils");
+
 // validate user credentials
 async function SignInUser(req, res) {
   const user = req.body.email;
@@ -26,6 +31,15 @@ async function SignInUser(req, res) {
     const userData_copy = await GetUserFromDataBase(user, pwd);
 
     if (!userData_copy[0]) {
+      return handleResponse(req, res, 401, null, "Email is Wrong.");
+    }
+
+    const userSalt = userData_copy[0].Salt;
+
+    // calculate hashed password and compare with data base
+    const ofuscatedPassword = generateOfuscatedPassword(pwd, userSalt);
+
+    if (ofuscatedPassword !== userData_copy[0].Password) {
       return handleResponse(req, res, 401, null, "Email or Password is Wrong.");
     }
 

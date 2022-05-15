@@ -2,12 +2,12 @@ const mysql = require("mysql");
 
 const { DataBaseConfig } = require("../../config/dataBase");
 
-function GetUserFromDataBase(email, password) {
+function GetUserFromDataBase(email) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT * FROM IUsers WHERE email = ? AND password = ?",
-      [email, password],
+      "SELECT * FROM IUsers WHERE email = ?",
+      [email],
       (err, result) => {
         if (err) {
           return reject(err);
