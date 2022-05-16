@@ -1,11 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
-// import groupAvatar from "../../images/group.png";
-import "./search.css";
 
+// import groupAvatar from "../../images/group.png";
 import SearchService from "./searchService.js";
 import * as AiIcons from "react-icons/ai";
 import Avatar from "./Avatar";
+import "./search.css";
 
 function PersonList() {
   const chatObj = useSelector((state) => state.chatRedu);
