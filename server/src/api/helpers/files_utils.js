@@ -4,7 +4,7 @@ const {
   GetUserDetailsData,
   GetRoomDetails,
   GetParticipantFromPrivateConversation,
-} = require("../../services/User");
+} = require("../services/User");
 
 // returns a promise which resolves true if file exists:
 function checkFileExists(filepath) {

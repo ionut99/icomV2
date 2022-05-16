@@ -167,12 +167,13 @@ function InsertNewUserAccountData(
   userName,
   email,
   password,
+  salt,
   isAdmin
 ) {
   const connection = new mysql.createConnection(DataBaseConfig);
   return new Promise((resolve) => {
     connection.query(
-      `INSERT INTO iusers (userId, Surname, Name, Email, Password, IsAdmin, Avatar) VALUES ('${userId}', '${userSurname}', '${userName}', '${email}', '${password}', '${isAdmin}', NULL)`,
+      `INSERT INTO iusers (userId, Surname, Name, Email, Salt, Password, IsAdmin, Avatar) VALUES ('${userId}', '${userSurname}', '${userName}', '${email}','${salt}', '${password}', '${isAdmin}', NULL)`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");

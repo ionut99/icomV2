@@ -20,48 +20,56 @@ const {
 const { GetUserByID } = require("../services/Auth");
 
 async function AddNewFolder(req, res) {
-  const name = req.body.name;
-  const parentId = req.body.parentId;
-  const userId = req.body.userId;
-  const path = req.body.path;
-  const createdAt = new Date();
+  try {
+    const name = req.body.name;
+    const parentId = req.body.parentId;
+    const userId = req.body.userId;
+    const path = req.body.path;
+    const createdAt = new Date();
 
-  if (name === undefined || userId === undefined)
-    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    if (name === undefined || userId === undefined)
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
 
-  const folderId = uui.v4();
+    const folderId = uui.v4();
 
-  var result = await InsertNewFolderDataBase(
-    folderId,
-    name,
-    parentId,
-    userId,
-    path,
-    createdAt
-  );
-  if (result === "FAILED") {
-    console.log("Error storage folder configuration!");
-    return handleResponse(req, res, 412, " DataBase Error ");
-  }
-
-  // de adaugat si roomId pentru folderele care sunt create la comun
-  // adica verificam parentId
-  if (parentId !== "root" && typeof path === "object" && path.length > 0) {
-    const parentFolder = await GetFolderDetails(parentId);
-    if (parentFolder === "FAILED") {
-      console.log("Error get details about folder!");
+    var result = await InsertNewFolderDataBase(
+      folderId,
+      name,
+      parentId,
+      userId,
+      path,
+      createdAt
+    );
+    if (result === "FAILED") {
+      console.log("Error storage folder configuration!");
       return handleResponse(req, res, 412, " DataBase Error ");
     }
 
-    if (parentFolder[0].RoomIdBeneficiary !== null) {
-      result = await InsertFolderUserRelationDataBase(
-        folderId,
-        userId,
-        parentFolder[0].RoomIdBeneficiary
-      );
-      if (result === "FAILED") {
-        console.log("Error storage folder configuration!");
+    // de adaugat si roomId pentru folderele care sunt create la comun
+    // adica verificam parentId
+    if (parentId !== "root" && typeof path === "object" && path.length > 0) {
+      const parentFolder = await GetFolderDetails(parentId);
+      if (parentFolder === "FAILED") {
+        console.log("Error get details about folder!");
         return handleResponse(req, res, 412, " DataBase Error ");
+      }
+
+      if (parentFolder[0].RoomIdBeneficiary !== null) {
+        result = await InsertFolderUserRelationDataBase(
+          folderId,
+          userId,
+          parentFolder[0].RoomIdBeneficiary
+        );
+        if (result === "FAILED") {
+          console.log("Error storage folder configuration!");
+          return handleResponse(req, res, 412, " DataBase Error ");
+        }
+      } else {
+        result = await InsertFolderUserRelationDataBase(folderId, userId, null);
+        if (result === "FAILED") {
+          console.log("Error storage folder configuration!");
+          return handleResponse(req, res, 412, " DataBase Error ");
+        }
       }
     } else {
       result = await InsertFolderUserRelationDataBase(folderId, userId, null);
@@ -70,112 +78,128 @@ async function AddNewFolder(req, res) {
         return handleResponse(req, res, 412, " DataBase Error ");
       }
     }
-  } else {
-    result = await InsertFolderUserRelationDataBase(folderId, userId, null);
-    if (result === "FAILED") {
-      console.log("Error storage folder configuration!");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
-  }
 
-  return handleResponse(req, res, 200, {
-    AddNewFolder: "SUCCESS",
-    folderId: folderId,
-    createdTime: createdAt,
-  });
+    return handleResponse(req, res, 200, {
+      AddNewFolder: "SUCCESS",
+      folderId: folderId,
+      createdTime: createdAt,
+    });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 412, {
+      AddNewFolder: "FAILED",
+      folderId: null,
+      createdTime: null,
+    });
+  }
 }
 
 // Get Folder
 async function GetFolderDataBase(req, res) {
-  const folderId = req.body.folderId;
-  const userId = req.body.userId;
+  try {
+    const folderId = req.body.folderId;
+    const userId = req.body.userId;
 
-  if (folderId === undefined || userId === undefined)
-    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    if (folderId === undefined || userId === undefined)
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
 
-  var folderObject = await GetFolderDetails(folderId);
+    var folderObject = await GetFolderDetails(folderId);
 
-  if (folderObject === "FAILED") {
-    return handleResponse(req, res, 412, " DataBase Error ");
+    if (folderObject === "FAILED") {
+      return handleResponse(req, res, 412, " DataBase Error ");
+    }
+
+    return handleResponse(req, res, 200, { folderObject });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 412, " Failed to get folder details! ");
   }
-
-  return handleResponse(req, res, 200, { folderObject });
 }
 
 // Get Child Folder List
 async function GetChildFolderList(req, res) {
-  const parentId = req.body.parentId;
-  const userId = req.body.userId;
+  try {
+    const parentId = req.body.parentId;
+    const userId = req.body.userId;
 
-  var userDetails = await GetUserByID(userId);
-  var userName = userDetails[0].Surname + " " + userDetails[0].Name;
+    var userDetails = await GetUserByID(userId);
+    var userName = userDetails[0].Surname + " " + userDetails[0].Name;
 
-  if (parentId === undefined || userId === undefined) {
-    return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    if (parentId === undefined || userId === undefined) {
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    }
+
+    var userFolderList = [];
+
+    var sharedGroupFoldersList = await GetSharedGroupFolders(userId, parentId);
+    if (sharedGroupFoldersList === "FAILED") {
+      return handleResponse(req, res, 412, " DataBase Error ");
+    }
+
+    sharedGroupFoldersList.map((x) => {
+      const sharedGroupFolder = { ...x };
+
+      sharedGroupFolder.Name = sharedGroupFolder.Name.replace(userName, "");
+      sharedGroupFolder.Name = sharedGroupFolder.Name.replace("#", "");
+
+      userFolderList.push(sharedGroupFolder);
+    });
+
+    // private folders
+    var userPrivateFolderList = await GetSharedPrivateFolders(userId, parentId);
+    if (userPrivateFolderList === "FAILED") {
+      return handleResponse(req, res, 412, " DataBase Error ");
+    }
+
+    userPrivateFolderList.map((x) => {
+      const sharedFolder = { ...x };
+      userFolderList.push(sharedFolder);
+    });
+
+    return handleResponse(req, res, 200, { userFolderList });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 412, " Failed to fetch child folder list ");
   }
-
-  var userFolderList = [];
-
-  var sharedGroupFoldersList = await GetSharedGroupFolders(userId, parentId);
-  if (sharedGroupFoldersList === "FAILED") {
-    return handleResponse(req, res, 412, " DataBase Error ");
-  }
-
-  sharedGroupFoldersList.map((x) => {
-    const sharedGroupFolder = { ...x };
-
-    sharedGroupFolder.Name = sharedGroupFolder.Name.replace(userName, "");
-    sharedGroupFolder.Name = sharedGroupFolder.Name.replace("#", "");
-
-    userFolderList.push(sharedGroupFolder);
-  });
-
-  // private folders
-  var userPrivateFolderList = await GetSharedPrivateFolders(userId, parentId);
-  if (userPrivateFolderList === "FAILED") {
-    return handleResponse(req, res, 412, " DataBase Error ");
-  }
-
-  userPrivateFolderList.map((x) => {
-    const sharedFolder = { ...x };
-    userFolderList.push(sharedFolder);
-  });
-
-  return handleResponse(req, res, 200, { userFolderList });
 }
 
 // Get Child Folder List
 async function GetChildFilesList(req, res) {
-  const folderId = req.body.folderId;
-  const userId = req.body.userId;
+  try {
+    const folderId = req.body.folderId;
+    const userId = req.body.userId;
 
-  var userFileList = [];
+    var userFileList = [];
 
-  // group files
+    // group files
 
-  var sharedGroupFileList = await GetSharedGroupFiles(folderId, userId);
-  if (sharedGroupFileList === "FAILED") {
-    return handleResponse(req, res, 412, " DataBase Error ");
+    var sharedGroupFileList = await GetSharedGroupFiles(folderId, userId);
+    if (sharedGroupFileList === "FAILED") {
+      return handleResponse(req, res, 412, " DataBase Error ");
+    }
+
+    sharedGroupFileList.map((x) => {
+      const sharedGroupFile = { ...x };
+
+      userFileList.push(sharedGroupFile);
+    });
+
+    // private files
+    var userPrivateFileList = await GetSharedPrivateFiles(folderId, userId);
+    if (userPrivateFileList === "FAILED") {
+      return handleResponse(req, res, 412, " DataBase Error ");
+    }
+
+    userPrivateFileList.map((x) => {
+      const file = { ...x };
+      userFileList.push(file);
+    });
+
+    return handleResponse(req, res, 200, { userFileList });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 412, " Failed to fetch child file list! ");
   }
-
-  sharedGroupFileList.map((x) => {
-    const sharedGroupFile = { ...x };
-
-    userFileList.push(sharedGroupFile);
-  });
-
-  // private files
-  var userPrivateFileList = await GetSharedPrivateFiles(folderId, userId);
-  if (userPrivateFileList === "FAILED") {
-    return handleResponse(req, res, 412, " DataBase Error ");
-  }
-
-  userPrivateFileList.map((x) => {
-    const file = { ...x };
-    userFileList.push(file);
-  });
-
-  return handleResponse(req, res, 200, { userFileList });
 }
 
 module.exports = {

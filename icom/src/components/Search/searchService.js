@@ -69,7 +69,7 @@ const SearchService = (userID) => {
         uuidRoom
       )
     );
-    dispatch(updateChannelDetails(uuidRoom, userSearchListName));
+    // we don't update chanel right now because it s not created
     dispatch(setUserSearchBoxContent(""));
     dispatch(setPersonSearchList([]));
   };

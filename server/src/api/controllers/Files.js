@@ -6,30 +6,33 @@ var uui = require("uuid");
 const {
   UpdateAvatarPathData,
   GetUserDetailsData,
-} = require("../../services/User");
+} = require("../services/User");
 //
 const {
   InsertNewFileDataBase,
   InsertNewFileRelationDataBase,
   GetFileDetailsFromDataBase,
-} = require("../../services/Files");
+} = require("../services/Files");
 //
-const { handleResponse } = require("../../helpers/utils");
-const { GetFolderDetails } = require("../../services/Folders");
-const { checkFileExists, extractProfilePicturePath } = require("./files_utils");
+const { handleResponse } = require("../helpers/utils");
+const { GetFolderDetails } = require("../services/Folders");
+const {
+  checkFileExists,
+  extractProfilePicturePath,
+} = require("../helpers/files_utils");
 
 // const { GetDocumentContentService } = require("../../services/Files");
 
 const defaultAvatarPicure = path.join(
   __dirname,
-  "../../../../",
+  "../../../",
   "users/default/default_avatar.png"
 );
 
-const { mimeTypes } = require("../../helpers/mimeType");
+const { mimeTypes } = require("../helpers/mimeType");
 
 const storageFile = multer.diskStorage({
-  destination: path.join(__dirname, "../../../../users/tempDir/"),
+  destination: path.join(__dirname, "../../../users/tempDir/"),
   filename: function (req, file, cb) {
     // null as first argument means no error
     cb(null, file.originalname);
@@ -66,12 +69,8 @@ async function UpdateProfilePicture(req, res) {
       const results = JSON.parse(JSON.stringify(userDetails));
 
       // verific daca exista folderul unde se va salva avatarul
-      const oldPath = path.join(
-        __dirname,
-        "../../../../users/tempDir/",
-        fileName
-      );
-      const newPath = path.join(__dirname, "../../../../users/", userID);
+      const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
+      const newPath = path.join(__dirname, "../../../users/", userID);
 
       try {
         if (!(await checkFileExists(newPath))) {
@@ -150,12 +149,8 @@ async function UploadNewStoredFile(req, res) {
       const userId = req.body.userId;
       // const createdTime = req.body.createdTime;
 
-      const oldPath = path.join(
-        __dirname,
-        "../../../../users/tempDir/",
-        fileName
-      );
-      const newPath = path.join(__dirname, "../../../../users/", userId);
+      const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
+      const newPath = path.join(__dirname, "../../../users/", userId);
 
       try {
         if (!(await checkFileExists(newPath))) {
@@ -272,11 +267,7 @@ async function GetProfilePicture(req, res) {
     if (currentAvatarPath === "") {
       currentAvatarPath = defaultAvatarPicure;
     } else {
-      currentAvatarPath = path.join(
-        __dirname,
-        "../../../../",
-        currentAvatarPath
-      );
+      currentAvatarPath = path.join(__dirname, "../../../", currentAvatarPath);
     }
 
     var options = {
@@ -307,48 +298,55 @@ async function GetProfilePicture(req, res) {
 
 // Get Editable document content
 async function GetDocumentContent(req, res) {
-  const fileId = req.body.fileId;
-  const userId = req.body.userId;
+  try {
+    const fileId = req.body.fileId;
+    const userId = req.body.userId;
 
-  ContentFile = [
-    { insert: "Hello " },
-    { insert: "World!", attributes: { bold: true } },
-    { insert: "\n" },
-  ];
+    ContentFile = [
+      { insert: "Hello " },
+      { insert: "World!", attributes: { bold: true } },
+      { insert: "\n" },
+    ];
 
-  return handleResponse(req, res, 200, { ContentFile });
+    return handleResponse(req, res, 200, { ContentFile });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 410, "  Err send File  ");
+  }
 }
 
 // Download File (Anytype)
 async function DownLoadFile(req, res) {
-  const fileId = req.body.fileId;
-  const userId = req.body.userId;
+  try {
+    const fileId = req.body.fileId;
+    const userId = req.body.userId;
 
-  console.log("parametrii de descarcare ai documentului sunt:");
-  console.log(fileId);
-  console.log(userId);
+    const filedetails_res = await GetFileDetailsFromDataBase(fileId, userId);
+    if (filedetails_res === "FAILED") {
+      console.log("Error get details about file!");
+      return handleResponse(req, res, 410, "  Err download File  ");
+    }
 
-  const filedetails_res = await GetFileDetailsFromDataBase(fileId, userId);
-  if (filedetails_res === "FAILED") {
-    console.log("Error get details aboaut file!");
-    return handleResponse(req, res, 410, "  Err download File  ");
+    const file_result = JSON.parse(JSON.stringify(filedetails_res));
+
+    const DownloadFilePath = path.join(
+      __dirname,
+      "../../../",
+      file_result[0].systemPath
+    );
+
+    // path where is store file
+    // console.log(DownloadFilePath);
+
+    res.download(DownloadFilePath, (err) => {
+      if (err) {
+        return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
   }
-
-  const file_result = JSON.parse(JSON.stringify(filedetails_res));
-
-  const DownloadFilePath = path.join(
-    __dirname,
-    "../../../../",
-    file_result[0].systemPath
-  );
-  // console.log(file_result[0]);
-
-  console.log(DownloadFilePath);
-
-  res.download(DownloadFilePath, (err) => {
-    if (err) console.log(err);
-  });
-  // return handleResponse(req, res, 200, { SUCCESS: "OK" });
 }
 
 module.exports = {

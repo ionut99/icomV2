@@ -5,6 +5,8 @@ import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 import { setUserSearchBoxContent } from "../../actions/userActions";
 import { setAuthToken } from "../../services/auth";
 import Navbar from "../../components/Navbar/Navbar";
+import { Button, Modal, Form } from "react-bootstrap";
+
 import moment from "moment";
 
 import {
@@ -43,29 +45,24 @@ function Chat() {
     }
   }
 
-  function CreateEnter(event) {
-    if (event.key === "Enter") {
-      CreateNewRoom();
-    }
-  }
-
-  const CreateNewRoom = async () => {
-    //e.preventDefault(); // help to prevent reload component
-    if (groupName === "") {
-      console.log("Nu s-a introdus niciun nume pentru noul grup!");
-    }
-    if (groupName !== "" && newGroup === true) {
-      SetgroupName("");
-      SetnewGroup(!newGroup);
-      dispatch(CreateNewGroup(groupName, 0, user.userId, uuidv4()));
-    }
-  };
-
   const getSearchUserList = async () => {
     dispatch(userSetRoomListAsync(search_box_content, user.userId));
     dispatch(userSearchPersonListAsync(search_box_content, user.userId));
   };
 
+  function closeModal() {
+    // delete old data
+    SetgroupName("");
+    SetnewGroup(false);
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    // send data for create new user Accoutn
+    dispatch(CreateNewGroup(groupName, 0, user.userId, uuidv4()));
+    closeModal();
+  }
   // set timer to renew token
   useEffect(() => {
     setAuthToken(token);
@@ -110,30 +107,35 @@ function Chat() {
               <BsIcons.BsPlusCircle
                 className="symbol"
                 onClick={() => {
-                  SetnewGroup(!newGroup);
+                  SetnewGroup(true);
                 }}
               />
             </div>
           </div>
           <div className="chat-persons">
-            <div
-              className="new-group-name"
-              style={{ display: newGroup ? "block" : "none" }}
-            >
-              <p>Enter New Channel Name:</p>
-              <div className="input-section">
-                <input
-                  type="text"
-                  value={groupName}
-                  onChange={(event) => SetgroupName(event.target.value)}
-                  onKeyDown={CreateEnter}
-                />
-                <button onClick={CreateNewRoom}>New</button>
-              </div>
-            </div>
-            {/* <pre>{JSON.stringify(userSearchList, null, 2)}</pre>
-            <pre>{JSON.stringify(RoomSearchList, null, 2)}</pre> */}
-            {/* <ConversationList RoomSearchList={RoomSearchList} /> exemplu pentru trimitere de argumente */}
+            <Modal show={newGroup} onHide={closeModal}>
+              <Form onSubmit={handleSubmit}>
+                <Modal.Body>
+                  <Form.Group>
+                    <Form.Label>Enter New Channel Name:</Form.Label>
+                    <Form.Control
+                      type="text"
+                      required
+                      value={groupName}
+                      onChange={(event) => SetgroupName(event.target.value)}
+                    />
+                  </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={closeModal}>
+                    Close
+                  </Button>
+                  <Button variant="success" type="submit">
+                    Add New User
+                  </Button>
+                </Modal.Footer>
+              </Form>
+            </Modal>
             <ConversationList />
             <PersonList />
           </div>
