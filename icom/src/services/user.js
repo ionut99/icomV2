@@ -16,18 +16,6 @@ export const getUserDetails = async (userId) => {
   }
 };
 
-// get list of the users
-export const getUserListService = async () => {
-  try {
-    return await axios.get(`${REACT_APP_API_URL}/users/getList`);
-  } catch (err) {
-    return {
-      error: true,
-      response: err.response,
-    };
-  }
-};
-
 // user Search Person API to return Persons Names
 export const getSearchPersonService = async (search_box_text, userId) => {
   try {
@@ -234,8 +222,6 @@ export const UpdateProfilePictureData = async (userID, NewPicture) => {
     };
   }
 };
-
-
 
 export const AddUserAccountDataBase = async (
   userSurname,

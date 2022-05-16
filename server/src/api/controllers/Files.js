@@ -298,45 +298,55 @@ async function GetProfilePicture(req, res) {
 
 // Get Editable document content
 async function GetDocumentContent(req, res) {
-  const fileId = req.body.fileId;
-  const userId = req.body.userId;
+  try {
+    const fileId = req.body.fileId;
+    const userId = req.body.userId;
 
-  ContentFile = [
-    { insert: "Hello " },
-    { insert: "World!", attributes: { bold: true } },
-    { insert: "\n" },
-  ];
+    ContentFile = [
+      { insert: "Hello " },
+      { insert: "World!", attributes: { bold: true } },
+      { insert: "\n" },
+    ];
 
-  return handleResponse(req, res, 200, { ContentFile });
+    return handleResponse(req, res, 200, { ContentFile });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 410, "  Err send File  ");
+  }
 }
 
 // Download File (Anytype)
 async function DownLoadFile(req, res) {
-  const fileId = req.body.fileId;
-  const userId = req.body.userId;
+  try {
+    const fileId = req.body.fileId;
+    const userId = req.body.userId;
 
-  const filedetails_res = await GetFileDetailsFromDataBase(fileId, userId);
-  if (filedetails_res === "FAILED") {
-    console.log("Error get details about file!");
-    return handleResponse(req, res, 410, "  Err download File  ");
-  }
-
-  const file_result = JSON.parse(JSON.stringify(filedetails_res));
-
-  const DownloadFilePath = path.join(
-    __dirname,
-    "../../../",
-    file_result[0].systemPath
-  );
-
-  // path where is store file
-  // console.log(DownloadFilePath);
-
-  res.download(DownloadFilePath, (err) => {
-    if (err) {
-      return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
+    const filedetails_res = await GetFileDetailsFromDataBase(fileId, userId);
+    if (filedetails_res === "FAILED") {
+      console.log("Error get details about file!");
+      return handleResponse(req, res, 410, "  Err download File  ");
     }
-  });
+
+    const file_result = JSON.parse(JSON.stringify(filedetails_res));
+
+    const DownloadFilePath = path.join(
+      __dirname,
+      "../../../",
+      file_result[0].systemPath
+    );
+
+    // path where is store file
+    // console.log(DownloadFilePath);
+
+    res.download(DownloadFilePath, (err) => {
+      if (err) {
+        return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
+  }
 }
 
 module.exports = {
