@@ -11,8 +11,8 @@ import Avatar from "../Search/Avatar";
 import AddUser from "../AddUserAccount/AddUserAccount";
 import "./navbar.css";
 
-import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
-import { updateUserAvatar } from "../../actions/authActions";
+// import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
+// import { updateUserAvatar } from "../../actions/authActions";
 
 function Navbar() {
   const ref = useRef();

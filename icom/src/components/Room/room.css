@@ -213,6 +213,7 @@
 @media screen and (max-width: 865px) {
   .right-section {
     max-width: 64%;
+    min-width: 400px;
     margin-right: 0%;
   }
 }

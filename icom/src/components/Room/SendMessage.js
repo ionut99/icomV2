@@ -1,39 +1,38 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Textarea from "react-expanding-textarea";
-
-import * as MdIcons from "react-icons/md";
-import * as IoIcons from "react-icons/io";
-import * as BsIcons from "react-icons/bs";
-import { Button, Modal, Form } from "react-bootstrap";
+import socketIOClient from "socket.io-client";
+import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faImage,
   faPaperPlane,
   faPaperclip,
 } from "@fortawesome/free-solid-svg-icons";
-import Comunication from "../../services/comunication";
+import { v4 as uuidv4 } from "uuid";
+import { InsertNewMessageLocal } from "../../actions/userActions";
+import { InsertNewMessage } from "../../asyncActions/userAsyncActions";
+
+const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
+const { REACT_APP_API_URL } = process.env;
 
 function SendMessage() {
+  const dispatch = useDispatch();
+
+  const socketRef = useRef();
   const textareaRef = useRef(null);
 
-  // redux information
+  const [newMessage, setNewMessage] = useState("");
+  const [send, setSend] = useState(false);
+
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
-
   const chatObj = useSelector((state) => state.chatRedu);
   const { channelID } = chatObj;
 
-  // send message function
-  const { sendMessage } = Comunication(channelID, user.userId);
-  const [newMessage, setNewMessage] = useState("");
-
   const handleSendMessage = () => {
-    if (newMessage !== "") {
-      sendMessage(newMessage);
-    }
-    setNewMessage("");
+    setSend(true);
   };
 
   const handleChange = useCallback((e) => {
@@ -45,6 +44,67 @@ function SendMessage() {
       handleSendMessage();
     }
   }
+
+  // do link with socket ..
+  useEffect(() => {
+    if (channelID === null || channelID === undefined) return;
+    socketRef.current = socketIOClient(REACT_APP_API_URL, {
+      query: { channelID },
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [channelID]);
+
+  useEffect(() => {
+    if (send === false || newMessage === "" || newMessage === " ") return;
+
+    if (socketRef.current === null) return;
+    console.log("vrei sa trimiti??");
+    var uuidMessage = uuidv4();
+    var dataToSend = {
+      body: newMessage,
+      senderID: user.userId,
+      channelID: channelID,
+      ID_message: uuidMessage,
+    };
+
+    dispatch(InsertNewMessage(uuidMessage, user.userId, channelID, newMessage));
+    socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
+
+    setSend(false);
+    setNewMessage("");
+  }, [send, newMessage]);
+
+  // receive message
+
+  useEffect(() => {
+    if (channelID === null) return;
+    if (socketRef.current === null) return;
+
+    socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
+      const createdTime = new Date();
+      if (message.channelID != null) {
+        dispatch(
+          InsertNewMessageLocal(
+            message.ID_message,
+            message.channelID,
+            message.senderID,
+            message.body,
+            createdTime
+          )
+        );
+      }
+    });
+    // receive document changes
+
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [channelID]);
+
+  // receive message
 
   useEffect(() => {
     textareaRef.current.focus();
@@ -98,17 +158,6 @@ function SendMessage() {
           </Button>
         </div>
       </div>
-      {/* <div className="toolbar-send">
-          <div className="write-instrument">
-            <MdIcons.MdTextFormat />
-          </div>
-          <div className="write-instrument">
-            <IoIcons.IoIosAttach />
-          </div>
-          <div className="write-instrument">
-            <BsIcons.BsEmojiSmile />
-          </div>
-        </div> */}
     </div>
   );
 }

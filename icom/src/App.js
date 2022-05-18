@@ -2,18 +2,17 @@ import { BrowserRouter, Switch, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
 
-import Dashboard from "./pages/Dashboard/Dashboard";
-import ChatWindow from "./pages/Chat/Chat";
-// import Files from "./pages/Files";
-import Login from "./pages/Login/Login";
 import TextEditor from "./pages/TextEditor/TextEditor";
-
+import Dashboard from "./pages/Dashboard/Dashboard";
+import VideoRoom from "./pages/VideoRoom/VideoRoom";
+import ChatWindow from "./pages/Chat/Chat";
+import Login from "./pages/Login/Login";
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 
 import { verifyTokenAsync } from "./asyncActions/authAsyncActions";
-import "./index.css";
 import Storage from "./pages/Storage/Storage";
+import "./index.css";
 
 function App() {
   const authObj = useSelector((state) => state.auth);
@@ -68,6 +67,13 @@ function App() {
               exact
               path="/storage/folder/:folderId"
               component={Storage}
+              isAuthenticated={isAuthenticated}
+            />
+
+            <PrivateRoute
+              exact
+              path="/roomcall/:roomId"
+              component={VideoRoom}
               isAuthenticated={isAuthenticated}
             />
 
