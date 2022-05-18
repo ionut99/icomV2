@@ -35,7 +35,7 @@ const TOOLBAR_OPTIONS = [
 
 const SEND_DOCUMENT_CHANGES = "SEND_DOCUMENT_CHANGES";
 const RECEIVE_DOCUMENT_CHANGES = "RECEIVE_DOCUMENT_CHANGES";
-const { REACT_APP_WEBSOCKET_URL } = process.env;
+const { REACT_APP_API_URL } = process.env;
 
 //
 
@@ -52,7 +52,7 @@ function TextEditor() {
   useEffect(() => {
     console.log(fileId);
     if (fileId === null || fileId === undefined) return;
-    socketRef.current = socketIOClient(REACT_APP_WEBSOCKET_URL, {
+    socketRef.current = socketIOClient(REACT_APP_API_URL, {
       query: { fileId },
     });
 

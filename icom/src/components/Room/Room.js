@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -17,12 +17,18 @@ import Message from "./Message";
 import "./room.css";
 
 function Room() {
+  const [openConference, setOpenConference] = useState(false);
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
   const { channelID, currentChannelName, RoomMessages, channelFolderId } =
     chatObj;
+
+  // const openVideoCall = () => {
+  //   console.log("deschide apelul video ! ");
+  //   setOpenConference(true);
+  // };
 
   return (
     <>
@@ -50,7 +56,9 @@ function Room() {
             </Link>
           </div>
           <div className="room-instrument">
-            <BsIcons.BsCameraVideo />
+            <Link to={`/roomcall/${channelID}`}>
+              <BsIcons.BsCameraVideo />
+            </Link>
           </div>
           <div className="room-instrument">
             <IoIcons2.IoCallOutline />
@@ -76,6 +84,12 @@ function Room() {
         </div>
         <SendMessage />
       </div>
+      {/* {openConference && (
+        <VideoRoom
+          open_conference_open={openConference}
+          close_conference={setOpenConference}
+        />
+      )} */}
     </>
   );
 }

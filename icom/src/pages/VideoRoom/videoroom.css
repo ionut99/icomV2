@@ -1,0 +1,49 @@
+/* .conference_popup {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  min-width: 900px;
+  min-height: 700px;
+  top: 0;
+  border: solid rgb(40, 140, 221) 1px;
+  background-color: #173a5c;
+  z-index: 2;
+  transform: translate(9999px);
+  transition-duration: 2s;
+}
+
+.conference_popup.active {
+  transform: translate(0);
+  transition-duration: 1s;
+}
+
+.conference_popup .action-tab {
+  width: 100%;
+  background-color: #24292f;
+}
+
+.conference_popup .close-button {
+  width: 100px;
+  height: 50px;
+  background-color: red;
+  margin-left: auto;
+}
+
+.conference_popup .close-button:hover {
+  cursor: pointer;
+}
+
+.video-grid-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  grid-auto-rows: 300px;
+  grid-gap: 10px;
+  border: green solid 1px;
+}
+
+.video-grid-wrapper .user-video {
+  width: 100%;
+  height: 100%;
+  border: 2px red solid;
+  object-fit: cover;
+} */
