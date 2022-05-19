@@ -28,6 +28,13 @@ function Message({ RoomMessages }) {
         }
         return () => {
           isMounted = false;
+          SetsenderDetails({
+            Surname: "",
+            Name: "",
+            Email: "",
+            IsAdmin: 0,
+            Avatar: "",
+          });
         };
       })
       .catch(() => {

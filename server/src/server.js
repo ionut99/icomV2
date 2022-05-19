@@ -33,12 +33,6 @@ const { Server } = require("socket.io");
 // });
 
 //
-// peer server setup
-// const { ExpressPeerServer } = require("peer");
-// const peerServer = ExpressPeerServer(server_chat, {
-//   debug: true,
-// });
-// peer serve
 //
 // app.use("/peerjs", peerServer);
 //
