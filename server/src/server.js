@@ -62,11 +62,23 @@ const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const SEND_DOCUMENT_CHANGES = "SEND_DOCUMENT_CHANGES";
 const RECEIVE_DOCUMENT_CHANGES = "RECEIVE_DOCUMENT_CHANGES";
 
+const JOIN_VIDEO_CALL = "JOIN_VIDEO_CALL";
+const VIDEO_CALL_FULL = "VIDEO_CALL_FULL";
+const VIDEO_CALL_USERS_LIST = "VIDEO_CALL_USERS_LIST";
+
+const SENDING_SIGNAL = "SENDING_SIGNAL";
+const USER_JOINED = "USER_JOINED";
+
+const RETURNING_SIGNAL = "RETURNING_SIGNAL";
+const RECEIVING_RETURNING_SIGNAL = "RECEIVING_RETURNING_SIGNAL";
+
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
   },
 });
+
+const users_in_call = {};
 
 io.on("connection", (socket) => {
   // Join a conversation
@@ -91,8 +103,56 @@ io.on("connection", (socket) => {
     console.log(delta);
   });
 
+  // listen for new video room
+
+  // join user, verify if exist in room
+  // if exist then update socketref
+  // if not exist add him
+  // then reply list with rest of users
+
+  socket.on("join room", (newUserDetails) => {
+    const roomID = newUserDetails.roomID;
+
+    if (users_in_call[roomID]) {
+      const length = users_in_call[roomID].length;
+      if (length === 4) {
+        socket.emit("room full");
+        return;
+      }
+      users_in_call[roomID].push(newUserDetails);
+    } else {
+      users_in_call[roomID] = [newUserDetails];
+    }
+    var usersInThisRoom = [];
+    users_in_call[roomID].map((x) => {
+      const currentUser = { ...x };
+      if (currentUser.callerSockerID !== socket.id) {
+        usersInThisRoom.push(currentUser);
+      }
+    });
+
+    socket.emit("all users", usersInThisRoom);
+  });
+
+  socket.on("sending signal", (payload) => {
+    io.to(payload.userToSignal).emit("user joined", {
+      signal: payload.signal,
+      callerID: payload.callerID,
+    });
+  });
+
+  socket.on("returning signal", (payload) => {
+    io.to(payload.callerID).emit("receiving returned signal", {
+      signal: payload.signal,
+      id: socket.id,
+    });
+  });
+
+  // listen for new video room
+
   // Leave the room if the user closes the socket
   socket.on("disconnect", () => {
+    console.log("Client deconectat");
     socket.leave(channelID);
   });
 });

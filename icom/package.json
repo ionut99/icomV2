@@ -44,8 +44,10 @@
     "react-textarea-autosize": "^8.3.3",
     "redux-thunk": "^2.4.1",
     "resizer": "^0.0.6",
+    "simple-peer": "^9.11.1",
     "socket.io": "^4.4.1",
     "socket.io-client": "^4.5.1",
+    "styled-components": "^5.3.5",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.2"
   },
