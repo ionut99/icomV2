@@ -41,6 +41,7 @@ const { REACT_APP_API_URL } = process.env;
 
 function TextEditor() {
   const { folderId, fileId } = useParams();
+  const fileID = fileId;
   const socketRef = useRef();
   const dispatch = useDispatch();
 
@@ -50,24 +51,24 @@ function TextEditor() {
   const { user, expiredAt, token } = authObj;
 
   useEffect(() => {
-    console.log(fileId);
-    if (fileId === null || fileId === undefined) return;
+    console.log(fileID);
+    if (fileID === null || fileID === undefined) return;
     socketRef.current = socketIOClient(REACT_APP_API_URL, {
-      query: { fileId },
+      query: { fileID },
     });
 
     return () => {
       socketRef.current.disconnect();
     };
-  }, [fileId]);
+  }, [fileID]);
 
   //
 
   useEffect(() => {
-    if (quill == null || socketRef.current == null || fileId == null) return;
+    if (quill == null || socketRef.current == null || fileID == null) return;
     console.log("loading content:");
     // loading document!
-    return getDocumentContentById(fileId, user.userId)
+    return getDocumentContentById(fileID, user.userId)
       .then((result) => {
         console.log("Contentul paginii este:");
         console.log(result.data["ContentFile"]);
@@ -77,7 +78,7 @@ function TextEditor() {
       .catch(() => {
         console.log("Error fetch Document Content!");
       });
-  }, [quill, fileId]);
+  }, [quill, fileID]);
 
   //
 
@@ -112,7 +113,7 @@ function TextEditor() {
       var dataToSend = {
         body: delta,
         senderID: user.userId,
-        fileID: fileId,
+        fileID: fileID,
         change_ID: uuidv4(),
       };
       socketRef.current.emit(SEND_DOCUMENT_CHANGES, dataToSend);
@@ -122,7 +123,7 @@ function TextEditor() {
     return () => {
       quill.off("text-change", handler);
     };
-  }, [quill, fileId, user.userId]);
+  }, [quill, fileID, user.userId]);
 
   //
 

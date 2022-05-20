@@ -79,15 +79,17 @@ const io = new Server(httpServer, {
 });
 
 const users_in_call = {};
+const socketToRoom = {};
 
 io.on("connection", (socket) => {
   // Join a conversation
   const { channelID } = socket.handshake.query;
-  const { fileId } = socket.handshake.query;
-  //console.log("incercare roomID: " + roomID);
-  //console.log("New connection established for chat part: ", roomID);
+  const { fileID } = socket.handshake.query;
+  const { videoChannelID } = socket.handshake.query;
+
   socket.join(channelID);
-  socket.join(fileId);
+  socket.join(fileID);
+  socket.join(videoChannelID);
 
   // Listen for new messages
   socket.on(NEW_CHAT_MESSAGE_EVENT, (data) => {
@@ -99,7 +101,7 @@ io.on("connection", (socket) => {
 
   // Listen for new document changes
   socket.on(SEND_DOCUMENT_CHANGES, (delta) => {
-    io.in(fileId).emit(RECEIVE_DOCUMENT_CHANGES, delta);
+    io.in(fileID).emit(RECEIVE_DOCUMENT_CHANGES, delta);
     console.log(delta);
   });
 
@@ -110,26 +112,21 @@ io.on("connection", (socket) => {
   // if not exist add him
   // then reply list with rest of users
 
-  socket.on("join room", (newUserDetails) => {
-    const roomID = newUserDetails.roomID;
-
+  socket.on("join room", (roomID) => {
     if (users_in_call[roomID]) {
       const length = users_in_call[roomID].length;
       if (length === 4) {
         socket.emit("room full");
         return;
       }
-      users_in_call[roomID].push(newUserDetails);
+      users_in_call[roomID].push(socket.id);
     } else {
-      users_in_call[roomID] = [newUserDetails];
+      users_in_call[roomID] = [socket.id];
     }
-    var usersInThisRoom = [];
-    users_in_call[roomID].map((x) => {
-      const currentUser = { ...x };
-      if (currentUser.callerSockerID !== socket.id) {
-        usersInThisRoom.push(currentUser);
-      }
-    });
+    socketToRoom[socket.id] = roomID;
+    const usersInThisRoom = users_in_call[roomID].filter(
+      (id) => id !== socket.id
+    );
 
     socket.emit("all users", usersInThisRoom);
   });
@@ -148,15 +145,12 @@ io.on("connection", (socket) => {
     });
   });
 
-  // listen for new video room
-
-  // Leave the room if the user closes the socket
   socket.on("disconnect", () => {
-    console.log("Client deconectat");
-    socket.leave(channelID);
+    const roomID = socketToRoom[socket.id];
+    let room = users_in_call[roomID];
+    if (room) {
+      room = room.filter((id) => id !== socket.id);
+      users_in_call[roomID] = room;
+    }
   });
 });
-
-// server_chat.listen(process.env.SERVER_PORT, () => {
-//   console.log(`Server started on port ${process.env.SERVER_PORT}`);
-// });

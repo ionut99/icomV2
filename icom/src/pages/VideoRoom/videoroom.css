@@ -1,49 +1,76 @@
-/* .conference_popup {
-  position: absolute;
+.video-page {
   height: 100vh;
   width: 100vw;
-  min-width: 900px;
-  min-height: 700px;
-  top: 0;
-  border: solid rgb(40, 140, 221) 1px;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-flow: column;
+  min-width: 700px;
+}
+
+.video-page .buttons-bar {
+  /* border: 2px solid green; */
+  display: flex;
+  align-items: center;
+  height: 60px;
   background-color: #173a5c;
-  z-index: 2;
-  transform: translate(9999px);
-  transition-duration: 2s;
 }
 
-.conference_popup.active {
-  transform: translate(0);
-  transition-duration: 1s;
+.video-page .buttons-bar .time {
+  color: #fff;
+  font-size: larger;
+  margin-left: 50px;
+  display: inline-flex;
 }
 
-.conference_popup .action-tab {
-  width: 100%;
-  background-color: #24292f;
+.video-page .buttons-bar .time .icon {
+  margin-right: 10px;
 }
 
-.conference_popup .close-button {
-  width: 100px;
-  height: 50px;
-  background-color: red;
+.video-page .buttons-bar .buttons {
   margin-left: auto;
+  width: fit-content;
 }
 
-.conference_popup .close-button:hover {
-  cursor: pointer;
+.video-page .buttons-bar .buttons .leave-button {
+  width: 100px;
+  margin-right: 20px;
 }
 
-.video-grid-wrapper {
+.video-page .buttons-bar .buttons .microphone-button {
+  margin-right: 20px;
+}
+
+.video-page .buttons-bar .buttons .video-button {
+  margin-right: 20px;
+}
+
+.video-page .video-content {
+  background-image: url("../../images/loginBackground.jpg");
+  background-position: center;
+  flex: 1 1 auto;
+}
+
+.video-page .video-content .video-wrapper {
+  margin-top: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  height: 90vh;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
-  grid-auto-rows: 300px;
-  grid-gap: 10px;
-  border: green solid 1px;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  justify-content: center;
+  align-items: center;
 }
 
-.video-grid-wrapper .user-video {
-  width: 100%;
+.video-page .video-content .video-wrapper .user-video {
+  max-height: 100%;
   height: 100%;
-  border: 2px red solid;
-  object-fit: cover;
-} */
+  border: 2px solid black;
+  background-color: #6c777e;
+  margin: 5px;
+}
+
+.video-page .video-content .video-wrapper .user-video .video-player {
+  height: 100%;
+  width: 100%;
+  border: solid red 2px;
+  
+}
