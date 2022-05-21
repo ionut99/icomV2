@@ -106,16 +106,10 @@ io.on("connection", (socket) => {
   });
 
   // listen for new video room
-
-  // join user, verify if exist in room
-  // if exist then update socketref
-  // if not exist add him
-  // then reply list with rest of users
-
   socket.on("join room", (roomID) => {
     if (users_in_call[roomID]) {
       const length = users_in_call[roomID].length;
-      if (length === 4) {
+      if (length === 5) {
         socket.emit("room full");
         return;
       }
@@ -151,6 +145,8 @@ io.on("connection", (socket) => {
     if (room) {
       room = room.filter((id) => id !== socket.id);
       users_in_call[roomID] = room;
+      console.log("socket disconnected " + socket.id);
+      socket.broadcast.emit("removePeer", socket.id);
     }
   });
 });

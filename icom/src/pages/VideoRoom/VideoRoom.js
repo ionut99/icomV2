@@ -54,6 +54,11 @@ const Video = (props) => {
   return <StyledVideo playsInline autoPlay ref={ref} />;
 };
 
+// const videoConstraints = {
+//   height: window.innerHeight / 2,
+//   width: window.innerWidth / 2,
+// };
+
 const videoConstraints = {
   height: window.innerHeight / 2,
   width: window.innerWidth / 2,
@@ -98,16 +103,14 @@ const VideoRoom = (props) => {
         const roomID = videoChannelID;
         socketRef.current.emit("join room", roomID);
         socketRef.current.on("all users", (users) => {
-          const peers = [];
           users.forEach((userID) => {
             const peer = createPeer(userID, socketRef.current.id, stream);
             peersRef.current.push({
               peerID: userID,
               peer,
             });
-            peers.push(peer);
+            setPeers((users) => [...users, peer]);
           });
-          setPeers(peers);
         });
 
         socketRef.current.on("user joined", (payload) => {
@@ -124,6 +127,21 @@ const VideoRoom = (props) => {
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
         });
+
+        socketRef.current.on("removePeer", (socket_id) => {
+          console.log("removing peer " + socket_id);
+          removePeer(socket_id);
+        });
+
+        socketRef.current.on("disconnect", () => {
+          console.log("GOT DISCONNECTED");
+          destroyAllPeers();
+        });
+
+        console.log("lista de peers din REF:");
+        console.log(peersRef.current);
+        console.log("lista de peers din useState:");
+        console.log(peers);
       });
   }, [videoChannelID]);
 
@@ -159,6 +177,29 @@ const VideoRoom = (props) => {
     peer.signal(incomingSignal);
 
     return peer;
+  }
+
+  function removePeer(socket_id) {
+    //delete peer
+    console.log("user trebuie sters din list:");
+    console.log(socket_id);
+    for (let i = 0; i < peersRef.current.length; i++) {
+      if (peersRef.current[i].peerID === socket_id) {
+        console.log("aici trebuie sa stergem");
+        setPeers((peers) =>
+          peers.filter((peer) => peer !== peersRef.current[i].peer)
+        );
+
+        peersRef.current[i].peer.destroy();
+      }
+    }
+  }
+
+  function destroyAllPeers() {
+    for (let i = 0; i < peersRef.current.length; i++) {
+      peersRef.current[i].peer.destroy();
+    }
+    setPeers([]);
   }
 
   const handleLeaveConference = () => {
