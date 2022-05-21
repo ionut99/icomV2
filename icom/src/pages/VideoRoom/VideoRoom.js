@@ -54,6 +54,11 @@ const Video = (props) => {
   return <StyledVideo playsInline autoPlay ref={ref} />;
 };
 
+// const videoConstraints = {
+//   height: window.innerHeight / 2,
+//   width: window.innerWidth / 2,
+// };
+
 const videoConstraints = {
   height: window.innerHeight / 2,
   width: window.innerWidth / 2,
@@ -98,16 +103,14 @@ const VideoRoom = (props) => {
         const roomID = videoChannelID;
         socketRef.current.emit("join room", roomID);
         socketRef.current.on("all users", (users) => {
-          const peers = [];
           users.forEach((userID) => {
             const peer = createPeer(userID, socketRef.current.id, stream);
             peersRef.current.push({
               peerID: userID,
               peer,
             });
-            peers.push(peer);
+            setPeers((users) => [...users, peer]);
           });
-          setPeers(peers);
         });
 
         socketRef.current.on("user joined", (payload) => {
@@ -132,8 +135,13 @@ const VideoRoom = (props) => {
 
         socketRef.current.on("disconnect", () => {
           console.log("GOT DISCONNECTED");
-          //destroyAllPeers();
+          destroyAllPeers();
         });
+
+        console.log("lista de peers din REF:");
+        console.log(peersRef.current);
+        console.log("lista de peers din useState:");
+        console.log(peers);
       });
   }, [videoChannelID]);
 
@@ -181,6 +189,7 @@ const VideoRoom = (props) => {
         setPeers((peers) =>
           peers.filter((peer) => peer !== peersRef.current[i].peer)
         );
+
         peersRef.current[i].peer.destroy();
       }
     }
@@ -190,7 +199,7 @@ const VideoRoom = (props) => {
     for (let i = 0; i < peersRef.current.length; i++) {
       peersRef.current[i].peer.destroy();
     }
-    for (let peer in peers) peer.destroy();
+    setPeers([]);
   }
 
   const handleLeaveConference = () => {
