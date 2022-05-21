@@ -4,6 +4,7 @@ import { monthNames } from "../../pages/Storage/FileIcons";
 
 import Avatar from "../Search/Avatar";
 import { getUserDetails } from "../../services/user";
+import { getUserDetailsAsync } from "../../asyncActions/userAsyncActions";
 
 function Message({ RoomMessages }) {
   const [senderDetails, SetsenderDetails] = useState({
@@ -18,28 +19,31 @@ function Message({ RoomMessages }) {
   const CreateMessageDate = new Date(Date.parse(RoomMessages.createdTime));
 
   useEffect(() => {
+    let isMounted = true;
     if (RoomMessages.senderID == null || RoomMessages.senderID === undefined)
       return;
-    let isMounted = true;
-    return getUserDetails(RoomMessages.senderID)
-      .then((result) => {
-        if (isMounted && result.status === 200) {
-          SetsenderDetails(result.data["userDetails"][0]);
-        }
-        return () => {
-          isMounted = false;
-          SetsenderDetails({
-            Surname: "",
-            Name: "",
-            Email: "",
-            IsAdmin: 0,
-            Avatar: "",
-          });
-        };
-      })
-      .catch(() => {
-        console.log("Error fetch details about message senderId!");
-      });
+
+    const userData = async (userId) => {
+      const user_details_result = await getUserDetailsAsync(userId);
+      return user_details_result;
+    };
+
+    userData(RoomMessages.senderID).then((result) => {
+      if (isMounted && result !== null) {
+        SetsenderDetails(result);
+      } else {
+        SetsenderDetails({
+          Surname: "",
+          Name: "",
+          Email: "",
+          IsAdmin: 0,
+          Avatar: "",
+        });
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
   }, [RoomMessages.senderID]);
 
   return (

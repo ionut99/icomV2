@@ -28,18 +28,31 @@ const Container = styled.div`
 `;
 
 const StyledVideo = styled.video`
-  max-height: 600px;
-  max-width: 600px;
-  margin: 0px;
+  height: 300px;
 `;
 
-const servers = {
+const configuration = {
+  // Using From https://www.metered.ca/tools/openrelay/
   iceServers: [
     {
-      urls: ["stun:"],
+      urls: "stun:openrelay.metered.ca:80",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:80",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443?transport=tcp",
+      username: "openrelayproject",
+      credential: "openrelayproject",
     },
   ],
-  iceCandidatePoolSize: 10,
 };
 
 const Video = (props) => {
@@ -109,7 +122,11 @@ const VideoRoom = (props) => {
               peerID: userID,
               peer,
             });
-            setPeers((users) => [...users, peer]);
+            const peerObj = {
+              peerID: userID,
+              peer,
+            };
+            setPeers((users) => [...users, peerObj]);
           });
         });
 
@@ -120,7 +137,12 @@ const VideoRoom = (props) => {
             peer,
           });
 
-          setPeers((users) => [...users, peer]);
+          const peerObj = {
+            peerID: payload.callerID,
+            peer,
+          };
+
+          setPeers((users) => [...users, peerObj]);
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
@@ -128,7 +150,7 @@ const VideoRoom = (props) => {
           item.peer.signal(payload.signal);
         });
 
-        socketRef.current.on("removePeer", (socket_id) => {
+        socketRef.current.on("user left", (socket_id) => {
           console.log("removing peer " + socket_id);
           removePeer(socket_id);
         });
@@ -137,11 +159,6 @@ const VideoRoom = (props) => {
           console.log("GOT DISCONNECTED");
           destroyAllPeers();
         });
-
-        console.log("lista de peers din REF:");
-        console.log(peersRef.current);
-        console.log("lista de peers din useState:");
-        console.log(peers);
       });
   }, [videoChannelID]);
 
@@ -149,7 +166,8 @@ const VideoRoom = (props) => {
     const peer = new Peer({
       initiator: true,
       trickle: false,
-      stream,
+      stream: stream,
+      config: configuration,
     });
 
     peer.on("signal", (signal) => {
@@ -167,7 +185,8 @@ const VideoRoom = (props) => {
     const peer = new Peer({
       initiator: false,
       trickle: false,
-      stream,
+      stream: stream,
+      config: configuration,
     });
 
     peer.on("signal", (signal) => {
@@ -180,25 +199,20 @@ const VideoRoom = (props) => {
   }
 
   function removePeer(socket_id) {
-    //delete peer
-    console.log("user trebuie sters din list:");
-    console.log(socket_id);
-    for (let i = 0; i < peersRef.current.length; i++) {
-      if (peersRef.current[i].peerID === socket_id) {
-        console.log("aici trebuie sa stergem");
-        setPeers((peers) =>
-          peers.filter((peer) => peer !== peersRef.current[i].peer)
-        );
-
-        peersRef.current[i].peer.destroy();
-      }
+    const peerObj = peersRef.current.find((p) => p.peerID === socket_id);
+    if (peerObj) {
+      peerObj.peer.destroy();
     }
+
+    peersRef.current = peersRef.current.filter((p) => p.peerID !== socket_id);
+    setPeers((peers) => peers.filter((peer) => peer.peerID !== socket_id));
   }
 
   function destroyAllPeers() {
     for (let i = 0; i < peersRef.current.length; i++) {
       peersRef.current[i].peer.destroy();
     }
+    peersRef.current = [];
     setPeers([]);
   }
 
@@ -234,7 +248,6 @@ const VideoRoom = (props) => {
         <div className="buttons">
           <Button
             className="video-button"
-            // size="lg"
             onClick={() => {
               handleStopVideoStream();
             }}
@@ -256,7 +269,6 @@ const VideoRoom = (props) => {
           </Button>
           <Button
             className="microphone-button"
-            // size="lg"
             onClick={() => {
               handleMuteUser();
             }}
@@ -280,7 +292,6 @@ const VideoRoom = (props) => {
             <Button
               className="leave-button"
               variant="danger"
-              // size="lg"
               onClick={() => {
                 handleLeaveConference();
               }}
@@ -292,9 +303,20 @@ const VideoRoom = (props) => {
       </div>
       <div className="video-content">
         <div className="video-wrapper">
-          <StyledVideo muted ref={userVideo} autoPlay playsInline />
-          {peers.map((peer, index) => {
-            return <Video key={index} peer={peer} />;
+          <div className="user-video">
+            <StyledVideo muted ref={userVideo} autoPlay playsInline />
+          </div>
+          {peers.map((peer) => {
+            return (
+              <div className="user-video" key={peer.peerID}>
+                <Video
+                  width="400"
+                  height="300"
+                  key={peer.peerID}
+                  peer={peer.peer}
+                />
+              </div>
+            );
           })}
         </div>
       </div>

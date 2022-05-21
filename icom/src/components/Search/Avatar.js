@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
-// import { useDispatch, useSelector } from "react-redux";
 import "./avatar.css";
 function Avatar(props) {
   const { userId, roomId } = props;
