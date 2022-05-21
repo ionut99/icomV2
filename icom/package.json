@@ -75,6 +75,6 @@
     ]
   },
   "devDependencies": {
-    "url-loader": "^4.1.1"
+    "react-error-overlay": "6.0.9"
   }
 }

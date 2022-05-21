@@ -28,18 +28,31 @@ const Container = styled.div`
 `;
 
 const StyledVideo = styled.video`
-  max-height: 600px;
-  max-width: 600px;
-  margin: 0px;
+  height: 300px;
 `;
 
-const servers = {
+const configuration = {
+  // Using From https://www.metered.ca/tools/openrelay/
   iceServers: [
     {
-      urls: ["stun:"],
+      urls: "stun:openrelay.metered.ca:80",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:80",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443",
+      username: "openrelayproject",
+      credential: "openrelayproject",
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443?transport=tcp",
+      username: "openrelayproject",
+      credential: "openrelayproject",
     },
   ],
-  iceCandidatePoolSize: 10,
 };
 
 const Video = (props) => {
@@ -153,7 +166,8 @@ const VideoRoom = (props) => {
     const peer = new Peer({
       initiator: true,
       trickle: false,
-      stream,
+      stream: stream,
+      config: configuration,
     });
 
     peer.on("signal", (signal) => {
@@ -171,7 +185,8 @@ const VideoRoom = (props) => {
     const peer = new Peer({
       initiator: false,
       trickle: false,
-      stream,
+      stream: stream,
+      config: configuration,
     });
 
     peer.on("signal", (signal) => {
@@ -291,9 +306,20 @@ const VideoRoom = (props) => {
       </div>
       <div className="video-content">
         <div className="video-wrapper">
-          <StyledVideo muted ref={userVideo} autoPlay playsInline />
+          <div className="user-video">
+            <StyledVideo muted ref={userVideo} autoPlay playsInline />
+          </div>
           {peers.map((peer) => {
-            return <Video key={peer.peerID} peer={peer.peer} />;
+            return (
+              <div className="user-video" key={peer.peerID}>
+                <Video
+                  width="400"
+                  height="300"
+                  key={peer.peerID}
+                  peer={peer.peer}
+                />
+              </div>
+            );
           })}
         </div>
       </div>

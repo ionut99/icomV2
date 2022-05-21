@@ -54,23 +54,16 @@
   margin-top: 10px;
   background-color: rgba(0, 0, 0, 0.7);
   height: 90vh;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  /* display: grid; */
+  /* grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); */
+  display: flex;
   justify-content: center;
-  align-items: center;
+  flex-wrap: wrap;
 }
 
 .video-page .video-content .video-wrapper .user-video {
-  max-height: 100%;
-  height: 100%;
-  border: 2px solid black;
-  background-color: #6c777e;
+  height: 300px;
   margin: 5px;
-}
-
-.video-page .video-content .video-wrapper .user-video .video-player {
-  height: 100%;
-  width: 100%;
-  border: solid red 2px;
-  
+  transform: rotateY(180deg);
+  margin: 0.5rem;
 }
