@@ -146,7 +146,7 @@ io.on("connection", (socket) => {
       room = room.filter((id) => id !== socket.id);
       users_in_call[roomID] = room;
       console.log("socket disconnected " + socket.id);
-      socket.broadcast.emit("removePeer", socket.id);
+      socket.broadcast.emit("user left", socket.id);
     }
   });
 });

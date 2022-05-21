@@ -13,6 +13,7 @@ import {
   UpdateProfilePictureData,
   getPersonToAddInGroup,
   // UploadNewStoringFile,
+  getUserDetails,
 } from "../services/user";
 
 import {
@@ -59,6 +60,13 @@ export const userGetFolderDetails = (folderId, userId) => async (dispatch) => {
 
     dispatch(updateFolder(formattedDoc));
   }
+};
+
+export const getUserDetailsAsync = async (userId) => {
+  const result = await getUserDetails(userId);
+
+  if (result.status === 200) return result.data["userDetails"][0];
+  else return null;
 };
 
 // handle get ChildFolderList

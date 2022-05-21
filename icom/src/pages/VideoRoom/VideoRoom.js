@@ -109,7 +109,11 @@ const VideoRoom = (props) => {
               peerID: userID,
               peer,
             });
-            setPeers((users) => [...users, peer]);
+            const peerObj = {
+              peerID: userID,
+              peer,
+            };
+            setPeers((users) => [...users, peerObj]);
           });
         });
 
@@ -120,7 +124,12 @@ const VideoRoom = (props) => {
             peer,
           });
 
-          setPeers((users) => [...users, peer]);
+          const peerObj = {
+            peerID: payload.callerID,
+            peer,
+          };
+
+          setPeers((users) => [...users, peerObj]);
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
@@ -128,7 +137,7 @@ const VideoRoom = (props) => {
           item.peer.signal(payload.signal);
         });
 
-        socketRef.current.on("removePeer", (socket_id) => {
+        socketRef.current.on("user left", (socket_id) => {
           console.log("removing peer " + socket_id);
           removePeer(socket_id);
         });
@@ -137,11 +146,6 @@ const VideoRoom = (props) => {
           console.log("GOT DISCONNECTED");
           destroyAllPeers();
         });
-
-        console.log("lista de peers din REF:");
-        console.log(peersRef.current);
-        console.log("lista de peers din useState:");
-        console.log(peers);
       });
   }, [videoChannelID]);
 
@@ -180,25 +184,20 @@ const VideoRoom = (props) => {
   }
 
   function removePeer(socket_id) {
-    //delete peer
-    console.log("user trebuie sters din list:");
-    console.log(socket_id);
-    for (let i = 0; i < peersRef.current.length; i++) {
-      if (peersRef.current[i].peerID === socket_id) {
-        console.log("aici trebuie sa stergem");
-        setPeers((peers) =>
-          peers.filter((peer) => peer !== peersRef.current[i].peer)
-        );
-
-        peersRef.current[i].peer.destroy();
-      }
+    const peerObj = peersRef.current.find((p) => p.peerID === socket_id);
+    if (peerObj) {
+      peerObj.peer.destroy();
     }
+
+    peersRef.current = peersRef.current.filter((p) => p.peerID !== socket_id);
+    setPeers((peers) => peers.filter((peer) => peer.peerID !== socket_id));
   }
 
   function destroyAllPeers() {
     for (let i = 0; i < peersRef.current.length; i++) {
       peersRef.current[i].peer.destroy();
     }
+    peersRef.current = [];
     setPeers([]);
   }
 
@@ -293,8 +292,8 @@ const VideoRoom = (props) => {
       <div className="video-content">
         <div className="video-wrapper">
           <StyledVideo muted ref={userVideo} autoPlay playsInline />
-          {peers.map((peer, index) => {
-            return <Video key={index} peer={peer} />;
+          {peers.map((peer) => {
+            return <Video key={peer.peerID} peer={peer.peer} />;
           })}
         </div>
       </div>
