@@ -33,12 +33,6 @@ const { Server } = require("socket.io");
 // });
 
 //
-// peer server setup
-// const { ExpressPeerServer } = require("peer");
-// const peerServer = ExpressPeerServer(server_chat, {
-//   debug: true,
-// });
-// peer serve
 //
 // app.use("/peerjs", peerServer);
 //
@@ -68,20 +62,34 @@ const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const SEND_DOCUMENT_CHANGES = "SEND_DOCUMENT_CHANGES";
 const RECEIVE_DOCUMENT_CHANGES = "RECEIVE_DOCUMENT_CHANGES";
 
+const JOIN_VIDEO_CALL = "JOIN_VIDEO_CALL";
+const VIDEO_CALL_FULL = "VIDEO_CALL_FULL";
+const VIDEO_CALL_USERS_LIST = "VIDEO_CALL_USERS_LIST";
+
+const SENDING_SIGNAL = "SENDING_SIGNAL";
+const USER_JOINED = "USER_JOINED";
+
+const RETURNING_SIGNAL = "RETURNING_SIGNAL";
+const RECEIVING_RETURNING_SIGNAL = "RECEIVING_RETURNING_SIGNAL";
+
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
   },
 });
 
+const users_in_call = {};
+const socketToRoom = {};
+
 io.on("connection", (socket) => {
   // Join a conversation
   const { channelID } = socket.handshake.query;
-  const { fileId } = socket.handshake.query;
-  //console.log("incercare roomID: " + roomID);
-  //console.log("New connection established for chat part: ", roomID);
+  const { fileID } = socket.handshake.query;
+  const { videoChannelID } = socket.handshake.query;
+
   socket.join(channelID);
-  socket.join(fileId);
+  socket.join(fileID);
+  socket.join(videoChannelID);
 
   // Listen for new messages
   socket.on(NEW_CHAT_MESSAGE_EVENT, (data) => {
@@ -93,16 +101,56 @@ io.on("connection", (socket) => {
 
   // Listen for new document changes
   socket.on(SEND_DOCUMENT_CHANGES, (delta) => {
-    io.in(fileId).emit(RECEIVE_DOCUMENT_CHANGES, delta);
+    io.in(fileID).emit(RECEIVE_DOCUMENT_CHANGES, delta);
     console.log(delta);
   });
 
-  // Leave the room if the user closes the socket
+  // listen for new video room
+
+  // join user, verify if exist in room
+  // if exist then update socketref
+  // if not exist add him
+  // then reply list with rest of users
+
+  socket.on("join room", (roomID) => {
+    if (users_in_call[roomID]) {
+      const length = users_in_call[roomID].length;
+      if (length === 4) {
+        socket.emit("room full");
+        return;
+      }
+      users_in_call[roomID].push(socket.id);
+    } else {
+      users_in_call[roomID] = [socket.id];
+    }
+    socketToRoom[socket.id] = roomID;
+    const usersInThisRoom = users_in_call[roomID].filter(
+      (id) => id !== socket.id
+    );
+
+    socket.emit("all users", usersInThisRoom);
+  });
+
+  socket.on("sending signal", (payload) => {
+    io.to(payload.userToSignal).emit("user joined", {
+      signal: payload.signal,
+      callerID: payload.callerID,
+    });
+  });
+
+  socket.on("returning signal", (payload) => {
+    io.to(payload.callerID).emit("receiving returned signal", {
+      signal: payload.signal,
+      id: socket.id,
+    });
+  });
+
   socket.on("disconnect", () => {
-    socket.leave(channelID);
+    const roomID = socketToRoom[socket.id];
+    let room = users_in_call[roomID];
+    if (room) {
+      room = room.filter((id) => id !== socket.id);
+      users_in_call[roomID] = room;
+    }
   });
 });
-
-// server_chat.listen(process.env.SERVER_PORT, () => {
-//   console.log(`Server started on port ${process.env.SERVER_PORT}`);
-// });
