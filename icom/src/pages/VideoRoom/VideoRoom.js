@@ -248,7 +248,6 @@ const VideoRoom = (props) => {
         <div className="buttons">
           <Button
             className="video-button"
-            // size="lg"
             onClick={() => {
               handleStopVideoStream();
             }}
@@ -270,7 +269,6 @@ const VideoRoom = (props) => {
           </Button>
           <Button
             className="microphone-button"
-            // size="lg"
             onClick={() => {
               handleMuteUser();
             }}
@@ -294,7 +292,6 @@ const VideoRoom = (props) => {
             <Button
               className="leave-button"
               variant="danger"
-              // size="lg"
               onClick={() => {
                 handleLeaveConference();
               }}
