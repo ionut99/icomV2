@@ -124,6 +124,16 @@ const VideoRoom = (props) => {
           const item = peersRef.current.find((p) => p.peerID === payload.id);
           item.peer.signal(payload.signal);
         });
+
+        socketRef.current.on("removePeer", (socket_id) => {
+          console.log("removing peer " + socket_id);
+          removePeer(socket_id);
+        });
+
+        socketRef.current.on("disconnect", () => {
+          console.log("GOT DISCONNECTED");
+          //destroyAllPeers();
+        });
       });
   }, [videoChannelID]);
 
@@ -159,6 +169,28 @@ const VideoRoom = (props) => {
     peer.signal(incomingSignal);
 
     return peer;
+  }
+
+  function removePeer(socket_id) {
+    //delete peer
+    console.log("user trebuie sters din list:");
+    console.log(socket_id);
+    for (let i = 0; i < peersRef.current.length; i++) {
+      if (peersRef.current[i].peerID === socket_id) {
+        console.log("aici trebuie sa stergem");
+        setPeers((peers) =>
+          peers.filter((peer) => peer !== peersRef.current[i].peer)
+        );
+        peersRef.current[i].peer.destroy();
+      }
+    }
+  }
+
+  function destroyAllPeers() {
+    for (let i = 0; i < peersRef.current.length; i++) {
+      peersRef.current[i].peer.destroy();
+    }
+    for (let peer in peers) peer.destroy();
   }
 
   const handleLeaveConference = () => {
