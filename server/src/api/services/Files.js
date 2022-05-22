@@ -1,5 +1,6 @@
 const { path } = require("express/lib/application");
 const mysql = require("mysql");
+const { NULL } = require("mysql/lib/protocol/constants/types");
 
 const { DataBaseConfig } = require("../../config/dataBase");
 
@@ -14,9 +15,18 @@ function InsertNewFileDataBase(
   systemPath
 ) {
   const connection = new mysql.createConnection(DataBaseConfig);
+  const fileId_escaped = mysql.escape(fileId);
+  const type_escaped = mysql.escape(type);
+  const fileName_escaped = mysql.escape(fileName);
+  const folderId_escaped = mysql.escape(folderId);
+  const createdTime_escaped = mysql.escape(createdTime);
+  const userId_escaped = mysql.escape(userId);
+  const size_escaped = mysql.escape(size);
+  const systemPath_escaped = mysql.escape(systemPath);
+
   return new Promise((resolve, reject) => {
     connection.query(
-      `INSERT INTO file (fileId, type, fileName, folderId, createdTime, userId, size, systemPath) VALUES ('${fileId}', '${type}', '${fileName}', '${folderId}', '${createdTime}', '${userId}', '${size}', '${systemPath}')`,
+      `INSERT INTO file (fileId, type, fileName, folderId, createdTime, userId, size, systemPath) VALUES (${fileId_escaped}, ${type_escaped}, ${fileName_escaped}, ${folderId_escaped}, ${createdTime_escaped}, ${userId_escaped}, ${size_escaped}, ${systemPath_escaped})`,
       (err, result) => {
         if (err) {
           return reject(err);
