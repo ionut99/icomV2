@@ -1,7 +1,5 @@
-const { path } = require("express/lib/application");
 const mysql = require("mysql");
-
-const { DataBaseConfig } = require("../../config/dataBase");
+var sqlPool = require("./sql.js");
 
 function InsertNewFolderDataBase(
   folderId,
@@ -12,26 +10,40 @@ function InsertNewFolderDataBase(
   createdAt
 ) {
   let stringPath = JSON.stringify(path);
-  const connection = new mysql.createConnection(DataBaseConfig);
+
+  let insertQuery =
+    "INSERT INTO ?? (??, ??, ??, ??, ??, ??) VALUES (?, ?, ?, ?, ?, ?)";
+  let query = mysql.format(insertQuery, [
+    "folders",
+    "folderId",
+    "Name",
+    "parentID",
+    "userID",
+    "path",
+    "createdTime",
+    folderId,
+    name,
+    parentId,
+    userId,
+    stringPath,
+    createdAt,
+  ]);
+  //
   return new Promise((resolve, reject) => {
-    connection.query(
-      `INSERT INTO folders (folderId, Name, parentID, userID, path, createdTime) VALUES ('${folderId}', '${name}', '${parentId}', '${userId}', '${stringPath}', '${createdAt}')`,
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
-    connection.end();
+      return resolve(result);
+    });
   });
 }
 
+// TO DO: verify system logic, re write queryes
 function InsertFolderUserRelationDataBase(folderId, userId, uuidRoom) {
-  const connection = new mysql.createConnection(DataBaseConfig);
   if (uuidRoom === null) {
     return new Promise((resolve) => {
-      connection.query(
+      sqlPool.pool.query(
         `INSERT INTO foldersusers (ID, folderIdResource, userIdBeneficiary, RoomIdBeneficiary) VALUES (NULL, '${folderId}', '${userId}', NULL)`,
         (err, result) => {
           if (err) {
@@ -41,11 +53,10 @@ function InsertFolderUserRelationDataBase(folderId, userId, uuidRoom) {
           return resolve(result);
         }
       );
-      connection.end();
     });
   } else if (userId === null) {
     return new Promise((resolve) => {
-      connection.query(
+      sqlPool.pool.query(
         `INSERT INTO foldersusers (ID, folderIdResource, userIdBeneficiary, RoomIdBeneficiary) VALUES (NULL, '${folderId}', NULL, '${uuidRoom}')`,
         (err, result) => {
           if (err) {
@@ -55,11 +66,10 @@ function InsertFolderUserRelationDataBase(folderId, userId, uuidRoom) {
           return resolve(result);
         }
       );
-      connection.end();
     });
   } else if (userId !== null && uuidRoom !== null) {
     return new Promise((resolve) => {
-      connection.query(
+      sqlPool.pool.query(
         `INSERT INTO foldersusers (ID, folderIdResource, userIdBeneficiary, RoomIdBeneficiary) VALUES (NULL, '${folderId}', '${userId}', '${uuidRoom}')`,
         (err, result) => {
           if (err) {
@@ -69,88 +79,135 @@ function InsertFolderUserRelationDataBase(folderId, userId, uuidRoom) {
           return resolve(result);
         }
       );
-      connection.end();
     });
   }
 }
 
 function GetFolderDetails(folderId) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
-    connection.query(
-      `SELECT * FROM folders INNER JOIN foldersusers ON folders.folderId = foldersusers.folderIdResource WHERE folders.folderId = '${folderId}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+  let selectQuery = "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ?";
+  let query = mysql.format(selectQuery, [
+    "folders",
+    "foldersusers",
+    "folders.folderId",
+    "foldersusers.folderIdResource",
+    "folders.folderId",
+    folderId,
+  ]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
-    connection.end();
+      return resolve(result);
+    });
   });
 }
 
 function GetSharedPrivateFolders(userId, parentId) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
-    connection.query(
-      `SELECT folders.folderId, folders.Name, folders.parentID, folders.userID, folders.createdTime, folders.path FROM folders INNER JOIN foldersusers ON folders.folderId = foldersusers.folderIdResource INNER JOIN iusers ON iusers.userId = foldersusers.userIdBeneficiary WHERE foldersusers.userIdBeneficiary = '${userId}' AND folders.parentID = '${parentId}' AND foldersusers.RoomIdBeneficiary IS NULL`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+  let selectQuery =
+    "SELECT ??, ??, ??, ??, ??, ?? FROM ?? INNER JOIN ?? ON ?? = ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? = ? AND ?? IS NULL";
+  let query = mysql.format(selectQuery, [
+    "folders.folderId",
+    "folders.Name",
+    "folders.parentID",
+    "folders.userID",
+    "folders.createdTime",
+    "folders.path",
+    "folders",
+    "foldersusers",
+    "folders.folderId",
+    "foldersusers.folderIdResource",
+    "iusers",
+    "iusers.userId",
+    "foldersusers.userIdBeneficiary",
+    "foldersusers.userIdBeneficiary",
+    userId,
+    "folders.parentID",
+    parentId,
+    "foldersusers.RoomIdBeneficiary",
+  ]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
-    connection.end();
+      return resolve(result);
+    });
   });
 }
 
 function GetSharedGroupFolders(userId, parentId) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
-    connection.query(
-      `SELECT DISTINCT folders.folderId, folders.Name, folders.parentID, folders.userID, folders.createdTime, folders.path FROM iusers INNER JOIN participants ON iusers.userId = participants.UserID INNER JOIN foldersusers ON participants.RoomID = foldersusers.RoomIdBeneficiary INNER JOIN folders ON foldersusers.folderIdResource = folders.folderId WHERE folders.parentID = '${parentId}' AND iusers.userId = '${userId}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+  let selectQuery =
+    "SELECT DISTINCT ??, ??, ??, ??, ??, ?? FROM ?? INNER JOIN ?? ON ?? = ?? INNER JOIN ?? ON ?? = ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? = ?";
+  let query = mysql.format(selectQuery, [
+    "folders.folderId",
+    "folders.Name",
+    "folders.parentID",
+    "folders.userID",
+    "folders.createdTime",
+    "folders.path",
+    "iusers",
+    "participants",
+    "iusers.userId",
+    "participants.UserID",
+    "foldersusers",
+    "participants.RoomID",
+    "foldersusers.RoomIdBeneficiary",
+    "folders",
+    "foldersusers.folderIdResource",
+    "folders.folderId",
+    "folders.parentID",
+    parentId,
+    "iusers.userId",
+    userId,
+  ]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
-    connection.end();
+      return resolve(result);
+    });
   });
 }
 
 function DeleteFolderUserRelation(roomID) {
-  const connection = new mysql.createConnection(DataBaseConfig);
-  return new Promise((resolve) => {
-    connection.query(
-      `DELETE FROM foldersusers WHERE RoomIdBeneficiary = '${roomID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+  let deleteQuery = "DELETE FROM ?? WHERE ?? = ?";
+  let query = mysql.format(deleteQuery, [
+    "foldersusers",
+    "RoomIdBeneficiary",
+    roomID,
+  ]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
-    connection.end();
+      return resolve(result);
+    });
   });
 }
 
 function DeleteRoomFolderAndUserRelation(roomID) {
-  const connection = new mysql.createConnection(DataBaseConfig);
+  let deleteQuery =
+    "DELETE ??, ?? FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ?";
+  let query = mysql.format(deleteQuery, [
+    "folders",
+    "foldersusers",
+    "folders",
+    "foldersusers",
+    "folders.folderId",
+    "foldersusers.folderIdResource",
+    "foldersusers.RoomIdBeneficiary",
+    roomID,
+  ]);
   return new Promise((resolve, reject) => {
-    connection.query(
-      `DELETE folders, foldersusers FROM folders INNER JOIN foldersusers ON folders.folderId=foldersusers.folderIdResource WHERE foldersusers.RoomIdBeneficiary = '${roomID}'`,
-      (err, result) => {
-        if (err) {
-          return reject(result);
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
-    connection.end();
+      return resolve(result);
+    });
   });
 }
 

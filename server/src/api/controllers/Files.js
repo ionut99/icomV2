@@ -21,15 +21,13 @@ const {
   extractProfilePicturePath,
 } = require("../helpers/files_utils");
 
-// const { GetDocumentContentService } = require("../../services/Files");
-
 const defaultAvatarPicure = path.join(
   __dirname,
   "../../../",
   "users/default/default_avatar.png"
 );
 
-const { mimeTypes } = require("../helpers/mimeType");
+const { returnMimeType } = require("../helpers/mimeType");
 
 const storageFile = multer.diskStorage({
   destination: path.join(__dirname, "../../../users/tempDir/"),
@@ -63,11 +61,20 @@ async function UpdateProfilePicture(req, res) {
       }
       // file details
       const fileName = req.file.originalname;
-
       const userID = req.body.userID;
-      const userDetails = await GetUserDetailsData(userID);
-      const results = JSON.parse(JSON.stringify(userDetails));
-
+      // Check user ID
+      const userDetails = await GetUserDetailsData(userID)
+        .then(function (userDetails) {
+          return userDetails;
+        })
+        .catch((err) =>
+          setImmediate(() => {
+            throw err;
+          })
+        );
+      if (userDetails.length === 0) {
+        return handleResponse(req, res, 410, " Wrong USER ID! ");
+      }
       // verific daca exista folderul unde se va salva avatarul
       const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
       const newPath = path.join(__dirname, "../../../users/", userID);
@@ -182,67 +189,80 @@ async function UploadNewStoredFile(req, res) {
             pathToStore = pathToStore.replace(/\\/g, "\\\\");
 
             //Store File details in database
-            var storingFile_res = await InsertNewFileDataBase(
+            //similarity
+            InsertNewFileDataBase(
               fileId,
-              mimeTypes[fileType],
+              returnMimeType(fileType),
               fileName,
               folderId,
               createdTime,
               userId,
               fileSize,
               pathToStore
-            );
-
-            if (storingFile_res === "FAILED") {
-              console.log("Error storage folder configuration!");
-              return handleResponse(req, res, 412, " DataBase Error ");
-            }
+            )
+              .then(function (result) {
+                //console.log(result);
+              })
+              .catch((err) =>
+                setImmediate(() => {
+                  throw err;
+                })
+              );
+            // similarity
 
             if (folderId !== "root") {
-              const parentFolder = await GetFolderDetails(folderId);
-
-              if (parentFolder === "FAILED") {
-                console.log("Error get details about folder!");
-                return handleResponse(req, res, 412, " DataBase Error ");
-              }
-              // console.log(parentFolder[0].RoomIdBeneficiary);
-              if (parentFolder[0].RoomIdBeneficiary !== null) {
-                result = await InsertNewFileRelationDataBase(
-                  fileId,
-                  userId,
-                  parentFolder[0].RoomIdBeneficiary
+              GetFolderDetails(folderId)
+                .then(function (parentFolder) {
+                  //console.log(parentFolder);
+                  if (parentFolder[0].RoomIdBeneficiary !== null) {
+                    //similarity
+                    InsertNewFileRelationDataBase(
+                      fileId,
+                      userId,
+                      parentFolder[0].RoomIdBeneficiary
+                    )
+                      .then(function (result) {
+                        //console.log(result);
+                      })
+                      .catch((err) =>
+                        setImmediate(() => {
+                          throw err;
+                        })
+                      );
+                    //similarity
+                  } else {
+                    InsertNewFileRelationDataBase(fileId, userId, null)
+                      .then(function (result) {
+                        //console.log(result);
+                      })
+                      .catch((err) =>
+                        setImmediate(() => {
+                          throw err;
+                        })
+                      );
+                  }
+                })
+                .catch((err) =>
+                  setImmediate(() => {
+                    throw err;
+                  })
                 );
-                if (result === "FAILED") {
-                  console.log("Error storage folder configuration!");
-                  return handleResponse(req, res, 412, " DataBase Error ");
-                }
-              } else {
-                result = await InsertNewFileRelationDataBase(
-                  fileId,
-                  userId,
-                  null
-                );
-                if (result === "FAILED") {
-                  console.log("Error storage folder configuration!");
-                  return handleResponse(req, res, 412, " DataBase Error ");
-                }
-              }
             } else {
-              result = await InsertNewFileRelationDataBase(
-                fileId,
-                userId,
-                null
-              );
-              if (result === "FAILED") {
-                console.log("Error storage folder configuration!");
-                return handleResponse(req, res, 412, " DataBase Error ");
-              }
+              InsertNewFileRelationDataBase(fileId, userId, null)
+                .then(function (result) {
+                  //console.log(result);
+                })
+                .catch((err) =>
+                  setImmediate(() => {
+                    throw err;
+                  })
+                );
             }
 
             return handleResponse(req, res, 200, {
               StorageFile: "SUCCESS",
               fileId: fileId,
-              type: mimeTypes[fileType],
+              type: returnMimeType(fileType),
             });
           }
         }
@@ -321,28 +341,28 @@ async function DownLoadFile(req, res) {
     const fileId = req.body.fileId;
     const userId = req.body.userId;
 
-    const filedetails_res = await GetFileDetailsFromDataBase(fileId, userId);
-    if (filedetails_res === "FAILED") {
-      console.log("Error get details about file!");
-      return handleResponse(req, res, 410, "  Err download File  ");
-    }
+    GetFileDetailsFromDataBase(fileId, userId)
+      .then(function (filedetails_res) {
+        //
+        const file_result = JSON.parse(JSON.stringify(filedetails_res));
 
-    const file_result = JSON.parse(JSON.stringify(filedetails_res));
+        const DownloadFilePath = path.join(
+          __dirname,
+          "../../../",
+          file_result[0].systemPath
+        );
 
-    const DownloadFilePath = path.join(
-      __dirname,
-      "../../../",
-      file_result[0].systemPath
-    );
-
-    // path where is store file
-    // console.log(DownloadFilePath);
-
-    res.download(DownloadFilePath, (err) => {
-      if (err) {
-        return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
-      }
-    });
+        res.download(DownloadFilePath, (err) => {
+          if (err) {
+            return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
+          }
+        });
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
   } catch (error) {
     console.error(error);
     return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
