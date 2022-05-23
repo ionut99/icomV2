@@ -1,56 +1,53 @@
 const mysql = require("mysql");
-
-const { DataBaseConfig } = require("../../config/dataBase");
+var sqlPool = require("./sql.js");
 
 function GetUserFromDataBase(email) {
-  const connection = new mysql.createConnection(DataBaseConfig);
+  let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
+  let query = mysql.format(selectQuery, ["iusers", "email", email]);
   return new Promise((resolve, reject) => {
-    connection.query(
-      "SELECT * FROM IUsers WHERE email = ?",
-      [email],
-      (err, result) => {
+    //
+    sqlPool.pool.getConnection((err, connection) => {
+      connection.query(query, [email], (err, result) => {
         if (err) {
           return reject(err);
         }
         return resolve(result);
-      }
-    );
-    connection.end();
+      });
+      connection.release();
+      //
+    });
   });
 }
 
 function GetUserByID(userId) {
-  const connection = new mysql.createConnection(DataBaseConfig);
+  let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
+  let query = mysql.format(selectQuery, ["iusers", "userId", userId]);
   return new Promise((resolve, reject) => {
-    connection.query(
-      "SELECT * FROM IUsers WHERE userId = ?",
-      [userId],
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, [userId], (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
-    connection.end();
+      return resolve(result);
+    });
   });
 }
 
 function GetParticipantByID(participantId, roomID) {
-  const connection = new mysql.createConnection(DataBaseConfig);
+  let selectQuery = "SELECT * FROM ?? WHERE ?? = ? AND ?? = ?";
+  let query = mysql.format(selectQuery, [
+    "participants",
+    "UserID",
+    userId,
+    "RoomID",
+    roomID,
+  ]);
   return new Promise((resolve) => {
-    connection.query(
-      `SELECT * FROM participants WHERE UserID = ? AND RoomID = ?`,
-      [participantId],
-      [roomID],
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+    sqlPool.query(query, [participantId], [roomID], (err, result) => {
+      if (err) {
+        return resolve("FAILED");
       }
-    );
-    connection.end();
+      return resolve(result);
+    });
   });
 }
 

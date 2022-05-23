@@ -28,8 +28,7 @@ async function SignInUser(req, res) {
   }
 
   try {
-    const userData_copy = await GetUserFromDataBase(user, pwd);
-
+    const userData_copy = await GetUserFromDataBase(user);
     if (!userData_copy[0]) {
       return handleResponse(req, res, 401, null, "Email is Wrong.");
     }

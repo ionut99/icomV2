@@ -13,6 +13,11 @@ function InsertNewFolderDataBase(
 ) {
   let stringPath = JSON.stringify(path);
   const connection = new mysql.createConnection(DataBaseConfig);
+  //
+  const folderId_escaped = mysql.escape(folderId);
+  const nama_escaped = mysql.escape(name);
+  const parentId_escaped = mysql.escape(parentId);
+  //
   return new Promise((resolve, reject) => {
     connection.query(
       `INSERT INTO folders (folderId, Name, parentID, userID, path, createdTime) VALUES ('${folderId}', '${name}', '${parentId}', '${userId}', '${stringPath}', '${createdAt}')`,
