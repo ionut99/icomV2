@@ -8,7 +8,6 @@ const {
 } = require("../helpers/user_utils");
 
 const {
-  GetSearchUsersList,
   GetAllUsersDataBase,
   GetUserRoomsList,
   InsertNewMessageData,
@@ -32,10 +31,35 @@ async function GetUserSearchList(req, res) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    const list = await GetSearchUsersList(search_box_text, userId);
+    var list = await GetAllUsersDataBase(userId)
+      .then(function (result) {
+        return result.map((x) => {
+          const user = { ...x };
+          return {
+            UserName: user.Surname + " " + user.Name,
+            userId: user.userId,
+          };
+        });
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+    list = list.filter(function (user) {
+      return user.UserName.includes(search_box_text);
+    });
+    // if (list.length === 0) {
+    //   return handleResponse(
+    //     req,
+    //     res,
+    //     412,
+    //     " Failed to fetch list with users! - Empty List"
+    //   );
+    // }
+    // console.log(list);
 
     var userRoomList = [];
-
     userRoomList = await GetUserRoomsList(search_box_text, userId);
     var userDetails = await GetUserByID(userId);
 
