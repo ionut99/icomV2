@@ -238,18 +238,28 @@ async function AddNewMemberInGroup(req, res) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    var participantDetails = await GetParticipantByID(userSearchListID, roomID);
+    var participantDetails = await GetParticipantByID(userSearchListID, roomID)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
-    if (participantDetails === "FAILED") {
-      console.log("FAILED - get participant! ");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    } else if (!participantDetails.length) {
-      var result = await AddNewMemberInGroupData(roomID, userSearchListID);
-      if (result === "FAILED") {
-        console.log("FAILED - add participant to group! ");
-        return handleResponse(req, res, 412, " DataBase Error ");
-      }
-      return handleResponse(req, res, 200, { AddParticipant: "SUCCES" });
+    if (!participantDetails.length) {
+      var result = await AddNewMemberInGroupData(roomID, userSearchListID)
+        .then(function (result) {
+          return result;
+        })
+        .catch((err) =>
+          setImmediate(() => {
+            throw err;
+          })
+        );
+      if (result.length > 0)
+        return handleResponse(req, res, 200, { AddParticipant: "SUCCES" });
     } else {
       return handleResponse(req, res, 200, "User is Already a member");
     }
@@ -273,11 +283,21 @@ async function GetPartList(req, res) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    const participantsRoomList = await GetPartListData(roomID);
-    if (participantsRoomList === "FAILED") {
-      console.log("FAILED - get participants list! ");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
+    const participantsRoomList = await GetPartListData(roomID)
+      .then(function (result) {
+        return result.map((x) => {
+          const user = { ...x };
+          return {
+            UserName: user.Surname + " " + user.Name,
+            userId: user.userId,
+          };
+        });
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
     return handleResponse(req, res, 200, { participantsRoomList });
   } catch (error) {
@@ -288,6 +308,7 @@ async function GetPartList(req, res) {
 
 async function GetNOTPartList(req, res) {
   try {
+    console.log("proces de adaugare:");
     const RoomID = req.body.RoomID;
     const userId = req.body.userId;
 
@@ -296,18 +317,38 @@ async function GetNOTPartList(req, res) {
     }
 
     // participants
-    const participantsRoomList = await GetPartListData(RoomID);
-    if (participantsRoomList === "FAILED") {
-      console.log("FAILED - get participants list! ");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
+    const participantsRoomList = await GetPartListData(RoomID)
+      .then(function (result) {
+        return result.map((x) => {
+          const user = { ...x };
+          return {
+            UserName: user.Surname + " " + user.Name,
+            userId: user.userId,
+          };
+        });
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
     // all users
-    var NOTparticipantsRoomList = await GetAllUsersDataBase();
-    if (NOTparticipantsRoomList === "FAILED") {
-      console.log("FAILED - get NOT participants list! ");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
+    var NOTparticipantsRoomList = await GetAllUsersDataBase(userId)
+      .then(function (result) {
+        return result.map((x) => {
+          const user = { ...x };
+          return {
+            UserName: user.Surname + " " + user.Name,
+            userId: user.userId,
+          };
+        });
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
     NOTparticipantsRoomList = NOTparticipantsRoomList.filter(function (item) {
       for (var p in participantsRoomList) {
@@ -320,6 +361,9 @@ async function GetNOTPartList(req, res) {
       }
       return true;
     });
+
+    console.log("lista non participanti:");
+    console.log(NOTparticipantsRoomList);
 
     return handleResponse(req, res, 200, { NOTparticipantsRoomList });
   } catch (error) {

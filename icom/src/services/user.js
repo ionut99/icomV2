@@ -32,6 +32,8 @@ export const getSearchPersonService = async (search_box_text, userId) => {
 };
 
 export const getPersonToAddInGroup = async (RoomID, userId) => {
+  console.log("vreau sa adaug persoane in grupul:");
+  console.log(RoomID);
   try {
     return await axios.post(`${REACT_APP_API_URL}/users/toadd`, {
       RoomID,
@@ -235,6 +237,31 @@ export const AddUserAccountDataBase = async (
       userName,
       email,
       isAdmin,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+export const EditUserAccountDataBase = async (
+  userSurname,
+  userName,
+  email,
+  currentPassword,
+  newPassword,
+  userId
+) => {
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/users/edit`, {
+      userSurname,
+      userName,
+      email,
+      currentPassword,
+      newPassword,
+      userId,
     });
   } catch (err) {
     return {

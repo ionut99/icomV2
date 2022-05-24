@@ -131,7 +131,7 @@ function Chat() {
                     Close
                   </Button>
                   <Button variant="success" type="submit">
-                    Add New User
+                    Create New Group
                   </Button>
                 </Modal.Footer>
               </Form>

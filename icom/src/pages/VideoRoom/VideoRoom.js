@@ -90,22 +90,22 @@ const VideoRoom = (props) => {
   const socketRef = useRef();
   const userVideo = useRef();
   const peersRef = useRef([]);
-  const videoChannelID = props.match.params.roomId;
+  const roomID = props.match.params.roomId;
 
   const authObj = useSelector((state) => state.auth);
   const { user, expiredAt, token } = authObj;
 
   // initializare socket
   useEffect(() => {
-    if (videoChannelID === null || videoChannelID === undefined) return;
+    if (roomID === null || roomID === undefined) return;
     socketRef.current = socketIOClient(REACT_APP_API_URL, {
-      query: { videoChannelID },
+      query: { roomID },
     });
 
     return () => {
       socketRef.current.disconnect();
     };
-  }, [videoChannelID]);
+  }, [roomID]);
   // initializare socket
 
   useEffect(() => {
@@ -113,17 +113,27 @@ const VideoRoom = (props) => {
       .getUserMedia({ video: videoConstraints, audio: true })
       .then((stream) => {
         userVideo.current.srcObject = stream;
-        const roomID = videoChannelID;
-        socketRef.current.emit("join room", roomID);
-        socketRef.current.on("all users", (users) => {
-          users.forEach((userID) => {
-            const peer = createPeer(userID, socketRef.current.id, stream);
+        const dataSend = {
+          userID: user.userId,
+          roomID: roomID,
+        };
+        socketRef.current.emit("join video room", dataSend, (error) => {
+          if (error) {
+            alert(error);
+          }
+        });
+        socketRef.current.on("all users", (roomData) => {
+          // console.log("Primim detaliile despre camera:");
+          // console.log(roomData.users);
+          roomData.users.forEach((user) => {
+            // console.log(user.id);
+            const peer = createPeer(user.id, socketRef.current.id, stream);
             peersRef.current.push({
-              peerID: userID,
+              peerID: user.id,
               peer,
             });
             const peerObj = {
-              peerID: userID,
+              peerID: user.id,
               peer,
             };
             setPeers((users) => [...users, peerObj]);
@@ -160,7 +170,7 @@ const VideoRoom = (props) => {
           destroyAllPeers();
         });
       });
-  }, [videoChannelID]);
+  }, [roomID]);
 
   function createPeer(userToSignal, callerID, stream) {
     const peer = new Peer({

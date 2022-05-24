@@ -6,16 +6,13 @@ function GetUserFromDataBase(email) {
   let query = mysql.format(selectQuery, ["iusers", "email", email]);
   return new Promise((resolve, reject) => {
     //
-    sqlPool.pool.getConnection((err, connection) => {
-      connection.query(query, [email], (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(result);
-      });
-      connection.release();
-      //
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(result);
     });
+    //
   });
 }
 
@@ -23,7 +20,7 @@ function GetUserByID(userId) {
   let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
   let query = mysql.format(selectQuery, ["iusers", "userId", userId]);
   return new Promise((resolve, reject) => {
-    sqlPool.pool.query(query, [userId], (err, result) => {
+    sqlPool.pool.query(query, (err, result) => {
       if (err) {
         return reject(err);
       }
@@ -37,14 +34,14 @@ function GetParticipantByID(participantId, roomID) {
   let query = mysql.format(selectQuery, [
     "participants",
     "UserID",
-    userId,
+    participantId,
     "RoomID",
     roomID,
   ]);
-  return new Promise((resolve) => {
-    sqlPool.query(query, [participantId], [roomID], (err, result) => {
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
       if (err) {
-        return resolve("FAILED");
+        return reject(err);
       }
       return resolve(result);
     });

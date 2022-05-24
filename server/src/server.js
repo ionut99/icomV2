@@ -11,6 +11,13 @@ require("dotenv").config();
 
 const app = express();
 
+const {
+  addUserInRoom,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+} = require("./api/controllers/Socket");
+
 // To Verify cors-origin !!!
 // enable CORS
 app.use(
@@ -78,19 +85,18 @@ const io = new Server(httpServer, {
   },
 });
 
-const users_in_call = {};
-const socketToRoom = {};
+// const users_in_call = {};
+// const socketToRoom = {};
 
 io.on("connection", (socket) => {
   // Join a conversation
   const { channelID } = socket.handshake.query;
   const { fileID } = socket.handshake.query;
-  const { videoChannelID } = socket.handshake.query;
+  const { roomID } = socket.handshake.query;
 
-  socket.join(channelID);
-  socket.join(fileID);
-  socket.join(videoChannelID);
-
+  //
+  socket.join(channelID);// grija aici
+  //
   // Listen for new messages
   socket.on(NEW_CHAT_MESSAGE_EVENT, (data) => {
     io.in(channelID).emit(NEW_CHAT_MESSAGE_EVENT, data);
@@ -98,31 +104,34 @@ io.on("connection", (socket) => {
     console.log(data);
     console.log("On channel: " + channelID);
   });
-
+  //
+  // socket.join(fileID);
+  //
   // Listen for new document changes
   socket.on(SEND_DOCUMENT_CHANGES, (delta) => {
-    io.in(fileID).emit(RECEIVE_DOCUMENT_CHANGES, delta);
+    socket.broadcast.to(fileID).emit(RECEIVE_DOCUMENT_CHANGES, delta);
     console.log(delta);
   });
+  //
+  // socket.join(videoChannelID);
 
-  // listen for new video room
-  socket.on("join room", (roomID) => {
-    if (users_in_call[roomID]) {
-      const length = users_in_call[roomID].length;
-      if (length === 4) {
-        socket.emit("room full");
-        return;
-      }
-      users_in_call[roomID].push(socket.id);
-    } else {
-      users_in_call[roomID] = [socket.id];
-    }
-    socketToRoom[socket.id] = roomID;
-    const usersInThisRoom = users_in_call[roomID].filter(
-      (id) => id !== socket.id
-    );
-
-    socket.emit("all users", usersInThisRoom);
+  socket.on("join video room", (dataSend, callback) => {
+    const userID = dataSend.userID;
+    const roomID = dataSend.roomID;
+    const { error, user } = addUserInRoom({ id: socket.id, userID, roomID });
+    if (error) return callback(error);
+    socket.join(user.roomID);
+    // io.to(user.roomID).emit("all users", {
+    //   roomID: user.roomID,
+    //   users: getUsersInRoom(user.roomID, user.id),
+    // });
+    // ramane de vazut daca utilizatorii vor primii lista cu toti participantii de fiecare data cand intra cineva nou
+    // de asemenea lista curenta nu contine utilizatorul care doreste sa se conecteze
+    socket.emit("all users", {
+      roomID: user.roomID,
+      users: getUsersInRoom(user.roomID, user.id),
+    });
+    callback();
   });
 
   socket.on("sending signal", (payload) => {
@@ -140,12 +149,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    const roomID = socketToRoom[socket.id];
-    let room = users_in_call[roomID];
-    if (room) {
-      room = room.filter((id) => id !== socket.id);
-      users_in_call[roomID] = room;
-      console.log("socket disconnected " + socket.id);
+    const user = removeUser(socket.id);
+    if (user) {
       socket.broadcast.emit("user left", socket.id);
     }
   });

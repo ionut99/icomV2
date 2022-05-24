@@ -23,7 +23,10 @@ import {
   // GetFileDocument,
 } from "./../actions/userActions";
 
-import { AddUserAccountDataBase } from "../services/user";
+import {
+  AddUserAccountDataBase,
+  EditUserAccountDataBase,
+} from "../services/user";
 import { getChildFolders, getFolderByID } from "../services/folder";
 import { getFileList } from "../services/file";
 import {
@@ -287,7 +290,7 @@ export const AddNewMemberInGroup =
 export const getParticipantList = (RoomID) => async (dispatch) => {
   const result = await getParticipantsListService(RoomID);
   // TO DO - display message
-  // console.log(result);
+  // console.log(result.data);
   dispatch(setPersonSearchList(result.data["participantsRoomList"]));
 };
 
@@ -314,6 +317,21 @@ export const AddNewUserAccount =
       userName,
       email,
       isAdmin
+    );
+    // TO DO - display message
+    console.log(varVerify);
+  };
+
+export const EditUserAccountInfor =
+  (userSurname, userName, email, currentPassword, newPassword, userId) =>
+  async (dispatch) => {
+    const varVerify = await EditUserAccountDataBase(
+      userSurname,
+      userName,
+      email,
+      currentPassword,
+      newPassword,
+      userId
     );
     // TO DO - display message
     console.log(varVerify);

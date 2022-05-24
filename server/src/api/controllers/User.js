@@ -16,12 +16,13 @@ const {
 
 // const { InsertNewFolderDataBase } = require("../services/Folders");
 
-const { InsertNewUserAccountData } = require("../services/User");
+const {
+  InsertNewUserAccountData,
+  EditUserAccountDataBase,
+} = require("../services/User");
 const { GetUserByID } = require("../services/Auth");
 
 //
-
-// return list with all users
 async function GetUserSearchList(req, res) {
   try {
     const search_box_text = req.body.search_box_text;
@@ -47,17 +48,10 @@ async function GetUserSearchList(req, res) {
         })
       );
     list = list.filter(function (user) {
-      return user.UserName.includes(search_box_text);
+      return user.UserName.toLowerCase().includes(
+        search_box_text.toLowerCase()
+      );
     });
-    // if (list.length === 0) {
-    //   return handleResponse(
-    //     req,
-    //     res,
-    //     412,
-    //     " Failed to fetch list with users! - Empty List"
-    //   );
-    // }
-    // console.log(list);
 
     var userRoomList = [];
     userRoomList = await GetUserRoomsList(search_box_text, userId);
@@ -288,10 +282,75 @@ async function InserNewUserAccount(req, res) {
   }
 }
 
+// edit User Account Data
+async function EditUserAccountAsync(req, res) {
+  try {
+    const userSurname = req.body.userSurname;
+    const userName = req.body.userName;
+    const email = req.body.email;
+    const currentPassword = req.body.currentPassword;
+    const newPassword = req.body.newPassword;
+    const userId = req.body.userId;
+
+    const userDetails = await GetUserDetailsData(userId)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    if (userDetails.length === 0) {
+      return handleResponse(req, res, 200, { EditUserAccount: "FAILED" });
+    }
+
+    const ofuscatedPassword = generateOfuscatedPassword(
+      currentPassword,
+      userDetails[0].Salt
+    );
+
+    if (userDetails[0].Password !== ofuscatedPassword) {
+      return handleResponse(req, res, 200, {
+        EditUserAccount: "FAILED",
+        Message: "Wrong Password",
+      });
+    }
+
+    // generate new password
+    const newsalt = generateRandomSalt(64);
+    const newServerPassword = generateOfuscatedPassword(newPassword, newsalt);
+
+    const result = await EditUserAccountDataBase(
+      userSurname,
+      userName,
+      email,
+      newServerPassword,
+      newsalt,
+      userId
+    )
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    return handleResponse(req, res, 200, { EditUserAccount: "SUCCESS" });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 200, { EditUserAccount: "FAILED" });
+  }
+}
+
 module.exports = {
   GetUserSearchList,
   GetRoomSearchList,
   InsertNewMessage,
   GetUserDetails,
   InserNewUserAccount,
+  EditUserAccountAsync,
 };

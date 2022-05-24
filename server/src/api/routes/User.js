@@ -6,6 +6,7 @@ const {
   GetUserSearchList,
   GetUserDetails,
   InserNewUserAccount,
+  EditUserAccountAsync,
 } = require("../controllers/User");
 const { GetNOTPartList } = require("../controllers/Room");
 const { UpdateProfilePicture } = require("../controllers/Files");
@@ -22,5 +23,5 @@ router.post("/toadd", GetNOTPartList);
 router.post("/updatePicture", UpdateProfilePicture);
 router.post("/details", GetUserDetails);
 router.post("/newuser", InserNewUserAccount);
-
+router.post("/edit", EditUserAccountAsync);
 module.exports = router;
