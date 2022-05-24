@@ -112,17 +112,8 @@ function GetParticipantFromPrivateConversation(roomId, userId) {
 
 //Get Other User Details from Rpivate Room
 function GetUserDetailsData(userId) {
-  let selectQuery = "SELECT ??, ??, ??, ??, ?? FROM ?? WHERE ?? = ?";
-  let query = mysql.format(selectQuery, [
-    "iusers.Surname",
-    "iusers.Name",
-    "iusers.Email",
-    "iusers.IsAdmin",
-    "iusers.Avatar",
-    "iusers",
-    "userId",
-    userId,
-  ]);
+  let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
+  let query = mysql.format(selectQuery, ["iusers", "userId", userId]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
       if (err) {
@@ -156,6 +147,42 @@ function InsertNewUserAccountData(
   });
 }
 
+// Edit New User Account
+function EditUserAccountDataBase(
+  userSurname,
+  userName,
+  email,
+  password,
+  salt,
+  userId
+) {
+  let updateQuery =
+    "UPDATE ?? SET ?? = ?, ?? = ?, ?? = ?, ?? = ?, ?? = ? WHERE ?? = ?";
+  let query = mysql.format(updateQuery, [
+    "iusers",
+    "Surname",
+    userSurname,
+    "Name",
+    userName,
+    "Email",
+    email,
+    "Password",
+    password,
+    "Salt",
+    salt,
+    "userId",
+    userId,
+  ]);
+  return new Promise((resolve) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return resolve("FAILED");
+      }
+      return resolve(result);
+    });
+  });
+}
+
 module.exports = {
   GetAllUsersDataBase,
   GetUserRoomsList,
@@ -166,4 +193,5 @@ module.exports = {
   GetParticipantFromPrivateConversation,
   GetUserDetailsData,
   InsertNewUserAccountData,
+  EditUserAccountDataBase,
 };

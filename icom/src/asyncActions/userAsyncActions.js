@@ -23,7 +23,10 @@ import {
   // GetFileDocument,
 } from "./../actions/userActions";
 
-import { AddUserAccountDataBase } from "../services/user";
+import {
+  AddUserAccountDataBase,
+  EditUserAccountDataBase,
+} from "../services/user";
 import { getChildFolders, getFolderByID } from "../services/folder";
 import { getFileList } from "../services/file";
 import {
@@ -314,6 +317,21 @@ export const AddNewUserAccount =
       userName,
       email,
       isAdmin
+    );
+    // TO DO - display message
+    console.log(varVerify);
+  };
+
+export const EditUserAccountInfor =
+  (userSurname, userName, email, currentPassword, newPassword, userId) =>
+  async (dispatch) => {
+    const varVerify = await EditUserAccountDataBase(
+      userSurname,
+      userName,
+      email,
+      currentPassword,
+      newPassword,
+      userId
     );
     // TO DO - display message
     console.log(varVerify);

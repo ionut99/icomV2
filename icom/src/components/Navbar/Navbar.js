@@ -9,6 +9,9 @@ import { updateCurrentChannel } from "../../actions/userActions";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import Avatar from "../Search/Avatar";
 import AddUser from "../AddUserAccount/AddUserAccount";
+import ChangePassword from "../ChangePassword/ChangePassword";
+import { Button } from "react-bootstrap";
+
 import "./navbar.css";
 
 // import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
@@ -126,10 +129,19 @@ function Navbar() {
             <div className="user-details">Sign in as {user.name}</div>
 
             <div className="dropdown-options">
-              <input
-                type="button"
+              <Button
+                className="user-menu-button"
+                variant="btn btn-outline-primary btn-sm"
                 onClick={handleChangePicture}
-                value="Change Profile Picture"
+              >
+                Change Avatar
+              </Button>
+            </div>
+            <div className="dropdown-options">
+              <ChangePassword
+                Surname={user.surname}
+                Name={user.name}
+                Email={user.email}
               />
             </div>
             <div
@@ -139,14 +151,15 @@ function Navbar() {
               }}
             >
               <AddUser />
-              {/* <input
-                type="button"
-                onClick={AddUserAccount}
-                value="Add New User"
-              /> */}
             </div>
             <div className="dropdown-options">
-              <input type="button" onClick={LogOut} value="Logout" />
+              <Button
+                className="user-menu-button"
+                variant="btn btn-outline-danger btn-sm"
+                onClick={LogOut}
+              >
+                Logout
+              </Button>
             </div>
           </ul>
         </nav>

@@ -71,6 +71,14 @@
   width: 100%;
   margin-top: 15px;
 }
+
+.dropdown-options .user-menu-button {
+  width: 150px;
+  justify-items: center;
+  align-items: center;
+  font-weight: 700;
+}
+
 .nav-menu {
   background-color: rgb(37, 107, 179, 1);
   width: 220px;
@@ -140,7 +148,7 @@
   align-items: center;
 }
 
-.navbar-toggle{
+.navbar-toggle {
   background-color: rgb(23, 58, 92);
 }
 

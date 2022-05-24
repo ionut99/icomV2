@@ -1,36 +1,55 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Form } from "react-bootstrap";
 
-import { AddNewUserAccount } from "../../asyncActions/userAsyncActions";
+import { EditUserAccountInfor } from "../../asyncActions/userAsyncActions";
 
-function AddUser() {
+function ChangePassword(props) {
   const dispatch = useDispatch();
+
+  const { Surname, Name, Email } = props;
+
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
 
   const [open, setOpen] = useState(false);
   const [userSurname, setUserSurname] = useState("");
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
+  //password
+  const [currentPassword, setcurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   function openModal() {
     setOpen(true);
+    setUserSurname(Surname);
+    setUserName(Name);
+    setEmail(Email);
   }
   function closeModal() {
-    // delete old data
     setUserSurname("");
     setUserName("");
     setEmail("");
+    setcurrentPassword("");
+    setNewPassword("");
     setOpen(false);
   }
-
-  const toggleAdminValue = () => setIsAdmin(!isAdmin);
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    // send data for create new user Accoutn
-    dispatch(AddNewUserAccount(userSurname, userName, email, isAdmin));
+    // send data for edit user details
+    dispatch(
+      EditUserAccountInfor(
+        userSurname,
+        userName,
+        email,
+        currentPassword,
+        newPassword,
+        user.userId
+      )
+    );
+
     closeModal();
   }
   return (
@@ -40,7 +59,7 @@ function AddUser() {
         variant="btn btn-outline-primary btn-sm"
         onClick={openModal}
       >
-        Add New User
+        Edit Profile
       </Button>
       <Modal show={open} onHide={closeModal}>
         <Form onSubmit={handleSubmit}>
@@ -69,15 +88,21 @@ function AddUser() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <div className="form-check">
-                <Form.Check
-                  type="radio"
-                  required
-                  checked={isAdmin}
-                  onChange={toggleAdminValue}
-                />
-                <Form.Label>Will this user be admin?</Form.Label>
-              </div>
+
+              <Form.Label>Current Password</Form.Label>
+              <Form.Control
+                type="password"
+                required
+                value={currentPassword}
+                onChange={(e) => setcurrentPassword(e.target.value)}
+              />
+
+              <Form.Label>New Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
@@ -85,7 +110,7 @@ function AddUser() {
               Close
             </Button>
             <Button variant="success" type="submit">
-              Add New User
+              Save
             </Button>
           </Modal.Footer>
         </Form>
@@ -94,4 +119,4 @@ function AddUser() {
   );
 }
 
-export default AddUser;
+export default ChangePassword;
