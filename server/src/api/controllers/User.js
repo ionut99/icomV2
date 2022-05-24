@@ -20,8 +20,6 @@ const { InsertNewUserAccountData } = require("../services/User");
 const { GetUserByID } = require("../services/Auth");
 
 //
-
-// return list with all users
 async function GetUserSearchList(req, res) {
   try {
     const search_box_text = req.body.search_box_text;
@@ -47,17 +45,10 @@ async function GetUserSearchList(req, res) {
         })
       );
     list = list.filter(function (user) {
-      return user.UserName.includes(search_box_text);
+      return user.UserName.toLowerCase().includes(
+        search_box_text.toLowerCase()
+      );
     });
-    // if (list.length === 0) {
-    //   return handleResponse(
-    //     req,
-    //     res,
-    //     412,
-    //     " Failed to fetch list with users! - Empty List"
-    //   );
-    // }
-    // console.log(list);
 
     var userRoomList = [];
     userRoomList = await GetUserRoomsList(search_box_text, userId);
