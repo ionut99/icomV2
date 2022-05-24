@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 // import groupAvatar from "../../images/group.png";
@@ -16,6 +16,8 @@ import Avatar from "../Search/Avatar";
 const ConversationList = () => {
   const dispatch = useDispatch();
 
+  // const [exist, setExist] = useState(false);
+
   const chatObj = useSelector((state) => state.chatRedu);
   const { RoomSearchList, addUserInGroup, channelID } = chatObj;
 
@@ -28,6 +30,7 @@ const ConversationList = () => {
     onDelete,
     setConfirmDialog,
     ShowParticipants,
+    // CloseChannelOptions,
     confirmDialog,
   } = SearchService(user.userId);
 

@@ -290,7 +290,7 @@ export const AddNewMemberInGroup =
 export const getParticipantList = (RoomID) => async (dispatch) => {
   const result = await getParticipantsListService(RoomID);
   // TO DO - display message
-  // console.log(result);
+  // console.log(result.data);
   dispatch(setPersonSearchList(result.data["participantsRoomList"]));
 };
 

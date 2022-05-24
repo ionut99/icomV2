@@ -49,19 +49,21 @@ function InsertNewMessageData(
 }
 
 function AddNewMemberInGroupData(roomID, userSearchListID) {
-  // console.log(
-  //   "se introduce in camera : " + roomID + " utilizatorul : " + userSearchListID
-  // );
-  return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `INSERT INTO participants (ID, UserID, RoomID) VALUES (NULL, '${userSearchListID}', '${roomID}');`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+  let insertQuery = "INSERT INTO ?? (ID, ??, ??) VALUES (NULL, ?, ?)";
+  let query = mysql.format(insertQuery, [
+    "participants",
+    "UserID",
+    "RoomID",
+    userSearchListID,
+    roomID,
+  ]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
