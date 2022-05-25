@@ -35,22 +35,16 @@ function Storage() {
   const folderObj = useSelector((state) => state.folderRedu);
   const { folder, childFolders, childFiles } = folderObj;
 
-  // console.log(childFolders);
-  // console.log(childFiles);
   const { folderId } = useParams();
 
   useEffect(() => {
     dispatch(selectFolder(folderId, folder));
   }, [folderId, folder, dispatch]);
 
-  // -------------------
-  // update folder details
   useEffect(() => {
     dispatch(userGetFolderDetails(folderId, user.userId));
   }, [folderId, user.userId, dispatch]);
 
-  // ---------------------
-  // get childFolderList and childFileList from Data Base
   useEffect(() => {
     if (folderId === undefined || folderId === null) {
       dispatch(userSetFolderList("root", user.userId));
