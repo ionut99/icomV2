@@ -2,30 +2,43 @@ const mysql = require("mysql");
 var sqlPool = require("./sql.js");
 
 function InsertNewRoomData(RoomName, Private, uuidRoom) {
-  return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `INSERT INTO room (ID, Name, Private, Avatar) VALUES ('${uuidRoom}', '${RoomName}', '${Private}', NULL);`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+  let insertQuery = "INSERT INTO ?? (??, ??, ??, ??) VALUES (?, ?, ?, NULL)";
+  let query = mysql.format(insertQuery, [
+    "room",
+    "ID",
+    "Name",
+    "Private",
+    "Avatar",
+    uuidRoom,
+    RoomName,
+    Private,
+  ]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
 function InsertParticipantData(uuidRoom, userID) {
-  return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `INSERT INTO participants (ID, UserID, RoomID) VALUES (NULL, '${userID}', '${uuidRoom}');`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+  let insertQuery = "INSERT INTO ?? (ID, ??, ??) VALUES (NULL, ?, ?)";
+  let query = mysql.format(insertQuery, [
+    "participants",
+    "UserID",
+    "RoomID",
+    userID,
+    uuidRoom,
+  ]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 

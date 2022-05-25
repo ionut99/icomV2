@@ -176,19 +176,27 @@ async function CreateNewRoom_Group(req, res) {
     }
 
     // adaugare camera noua in tabela
-    var roomResult = await InsertNewRoomData(NewGroupName, Type, uuidRoom);
-    if (roomResult === "FAILED") {
-      console.log("FAILED - insert new room! ");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
+    var roomResult = await InsertNewRoomData(NewGroupName, Type, uuidRoom)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
     // adaugare participant la camera creata mai sus
     if (userID !== null) {
-      var partResult = await InsertParticipantData(uuidRoom, userID);
-      if (partResult === "FAILED") {
-        console.log("FAILED - inser new participant in room! ");
-        return handleResponse(req, res, 412, " DataBase Error ");
-      }
+      var partResult = await InsertParticipantData(uuidRoom, userID)
+        .then(function (result) {
+          return result;
+        })
+        .catch((err) =>
+          setImmediate(() => {
+            throw err;
+          })
+        );
     }
 
     // folder Creation for new group
@@ -197,21 +205,25 @@ async function CreateNewRoom_Group(req, res) {
     const createdAt = new Date();
     const parentID = "root";
 
-    var folderResult = await InsertNewFolderDataBase(
+    var create_folder_res = await InsertNewFolderDataBase(
       folderId,
       NewGroupName,
       parentID,
       userID,
       path,
       createdAt
-    );
-    if (folderResult === "FAILED") {
-      console.log("Error storage folder configuration!");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
+    )
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
     // add folder relation for user whicj initiate conversation
-    folderResult = await InsertFolderUserRelationDataBase(
+    var folderResult = await InsertFolderUserRelationDataBase(
       folderId,
       null,
       uuidRoom
@@ -308,7 +320,6 @@ async function GetPartList(req, res) {
 
 async function GetNOTPartList(req, res) {
   try {
-    console.log("proces de adaugare:");
     const RoomID = req.body.RoomID;
     const userId = req.body.userId;
 
@@ -361,9 +372,6 @@ async function GetNOTPartList(req, res) {
       }
       return true;
     });
-
-    console.log("lista non participanti:");
-    console.log(NOTparticipantsRoomList);
 
     return handleResponse(req, res, 200, { NOTparticipantsRoomList });
   } catch (error) {

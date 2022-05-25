@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 // import groupAvatar from "../../images/group.png";
+import { faBackward } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./search.css";
 
 import * as MdIcons from "react-icons/md";
@@ -12,11 +14,12 @@ import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import SearchService from "./searchService.js";
 
 import Avatar from "../Search/Avatar";
+import { set } from "lodash";
 
 const ConversationList = () => {
   const dispatch = useDispatch();
 
-  // const [exist, setExist] = useState(false);
+  const [backButton, setBackButton] = useState(false);
 
   const chatObj = useSelector((state) => state.chatRedu);
   const { RoomSearchList, addUserInGroup, channelID } = chatObj;
@@ -36,6 +39,7 @@ const ConversationList = () => {
 
   const handleAddUserInGroup = (RoomID) => {
     onAddUser(RoomID);
+    setBackButton(true);
   };
   const handleDeleteUser = () => {
     onDelete(channelID);

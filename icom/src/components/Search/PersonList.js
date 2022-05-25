@@ -1,9 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-
-// import groupAvatar from "../../images/group.png";
 import SearchService from "./searchService.js";
-import * as AiIcons from "react-icons/ai";
 import Avatar from "./Avatar";
 import "./search.css";
 
@@ -14,8 +11,7 @@ function PersonList() {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  const { ClickPerson, ClickAddPersonInGroup, CloseChannelOptions } =
-    SearchService(user.userId);
+  const { ClickPerson, ClickAddPersonInGroup } = SearchService(user.userId);
 
   const handleClickPerson = (UserName, PersonID, thisName) => {
     if (addUserInGroup !== "") {
@@ -25,21 +21,12 @@ function PersonList() {
     }
   };
 
-  const handleCloseChannelOptions = () => {
-    CloseChannelOptions();
-  };
   return (
     <>
       <div
         className="RoomDelimiter"
         style={{ display: userSearchList.length ? "flex" : "none" }}
       >
-        <div className="close-person-list">
-          <AiIcons.AiOutlineCloseCircle
-            className="symbol"
-            onClick={handleCloseChannelOptions}
-          />
-        </div>
         <p>{addUserInGroup === "" ? "Persons" : "Participants"}</p>
       </div>
       {userSearchList.map((userSearchList, index) => {

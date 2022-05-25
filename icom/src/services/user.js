@@ -32,8 +32,6 @@ export const getSearchPersonService = async (search_box_text, userId) => {
 };
 
 export const getPersonToAddInGroup = async (RoomID, userId) => {
-  console.log("vreau sa adaug persoane in grupul:");
-  console.log(RoomID);
   try {
     return await axios.post(`${REACT_APP_API_URL}/users/toadd`, {
       RoomID,

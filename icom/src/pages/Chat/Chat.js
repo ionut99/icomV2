@@ -1,11 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Modal, Form } from "react-bootstrap";
 
 import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 import { setUserSearchBoxContent } from "../../actions/userActions";
 import { setAuthToken } from "../../services/auth";
 import Navbar from "../../components/Navbar/Navbar";
-import { Button, Modal, Form } from "react-bootstrap";
 
 import moment from "moment";
 
@@ -25,6 +27,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import "./chat.css";
 
+import SearchService from "../../components/Search/searchService";
+
 function setSearchBoxContent(search_box_content, dispatch) {
   dispatch(setUserSearchBoxContent(search_box_content));
 }
@@ -36,9 +40,14 @@ function Chat() {
   const authObj = useSelector((state) => state.auth);
   const { user, expiredAt, token } = authObj;
 
-  const chatObj = useSelector((state) => state.chatRedu);
-  const { search_box_content } = chatObj;
+  const { CloseChannelOptions } = SearchService(user.userId);
 
+  const chatObj = useSelector((state) => state.chatRedu);
+  const { search_box_content, addUserInGroup } = chatObj;
+
+  const handleCloseChannelOptions = () => {
+    CloseChannelOptions();
+  };
   function SearchEnter(event) {
     if (event.key === "Enter") {
       getSearchUserList();
@@ -113,6 +122,16 @@ function Chat() {
             </div>
           </div>
           <div className="chat-persons">
+            <Button
+              className="back-button"
+              onClick={() => handleCloseChannelOptions()}
+              variant="outline-success"
+              style={{
+                display: addUserInGroup !== "" ? "block" : "none",
+              }}
+            >
+              <FontAwesomeIcon icon={faArrowLeft} className="w-100 h-100" />
+            </Button>
             <Modal show={newGroup} onHide={closeModal}>
               <Form onSubmit={handleSubmit}>
                 <Modal.Body>
