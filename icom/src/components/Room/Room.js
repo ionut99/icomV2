@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -11,12 +11,13 @@ import Avatar from "../Search/Avatar";
 import SendMessage from "./SendMessage";
 import ReactScrollableFeed from "react-scrollable-feed";
 import classNames from "classnames";
-import { monthNames } from "../../pages/Storage/FileIcons";
 import { Spinner } from "react-bootstrap";
+import { monthNames } from "../../pages/Storage/FileIcons";
 
 import "./room.css";
 
 function Room() {
+  const listInnerRef = useRef();
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
@@ -24,13 +25,31 @@ function Room() {
   const { channelID, currentChannelName, RoomMessages, channelFolderId } =
     chatObj;
 
-  console.log(RoomMessages);
-
-  const [date, setDate] = useState();
   const [loaded, setLoaded] = useState(false);
 
-  const tranformDate = (sendTime) => {
-    setDate(new Date(Date.parse(sendTime)));
+  const updateIsAtBottomState = (result) => {
+    console.log("dam scroll:");
+    console.log(result.scrollTop);
+  };
+
+  const handleScroll = (e) => {
+    console.log("se misca");
+    let element = e.target;
+    if (element.scrollTop === 0) {
+      console.log("am ajuns din nou sus!");
+    }
+  };
+
+  const onScroll = () => {
+    if (listInnerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+      // if (scrollTop + clientHeight === scrollHeight) {
+      //   console.log("reached bottom");
+      // }
+      if (scrollTop === 0) {
+        console.log("reached top");
+      }
+    }
   };
 
   useEffect(() => {
@@ -71,40 +90,56 @@ function Room() {
           </div>
         </div>
         <div className="test-scrollbar">
-          <div className="messages">
-            <ReactScrollableFeed>
-              {loaded ? (
-                RoomMessages.map((message, index) => {
-                  return (
-                    <div
-                      key={message.messageID}
-                      className={classNames("one_message", {
-                        me: message.senderID === user.userId,
-                      })}
-                    >
-                      {/* <Message RoomMessages={RoomMessages} /> */}
-                      <div className="user_picture">
-                        <Avatar userId={message.senderID} roomId={null} />
+          <div className="messages" ref={listInnerRef} onScroll={onScroll}>
+            {/* <ReactScrollableFeed
+              forceScroll={true}
+              onScroll={(isAtBottom) => updateIsAtBottomState(isAtBottom)}
+            > */}
+            {loaded ? (
+              RoomMessages.map((message, index) => {
+                const CreateMessageDate = new Date(
+                  Date.parse(message.createdTime)
+                );
+                return (
+                  <div
+                    key={message.messageID}
+                    className={classNames("one_message", {
+                      me: message.senderID === user.userId,
+                    })}
+                  >
+                    {/* <Message RoomMessages={RoomMessages} /> */}
+                    <div className="user_picture">
+                      <Avatar userId={message.senderID} roomId={null} />
+                    </div>
+                    <div className="message_body">
+                      <div className="message_author">
+                        {message.senderID === user.userId ? (
+                          <>{` ${
+                            monthNames[CreateMessageDate.getMonth()] +
+                            " " +
+                            CreateMessageDate.getDate() +
+                            " " +
+                            CreateMessageDate.getHours() +
+                            ":" +
+                            CreateMessageDate.getMinutes() +
+                            ":" +
+                            CreateMessageDate.getSeconds()
+                          }`}</>
+                        ) : (
+                          message.UserName
+                        )}
                       </div>
-                      <div className="message_body">
-                        <div className="message_author">
-                          {message.senderID === user.userId ? (
-                            <>lala</>
-                          ) : (
-                            message.UserName
-                          )}
-                        </div>
-                        <div className="message_text">
-                          <p>{message.Body}</p>
-                        </div>
+                      <div className="message_text">
+                        <p>{message.Body}</p>
                       </div>
                     </div>
-                  );
-                })
-              ) : (
-                <Spinner animation="border" />
-              )}
-            </ReactScrollableFeed>
+                  </div>
+                );
+              })
+            ) : (
+              <Spinner animation="border" />
+            )}
+            {/* </ReactScrollableFeed> */}
           </div>
         </div>
         <SendMessage />
