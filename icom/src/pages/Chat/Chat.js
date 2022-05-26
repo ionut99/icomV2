@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Modal, Form } from "react-bootstrap";
+import { Button, Modal, Form, Spinner } from "react-bootstrap";
 
 import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 import { setUserSearchBoxContent } from "../../actions/userActions";
@@ -35,10 +35,14 @@ function setSearchBoxContent(search_box_content, dispatch) {
 
 function Chat() {
   const dispatch = useDispatch();
+  //
   const [newGroup, SetnewGroup] = useState(false);
   const [groupName, SetgroupName] = useState("");
+  //
   const authObj = useSelector((state) => state.auth);
   const { user, expiredAt, token } = authObj;
+  //
+  const [loaded, setLoaded] = useState(false);
 
   const { CloseChannelOptions } = SearchService(user.userId);
 
@@ -91,6 +95,10 @@ function Chat() {
   const SearchPerson = (event) => {
     setSearchBoxContent(event.target.value, dispatch);
   };
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
 
   return (
     <div className="page">
@@ -155,8 +163,8 @@ function Chat() {
                 </Modal.Footer>
               </Form>
             </Modal>
-            <ConversationList />
-            <PersonList />
+            {loaded ? <ConversationList /> : <Spinner animation="border" />}
+            {loaded ? <PersonList /> : <Spinner animation="border" />}
           </div>
         </div>
         <Room />

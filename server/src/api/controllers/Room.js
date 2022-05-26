@@ -9,7 +9,6 @@ const {
   DeleteAllParticipantsFromRoom,
   DeleteRoomData,
   GetPartListData,
-  GetNOTPartListData,
 } = require("../services/Room");
 
 const {
@@ -25,7 +24,7 @@ const { GetRoomMessagesData, GetRoomFolderID } = require("../services/Room");
 const { GetAllUsersDataBase } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
-const { GetParticipantByID } = require("../services/Auth");
+const { GetParticipantByID, GetUserByID } = require("../services/Auth");
 const { is } = require("express/lib/request");
 
 // --------------------- // -----------------------
@@ -389,23 +388,51 @@ async function GetRoomMessages(req, res) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    var messageRoomList = await GetRoomMessagesData(roomID);
+    var messageRoomList = await GetRoomMessagesData(roomID)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
-    if (messageRoomList === "FAILED") {
-      console.log("Error get room messages!");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
-    // id pentru folderul grupului !!!
+    var newMessageList = [];
+    for (message in messageRoomList) {
+      const userDetails = await GetUserByID(messageRoomList[message].senderID)
+        .then(function (result) {
+          return result;
+        })
+        .catch((err) =>
+          setImmediate(() => {
+            throw err;
+          })
+        );
 
-    var res_roomId = await GetRoomFolderID(roomID);
-    if (res_roomId === "FAILED") {
-      console.log("Error get room folder Id!");
-      return handleResponse(req, res, 412, " DataBase Error ");
+      newMessageList.push({
+        messageID: messageRoomList[message].ID_message,
+        RoomID: messageRoomList[message].RoomID,
+        senderID: messageRoomList[message].senderID,
+        Body: messageRoomList[message].Body,
+        createdTime: messageRoomList[message].createdTime,
+        UserName: userDetails[0].Surname + " " + userDetails[0].Name,
+      });
     }
+
+    var res_roomId = await GetRoomFolderID(roomID)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
     const roomId_folder = JSON.parse(JSON.stringify(res_roomId));
     return handleResponse(req, res, 200, {
-      messageRoomList: messageRoomList,
+      messageRoomList: newMessageList,
       folderId: roomId_folder[0].folderId,
     });
   } catch (err) {

@@ -43,7 +43,6 @@ export default function ControlPanel() {
   //
   const getSearchUserList = async () => {
     const userList = await adminSearchList(search_text, user.userId);
-    console.log(userList);
     setAdminUserList(userList);
   };
 

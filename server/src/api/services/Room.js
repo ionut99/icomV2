@@ -86,26 +86,45 @@ function DeleteRoomData(RoomID) {
 }
 
 function GetRoomMessagesData(ChannelID) {
+  let selectQuery = "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ?";
+  let query = mysql.format(selectQuery, [
+    "messages",
+    "room",
+    "messages.RoomID",
+    "room.ID",
+    "room.ID",
+    ChannelID,
+  ]);
   return new Promise((resolve, reject) => {
-    sqlPool.pool.query(
-      `SELECT * FROM messages INNER JOIN room ON messages.RoomID = room.ID WHERE room.ID = '${ChannelID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
 function GetRoomFolderID(ChannelID) {
+  let selectQuery =
+    "SELECT ?? FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? = ??";
+  let query = mysql.format(selectQuery, [
+    "folders.folderId",
+    "folders",
+    "foldersusers",
+    "folders.folderId",
+    "foldersusers.folderIdResource",
+    "foldersusers.RoomIdBeneficiary",
+    ChannelID,
+    "folders.parentID",
+    "root",
+  ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(
       `SELECT folders.folderId FROM folders INNER JOIN foldersusers ON folders.folderId = foldersusers.folderIdResource WHERE foldersusers.RoomIdBeneficiary = '${ChannelID}' AND folders.parentID = 'root'`,
       (err, result) => {
         if (err) {
-          return resolve("FAILED");
+          return reject(err);
         }
         return resolve(result);
       }

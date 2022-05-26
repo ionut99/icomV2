@@ -1,9 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-
-import ReactScrollableFeed from "react-scrollable-feed";
-import classNames from "classnames";
 
 import * as BsIcons from "react-icons/bs";
 import * as IoIcons2 from "react-icons/io5";
@@ -12,12 +9,14 @@ import * as AiIcons from "react-icons/ai";
 import Avatar from "../Search/Avatar";
 
 import SendMessage from "./SendMessage";
-import Message from "./Message";
+import ReactScrollableFeed from "react-scrollable-feed";
+import classNames from "classnames";
+import { monthNames } from "../../pages/Storage/FileIcons";
+import { Spinner } from "react-bootstrap";
 
 import "./room.css";
 
 function Room() {
-  const [openConference, setOpenConference] = useState(false);
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
@@ -25,10 +24,18 @@ function Room() {
   const { channelID, currentChannelName, RoomMessages, channelFolderId } =
     chatObj;
 
-  // const openVideoCall = () => {
-  //   console.log("deschide apelul video ! ");
-  //   setOpenConference(true);
-  // };
+  console.log(RoomMessages);
+
+  const [date, setDate] = useState();
+  const [loaded, setLoaded] = useState(false);
+
+  const tranformDate = (sendTime) => {
+    setDate(new Date(Date.parse(sendTime)));
+  };
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
 
   return (
     <>
@@ -50,7 +57,6 @@ function Room() {
             <p>{currentChannelName}</p>
           </div>
           <div className="room-instrument">
-            {/* <Link to={`/newdocument/${channelID}`}> */}
             <Link to={`/storage/folder/${channelFolderId}`}>
               {<AiIcons.AiOutlineFile />}
             </Link>
@@ -67,29 +73,42 @@ function Room() {
         <div className="test-scrollbar">
           <div className="messages">
             <ReactScrollableFeed>
-              {RoomMessages.map((RoomMessages, index) => {
-                return (
-                  <div
-                    key={index}
-                    className={classNames("one_message", {
-                      me: RoomMessages.senderID === user.userId,
-                    })}
-                  >
-                    <Message RoomMessages={RoomMessages} />
-                  </div>
-                );
-              })}
+              {loaded ? (
+                RoomMessages.map((message, index) => {
+                  return (
+                    <div
+                      key={message.messageID}
+                      className={classNames("one_message", {
+                        me: message.senderID === user.userId,
+                      })}
+                    >
+                      {/* <Message RoomMessages={RoomMessages} /> */}
+                      <div className="user_picture">
+                        <Avatar userId={message.senderID} roomId={null} />
+                      </div>
+                      <div className="message_body">
+                        <div className="message_author">
+                          {message.senderID === user.userId ? (
+                            <>lala</>
+                          ) : (
+                            message.UserName
+                          )}
+                        </div>
+                        <div className="message_text">
+                          <p>{message.Body}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <Spinner animation="border" />
+              )}
             </ReactScrollableFeed>
           </div>
         </div>
         <SendMessage />
       </div>
-      {/* {openConference && (
-        <VideoRoom
-          open_conference_open={openConference}
-          close_conference={setOpenConference}
-        />
-      )} */}
     </>
   );
 }
