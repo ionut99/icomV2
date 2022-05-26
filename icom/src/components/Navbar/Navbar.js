@@ -106,16 +106,6 @@ function Navbar() {
               {/* <img className="logo_picture" src={Applogo} alt="logo jmecher" /> */}
             </li>
             <div className="group-nav-text"></div>
-            {/* {SidebarData.map((item, index) => {
-              return (
-                <li key={index} className={item.cName}>
-                  <Link to={item.path} onClick={showSidebar}>
-                    {item.icon}
-                    <span>{item.title}</span>
-                  </Link>
-                </li>
-              );
-            })} */}
             <Sidebar user={user} showSidebar={showSidebar} />
           </ul>
         </nav>
@@ -139,14 +129,14 @@ function Navbar() {
                 Email={user.email}
               />
             </div>
-            <div
+            {/* <div
               className="dropdown-options"
               style={{
                 display: user.isAdmin ? "flex" : "none",
               }}
             >
               <AddUser />
-            </div>
+            </div> */}
             <div className="dropdown-options">
               <Button
                 className="user-menu-button"

@@ -34,10 +34,10 @@ function AddUser() {
     closeModal();
   }
   return (
-    <div>
+    <>
       <Button
-        className="user-menu-button"
-        variant="btn btn-outline-primary btn-sm"
+        className="add-user-button"
+        variant="btn btn-primary btn-sm"
         onClick={openModal}
       >
         Add New User
@@ -90,7 +90,7 @@ function AddUser() {
           </Modal.Footer>
         </Form>
       </Modal>
-    </div>
+    </>
   );
 }
 

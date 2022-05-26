@@ -62,7 +62,6 @@ async function SignInUser(req, res) {
     userData.email = userData_copy[0].Email;
     userData.password = userData_copy[0].Password;
     userData.isAdmin = userData_copy[0].IsAdmin;
-
     //console.log(userData);
 
     // return 401 status if the credential is not matched

@@ -16,8 +16,23 @@ export const getUserDetails = async (userId) => {
   }
 };
 
-// user Search Person API to return Persons Names
-export const getSearchPersonService = async (search_box_text, userId) => {
+// user search person to start new conversation
+export const newChatPersonService = async (search_box_text, userId) => {
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/users/newchat`, {
+      search_box_text,
+      userId,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+//admin search person for management
+export const getUserAdminList = async (search_box_text, userId) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/users/search`, {
       search_box_text,

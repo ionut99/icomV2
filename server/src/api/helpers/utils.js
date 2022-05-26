@@ -87,6 +87,7 @@ function getCleanUser(user) {
     name: user.name,
     email: user.email,
     isAdmin: user.isAdmin,
+    isOnline: 1,
   };
 }
 

@@ -34,9 +34,9 @@ function setSearchBoxContent(search_box_content, dispatch) {
 }
 
 function Chat() {
+  const dispatch = useDispatch();
   const [newGroup, SetnewGroup] = useState(false);
   const [groupName, SetgroupName] = useState("");
-  const dispatch = useDispatch();
   const authObj = useSelector((state) => state.auth);
   const { user, expiredAt, token } = authObj;
 
