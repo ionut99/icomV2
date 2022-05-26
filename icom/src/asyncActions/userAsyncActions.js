@@ -1,7 +1,7 @@
 import { userLogout, verifyTokenEnd } from "./../actions/authActions";
 import {
   getSearchRoomService,
-  getSearchPersonService,
+  newChatPersonService,
   getRoomMessages,
   InsertNewMessageDataBase,
   CreateNewRoomDataBase,
@@ -12,15 +12,14 @@ import {
   GetDocumentFileData,
   UpdateProfilePictureData,
   getPersonToAddInGroup,
-  // UploadNewStoringFile,
   getUserDetails,
+  getUserAdminList,
 } from "../services/user";
 
 import {
   setRoomList,
   setPersonSearchList,
   updateCurrentChannel,
-  // GetFileDocument,
 } from "./../actions/userActions";
 
 import {
@@ -141,10 +140,7 @@ export const userSetRoomListAsync =
 // handle Person Search
 export const userSearchPersonListAsync =
   (search_box_content, userId) => async (dispatch) => {
-    const Personresult = await getSearchPersonService(
-      search_box_content,
-      userId
-    );
+    const Personresult = await newChatPersonService(search_box_content, userId);
 
     if (Personresult.error) {
       dispatch(verifyTokenEnd());
@@ -336,3 +332,11 @@ export const EditUserAccountInfor =
     // TO DO - display message
     console.log(varVerify);
   };
+
+//admin search user function
+export const adminSearchList = async (search_text, userId) => {
+  const result = await getUserAdminList(search_text, userId);
+
+  if (result.status === 200) return result.data["admin_user_list"];
+  else return null;
+};

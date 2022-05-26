@@ -23,7 +23,74 @@ const {
 const { GetUserByID } = require("../services/Auth");
 
 //
-async function GetUserSearchList(req, res) {
+async function adminGetUserList(req, res) {
+  try {
+    const search_box_text = req.body.search_box_text;
+    const userId = req.body.userId;
+
+    if (userId === null) {
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    }
+
+    var list = await GetAllUsersDataBase(userId)
+      .then(function (result) {
+        return result.map((x) => {
+          const user = { ...x };
+          return {
+            UserName: user.Surname + " " + user.Name,
+            email: user.Email,
+            userId: user.userId,
+            IsAdmin: user.IsAdmin,
+            IsOnline: user.IsOnline,
+            LastOnline: user.LastOnline,
+          };
+        });
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+    list = list.filter(function (user) {
+      return user.UserName.toLowerCase().includes(
+        search_box_text.toLowerCase()
+      );
+    });
+
+    let keyword = search_box_text;
+
+    let admin_user_list = list
+      .filter((prof) => {
+        // Filter results by doing case insensitive match on name here
+        return prof.UserName.toLowerCase().includes(keyword.toLowerCase());
+      })
+      .sort((a, b) => {
+        // Sort results by matching name with keyword position in name
+        if (
+          a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) >
+          b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
+        ) {
+          return 1;
+        } else if (
+          a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) <
+          b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
+        ) {
+          return -1;
+        } else {
+          if (a.UserName > b.UserName) return 1;
+          else return -1;
+        }
+      });
+
+    return handleResponse(req, res, 200, { admin_user_list });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 412, " Failed to fetch admin user list! ");
+  }
+}
+
+//
+async function getNewUserChatList(req, res) {
   try {
     const search_box_text = req.body.search_box_text;
     const userId = req.body.userId;
@@ -347,10 +414,11 @@ async function EditUserAccountAsync(req, res) {
 }
 
 module.exports = {
-  GetUserSearchList,
+  getNewUserChatList,
   GetRoomSearchList,
   InsertNewMessage,
   GetUserDetails,
   InserNewUserAccount,
   EditUserAccountAsync,
+  adminGetUserList,
 };

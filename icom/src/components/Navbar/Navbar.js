@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SidebarData } from "../SidebarData";
 import { IconContext } from "react-icons";
 import * as FaIcons from "react-icons/fa";
-import { Link } from "react-router-dom";
 import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 import { updateCurrentChannel } from "../../actions/userActions";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
@@ -12,10 +10,9 @@ import AddUser from "../AddUserAccount/AddUserAccount";
 import ChangePassword from "../ChangePassword/ChangePassword";
 import { Button } from "react-bootstrap";
 
-import "./navbar.css";
+import Sidebar from "./Sidebar";
 
-// import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
-// import { updateUserAvatar } from "../../actions/authActions";
+import "./navbar.css";
 
 function Navbar() {
   const ref = useRef();
@@ -55,8 +52,6 @@ function Navbar() {
 
   useEffect(() => {
     const checkIfClickedOutside = (e) => {
-      // If the menu is open and the clicked target is not within the menu,
-      // then close the menu
       if (
         (isMenuOpen || sidebar) &&
         ref.current &&
@@ -70,7 +65,6 @@ function Navbar() {
     document.addEventListener("mousedown", checkIfClickedOutside);
 
     return () => {
-      // Cleanup the event listener
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
   }, [isMenuOpen, sidebar]);
@@ -112,16 +106,7 @@ function Navbar() {
               {/* <img className="logo_picture" src={Applogo} alt="logo jmecher" /> */}
             </li>
             <div className="group-nav-text"></div>
-            {SidebarData.map((item, index) => {
-              return (
-                <li key={index} className={item.cName}>
-                  <Link to={item.path} onClick={showSidebar}>
-                    {item.icon}
-                    <span>{item.title}</span>
-                  </Link>
-                </li>
-              );
-            })}
+            <Sidebar user={user} showSidebar={showSidebar} />
           </ul>
         </nav>
         <nav className={isMenuOpen ? "profile-menu active" : "profile-menu"}>
@@ -144,14 +129,14 @@ function Navbar() {
                 Email={user.email}
               />
             </div>
-            <div
+            {/* <div
               className="dropdown-options"
               style={{
                 display: user.isAdmin ? "flex" : "none",
               }}
             >
               <AddUser />
-            </div>
+            </div> */}
             <div className="dropdown-options">
               <Button
                 className="user-menu-button"

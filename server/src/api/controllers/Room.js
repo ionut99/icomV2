@@ -9,7 +9,6 @@ const {
   DeleteAllParticipantsFromRoom,
   DeleteRoomData,
   GetPartListData,
-  GetNOTPartListData,
 } = require("../services/Room");
 
 const {
@@ -25,7 +24,7 @@ const { GetRoomMessagesData, GetRoomFolderID } = require("../services/Room");
 const { GetAllUsersDataBase } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
-const { GetParticipantByID } = require("../services/Auth");
+const { GetParticipantByID, GetUserByID } = require("../services/Auth");
 const { is } = require("express/lib/request");
 
 // --------------------- // -----------------------
@@ -176,19 +175,27 @@ async function CreateNewRoom_Group(req, res) {
     }
 
     // adaugare camera noua in tabela
-    var roomResult = await InsertNewRoomData(NewGroupName, Type, uuidRoom);
-    if (roomResult === "FAILED") {
-      console.log("FAILED - insert new room! ");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
+    var roomResult = await InsertNewRoomData(NewGroupName, Type, uuidRoom)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
     // adaugare participant la camera creata mai sus
     if (userID !== null) {
-      var partResult = await InsertParticipantData(uuidRoom, userID);
-      if (partResult === "FAILED") {
-        console.log("FAILED - inser new participant in room! ");
-        return handleResponse(req, res, 412, " DataBase Error ");
-      }
+      var partResult = await InsertParticipantData(uuidRoom, userID)
+        .then(function (result) {
+          return result;
+        })
+        .catch((err) =>
+          setImmediate(() => {
+            throw err;
+          })
+        );
     }
 
     // folder Creation for new group
@@ -197,21 +204,25 @@ async function CreateNewRoom_Group(req, res) {
     const createdAt = new Date();
     const parentID = "root";
 
-    var folderResult = await InsertNewFolderDataBase(
+    var create_folder_res = await InsertNewFolderDataBase(
       folderId,
       NewGroupName,
       parentID,
       userID,
       path,
       createdAt
-    );
-    if (folderResult === "FAILED") {
-      console.log("Error storage folder configuration!");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
+    )
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
     // add folder relation for user whicj initiate conversation
-    folderResult = await InsertFolderUserRelationDataBase(
+    var folderResult = await InsertFolderUserRelationDataBase(
       folderId,
       null,
       uuidRoom
@@ -308,7 +319,6 @@ async function GetPartList(req, res) {
 
 async function GetNOTPartList(req, res) {
   try {
-    console.log("proces de adaugare:");
     const RoomID = req.body.RoomID;
     const userId = req.body.userId;
 
@@ -362,9 +372,6 @@ async function GetNOTPartList(req, res) {
       return true;
     });
 
-    console.log("lista non participanti:");
-    console.log(NOTparticipantsRoomList);
-
     return handleResponse(req, res, 200, { NOTparticipantsRoomList });
   } catch (error) {
     console.error(error);
@@ -381,23 +388,51 @@ async function GetRoomMessages(req, res) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    var messageRoomList = await GetRoomMessagesData(roomID);
+    var messageRoomList = await GetRoomMessagesData(roomID)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
-    if (messageRoomList === "FAILED") {
-      console.log("Error get room messages!");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
-    // id pentru folderul grupului !!!
+    var newMessageList = [];
+    for (message in messageRoomList) {
+      const userDetails = await GetUserByID(messageRoomList[message].senderID)
+        .then(function (result) {
+          return result;
+        })
+        .catch((err) =>
+          setImmediate(() => {
+            throw err;
+          })
+        );
 
-    var res_roomId = await GetRoomFolderID(roomID);
-    if (res_roomId === "FAILED") {
-      console.log("Error get room folder Id!");
-      return handleResponse(req, res, 412, " DataBase Error ");
+      newMessageList.push({
+        messageID: messageRoomList[message].ID_message,
+        RoomID: messageRoomList[message].RoomID,
+        senderID: messageRoomList[message].senderID,
+        Body: messageRoomList[message].Body,
+        createdTime: messageRoomList[message].createdTime,
+        UserName: userDetails[0].Surname + " " + userDetails[0].Name,
+      });
     }
+
+    var res_roomId = await GetRoomFolderID(roomID)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
     const roomId_folder = JSON.parse(JSON.stringify(res_roomId));
     return handleResponse(req, res, 200, {
-      messageRoomList: messageRoomList,
+      messageRoomList: newMessageList,
       folderId: roomId_folder[0].folderId,
     });
   } catch (err) {

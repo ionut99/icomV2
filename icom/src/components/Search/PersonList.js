@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-
-// import groupAvatar from "../../images/group.png";
 import SearchService from "./searchService.js";
-import * as AiIcons from "react-icons/ai";
 import Avatar from "./Avatar";
 import "./search.css";
+import { Spinner } from "react-bootstrap";
 
 function PersonList() {
   const chatObj = useSelector((state) => state.chatRedu);
@@ -14,8 +12,9 @@ function PersonList() {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  const { ClickPerson, ClickAddPersonInGroup, CloseChannelOptions } =
-    SearchService(user.userId);
+  const [loaded, setLoaded] = useState(false);
+
+  const { ClickPerson, ClickAddPersonInGroup } = SearchService(user.userId);
 
   const handleClickPerson = (UserName, PersonID, thisName) => {
     if (addUserInGroup !== "") {
@@ -25,49 +24,48 @@ function PersonList() {
     }
   };
 
-  const handleCloseChannelOptions = () => {
-    CloseChannelOptions();
-  };
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
+
   return (
     <>
       <div
         className="RoomDelimiter"
         style={{ display: userSearchList.length ? "flex" : "none" }}
       >
-        <div className="close-person-list">
-          <AiIcons.AiOutlineCloseCircle
-            className="symbol"
-            onClick={handleCloseChannelOptions}
-          />
-        </div>
         <p>{addUserInGroup === "" ? "Persons" : "Participants"}</p>
       </div>
-      {userSearchList.map((userSearchList, index) => {
-        return (
-          <div
-            className="conversation"
-            key={index}
-            onClick={() =>
-              handleClickPerson(
-                userSearchList.UserName,
-                userSearchList.userId,
-                user.surname + " " + user.name
-              )
-            }
-          >
-            <div className="user_picture">
-              <Avatar userId={userSearchList.userId} roomId={null} />
-            </div>
-            <div className="conversation-details-left">
-              <div className="conversation-header">
-                <div className="conversation-user-details">
-                  <p>{userSearchList.UserName}</p>
+      {loaded ? (
+        userSearchList.map((userSearchList, index) => {
+          return (
+            <div
+              className="conversation"
+              key={index}
+              onClick={() =>
+                handleClickPerson(
+                  userSearchList.UserName,
+                  userSearchList.userId,
+                  user.surname + " " + user.name
+                )
+              }
+            >
+              <div className="user_picture">
+                <Avatar userId={userSearchList.userId} roomId={null} />
+              </div>
+              <div className="conversation-details-left">
+                <div className="conversation-header">
+                  <div className="conversation-user-details">
+                    <p>{userSearchList.UserName}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })
+      ) : (
+        <Spinner animation="border" />
+      )}
     </>
   );
 }

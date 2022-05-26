@@ -3,10 +3,11 @@ const router = express.Router();
 
 const { SignInUser, LogOutUser, VerifyToken } = require("../controllers/Auth");
 const {
-  GetUserSearchList,
+  getNewUserChatList,
   GetUserDetails,
   InserNewUserAccount,
   EditUserAccountAsync,
+  adminGetUserList,
 } = require("../controllers/User");
 const { GetNOTPartList } = require("../controllers/Room");
 const { UpdateProfilePicture } = require("../controllers/Files");
@@ -18,7 +19,8 @@ router.post("/verifyToken", VerifyToken);
 
 // router.post("/search", authMiddleware, GetUserSearchList);
 // router.post("/updatePicture", authMiddleware, UpdateProfilePicture);
-router.post("/search", GetUserSearchList);
+router.post("/newchat", getNewUserChatList);
+router.post("/search", adminGetUserList);
 router.post("/toadd", GetNOTPartList);
 router.post("/updatePicture", UpdateProfilePicture);
 router.post("/details", GetUserDetails);

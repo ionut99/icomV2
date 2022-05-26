@@ -2,16 +2,18 @@ import { BrowserRouter, Switch, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
 
+import ControlPanel from "./pages/ControlPanel/ControlPanel";
+import Storage from "./pages/Storage/Storage";
 import TextEditor from "./pages/TextEditor/TextEditor";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import VideoRoom from "./pages/VideoRoom/VideoRoom";
 import ChatWindow from "./pages/Chat/Chat";
 import Login from "./pages/Login/Login";
+//
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 
 import { verifyTokenAsync } from "./asyncActions/authAsyncActions";
-import Storage from "./pages/Storage/Storage";
 import "./index.css";
 
 function App() {
@@ -74,6 +76,13 @@ function App() {
               exact
               path="/roomcall/:roomId"
               component={VideoRoom}
+              isAuthenticated={isAuthenticated}
+            />
+
+            <PrivateRoute
+              exact
+              path="/controlpanel"
+              component={ControlPanel}
               isAuthenticated={isAuthenticated}
             />
 
