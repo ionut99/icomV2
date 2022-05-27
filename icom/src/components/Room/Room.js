@@ -13,8 +13,12 @@ import ReactScrollableFeed from "react-scrollable-feed";
 import classNames from "classnames";
 import { Spinner } from "react-bootstrap";
 import { monthNames } from "../../pages/Storage/FileIcons";
-import { getRoomMessages } from "../../services/user";
+import { getRoomMessagesWithTime } from "../../services/user";
 import "./room.css";
+import moment from "moment";
+
+// import dateFormat, { masks } from "dateformat";
+import date from "date-and-time";
 
 function Room() {
   const listInnerRef = useRef();
@@ -22,31 +26,46 @@ function Room() {
   const { user } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID, currentChannelName, RoomMessages, channelFolderId } =
-    chatObj;
+  const { channelID, currentChannelName, channelFolderId } = chatObj;
 
   const [loaded, setLoaded] = useState(false);
-  const [lastMessageTime, setLastMessageTime] = useState(new Date());
+  // set actual time
+  var timevar = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
+  //
+  const [lastMessageTime, setLastMessageTime] = useState(timevar);
   const [meesageList, setMessageList] = useState([]);
 
   const onScroll = () => {
-    if (listInnerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-      // if (scrollTop + clientHeight === scrollHeight) {
-      //   console.log("reached bottom");
-      // }
-      if (scrollTop === 0) {
-        console.log("reached top");
-        console.log(RoomMessages[0]);
-        setLastMessageTime(RoomMessages[0].createdTime);
-      }
-    }
+    // if (listInnerRef.current) {
+    //   const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+    //   // if (scrollTop + clientHeight === scrollHeight) {
+    //   //   console.log("reached bottom");
+    //   // }
+    //   if (scrollTop === 0) {
+    //     console.log("reached top");
+    //     console.log(meesageList[0]);
+    //     setLastMessageTime(meesageList[0].createdTime);
+    //   }
+    //   if (scrollTop + clientHeight === scrollHeight) {
+    //     console.log("reached bottom");
+    //     console.log(meesageList[meesageList.length - 1]);
+    //     setLastMessageTime(meesageList[meesageList.length - 1].createdTime);
+    //   }
+    // }
   };
+
+  useEffect(() => {
+    if (channelID === null) return;
+    var timevar = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
+    setLastMessageTime(timevar);
+    setMessageList([]);
+  }, [channelID]);
 
   useEffect(() => {
     if (channelID === null || lastMessageTime === null) return;
     let isMounted = true;
-    getRoomMessages(channelID).then((result) => {
+    getRoomMessagesWithTime(channelID, lastMessageTime).then((result) => {
+      console.log(result.data["messageRoomList"]);
       if (isMounted) setMessageList(result.data["messageRoomList"]);
     });
     setLoaded(true);
@@ -101,7 +120,7 @@ function Room() {
                 );
                 return (
                   <div
-                    key={message.messageID}
+                    key={index}
                     className={classNames("one_message", {
                       me: message.senderID === user.userId,
                     })}

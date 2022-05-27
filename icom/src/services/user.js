@@ -76,10 +76,25 @@ export const getSearchRoomService = async (search_box_text, userId) => {
 };
 
 // get messages list from a room
-export const getRoomMessages = async (ChannelID) => {
+export const getChannelDetails = async (ChannelID) => {
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/room/details`, {
+      ChannelID,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+// get messages list from a room
+export const getRoomMessagesWithTime = async (ChannelID, lastTime) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/messages`, {
       ChannelID,
+      lastTime,
     });
   } catch (err) {
     return {

@@ -10,7 +10,8 @@ const {
   CreateNewRoom_Group,
   AddNewMemberInGroup,
   GetPartList,
-  GetRoomMessages,
+  GetMessageListInTime,
+  GetRoomFolder,
 } = require("../controllers/Room");
 
 // router.post("/newroom", authMiddleware, CreateNewRoom);
@@ -28,7 +29,8 @@ router.post("/newroom", CreateNewRoom);
 router.post("/deleteroom", DeleteRoom);
 
 router.post("/search", GetRoomSearchList);
-router.post("/messages", GetRoomMessages);
+router.post("/messages", GetMessageListInTime);
+router.post("/details", GetRoomFolder);
 
 router.post("/newmessage", InsertNewMessage);
 router.post("/newgroup", CreateNewRoom_Group);

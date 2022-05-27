@@ -14,6 +14,9 @@ import { v4 as uuidv4 } from "uuid";
 import { InsertNewMessageLocal } from "../../actions/userActions";
 import { InsertNewMessage } from "../../asyncActions/userAsyncActions";
 
+// import dateFormat, { masks } from "dateformat";
+import date from "date-and-time";
+
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const { REACT_APP_API_URL } = process.env;
 
@@ -61,7 +64,7 @@ function SendMessage() {
     if (send === false || newMessage === "" || newMessage === " ") return;
 
     if (socketRef.current === null) return;
-    console.log("vrei sa trimiti??");
+    //
     var uuidMessage = uuidv4();
     var dataToSend = {
       body: newMessage,
@@ -84,7 +87,7 @@ function SendMessage() {
     if (socketRef.current === null) return;
 
     socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-      const createdTime = new Date();
+      const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
       if (message.channelID != null) {
         dispatch(
           InsertNewMessageLocal(

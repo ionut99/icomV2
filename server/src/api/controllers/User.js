@@ -1,4 +1,5 @@
 var uui = require("uuid");
+const date = require("date-and-time");
 const { handleResponse } = require("../helpers/utils");
 const { is } = require("express/lib/request");
 
@@ -245,7 +246,7 @@ async function InsertNewMessage(req, res) {
     const roomID = req.body.roomID;
     const messageBody = req.body.messageBody;
     const ID_message = req.body.ID_message;
-    const createdTime = new Date();
+    const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
 
     if (
       roomID === null ||

@@ -85,8 +85,9 @@ function DeleteRoomData(RoomID) {
   });
 }
 
-function GetRoomMessagesData(ChannelID) {
-  let selectQuery = "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ?";
+function GetRoomMessagesData(ChannelID, time) {
+  let selectQuery =
+    "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? < ? LIMIT 10";
   let query = mysql.format(selectQuery, [
     "messages",
     "room",
@@ -94,6 +95,8 @@ function GetRoomMessagesData(ChannelID) {
     "room.ID",
     "room.ID",
     ChannelID,
+    "messages.createdTime",
+    time,
   ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {

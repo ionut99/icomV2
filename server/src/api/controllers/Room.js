@@ -379,16 +379,15 @@ async function GetNOTPartList(req, res) {
   }
 }
 
-// return messages from a room
-async function GetRoomMessages(req, res) {
+async function GetRoomFolder(req, res) {
   try {
     const roomID = req.body.ChannelID;
 
     if (roomID === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
-
-    var messageRoomList = await GetRoomMessagesData(roomID)
+    //
+    var res_roomId = await GetRoomFolderID(roomID)
       .then(function (result) {
         return result;
       })
@@ -398,6 +397,40 @@ async function GetRoomMessages(req, res) {
         })
       );
 
+    const roomId_folder = JSON.parse(JSON.stringify(res_roomId));
+    return handleResponse(req, res, 200, {
+      folderId: roomId_folder[0].folderId,
+    });
+  } catch (err) {
+    console.error(err);
+    return handleResponse(req, res, 412, " Failed to fetch room folderID ");
+  }
+}
+
+// return messages from a room
+async function GetMessageListInTime(req, res) {
+  try {
+    const roomID = req.body.ChannelID;
+    const messageTime = req.body.lastTime;
+
+    if (roomID === null || messageTime === null) {
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    }
+
+    var messageRoomList = await GetRoomMessagesData(roomID, messageTime)
+      .then(function (result) {
+        return result.sort(function (a, b) {
+          return new Date(a.createdTime) - new Date(b.createdTime);
+        });
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    console.log("mesaje:");
+    console.log(messageRoomList);
     var newMessageList = [];
     for (message in messageRoomList) {
       const userDetails = await GetUserByID(messageRoomList[message].senderID)
@@ -420,20 +453,8 @@ async function GetRoomMessages(req, res) {
       });
     }
 
-    var res_roomId = await GetRoomFolderID(roomID)
-      .then(function (result) {
-        return result;
-      })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
-
-    const roomId_folder = JSON.parse(JSON.stringify(res_roomId));
     return handleResponse(req, res, 200, {
       messageRoomList: newMessageList,
-      folderId: roomId_folder[0].folderId,
     });
   } catch (err) {
     console.error(err);
@@ -453,5 +474,6 @@ module.exports = {
   AddNewMemberInGroup,
   GetPartList,
   GetNOTPartList,
-  GetRoomMessages,
+  GetMessageListInTime,
+  GetRoomFolder,
 };

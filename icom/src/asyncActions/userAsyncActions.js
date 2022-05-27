@@ -2,7 +2,7 @@ import { userLogout, verifyTokenEnd } from "./../actions/authActions";
 import {
   getSearchRoomService,
   newChatPersonService,
-  getRoomMessages,
+  getChannelDetails,
   InsertNewMessageDataBase,
   CreateNewRoomDataBase,
   DeleteRoomDataBase,
@@ -184,32 +184,22 @@ export const updateChannelDetails =
     if (channelID == null) {
       return [];
     }
-    const messageList = await getRoomMessages(channelID);
+    const channelData = await getChannelDetails(channelID);
 
-    if (messageList.error) {
+    if (channelData.error) {
       dispatch(verifyTokenEnd());
       if (
-        messageList.response &&
-        [401, 403].includes(messageList.response.status)
+        channelData.response &&
+        [401, 403].includes(channelData.response.status)
       )
         dispatch(userLogout());
       return;
     }
 
-    const messageOrderList = messageList.data["messageRoomList"].sort(function (
-      a,
-      b
-    ) {
-      return new Date(a.createdTime) - new Date(b.createdTime);
-    });
+    const roomFolderID = channelData.data["folderId"];
 
     dispatch(
-      updateCurrentChannel(
-        channelID,
-        currentChannelName,
-        messageOrderList,
-        messageList.data["folderId"]
-      )
+      updateCurrentChannel(channelID, currentChannelName, [], roomFolderID)
     );
   };
 
