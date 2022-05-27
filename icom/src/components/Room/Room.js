@@ -13,7 +13,7 @@ import ReactScrollableFeed from "react-scrollable-feed";
 import classNames from "classnames";
 import { Spinner } from "react-bootstrap";
 import { monthNames } from "../../pages/Storage/FileIcons";
-
+import { getRoomMessages } from "../../services/user";
 import "./room.css";
 
 function Room() {
@@ -26,19 +26,8 @@ function Room() {
     chatObj;
 
   const [loaded, setLoaded] = useState(false);
-
-  const updateIsAtBottomState = (result) => {
-    console.log("dam scroll:");
-    console.log(result.scrollTop);
-  };
-
-  const handleScroll = (e) => {
-    console.log("se misca");
-    let element = e.target;
-    if (element.scrollTop === 0) {
-      console.log("am ajuns din nou sus!");
-    }
-  };
+  const [lastMessageTime, setLastMessageTime] = useState(new Date());
+  const [meesageList, setMessageList] = useState([]);
 
   const onScroll = () => {
     if (listInnerRef.current) {
@@ -48,13 +37,23 @@ function Room() {
       // }
       if (scrollTop === 0) {
         console.log("reached top");
+        console.log(RoomMessages[0]);
+        setLastMessageTime(RoomMessages[0].createdTime);
       }
     }
   };
 
   useEffect(() => {
+    if (channelID === null || lastMessageTime === null) return;
+    let isMounted = true;
+    getRoomMessages(channelID).then((result) => {
+      if (isMounted) setMessageList(result.data["messageRoomList"]);
+    });
     setLoaded(true);
-  }, []);
+    return () => {
+      isMounted = false;
+    };
+  }, [lastMessageTime, channelID]);
 
   return (
     <>
@@ -96,7 +95,7 @@ function Room() {
               onScroll={(isAtBottom) => updateIsAtBottomState(isAtBottom)}
             > */}
             {loaded ? (
-              RoomMessages.map((message, index) => {
+              meesageList.map((message, index) => {
                 const CreateMessageDate = new Date(
                   Date.parse(message.createdTime)
                 );
