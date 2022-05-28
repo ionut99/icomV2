@@ -14,6 +14,7 @@ import {
   getPersonToAddInGroup,
   getUserDetails,
   getUserAdminList,
+  getRoomMessagesWithTime,
 } from "../services/user";
 
 import {
@@ -329,4 +330,17 @@ export const adminSearchList = async (search_text, userId) => {
 
   if (result.status === 200) return result.data["admin_user_list"];
   else return null;
+};
+
+export const getMessageListTime = async (channelID, lastMessageTime) => {
+  const result = await getRoomMessagesWithTime(channelID, lastMessageTime).then(
+    (result) => {
+      return result;
+    }
+  );
+  if (result.status !== 200) {
+    console.log("Error fetch message list");
+    return;
+  }
+  return result.data["messageRoomList"];
 };

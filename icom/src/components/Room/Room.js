@@ -13,9 +13,9 @@ import ReactScrollableFeed from "react-scrollable-feed";
 import classNames from "classnames";
 import { Spinner } from "react-bootstrap";
 import { monthNames } from "../../pages/Storage/FileIcons";
-import { getRoomMessagesWithTime } from "../../services/user";
 import "./room.css";
 import moment from "moment";
+import { getMessageListTime } from "../../asyncActions/userAsyncActions";
 
 // import dateFormat, { masks } from "dateformat";
 import date from "date-and-time";
@@ -61,14 +61,17 @@ function Room() {
     setMessageList([]);
   }, [channelID]);
 
+  const getMessages = async () => {
+    const messages = await getMessageListTime(channelID, lastMessageTime);
+    console.log(messages);
+    setLoaded(true);
+    setMessageList(messages);
+  };
+
   useEffect(() => {
     if (channelID === null || lastMessageTime === null) return;
     let isMounted = true;
-    getRoomMessagesWithTime(channelID, lastMessageTime).then((result) => {
-      console.log(result.data["messageRoomList"]);
-      if (isMounted) setMessageList(result.data["messageRoomList"]);
-    });
-    setLoaded(true);
+    getMessages();
     return () => {
       isMounted = false;
     };

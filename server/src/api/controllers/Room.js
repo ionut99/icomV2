@@ -419,9 +419,7 @@ async function GetMessageListInTime(req, res) {
 
     var messageRoomList = await GetRoomMessagesData(roomID, messageTime)
       .then(function (result) {
-        return result.sort(function (a, b) {
-          return new Date(a.createdTime) - new Date(b.createdTime);
-        });
+        return result;
       })
       .catch((err) =>
         setImmediate(() => {
@@ -429,8 +427,6 @@ async function GetMessageListInTime(req, res) {
         })
       );
 
-    console.log("mesaje:");
-    console.log(messageRoomList);
     var newMessageList = [];
     for (message in messageRoomList) {
       const userDetails = await GetUserByID(messageRoomList[message].senderID)
@@ -452,6 +448,10 @@ async function GetMessageListInTime(req, res) {
         UserName: userDetails[0].Surname + " " + userDetails[0].Name,
       });
     }
+
+    newMessageList = newMessageList.sort(function (a, b) {
+      return new Date(a.createdTime) - new Date(b.createdTime);
+    });
 
     return handleResponse(req, res, 200, {
       messageRoomList: newMessageList,
