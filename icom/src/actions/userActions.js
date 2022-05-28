@@ -155,8 +155,8 @@ export const resetRoomList = () => {
 
 export const InsertNewMessageLocal = (
   ID_message,
-  RoomID,
   senderID,
+  RoomID,
   Body,
   createdTime
 ) => {

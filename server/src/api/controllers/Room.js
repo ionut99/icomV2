@@ -21,11 +21,11 @@ const {
 
 const { GetRoomMessagesData, GetRoomFolderID } = require("../services/Room");
 
-const { GetAllUsersDataBase } = require("../services/User");
 
 const { handleResponse } = require("../helpers/utils");
-const { GetParticipantByID, GetUserByID } = require("../services/Auth");
-const { is } = require("express/lib/request");
+const { GetParticipantByID } = require("../services/Auth");
+const { GetAllUsersDataBase } = require("../services/User");
+const { CompleteMessageList } = require("../helpers/message_utils");
 
 // --------------------- // -----------------------
 
@@ -427,31 +427,7 @@ async function GetMessageListInTime(req, res) {
         })
       );
 
-    var newMessageList = [];
-    for (message in messageRoomList) {
-      const userDetails = await GetUserByID(messageRoomList[message].senderID)
-        .then(function (result) {
-          return result;
-        })
-        .catch((err) =>
-          setImmediate(() => {
-            throw err;
-          })
-        );
-
-      newMessageList.push({
-        messageID: messageRoomList[message].ID_message,
-        RoomID: messageRoomList[message].RoomID,
-        senderID: messageRoomList[message].senderID,
-        Body: messageRoomList[message].Body,
-        createdTime: messageRoomList[message].createdTime,
-        UserName: userDetails[0].Surname + " " + userDetails[0].Name,
-      });
-    }
-
-    newMessageList = newMessageList.sort(function (a, b) {
-      return new Date(a.createdTime) - new Date(b.createdTime);
-    });
+    var newMessageList = await CompleteMessageList(messageRoomList);
 
     return handleResponse(req, res, 200, {
       messageRoomList: newMessageList,

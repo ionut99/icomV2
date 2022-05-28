@@ -35,16 +35,28 @@ function InsertNewMessageData(
   messageBody,
   createdTime
 ) {
-  return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `INSERT INTO messages (ID_message, RoomID, senderID, Body, createdTime) VALUES ('${ID_message}', '${roomID}', '${senderID}', '${messageBody}', '${createdTime}');`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+  let insertQuery =
+    "INSERT INTO ?? (??, ??, ??, ??, ??) VALUES (?, ?, ?, ?, ?);";
+  let query = mysql.format(insertQuery, [
+    "messages",
+    "ID_message",
+    "RoomID",
+    "senderID",
+    "Body",
+    "createdTime",
+    ID_message,
+    roomID,
+    senderID,
+    messageBody,
+    createdTime,
+  ]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 

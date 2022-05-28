@@ -18,6 +18,8 @@ const {
   getUsersInRoom,
 } = require("./api/controllers/Socket");
 
+const { InsertNewMessage } = require("./api/controllers/Message");
+
 // To Verify cors-origin !!!
 // enable CORS
 app.use(
@@ -95,14 +97,42 @@ io.on("connection", (socket) => {
   const { roomID } = socket.handshake.query;
 
   //
-  socket.join(channelID);// grija aici
+  socket.join(channelID); // grija aici
   //
   // Listen for new messages
-  socket.on(NEW_CHAT_MESSAGE_EVENT, (data) => {
-    io.in(channelID).emit(NEW_CHAT_MESSAGE_EVENT, data);
-    console.log("New message was sent:  ");
-    console.log(data);
-    console.log("On channel: " + channelID);
+  socket.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
+    io.in(channelID).emit(NEW_CHAT_MESSAGE_EVENT, message);
+
+    // salvare mesaj
+    const mes_res = InsertNewMessage(
+      message.ID_message,
+      message.senderID,
+      message.roomID,
+      message.messageBody,
+      message.createdTime
+    );
+
+    if (mes_res === null) {
+      console.log("Error save message !");
+      socket.emit("error insert message", {
+        ID_message: message.ID_message,
+        senderID: message.senderID,
+        roomID: message.roomID,
+        messageBody: message.messageBody,
+        createdTime: message.createdTime,
+      });
+    } else {
+      console.log(
+        "MESSAGE: " +
+          message.messageBody +
+          " by " +
+          message.senderID +
+          " on " +
+          message.roomID
+      );
+    }
+    // salvare mesaj
+    //
   });
   //
   // socket.join(fileID);

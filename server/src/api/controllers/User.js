@@ -1,7 +1,6 @@
 var uui = require("uuid");
 const date = require("date-and-time");
 const { handleResponse } = require("../helpers/utils");
-const { is } = require("express/lib/request");
 
 const {
   generateOfuscatedPassword,
@@ -11,7 +10,6 @@ const {
 const {
   GetAllUsersDataBase,
   GetUserRoomsList,
-  InsertNewMessageData,
   GetUserDetailsData,
 } = require("../services/User");
 
@@ -239,43 +237,7 @@ async function GetRoomSearchList(req, res) {
   }
 }
 
-// insert new message in a room
-async function InsertNewMessage(req, res) {
-  try {
-    const senderID = req.body.senderID;
-    const roomID = req.body.roomID;
-    const messageBody = req.body.messageBody;
-    const ID_message = req.body.ID_message;
-    const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
-
-    if (
-      roomID === null ||
-      senderID === null ||
-      messageBody === "" ||
-      messageBody === " " ||
-      ID_message === ""
-    ) {
-      return handleResponse(req, res, 410, "Invalid Request Parameters ");
-    }
-
-    var result = await InsertNewMessageData(
-      ID_message,
-      senderID,
-      roomID,
-      messageBody,
-      createdTime
-    );
-    if (result === "FAILED") {
-      console.log("Error storage message!");
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
-
-    return handleResponse(req, res, 200, { InserNewMessage: "SUCCES" });
-  } catch (error) {
-    console.error(error);
-    return handleResponse(req, res, 412, " Failed to insert new message! ");
-  }
-}
+//
 
 async function GetUserDetails(req, res) {
   try {
@@ -417,7 +379,6 @@ async function EditUserAccountAsync(req, res) {
 module.exports = {
   getNewUserChatList,
   GetRoomSearchList,
-  InsertNewMessage,
   GetUserDetails,
   InserNewUserAccount,
   EditUserAccountAsync,

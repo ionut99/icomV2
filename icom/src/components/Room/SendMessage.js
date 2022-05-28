@@ -60,20 +60,21 @@ function SendMessage() {
     };
   }, [channelID]);
 
+  // send new message
   useEffect(() => {
     if (send === false || newMessage === "" || newMessage === " ") return;
 
     if (socketRef.current === null) return;
     //
-    var uuidMessage = uuidv4();
     var dataToSend = {
-      body: newMessage,
+      ID_message: uuidv4(),
       senderID: user.userId,
-      channelID: channelID,
-      ID_message: uuidMessage,
+      roomID: channelID,
+      messageBody: newMessage,
+      createdTime: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
     };
 
-    dispatch(InsertNewMessage(uuidMessage, user.userId, channelID, newMessage));
+    // dispatch(InsertNewMessage(uuidMessage, user.userId, channelID, newMessage));
     socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
 
     setSend(false);
@@ -87,20 +88,18 @@ function SendMessage() {
     if (socketRef.current === null) return;
 
     socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-      const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
       if (message.channelID != null) {
         dispatch(
           InsertNewMessageLocal(
             message.ID_message,
-            message.channelID,
             message.senderID,
-            message.body,
-            createdTime
+            message.roomID,
+            message.messageBody,
+            message.createdTime
           )
         );
       }
     });
-    // receive document changes
 
     return () => {
       socketRef.current.disconnect();
