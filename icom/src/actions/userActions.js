@@ -1,5 +1,6 @@
 import {
   USER_UPDATE_CHAT,
+  USER_MESSAGES_LIST_CHAT,
   USER_SET_SEARCH_BOX_CONTENT,
   USER_SET_PERSON_SEARCH_LIST,
   USER_SET_ROOM_LIST,
@@ -105,7 +106,6 @@ export const setChildFileList = (fileList) => {
 export const updateCurrentChannel = (
   channelID,
   currentChannelName,
-  RoomMessages,
   channelFolderId
 ) => {
   return {
@@ -113,8 +113,18 @@ export const updateCurrentChannel = (
     payload: {
       channelID,
       currentChannelName,
-      RoomMessages,
       channelFolderId,
+    },
+  };
+};
+
+export const updateMessageChannelList = (RoomMessages, position) => {
+  console.log(position);
+  return {
+    type: USER_MESSAGES_LIST_CHAT,
+    payload: {
+      RoomMessages,
+      position,
     },
   };
 };
@@ -156,13 +166,14 @@ export const resetRoomList = () => {
 export const InsertNewMessageLocal = (
   ID_message,
   senderID,
+  senderName,
   RoomID,
   Body,
   createdTime
 ) => {
   return {
     type: USER_ADD_NEW_MESSAGE,
-    payload: { ID_message, RoomID, senderID, Body, createdTime },
+    payload: { ID_message, RoomID, senderID, senderName, Body, createdTime },
   };
 };
 

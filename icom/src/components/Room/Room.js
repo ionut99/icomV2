@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import * as BsIcons from "react-icons/bs";
@@ -9,82 +9,113 @@ import * as AiIcons from "react-icons/ai";
 import Avatar from "../Search/Avatar";
 
 import SendMessage from "./SendMessage";
-import ReactScrollableFeed from "react-scrollable-feed";
 import classNames from "classnames";
 import { Spinner } from "react-bootstrap";
 import { monthNames } from "../../pages/Storage/FileIcons";
 import "./room.css";
-import moment from "moment";
 import { getMessageListTime } from "../../asyncActions/userAsyncActions";
-
-// import dateFormat, { masks } from "dateformat";
+import { updateMessageChannelList } from "../../actions/userActions";
 import date from "date-and-time";
 
 function Room() {
+  const dispatch = useDispatch();
+  const messagesEndRef = useRef(null);
   const listInnerRef = useRef();
+
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID, currentChannelName, channelFolderId } = chatObj;
+  const { channelID, currentChannelName, channelFolderId, RoomMessages } =
+    chatObj;
 
+  //
+  const [receiveNewMessage, setReceiveNewMessage] = useState(false);
+  //
   const [loaded, setLoaded] = useState(false);
-  // set actual time
   var timevar = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
   //
-  const [lastMessageTime, setLastMessageTime] = useState(timevar);
-  const [meesageList, setMessageList] = useState([]);
+  const [lastMessageTime, setLastMessageTime] = useState({
+    time: timevar,
+    pos: "top",
+  });
+
+  // const timeout = (delay) => {
+  //   return new Promise((res) => setTimeout(res, delay));
+  // };
+  //
+
+  // fetch messages function
+  const getMessages = async () => {
+    // setLoaded(false);
+    const messageslist = await getMessageListTime(
+      channelID,
+      lastMessageTime.time,
+      lastMessageTime.pos
+    );
+    dispatch(updateMessageChannelList(messageslist, lastMessageTime.pos));
+    setLoaded(true);
+  };
+  //
 
   const onScroll = () => {
-    // if (listInnerRef.current) {
-    //   const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-    //   // if (scrollTop + clientHeight === scrollHeight) {
-    //   //   console.log("reached bottom");
-    //   // }
-    //   if (scrollTop === 0) {
-    //     console.log("reached top");
-    //     console.log(meesageList[0]);
-    //     setLastMessageTime(meesageList[0].createdTime);
-    //   }
-    //   if (scrollTop + clientHeight === scrollHeight) {
-    //     console.log("reached bottom");
-    //     console.log(meesageList[meesageList.length - 1]);
-    //     setLastMessageTime(meesageList[meesageList.length - 1].createdTime);
-    //   }
-    // }
+    if (listInnerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+
+      if (scrollTop === 0) {
+        console.log("reached top");
+        setLastMessageTime({
+          time: RoomMessages[0].createdTime,
+          pos: "top",
+        });
+      }
+      if (scrollTop + clientHeight === scrollHeight) {
+        console.log("reached bottom");
+        setLastMessageTime({
+          time: RoomMessages[RoomMessages.length - 1].createdTime,
+          pos: "bottom",
+        });
+      }
+    }
   };
 
+  // set current time for messages
   useEffect(() => {
     if (channelID === null) return;
     var timevar = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
-    setLastMessageTime(timevar);
-    setMessageList([]);
+    setLastMessageTime({
+      time: timevar,
+      pos: "top",
+    });
   }, [channelID]);
 
-  const getMessages = async () => {
-    const messages = await getMessageListTime(channelID, lastMessageTime);
-    console.log(messages);
-    setLoaded(true);
-    setMessageList(messages);
-  };
-
-  useEffect(() => {
-    if (channelID === null || lastMessageTime === null) return;
+  //
+  useEffect(async () => {
+    if (channelID === null || lastMessageTime.time === null) return;
     let isMounted = true;
-    getMessages();
+    if (isMounted) {
+      // setLoaded(false);
+      // await timeout(500);
+      getMessages();
+    }
     return () => {
       isMounted = false;
     };
   }, [lastMessageTime, channelID]);
+  //
+
+  //
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    setReceiveNewMessage(false);
+  }, [receiveNewMessage]);
 
   return (
     <>
       <div
         className="right-section-empty"
         style={{ display: channelID ? "none" : "block" }}
-      >
-        {/* <p>Choose a channel or create a new one</p> */}
-      </div>
+      ></div>
       <div
         className="right-section"
         style={{ display: channelID ? "block" : "none" }}
@@ -112,12 +143,8 @@ function Room() {
         </div>
         <div className="test-scrollbar">
           <div className="messages" ref={listInnerRef} onScroll={onScroll}>
-            {/* <ReactScrollableFeed
-              forceScroll={true}
-              onScroll={(isAtBottom) => updateIsAtBottomState(isAtBottom)}
-            > */}
             {loaded ? (
-              meesageList.map((message, index) => {
+              RoomMessages.map((message, index) => {
                 const CreateMessageDate = new Date(
                   Date.parse(message.createdTime)
                 );
@@ -128,7 +155,6 @@ function Room() {
                       me: message.senderID === user.userId,
                     })}
                   >
-                    {/* <Message RoomMessages={RoomMessages} /> */}
                     <div className="user_picture">
                       <Avatar userId={message.senderID} roomId={null} />
                     </div>
@@ -147,7 +173,7 @@ function Room() {
                             CreateMessageDate.getSeconds()
                           }`}</>
                         ) : (
-                          message.UserName
+                          message.senderName
                         )}
                       </div>
                       <div className="message_text">
@@ -160,10 +186,10 @@ function Room() {
             ) : (
               <Spinner animation="border" />
             )}
-            {/* </ReactScrollableFeed> */}
+            <div ref={messagesEndRef} />
           </div>
         </div>
-        <SendMessage />
+        <SendMessage setReceiveNewMessage={setReceiveNewMessage} />
       </div>
     </>
   );

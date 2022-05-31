@@ -126,7 +126,7 @@ io.on("connection", (socket) => {
         "MESSAGE: " +
           message.messageBody +
           " by " +
-          message.senderID +
+          message.senderName +
           " on " +
           message.roomID
       );

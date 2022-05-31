@@ -12,17 +12,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { v4 as uuidv4 } from "uuid";
 import { InsertNewMessageLocal } from "../../actions/userActions";
-import { InsertNewMessage } from "../../asyncActions/userAsyncActions";
 
-// import dateFormat, { masks } from "dateformat";
 import date from "date-and-time";
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const { REACT_APP_API_URL } = process.env;
 
-function SendMessage() {
+function SendMessage(props) {
+  const { setReceiveNewMessage } = props;
+  //
   const dispatch = useDispatch();
-
   const socketRef = useRef();
   const textareaRef = useRef(null);
 
@@ -69,30 +68,32 @@ function SendMessage() {
     var dataToSend = {
       ID_message: uuidv4(),
       senderID: user.userId,
+      senderName: user.surname + " " + user.name,
       roomID: channelID,
       messageBody: newMessage,
       createdTime: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
     };
 
-    // dispatch(InsertNewMessage(uuidMessage, user.userId, channelID, newMessage));
     socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
 
     setSend(false);
     setNewMessage("");
   }, [send, newMessage]);
 
-  // receive message
+  // receive message from socket and insert in local messages list
 
   useEffect(() => {
     if (channelID === null) return;
     if (socketRef.current === null) return;
 
     socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-      if (message.channelID != null) {
+      if (message.roomID != null) {
+        setReceiveNewMessage(true);
         dispatch(
           InsertNewMessageLocal(
             message.ID_message,
             message.senderID,
+            message.senderName,
             message.roomID,
             message.messageBody,
             message.createdTime

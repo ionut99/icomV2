@@ -90,33 +90,16 @@ export const getChannelDetails = async (ChannelID) => {
 };
 
 // get messages list from a room
-export const getRoomMessagesWithTime = async (ChannelID, lastTime) => {
+export const getRoomMessagesWithTime = async (
+  ChannelID,
+  lastTime,
+  position
+) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/messages`, {
       ChannelID,
       lastTime,
-    });
-  } catch (err) {
-    return {
-      error: true,
-      response: err.response,
-    };
-  }
-};
-
-// insert new message that was sent in table
-export const InsertNewMessageDataBase = async (
-  ID_message,
-  senderID,
-  roomID,
-  messageBody
-) => {
-  try {
-    return await axios.post(`${REACT_APP_API_URL}/room/newmessage`, {
-      ID_message,
-      senderID,
-      roomID,
-      messageBody,
+      position,
     });
   } catch (err) {
     return {

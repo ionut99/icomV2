@@ -21,7 +21,7 @@ async function CompleteMessageList(messageList) {
         senderID: messageList[i].senderID,
         Body: messageList[i].Body,
         createdTime: messageList[i].createdTime,
-        UserName: userDetails[0].Surname + " " + userDetails[0].Name,
+        senderName: userDetails[0].Surname + " " + userDetails[0].Name,
       });
     }
 
@@ -29,6 +29,7 @@ async function CompleteMessageList(messageList) {
       return new Date(a.createdTime) - new Date(b.createdTime);
     });
   } catch (err) {
+    console.error(err);
     return null;
   }
 }

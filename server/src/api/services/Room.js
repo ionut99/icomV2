@@ -85,9 +85,15 @@ function DeleteRoomData(RoomID) {
   });
 }
 
-function GetRoomMessagesData(ChannelID, time) {
-  let selectQuery =
-    "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? < ? LIMIT 10";
+function GetRoomMessagesData(ChannelID, time, messagesPosition) {
+  var selectQuery = "";
+
+  if (messagesPosition === "top")
+    selectQuery =
+      "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? <= ? ORDER BY ?? DESC LIMIT 10";
+  else
+    selectQuery =
+      "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? >= ? ORDER BY ?? ASC LIMIT 10";
   let query = mysql.format(selectQuery, [
     "messages",
     "room",
@@ -97,6 +103,7 @@ function GetRoomMessagesData(ChannelID, time) {
     ChannelID,
     "messages.createdTime",
     time,
+    "messages.createdTime",
   ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
@@ -110,7 +117,7 @@ function GetRoomMessagesData(ChannelID, time) {
 
 function GetRoomFolderID(ChannelID) {
   let selectQuery =
-    "SELECT ?? FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? = ??";
+    "SELECT ?? FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? = 'root'";
   let query = mysql.format(selectQuery, [
     "folders.folderId",
     "folders",
@@ -120,18 +127,14 @@ function GetRoomFolderID(ChannelID) {
     "foldersusers.RoomIdBeneficiary",
     ChannelID,
     "folders.parentID",
-    "root",
   ]);
   return new Promise((resolve, reject) => {
-    sqlPool.pool.query(
-      `SELECT folders.folderId FROM folders INNER JOIN foldersusers ON folders.folderId = foldersusers.folderIdResource WHERE foldersusers.RoomIdBeneficiary = '${ChannelID}' AND folders.parentID = 'root'`,
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 

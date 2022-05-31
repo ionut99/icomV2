@@ -21,7 +21,6 @@ const {
 
 const { GetRoomMessagesData, GetRoomFolderID } = require("../services/Room");
 
-
 const { handleResponse } = require("../helpers/utils");
 const { GetParticipantByID } = require("../services/Auth");
 const { GetAllUsersDataBase } = require("../services/User");
@@ -412,12 +411,17 @@ async function GetMessageListInTime(req, res) {
   try {
     const roomID = req.body.ChannelID;
     const messageTime = req.body.lastTime;
+    const messagesPosition = req.body.position;
 
     if (roomID === null || messageTime === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    var messageRoomList = await GetRoomMessagesData(roomID, messageTime)
+    var messageRoomList = await GetRoomMessagesData(
+      roomID,
+      messageTime,
+      messagesPosition
+    )
       .then(function (result) {
         return result;
       })

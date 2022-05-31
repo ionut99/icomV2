@@ -1,5 +1,6 @@
 import {
   USER_UPDATE_CHAT,
+  USER_MESSAGES_LIST_CHAT,
   USER_SET_SEARCH_BOX_CONTENT,
   USER_SET_PERSON_SEARCH_LIST,
   USER_RESET_PERSON_SEARCH_LIST,
@@ -25,13 +26,11 @@ const chatRedu = (state = ChannelState, action) => {
   switch (action.type) {
     // update chat room ID
     case USER_UPDATE_CHAT:
-      const { channelID, currentChannelName, RoomMessages, channelFolderId } =
-        action.payload;
+      const { channelID, currentChannelName, channelFolderId } = action.payload;
       return {
         ...state,
         channelID,
         currentChannelName,
-        RoomMessages,
         channelFolderId,
       };
 
@@ -79,8 +78,38 @@ const chatRedu = (state = ChannelState, action) => {
         addUserInGroup: addUserInGroup,
       };
 
+    case USER_MESSAGES_LIST_CHAT:
+      const { RoomMessages, position } = action.payload;
+      if (RoomMessages.length === 1) {
+        return state;
+      }
+      if (position === "top") {
+        // append top
+        console.log("Append messages top:");
+        console.log(state.RoomMessages);
+        const newList = RoomMessages.concat(state.RoomMessages.slice(1, 5));
+        console.log(newList);
+        return {
+          ...state,
+          RoomMessages: newList,
+        };
+      } else if (position === "bottom") {
+        //append bottom
+        console.log("Append messages to bottom:");
+        const newList = state.RoomMessages.slice(-5, -1).concat(RoomMessages);
+        return {
+          ...state,
+          RoomMessages: newList,
+        };
+      } else {
+        return {
+          ...state,
+          RoomMessages,
+        };
+      }
+
     case USER_ADD_NEW_MESSAGE:
-      const { ID_message, RoomID, senderID, Body, createdTime } =
+      const { ID_message, RoomID, senderID, senderName, Body, createdTime } =
         action.payload;
       return {
         ...state,
@@ -90,6 +119,7 @@ const chatRedu = (state = ChannelState, action) => {
             ID_message: ID_message,
             RoomID: RoomID,
             senderID: senderID,
+            senderName: senderName,
             Body: Body,
             createdTime: createdTime,
           },

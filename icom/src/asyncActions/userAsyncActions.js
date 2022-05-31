@@ -3,7 +3,6 @@ import {
   getSearchRoomService,
   newChatPersonService,
   getChannelDetails,
-  InsertNewMessageDataBase,
   CreateNewRoomDataBase,
   DeleteRoomDataBase,
   CreateNewGroupDataBase,
@@ -27,6 +26,7 @@ import {
   AddUserAccountDataBase,
   EditUserAccountDataBase,
 } from "../services/user";
+
 import { getChildFolders, getFolderByID } from "../services/folder";
 import { getFileList } from "../services/file";
 import {
@@ -37,7 +37,7 @@ import {
 
 import { ROOT_FOLDER } from "../reducers/folderReducer";
 
-// handle get ChildFolderList
+//
 export const userGetFolderDetails = (folderId, userId) => async (dispatch) => {
   if (
     folderId === "root" ||
@@ -72,7 +72,7 @@ export const getUserDetailsAsync = async (userId) => {
   else return null;
 };
 
-// handle get ChildFolderList
+//
 export const userSetFolderList = (folderId, userId) => async (dispatch) => {
   if (
     folderId === null ||
@@ -95,8 +95,6 @@ export const userSetFolderList = (folderId, userId) => async (dispatch) => {
 //
 
 //
-
-// handle get ChildFolderList
 export const userSetFileList = (folderId, userId) => async (dispatch) => {
   if (
     folderId === null ||
@@ -115,8 +113,6 @@ export const userSetFileList = (folderId, userId) => async (dispatch) => {
 
   dispatch(setChildFileList(orderList));
 };
-
-//
 
 //
 
@@ -199,23 +195,7 @@ export const updateChannelDetails =
 
     const roomFolderID = channelData.data["folderId"];
 
-    dispatch(
-      updateCurrentChannel(channelID, currentChannelName, [], roomFolderID)
-    );
-  };
-
-// handle insert new message in database
-export const InsertNewMessage =
-  (ID_message, senderID, roomID, messageBody) => async (dispatch) => {
-    const varVerify = await InsertNewMessageDataBase(
-      ID_message,
-      senderID,
-      roomID,
-      messageBody
-    );
-
-    // TO DO - display message
-    //console.log(varVerify);
+    dispatch(updateCurrentChannel(channelID, currentChannelName, roomFolderID));
   };
 
 export const CreateNewConversation =
@@ -332,12 +312,18 @@ export const adminSearchList = async (search_text, userId) => {
   else return null;
 };
 
-export const getMessageListTime = async (channelID, lastMessageTime) => {
-  const result = await getRoomMessagesWithTime(channelID, lastMessageTime).then(
-    (result) => {
-      return result;
-    }
-  );
+export const getMessageListTime = async (
+  channelID,
+  lastMessageTime,
+  position
+) => {
+  const result = await getRoomMessagesWithTime(
+    channelID,
+    lastMessageTime,
+    position
+  ).then((result) => {
+    return result;
+  });
   if (result.status !== 200) {
     console.log("Error fetch message list");
     return;

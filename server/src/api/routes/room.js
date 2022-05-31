@@ -32,7 +32,6 @@ router.post("/search", GetRoomSearchList);
 router.post("/messages", GetMessageListInTime);
 router.post("/details", GetRoomFolder);
 
-router.post("/newmessage", InsertNewMessage);
 router.post("/newgroup", CreateNewRoom_Group);
 router.post("/newmember", AddNewMemberInGroup);
 router.post("/participants", GetPartList);
