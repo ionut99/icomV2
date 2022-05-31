@@ -420,7 +420,8 @@ async function GetMessageListInTime(req, res) {
     var messageRoomList = await GetRoomMessagesData(
       roomID,
       messageTime,
-      messagesPosition
+      messagesPosition,
+      10
     )
       .then(function (result) {
         return result;

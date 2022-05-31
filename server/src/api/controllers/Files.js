@@ -278,7 +278,7 @@ async function GetProfilePicture(req, res) {
     const userId = req.body.userId;
     const roomId = req.body.roomId;
 
-    if (userId === null) {
+    if (userId === null || userId === undefined) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 

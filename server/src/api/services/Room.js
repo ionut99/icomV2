@@ -43,57 +43,57 @@ function InsertParticipantData(uuidRoom, userID) {
 }
 
 function DeleteAllMessageFromRoom(RoomID) {
+  let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
+  let query = mysql.format(deletQuery, ["messages", "messages.RoomID", RoomID]);
   return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `DELETE FROM messages WHERE messages.RoomID = '${RoomID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return resolve("FAILED");
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
 function DeleteAllParticipantsFromRoom(RoomID) {
+  let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
+  let query = mysql.format(deletQuery, [
+    "participants",
+    "participants.RoomID",
+    RoomID,
+  ]);
   return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `DELETE FROM participants WHERE participants.RoomID = '${RoomID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return resolve("FAILED");
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
 function DeleteRoomData(RoomID) {
+  let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
+  let query = mysql.format(deletQuery, ["room", "room.ID", RoomID]);
   return new Promise((resolve, reject) => {
-    sqlPool.pool.query(
-      `DELETE FROM room WHERE room.ID = '${RoomID}'`,
-      (err, result) => {
-        if (err) {
-          //   return resolve("FAILED");
-          return reject(err);
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
-function GetRoomMessagesData(ChannelID, time, messagesPosition) {
+function GetRoomMessagesData(ChannelID, time, messagesPosition, number) {
   var selectQuery = "";
 
   if (messagesPosition === "top")
     selectQuery =
-      "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? <= ? ORDER BY ?? DESC LIMIT 10";
+      "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? <= ? ORDER BY ?? DESC LIMIT ?";
   else
     selectQuery =
-      "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? >= ? ORDER BY ?? ASC LIMIT 10";
+      "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? >= ? ORDER BY ?? ASC LIMIT ?";
   let query = mysql.format(selectQuery, [
     "messages",
     "room",
@@ -104,6 +104,7 @@ function GetRoomMessagesData(ChannelID, time, messagesPosition) {
     "messages.createdTime",
     time,
     "messages.createdTime",
+    number,
   ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {

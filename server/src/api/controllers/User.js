@@ -5,6 +5,9 @@ const { handleResponse } = require("../helpers/utils");
 const {
   generateOfuscatedPassword,
   generateRandomSalt,
+  sortRoomAfterSearchText,
+  sortPersonstAfterSearchText,
+  AddLastMessage,
 } = require("../helpers/user_utils");
 
 const {
@@ -98,7 +101,7 @@ async function getNewUserChatList(req, res) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    var list = await GetAllUsersDataBase(userId)
+    var search_results = await GetAllUsersDataBase(userId)
       .then(function (result) {
         return result.map((x) => {
           const user = { ...x };
@@ -113,16 +116,36 @@ async function getNewUserChatList(req, res) {
           throw err;
         })
       );
-    list = list.filter(function (user) {
+    search_results = search_results.filter(function (user) {
       return user.UserName.toLowerCase().includes(
         search_box_text.toLowerCase()
       );
     });
 
     var userRoomList = [];
-    userRoomList = await GetUserRoomsList(search_box_text, userId);
-    var userDetails = await GetUserByID(userId);
+    userRoomList = await GetUserRoomsList(userId)
+      .then(function (result) {
+        return result.filter(function (room) {
+          return room.RoomName.toLowerCase().includes(
+            search_box_text.toLowerCase()
+          );
+        });
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
+    var userDetails = await GetUserByID(userId)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
     var userName = userDetails[0].Surname + " " + userDetails[0].Name;
 
     const Roomlist = userRoomList.map((x) => {
@@ -134,38 +157,19 @@ async function getNewUserChatList(req, res) {
     });
 
     for (let j = 0; j < Roomlist.length; j++) {
-      for (let i = 0; i < list.length; i++) {
-        if (Roomlist[j].RoomName.indexOf(list[i].UserName) != -1) {
-          list.splice(i, 1);
+      for (let i = 0; i < search_results.length; i++) {
+        if (Roomlist[j].RoomName.indexOf(search_results[i].UserName) != -1) {
+          search_results.splice(i, 1);
           continue;
         }
       }
     }
 
-    let keyword = search_box_text;
-
-    let search_results = list
-      .filter((prof) => {
-        // Filter results by doing case insensitive match on name here
-        return prof.UserName.toLowerCase().includes(keyword.toLowerCase());
-      })
-      .sort((a, b) => {
-        // Sort results by matching name with keyword position in name
-        if (
-          a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) >
-          b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
-        ) {
-          return 1;
-        } else if (
-          a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) <
-          b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
-        ) {
-          return -1;
-        } else {
-          if (a.UserName > b.UserName) return 1;
-          else return -1;
-        }
-      });
+    // sort result
+    search_results = sortPersonstAfterSearchText(
+      search_results,
+      search_box_text
+    );
 
     return handleResponse(req, res, 200, { search_results });
   } catch (error) {
@@ -184,13 +188,27 @@ async function GetRoomSearchList(req, res) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    var userRoomList = [];
-    userRoomList = await GetUserRoomsList(search_box_text, userId);
-    var userDetails = await GetUserByID(userId);
+    var userRoomList = await GetUserRoomsList(userId)
+      .then(function (result) {
+        return result.filter(function (room) {
+          return room.RoomName.toLowerCase().includes(
+            search_box_text.toLowerCase()
+          );
+        });
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
 
+    userRoomList = await AddLastMessage(userRoomList);
+    console.log(userRoomList);
+
+    var userDetails = await GetUserByID(userId);
     var userName = userDetails[0].Surname + " " + userDetails[0].Name;
 
-    const list = userRoomList.map((x) => {
+    var search_results = userRoomList.map((x) => {
       const room = { ...x };
       if (room.Type === 0) return room;
       if (room.Type === 1) {
@@ -200,30 +218,7 @@ async function GetRoomSearchList(req, res) {
       return room;
     });
 
-    let keyword = search_box_text;
-
-    let search_results = list
-      .filter((prof) => {
-        // Filter results by doing case insensitive match on name here
-        return prof.RoomName.toLowerCase().includes(keyword.toLowerCase());
-      })
-      .sort((a, b) => {
-        // Sort results by matching name with keyword position in name
-        if (
-          a.RoomName.toLowerCase().indexOf(keyword.toLowerCase()) >
-          b.RoomName.toLowerCase().indexOf(keyword.toLowerCase())
-        ) {
-          return 1;
-        } else if (
-          a.RoomName.toLowerCase().indexOf(keyword.toLowerCase()) <
-          b.RoomName.toLowerCase().indexOf(keyword.toLowerCase())
-        ) {
-          return -1;
-        } else {
-          if (a.RoomName > b.RoomName) return 1;
-          else return -1;
-        }
-      });
+    search_results = sortRoomAfterSearchText(search_results, search_box_text);
 
     return handleResponse(req, res, 200, { search_results });
   } catch (error) {

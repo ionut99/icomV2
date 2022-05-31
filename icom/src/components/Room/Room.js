@@ -12,10 +12,9 @@ import SendMessage from "./SendMessage";
 import classNames from "classnames";
 import { Spinner } from "react-bootstrap";
 import { monthNames } from "../../pages/Storage/FileIcons";
-import "./room.css";
 import { getMessageListTime } from "../../asyncActions/userAsyncActions";
-import { updateMessageChannelList } from "../../actions/userActions";
 import date from "date-and-time";
+import "./room.css";
 
 function Room() {
   const dispatch = useDispatch();
@@ -40,20 +39,12 @@ function Room() {
     pos: "top",
   });
 
-  // const timeout = (delay) => {
-  //   return new Promise((res) => setTimeout(res, delay));
-  // };
-  //
-
   // fetch messages function
   const getMessages = async () => {
     // setLoaded(false);
-    const messageslist = await getMessageListTime(
-      channelID,
-      lastMessageTime.time,
-      lastMessageTime.pos
+    dispatch(
+      getMessageListTime(channelID, lastMessageTime.time, lastMessageTime.pos)
     );
-    dispatch(updateMessageChannelList(messageslist, lastMessageTime.pos));
     setLoaded(true);
   };
   //
@@ -63,14 +54,14 @@ function Room() {
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
 
       if (scrollTop === 0) {
-        console.log("reached top");
+        // console.log("reached top");
         setLastMessageTime({
           time: RoomMessages[0].createdTime,
           pos: "top",
         });
       }
       if (scrollTop + clientHeight === scrollHeight) {
-        console.log("reached bottom");
+        // console.log("reached bottom");
         setLastMessageTime({
           time: RoomMessages[RoomMessages.length - 1].createdTime,
           pos: "bottom",

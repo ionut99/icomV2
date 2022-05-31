@@ -20,6 +20,7 @@ import {
   setRoomList,
   setPersonSearchList,
   updateCurrentChannel,
+  updateMessageChannelList,
 } from "./../actions/userActions";
 
 import {
@@ -312,21 +313,21 @@ export const adminSearchList = async (search_text, userId) => {
   else return null;
 };
 
-export const getMessageListTime = async (
-  channelID,
-  lastMessageTime,
-  position
-) => {
-  const result = await getRoomMessagesWithTime(
-    channelID,
-    lastMessageTime,
-    position
-  ).then((result) => {
-    return result;
-  });
-  if (result.status !== 200) {
-    console.log("Error fetch message list");
-    return;
-  }
-  return result.data["messageRoomList"];
-};
+export const getMessageListTime =
+  (channelID, lastMessageTime, position) => async (dispatch) => {
+    const result = await getRoomMessagesWithTime(
+      channelID,
+      lastMessageTime,
+      position
+    ).then((result) => {
+      return result;
+    });
+    if (result.status !== 200) {
+      console.log("Error fetch message list");
+      return;
+    }
+    dispatch(
+      updateMessageChannelList(result.data["messageRoomList"], position)
+    );
+    //return result.data["messageRoomList"];
+  };

@@ -49,7 +49,6 @@ export const addChildFile = (
   userIdFile,
   sizeFile
 ) => {
-  console.log(fileId);
   return {
     type: ADD_CHILD_FILE,
     payload: {
@@ -119,7 +118,6 @@ export const updateCurrentChannel = (
 };
 
 export const updateMessageChannelList = (RoomMessages, position) => {
-  console.log(position);
   return {
     type: USER_MESSAGES_LIST_CHAT,
     payload: {

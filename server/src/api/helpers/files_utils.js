@@ -16,38 +16,60 @@ function checkFileExists(filepath) {
 }
 
 async function extractProfilePicturePath(userId, roomId) {
-  if (userId === null) {
+  if (userId === null || userId === undefined) {
     return "";
   }
   if (roomId === null) {
-    const userDetails = await GetUserDetailsData(userId);
-    if (userDetails === "FAILED") {
+    const userAvatar = await GetUserDetailsData(userId)
+      .then(function (result) {
+        return result[0].Avatar;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    if (userAvatar === null) {
       return "";
     }
-    const result_userDetails = jsonStringParse(userDetails);
-    if (result_userDetails.Avatar === null) {
-      return "";
-    }
-    return result_userDetails.Avatar;
+    return userAvatar;
   } else if (roomId !== null) {
-    const roomDetails = await GetRoomDetails(roomId);
-    if (roomDetails === "FAILED") {
-      return "";
-    }
-    const result_roomDetails = jsonStringParse(roomDetails);
-    if (result_roomDetails.Private > 0) {
-      const part2 = await GetParticipantFromPrivateConversation(roomId, userId);
-      const part2_result = jsonStringParse(part2);
-      const userDetails2 = await GetUserDetailsData(part2_result.userId);
-      if (userDetails2 === "FAILED") {
-        return "";
-      }
-      const result_userDetails2 = jsonStringParse(userDetails2);
-      if (result_userDetails2.Avatar === null) return "";
-      return result_userDetails2.Avatar;
+    const roomDetails = await GetRoomDetails(roomId)
+      .then(function (result) {
+        return result[0];
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    if (roomDetails.Private > 0) {
+      const part2 = await GetParticipantFromPrivateConversation(roomId, userId)
+        .then(function (result) {
+          return result[0];
+        })
+        .catch((err) =>
+          setImmediate(() => {
+            throw err;
+          })
+        );
+      const userDetails2 = await GetUserDetailsData(part2.userId)
+        .then(function (result) {
+          return result[0];
+        })
+        .catch((err) =>
+          setImmediate(() => {
+            throw err;
+          })
+        );
+
+      if (userDetails2.Avatar === null) return "";
+      return userDetails2.Avatar;
     } else {
-      if (result_roomDetails.Avatar === null) return "";
-      return result_roomDetails.Avatar;
+      if (roomDetails.Avatar === null) return "";
+      return roomDetails.Avatar;
     }
   }
 

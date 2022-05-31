@@ -80,22 +80,24 @@ const chatRedu = (state = ChannelState, action) => {
 
     case USER_MESSAGES_LIST_CHAT:
       const { RoomMessages, position } = action.payload;
-      if (RoomMessages.length === 1) {
+      if (RoomMessages.length === 1 && state.RoomMessages.length === 0) {
+        return {
+          ...state,
+          RoomMessages,
+        };
+      }
+      if (RoomMessages.length === 1 && state.RoomMessages.length > 0) {
         return state;
       }
-      if (position === "top") {
+      if (position === "top" && state.RoomMessages.length > 7) {
         // append top
-        console.log("Append messages top:");
-        console.log(state.RoomMessages);
         const newList = RoomMessages.concat(state.RoomMessages.slice(1, 5));
-        console.log(newList);
         return {
           ...state,
           RoomMessages: newList,
         };
-      } else if (position === "bottom") {
+      } else if (position === "bottom" && state.RoomMessages.length > 7) {
         //append bottom
-        console.log("Append messages to bottom:");
         const newList = state.RoomMessages.slice(-5, -1).concat(RoomMessages);
         return {
           ...state,
