@@ -13,7 +13,9 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { InsertNewMessageLocal } from "../../actions/userActions";
 
+import { UploadFileForStoring } from "../../asyncActions/fileAsyncActions";
 import date from "date-and-time";
+const dayjs = require("dayjs");
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const { REACT_APP_API_URL } = process.env;
@@ -24,18 +26,22 @@ function SendMessage(props) {
   const dispatch = useDispatch();
   const socketRef = useRef();
   const textareaRef = useRef(null);
+  //
+  //
+  const [fileToSendInfo, setFileToSendInfo] = useState({
+    currentFile: undefined,
+    previewImage: undefined,
+    progress: 0,
+    message: "",
+    fileInfos: [],
+  });
+  //
 
   const [newMessage, setNewMessage] = useState("");
-  const [send, setSend] = useState(false);
-
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID } = chatObj;
-
-  const handleSendMessage = () => {
-    setSend(true);
-  };
+  const { channelID, channelFolderId } = chatObj;
 
   const handleChange = useCallback((e) => {
     if (e.key !== "Enter") setNewMessage(e.target.value.replace("\n", ""));
@@ -48,9 +54,28 @@ function SendMessage(props) {
   }
 
   const handleInputChange = (event) => {
-    // const imageFile = event.target.files[0];
-    const imageFilname = event.target.files[0].name;
-    console.log(imageFilname);
+    // const imageFilname = event.target.files[0].name;
+    // console.log(imageFilname);
+    setFileToSendInfo({
+      currentFile: event.target.files[0],
+      previewImage: URL.createObjectURL(event.target.files[0]),
+      progress: 0,
+      message: "",
+    });
+  };
+
+  const handleConfirmation = () => {
+    // upload file here
+    const createdTime = dayjs();
+
+    dispatch(
+      UploadFileForStoring(
+        channelFolderId,
+        user.userId,
+        createdTime,
+        fileToSendInfo.currentFile
+      )
+    );
   };
 
   // do link with socket ..
@@ -65,29 +90,7 @@ function SendMessage(props) {
     };
   }, [channelID]);
 
-  // send new message
-  useEffect(() => {
-    if (send === false || newMessage === "" || newMessage === " ") return;
-
-    if (socketRef.current === null) return;
-    //
-    var dataToSend = {
-      ID_message: uuidv4(),
-      senderID: user.userId,
-      senderName: user.surname + " " + user.name,
-      roomID: channelID,
-      messageBody: newMessage,
-      createdTime: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
-    };
-
-    socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
-
-    setSend(false);
-    setNewMessage("");
-  }, [send, newMessage]);
-
   // receive message from socket and insert in local messages list
-
   useEffect(() => {
     if (channelID === null) return;
     if (socketRef.current === null) return;
@@ -112,12 +115,28 @@ function SendMessage(props) {
       socketRef.current.disconnect();
     };
   }, [channelID]);
-
   // receive message
 
   useEffect(() => {
     textareaRef.current.focus();
   }, []);
+
+  const handleSendMessage = () => {
+    if (newMessage === "" || newMessage === " ") return;
+    if (socketRef.current === null) return;
+    //
+    var dataToSend = {
+      ID_message: uuidv4(),
+      senderID: user.userId,
+      senderName: user.surname + " " + user.name,
+      roomID: channelID,
+      messageBody: newMessage,
+      createdTime: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
+    };
+
+    socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
+    setNewMessage("");
+  };
 
   return (
     <div className="messenger_input">

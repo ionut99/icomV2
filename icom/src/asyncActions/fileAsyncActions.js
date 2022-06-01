@@ -4,12 +4,7 @@ import { addChildFile } from "../actions/userActions";
 // handle upload new file
 export const UploadFileForStoring =
   (folderId, userId, createdTime, FILE) => async (dispatch) => {
-    const res_addFile = await UploadNewStoringFile(
-      folderId,
-      userId,
-      createdTime,
-      FILE
-    );
+    const res_addFile = await UploadNewStoringFile(folderId, userId, FILE);
     if (res_addFile.status === 200) {
       dispatch(
         addChildFile(
