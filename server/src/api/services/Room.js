@@ -159,6 +159,19 @@ function GetPartListData(ChannelID) {
   });
 }
 
+function GetRoomDetailsData(ChannelID) {
+  let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
+  let query = mysql.format(selectQuery, ["room", "room.ID", ChannelID]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(result);
+    });
+  });
+}
+
 module.exports = {
   InsertNewRoomData,
   InsertParticipantData,
@@ -168,4 +181,5 @@ module.exports = {
   GetRoomMessagesData,
   GetRoomFolderID,
   GetPartListData,
+  GetRoomDetailsData,
 };

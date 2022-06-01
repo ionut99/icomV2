@@ -10,7 +10,7 @@ import { getUserDetails } from "../../services/user";
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 
-import { monthNames } from "./FileIcons";
+import { monthNames } from "../../helpers/FileIcons";
 
 function Folder({ folder }) {
   const ref = useRef();

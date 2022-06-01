@@ -177,32 +177,32 @@ export const userAddNewPersonInGroup = (RoomID, userId) => async (dispatch) => {
 };
 
 // handle to select channel and fetch messages from data-base
-export const updateChannelDetails =
-  (channelID, currentChannelName) => async (dispatch) => {
-    if (channelID == null) {
-      return [];
-    }
-    const channelData = await getChannelDetails(channelID);
+export const updateChannelDetails = (channelID, userId) => async (dispatch) => {
+  if (channelID == null) {
+    return [];
+  }
+  const channelData = await getChannelDetails(channelID, userId);
 
-    if (channelData.error) {
-      dispatch(verifyTokenEnd());
-      if (
-        channelData.response &&
-        [401, 403].includes(channelData.response.status)
-      )
-        dispatch(userLogout());
-      return;
-    }
+  if (channelData.error) {
+    dispatch(verifyTokenEnd());
+    if (
+      channelData.response &&
+      [401, 403].includes(channelData.response.status)
+    )
+      dispatch(userLogout());
+    return;
+  }
 
-    const roomFolderID = channelData.data["folderId"];
+  const roomFolderID = channelData.data["folderId"];
+  const currentChannelName = channelData.data["roomName"];
 
-    dispatch(updateCurrentChannel(channelID, currentChannelName, roomFolderID));
-  };
+  dispatch(updateCurrentChannel(channelID, currentChannelName, roomFolderID));
+};
 
 export const CreateNewConversation =
   (RoomName, Private, userSearchListID, userID, uuidRoom) =>
   async (dispatch) => {
-    const varVerify = await CreateNewRoomDataBase(
+    const result = await CreateNewRoomDataBase(
       RoomName,
       Private,
       userSearchListID,
@@ -210,6 +210,9 @@ export const CreateNewConversation =
       uuidRoom
     );
 
+    if (result.status === 200) {
+      dispatch(updateChannelDetails(uuidRoom, userID));
+    }
     dispatch(userSetRoomListAsync("", userID));
     // TO DO - display message
     // console.log(varVerify);

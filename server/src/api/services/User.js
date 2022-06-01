@@ -46,21 +46,27 @@ function InsertNewMessageData(
   senderID,
   roomID,
   messageBody,
+  type,
+  fileId,
   createdTime
 ) {
   let insertQuery =
-    "INSERT INTO ?? (??, ??, ??, ??, ??) VALUES (?, ?, ?, ?, ?);";
+    "INSERT INTO ?? (??, ??, ??, ??, ??, ??, ??) VALUES (?, ?, ?, ?, ?, ?, ?);";
   let query = mysql.format(insertQuery, [
     "messages",
     "ID_message",
     "RoomID",
     "senderID",
     "Body",
+    "type",
+    "fileId",
     "createdTime",
     ID_message,
     roomID,
     senderID,
     messageBody,
+    type,
+    fileId,
     createdTime,
   ]);
   return new Promise((resolve, reject) => {

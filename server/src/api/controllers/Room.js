@@ -1,7 +1,7 @@
 var uui = require("uuid");
 
 const { AddNewMemberInGroupData } = require("../services/User");
-
+const { GetUserByID } = require("../services/Auth");
 const {
   InsertNewRoomData,
   InsertParticipantData,
@@ -9,6 +9,7 @@ const {
   DeleteAllParticipantsFromRoom,
   DeleteRoomData,
   GetPartListData,
+  GetRoomDetailsData,
 } = require("../services/Room");
 
 const {
@@ -381,14 +382,15 @@ async function GetNOTPartList(req, res) {
 async function GetRoomFolder(req, res) {
   try {
     const roomID = req.body.ChannelID;
+    const userId = req.body.userId;
 
     if (roomID === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
     //
-    var res_roomId = await GetRoomFolderID(roomID)
+    var room_folder = await GetRoomFolderID(roomID)
       .then(function (result) {
-        return result;
+        return result[0];
       })
       .catch((err) =>
         setImmediate(() => {
@@ -396,9 +398,32 @@ async function GetRoomFolder(req, res) {
         })
       );
 
-    const roomId_folder = JSON.parse(JSON.stringify(res_roomId));
+    var roomName = await GetRoomDetailsData(roomID)
+      .then(function (result) {
+        return result[0].Name;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    var userName = await GetUserByID(userId)
+      .then(function (result) {
+        return result[0].Surname + " " + result[0].Name;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    roomName = roomName.replace(userName, "");
+    roomName = roomName.replace("#", "");
+
     return handleResponse(req, res, 200, {
-      folderId: roomId_folder[0].folderId,
+      folderId: room_folder.folderId,
+      roomName: roomName,
     });
   } catch (err) {
     console.error(err);

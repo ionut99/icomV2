@@ -78,7 +78,7 @@ function TextEditor() {
       .catch(() => {
         console.log("Error fetch Document Content!");
       });
-  }, [quill, fileID]);
+  }, [quill, fileID, user.userId]);
 
   //
 

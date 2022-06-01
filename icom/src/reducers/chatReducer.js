@@ -8,6 +8,7 @@ import {
   USER_RESET_ROOM_LIST,
   USER_ADD_NEW_MESSAGE,
   UPDATE_ADD_USER_IN_GROUP,
+  UPDATE_LAST_MESSAGE,
 } from "../actions/actionTypes";
 
 const ChannelState = {
@@ -111,8 +112,16 @@ const chatRedu = (state = ChannelState, action) => {
       }
 
     case USER_ADD_NEW_MESSAGE:
-      const { ID_message, RoomID, senderID, senderName, Body, createdTime } =
-        action.payload;
+      const {
+        ID_message,
+        RoomID,
+        senderID,
+        senderName,
+        Body,
+        type,
+        fileId,
+        createdTime,
+      } = action.payload;
       return {
         ...state,
         RoomMessages: [
@@ -123,9 +132,23 @@ const chatRedu = (state = ChannelState, action) => {
             senderID: senderID,
             senderName: senderName,
             Body: Body,
+            type: type,
+            fileId: fileId,
             createdTime: createdTime,
           },
         ],
+      };
+
+    case UPDATE_LAST_MESSAGE:
+      const { LastMessage, ID } = action.payload;
+      for (let i = 0; i < state.RoomSearchList.length; i++) {
+        if (state.RoomSearchList[i].RoomID === ID) {
+          state.RoomSearchList[i].LastMessage = LastMessage;
+        }
+      }
+      return {
+        ...state,
+        RoomSearchList: state.RoomSearchList,
       };
 
     default:

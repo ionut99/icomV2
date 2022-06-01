@@ -5,10 +5,14 @@ import * as BsIcons from "react-icons/bs";
 import * as MdIcons from "react-icons/md";
 import * as CgIcons from "react-icons/cg";
 
-import Avatar from "../Search/Avatar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import Avatar from "../Avatar/Avatar";
 
 import classNames from "classnames";
-import { monthNames } from "../../pages/Storage/FileIcons";
+import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
+import { handleReturnFileIcon } from "../../helpers/FileIcons";
+
 import "./room.css";
 
 //
@@ -18,8 +22,6 @@ function Message(props) {
   const { user } = authObj;
   //
   const { message } = props;
-  const CreateMessageDate = new Date(Date.parse(message.createdTime));
-
   //
 
   const [messageDetails, setmMssageDetails] = useState(false);
@@ -62,23 +64,25 @@ function Message(props) {
       </div>
       <div className="message_body">
         <div className="message_author">
-          {message.senderID === user.userId ? (
-            <>{` ${
-              monthNames[CreateMessageDate.getMonth()] +
-              " " +
-              CreateMessageDate.getDate() +
-              " " +
-              CreateMessageDate.getHours() +
-              ":" +
-              CreateMessageDate.getMinutes() +
-              ":" +
-              CreateMessageDate.getSeconds()
-            }`}</>
-          ) : (
-            message.senderName
-          )}
+          {message.senderID === user.userId
+            ? handleReturnHumanDateFormat(message.createdTime)
+            : message.senderName}
         </div>
-        <div className="message_text">
+        <div className="message_content">
+          <div
+            className="message_icon"
+            style={{
+              display: message.type !== "text" ? "block" : "none",
+            }}
+          >
+            <FontAwesomeIcon
+              icon={handleReturnFileIcon(message.type)}
+              className="icon"
+              style={{
+                color: "#0969da",
+              }}
+            />
+          </div>
           <p>{message.Body}</p>
         </div>
       </div>

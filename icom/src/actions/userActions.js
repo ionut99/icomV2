@@ -15,6 +15,7 @@ import {
   SET_CHILD_FILES,
   ADD_CHILD_FOLDER,
   ADD_CHILD_FILE,
+  UPDATE_LAST_MESSAGE,
 } from "./actionTypes";
 
 //file system
@@ -161,17 +162,26 @@ export const resetRoomList = () => {
   };
 };
 
-export const InsertNewMessageLocal = (
-  ID_message,
-  senderID,
-  senderName,
-  RoomID,
-  Body,
-  createdTime
-) => {
+export const InsertNewMessageLocal = (message) => {
   return {
     type: USER_ADD_NEW_MESSAGE,
-    payload: { ID_message, RoomID, senderID, senderName, Body, createdTime },
+    payload: {
+      ID_message: message.ID_message,
+      RoomID: message.roomID,
+      senderID: message.senderID,
+      senderName: message.senderName,
+      Body: message.messageBody,
+      type: message.type,
+      fileId: message.fileId,
+      createdTime: message.createdTime,
+    },
+  };
+};
+
+export const UpdateLastMessage = (LastMessage, ID) => {
+  return {
+    type: UPDATE_LAST_MESSAGE,
+    payload: { LastMessage, ID },
   };
 };
 

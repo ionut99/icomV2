@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddUser from "../../components/AddUserAccount/AddUserAccount";
 import { adminSearchList } from "../../asyncActions/userAsyncActions";
 
-import Avatar from "../../components/Search/Avatar";
+import Avatar from "../../components/Avatar/Avatar";
 
 import "./panel.css";
 

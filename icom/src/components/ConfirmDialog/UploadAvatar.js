@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import React, { useState } from "react";
 // import { updateUserAvatar } from "../../actions/authActions";
 import { UpdateProfilePicture } from "../../asyncActions/userAsyncActions";
-import Avatar from "../Search/Avatar";
+import Avatar from "../Avatar/Avatar";
 
 function UploadAvatar(props) {
   const { open, discard, setDiscard, handleClose } = props;

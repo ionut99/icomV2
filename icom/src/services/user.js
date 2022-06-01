@@ -76,10 +76,11 @@ export const getSearchRoomService = async (search_box_text, userId) => {
 };
 
 // get messages list from a room
-export const getChannelDetails = async (ChannelID) => {
+export const getChannelDetails = async (ChannelID, userId) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/details`, {
       ChannelID,
+      userId,
     });
   } catch (err) {
     return {

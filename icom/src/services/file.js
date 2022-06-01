@@ -1,5 +1,5 @@
 import axios from "axios";
-import download from "js-file-download";
+// import download from "js-file-download";
 const { REACT_APP_API_URL } = process.env;
 
 // get File List from folder
@@ -18,17 +18,12 @@ export const getFileList = async (folderId, userId) => {
 };
 
 // uploading File for Storing
-export const UploadNewStoringFile = async (
-  folderId,
-  userId,
-  createdTime,
-  FILE
-) => {
+export const UploadNewStoringFile = async (folderId, userId, fileId, FILE) => {
   const formdata = new FormData();
   formdata.append("storedfile", FILE);
   formdata.append("folderId", folderId);
   formdata.append("userId", userId);
-  formdata.append("createdTime", createdTime);
+  formdata.append("fileId", fileId);
   try {
     return await axios.post(
       `${REACT_APP_API_URL}/document/newStoragefile`,

@@ -6,7 +6,7 @@ import * as BsIcons from "react-icons/bs";
 import * as IoIcons2 from "react-icons/io5";
 import * as AiIcons from "react-icons/ai";
 
-import Avatar from "../Search/Avatar";
+import Avatar from "../Avatar/Avatar";
 
 import SendMessage from "./SendMessage";
 import { Spinner } from "react-bootstrap";
@@ -32,10 +32,9 @@ function Room() {
   const [receiveNewMessage, setReceiveNewMessage] = useState(false);
   //
   const [loaded, setLoaded] = useState(false);
-  var timevar = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
   //
   const [lastMessageTime, setLastMessageTime] = useState({
-    time: timevar,
+    time: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
     pos: "top",
   });
 
@@ -55,17 +54,30 @@ function Room() {
 
       if (scrollTop === 0) {
         // console.log("reached top");
-        setLastMessageTime({
-          time: RoomMessages[0].createdTime,
-          pos: "top",
-        });
+        if (RoomMessages.length > 0) {
+          setLastMessageTime({
+            time: RoomMessages[0].createdTime,
+            pos: "top",
+          });
+        } else {
+          setLastMessageTime({
+            time: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
+            pos: "top",
+          });
+        }
       }
       if (scrollTop + clientHeight === scrollHeight) {
-        // console.log("reached bottom");
-        setLastMessageTime({
-          time: RoomMessages[RoomMessages.length - 1].createdTime,
-          pos: "bottom",
-        });
+        if (RoomMessages.length > 0) {
+          setLastMessageTime({
+            time: RoomMessages[RoomMessages.length - 1].createdTime,
+            pos: "bottom",
+          });
+        } else {
+          setLastMessageTime({
+            time: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
+            pos: "bottom",
+          });
+        }
       }
     }
   };

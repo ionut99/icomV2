@@ -27,8 +27,6 @@ const defaultAvatarPicure = path.join(
   "users/default/default_avatar.png"
 );
 
-const { returnMimeType } = require("../helpers/mimeType");
-
 const storageFile = multer.diskStorage({
   destination: path.join(__dirname, "../../../users/tempDir/"),
   filename: function (req, file, cb) {
@@ -151,7 +149,7 @@ async function UploadNewStoredFile(req, res) {
       const fileSize = req.file.size;
 
       // server details
-      const fileId = uui.v4();
+      const fileId = req.body.fileId;
       const folderId = req.body.folderId;
       const userId = req.body.userId;
       // const createdTime = req.body.createdTime;
@@ -192,7 +190,7 @@ async function UploadNewStoredFile(req, res) {
             //similarity
             InsertNewFileDataBase(
               fileId,
-              returnMimeType(fileType),
+              fileType,
               fileName,
               folderId,
               createdTime,
@@ -262,7 +260,7 @@ async function UploadNewStoredFile(req, res) {
             return handleResponse(req, res, 200, {
               StorageFile: "SUCCESS",
               fileId: fileId,
-              type: returnMimeType(fileType),
+              type: fileType,
             });
           }
         }

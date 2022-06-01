@@ -8,7 +8,7 @@ import * as BiIcons from "react-icons/bi";
 
 import { getChildFolders } from "../../services/folder";
 import { getFileList } from "../../services/file";
-import { handleReturnFileIcon } from "./FileIcons";
+import { handleReturnFileIcon } from "../../helpers/FileIcons";
 
 function SubFolder({ currentFolder }) {
   const authObj = useSelector((state) => state.auth);

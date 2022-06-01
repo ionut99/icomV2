@@ -68,17 +68,25 @@
   text-align: left;
 }
 
-.right-section .messages .one_message.me .message_body .message_text {
-  background-color: var(--me-message-color);
-}
-
-.right-section .messages .one_message .message_body .message_text {
+.right-section .messages .one_message .message_body .message_content {
+  display: inline-flex;
+  align-items: center;
   background: var(--sender-message-color);
   color: var(--white-color);
   padding: 10px;
   border-radius: 10px;
 }
-.right-section .messages .one_message .message_body .message_text p {
+
+.right-section .messages .one_message.me .message_body .message_content {
+  background-color: var(--me-message-color);
+}
+
+.message_content .message_icon{
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.right-section .messages .one_message .message_body .message_content p {
   word-wrap: break-word;
   margin: 0;
 }
@@ -193,6 +201,41 @@
 
 .right-section .messenger_input .actions button:hover {
   cursor: pointer;
+}
+
+.file_icon {
+  display: flex;
+  justify-content: center;
+  font-size: 200px;
+}
+
+.picture_preview {
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.file_details {
+  padding-left: 30px;
+  padding-top: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.file_details .prop {
+  display: inline-flex;
+}
+
+.file_details .prop .key {
+  font-weight: 800;
+  font-size: medium;
+}
+
+.file_details .prop .value {
+  margin: 0;
+  font-size: medium;
 }
 
 .conversation-details {
