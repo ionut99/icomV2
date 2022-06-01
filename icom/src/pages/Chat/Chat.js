@@ -5,7 +5,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Modal, Form, Spinner } from "react-bootstrap";
 
 import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
-import { setUserSearchBoxContent } from "../../actions/userActions";
+import {
+  setUserSearchBoxContent,
+  UpdateAddUserInGroup,
+  setPersonSearchList,
+} from "../../actions/userActions";
 import { setAuthToken } from "../../services/auth";
 import Navbar from "../../components/Navbar/Navbar";
 
@@ -27,8 +31,6 @@ import { v4 as uuidv4 } from "uuid";
 
 import "./chat.css";
 
-import SearchService from "../../components/Search/searchService";
-
 function setSearchBoxContent(search_box_content, dispatch) {
   dispatch(setUserSearchBoxContent(search_box_content));
 }
@@ -44,13 +46,14 @@ function Chat() {
   //
   const [loaded, setLoaded] = useState(false);
 
-  const { CloseChannelOptions } = SearchService(user.userId);
-
   const chatObj = useSelector((state) => state.chatRedu);
   const { search_box_content, addUserInGroup } = chatObj;
 
   const handleCloseChannelOptions = () => {
-    CloseChannelOptions();
+    dispatch(UpdateAddUserInGroup(""));
+    dispatch(setPersonSearchList([]));
+    dispatch(setUserSearchBoxContent(""));
+    dispatch(userSetRoomListAsync("", user.userId));
   };
   function SearchEnter(event) {
     if (event.key === "Enter") {

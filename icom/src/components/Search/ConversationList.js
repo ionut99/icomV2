@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import "./search.css";
 import { Spinner } from "react-bootstrap";
 import { Button, Modal, Form } from "react-bootstrap";
 
-import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
-import SearchService from "./searchService.js";
-
+import { DeleteConversation } from "../../asyncActions/userAsyncActions";
+import { updateCurrentChannel } from "../../actions/userActions";
 import Conversation from "./Conversation";
 
 const ConversationList = () => {
+  const dispatch = useDispatch();
+
   const chatObj = useSelector((state) => state.chatRedu);
   const { RoomSearchList, addUserInGroup } = chatObj;
 
@@ -25,18 +26,18 @@ const ConversationList = () => {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  const { onDelete } = SearchService(user.userId);
-
   function handleSubmit(e) {
     e.preventDefault();
     if (currentChannel.name === undefined || currentChannel.id === undefined)
       return;
-    onDelete(currentChannel.id);
+
+    dispatch(DeleteConversation(currentChannel.id, user.userId));
+    dispatch(updateCurrentChannel(null, "", []));
     closeModal();
   }
 
   function closeModal() {
-    // delete old data
+    // clean data
     setCurrentChannel({
       name: undefined,
       id: undefined,

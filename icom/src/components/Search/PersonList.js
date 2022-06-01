@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import SearchService from "./searchService.js";
+import { useDispatch, useSelector } from "react-redux";
 import Avatar from "./Avatar";
 import "./search.css";
 import { Spinner } from "react-bootstrap";
 
+import {
+  setPersonSearchList,
+  setUserSearchBoxContent,
+  UpdateAddUserInGroup,
+} from "../../actions/userActions";
+
+import {
+  updateChannelDetails,
+  CreateNewConversation,
+  AddNewMemberInGroup,
+} from "../../asyncActions/userAsyncActions";
+
+import { v4 as uuidv4 } from "uuid";
+
 function PersonList() {
+  const dispatch = useDispatch();
   const chatObj = useSelector((state) => state.chatRedu);
-  const { userSearchList, addUserInGroup } = chatObj;
+  const { userSearchList, addUserInGroup, RoomSearchList } = chatObj;
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
   const [loaded, setLoaded] = useState(false);
-
-  const { ClickPerson, ClickAddPersonInGroup } = SearchService(user.userId);
 
   const handleClickPerson = (UserName, PersonID, thisName) => {
     if (addUserInGroup !== "") {
@@ -22,6 +34,38 @@ function PersonList() {
     } else {
       ClickPerson(UserName, PersonID, thisName);
     }
+  };
+
+  const ClickPerson = (userSearchListName, userSearchListID, userName) => {
+    for (let i = 0; i < RoomSearchList.length; i++) {
+      if (RoomSearchList[i]["RoomName"].includes(userSearchListName)) {
+        dispatch(
+          updateChannelDetails(RoomSearchList[i]["RoomID"], user.userId)
+        );
+        dispatch(setUserSearchBoxContent(""));
+        dispatch(setPersonSearchList([]));
+        return;
+      }
+    }
+
+    dispatch(
+      CreateNewConversation(
+        userSearchListName + " # " + userName,
+        1,
+        userSearchListID,
+        user.userId,
+        uuidv4()
+      )
+    );
+    // we don't update chanel right now because it s not created
+    dispatch(setUserSearchBoxContent(""));
+    dispatch(setPersonSearchList([]));
+  };
+
+  const ClickAddPersonInGroup = (RoomID, userSearchListID) => {
+    dispatch(AddNewMemberInGroup(RoomID, userSearchListID));
+    dispatch(setPersonSearchList([]));
+    dispatch(UpdateAddUserInGroup(""));
   };
 
   useEffect(() => {

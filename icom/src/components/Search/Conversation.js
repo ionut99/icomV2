@@ -2,13 +2,24 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
+import {
+  setPersonSearchList,
+  setUserSearchBoxContent,
+  UpdateAddUserInGroup,
+} from "../../actions/userActions";
+
+import {
+  updateChannelDetails,
+  userSetRoomListAsync,
+  getParticipantList,
+  userAddNewPersonInGroup,
+} from "../../asyncActions/userAsyncActions";
+
 import "./search.css";
 
 import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 import * as BsIcons from "react-icons/bs";
-
-import SearchService from "./searchService.js";
 
 import Avatar from "../Search/Avatar";
 
@@ -25,17 +36,21 @@ function Conversation(props) {
 
   const CreateMessageDate = new Date(Date.parse(channel.LastMessageTime));
 
-  console.log(channel.LastMessageTime);
-  const { ClickChannel, onAddUser, ShowParticipants } = SearchService(
-    user.userId
-  );
+  const selectChannel = (roomID) => {
+    dispatch(updateChannelDetails(roomID, user.userId));
+    dispatch(userSetRoomListAsync("", user.userId));
+    dispatch(setUserSearchBoxContent(""));
+    dispatch(setPersonSearchList([]));
+  };
 
   const handleAddUserInGroup = (RoomID) => {
-    onAddUser(RoomID);
+    dispatch(UpdateAddUserInGroup(RoomID));
+    dispatch(userAddNewPersonInGroup(RoomID, user.userId));
   };
 
   const handleShowParticipants = (RoomID) => {
-    ShowParticipants(RoomID);
+    dispatch(getParticipantList(RoomID));
+    dispatch(UpdateAddUserInGroup(RoomID));
   };
 
   const handleDeleteChannel = (channelName, channelId) => {
@@ -70,7 +85,7 @@ function Conversation(props) {
   return (
     <div
       className="conversation"
-      onClick={() => ClickChannel(channel.RoomID, dispatch)}
+      onClick={() => selectChannel(channel.RoomID)}
       ref={ref}
     >
       <div className="user_picture">
