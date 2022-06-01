@@ -3,10 +3,10 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Textarea from "react-expanding-textarea";
 import socketIOClient from "socket.io-client";
-import { Button } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faImage,
+  // faImage,
   faPaperPlane,
   faPaperclip,
 } from "@fortawesome/free-solid-svg-icons";
@@ -46,6 +46,12 @@ function SendMessage(props) {
       handleSendMessage();
     }
   }
+
+  const handleInputChange = (event) => {
+    // const imageFile = event.target.files[0];
+    const imageFilname = event.target.files[0].name;
+    console.log(imageFilname);
+  };
 
   // do link with socket ..
   useEffect(() => {
@@ -117,28 +123,19 @@ function SendMessage(props) {
     <div className="messenger_input">
       <div className="text_input">
         <div className="actions">
-          <Button variant="outline-light">
-            <FontAwesomeIcon
-              icon={faPaperclip}
-              size="5x"
-              className="folder-icon"
-              style={{
-                color: "#6f6f6f",
-              }}
-            />
-          </Button>
-        </div>
-        <div className="actions">
-          <Button variant="outline-light">
-            <FontAwesomeIcon
-              icon={faImage}
-              size="5x"
-              className="folder-icon"
-              style={{
-                color: "#6f6f6f",
-              }}
-            />
-          </Button>
+          <Form.Group controlId="formFile">
+            <Form.Label variant="outline-light" className="send_file">
+              <FontAwesomeIcon
+                icon={faPaperclip}
+                size="5x"
+                className="folder-icon"
+                style={{
+                  color: "#6f6f6f",
+                }}
+              ></FontAwesomeIcon>
+            </Form.Label>
+            <Form.Control type="file" onChange={handleInputChange} />
+          </Form.Group>
         </div>
         <Textarea
           className="custom-textarea"

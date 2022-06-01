@@ -187,6 +187,10 @@
   margin-top: auto;
 }
 
+.right-section .messenger_input .actions .send_file svg:hover {
+  cursor: pointer;
+}
+
 .right-section .messenger_input .actions button:hover {
   cursor: pointer;
 }
