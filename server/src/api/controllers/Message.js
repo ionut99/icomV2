@@ -3,21 +3,17 @@ const { handleResponse } = require("../helpers/utils");
 const { InsertNewMessageData } = require("../services/User");
 
 // insert new message in a room
-async function InsertNewMessage(
-  ID_message,
-  senderID,
-  roomID,
-  messageBody,
-  createdTime
-) {
+async function InsertNewMessage(message) {
   try {
     // TO DO: - verify if user is int that room, and add midleware
     var result = await InsertNewMessageData(
-      ID_message,
-      senderID,
-      roomID,
-      messageBody,
-      createdTime
+      message.ID_message,
+      message.senderID,
+      message.roomID,
+      message.messageBody,
+      message.type,
+      message.fileId,
+      message.createdTime
     );
     // console.log("Rezultat inserare mesaj baza de date:");
     // console.log(result.affectedRows);

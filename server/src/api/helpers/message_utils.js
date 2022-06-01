@@ -21,6 +21,8 @@ async function CompleteMessageList(messageList) {
         senderID: messageList[i].senderID,
         Body: messageList[i].Body,
         createdTime: messageList[i].createdTime,
+        type: messageList[i].type,
+        fileId: messageList[i].fileId,
         senderName: userDetails[0].Surname + " " + userDetails[0].Name,
       });
     }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Avatar from "./Avatar";
+import Avatar from "../Avatar/Avatar";
 import "./search.css";
 import { Spinner } from "react-bootstrap";
 

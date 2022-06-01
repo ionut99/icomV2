@@ -112,8 +112,16 @@ const chatRedu = (state = ChannelState, action) => {
       }
 
     case USER_ADD_NEW_MESSAGE:
-      const { ID_message, RoomID, senderID, senderName, Body, createdTime } =
-        action.payload;
+      const {
+        ID_message,
+        RoomID,
+        senderID,
+        senderName,
+        Body,
+        type,
+        fileId,
+        createdTime,
+      } = action.payload;
       return {
         ...state,
         RoomMessages: [
@@ -124,6 +132,8 @@ const chatRedu = (state = ChannelState, action) => {
             senderID: senderID,
             senderName: senderName,
             Body: Body,
+            type: type,
+            fileId: fileId,
             createdTime: createdTime,
           },
         ],

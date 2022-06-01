@@ -15,9 +15,11 @@ import {
   InsertNewMessageLocal,
   UpdateLastMessage,
 } from "../../actions/userActions";
-
+import { handleReturnFileIcon } from "../../helpers/FileIcons";
 import { UploadFileForStoring } from "../../asyncActions/fileAsyncActions";
 import date from "date-and-time";
+import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
+
 const dayjs = require("dayjs");
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
@@ -43,7 +45,8 @@ function SendMessage(props) {
     fileInfos: [],
   });
   //
-
+  const [preview, setPreview] = useState(false);
+  //
   const [newMessage, setNewMessage] = useState("");
   //
   const [open, setOpen] = useState(false);
@@ -76,22 +79,23 @@ function SendMessage(props) {
 
   function SendEnter(event) {
     if (event.key === "Enter") {
-      handleSendMessage();
+      handleSendMessage("text", undefined);
     }
   }
 
   const handleInputChange = (event) => {
-    // const imageFilname = event.target.files[0].name;
-    // console.log(imageFilname);
-    console.log("Structura fisier:");
-    console.log(event.target.files[0]);
+    if (event.target.files[0].name.match(/\.(jpg|jpeg|png|JPG|JPEG|PNG|gif)$/))
+      setPreview(true);
+    else setPreview(false);
     //
     setFileToSendInfo({
       file: event.target.files[0],
       previewImage: URL.createObjectURL(event.target.files[0]),
       name: event.target.files[0].name,
       size: event.target.files[0].size,
-      lastModified: event.target.files[0].lastModified,
+      lastModified: handleReturnHumanDateFormat(
+        event.target.files[0].lastModified
+      ),
       type: event.target.files[0].type,
       progress: 0,
       message: "",
@@ -103,19 +107,21 @@ function SendMessage(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    // upload file here
-
+    // send file to server
     const createdTime = dayjs();
+    const fileId = uuidv4();
 
     dispatch(
       UploadFileForStoring(
         channelFolderId,
         user.userId,
         createdTime,
+        fileId,
         fileToSendInfo.file
       )
     );
-    handleSendMessage();
+    // to do, verify if upload succed...
+    handleSendMessage(fileToSendInfo.type, fileId);
     closeModal();
   }
 
@@ -139,16 +145,7 @@ function SendMessage(props) {
     socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
       if (message.roomID != null) {
         setReceiveNewMessage(true);
-        dispatch(
-          InsertNewMessageLocal(
-            message.ID_message,
-            message.senderID,
-            message.senderName,
-            message.roomID,
-            message.messageBody,
-            message.createdTime
-          )
-        );
+        dispatch(InsertNewMessageLocal(message));
         dispatch(UpdateLastMessage(message.messageBody, message.roomID));
       }
     });
@@ -163,7 +160,7 @@ function SendMessage(props) {
     textareaRef.current.focus();
   }, []);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (messageType, fileId) => {
     if (newMessage === "" || newMessage === " ") return;
     if (socketRef.current === null) return;
     //
@@ -173,6 +170,8 @@ function SendMessage(props) {
       senderName: user.surname + " " + user.name,
       roomID: channelID,
       messageBody: newMessage,
+      type: messageType,
+      fileId: fileId,
       createdTime: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
     };
 
@@ -206,11 +205,13 @@ function SendMessage(props) {
           placeholder=" Write your message..."
           ref={textareaRef}
         />
-        <div className="actions" onClick={handleSendMessage}>
+        <div
+          className="actions"
+          onClick={() => handleSendMessage("text", undefined)}
+        >
           <Button variant="outline-light">
             <FontAwesomeIcon
               icon={faPaperPlane}
-              size="5x"
               className="folder-icon"
               style={{
                 color: "#0969da",
@@ -225,10 +226,57 @@ function SendMessage(props) {
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
-            <p>Name: {fileToSendInfo.name}</p>
-            <p>Creation Date: {fileToSendInfo.lastModified}</p>
-            <p>Size: {fileToSendInfo.size} Bytes</p>
-            <p>Type: {fileToSendInfo.type}</p>
+            <div
+              className="file_icon"
+              style={{
+                display: !preview ? "flex" : "none",
+              }}
+            >
+              <FontAwesomeIcon
+                icon={handleReturnFileIcon(fileToSendInfo.type)}
+                className="icon"
+                style={{
+                  color: "#0969da",
+                }}
+              />
+            </div>
+            <div
+              className="picture_preview"
+              style={{
+                display: preview ? "flex" : "none",
+              }}
+            >
+              <img src={fileToSendInfo.previewImage} alt="userAvatar jmecher" />
+            </div>
+            <div className="file_details">
+              <div className="prop">
+                <div className="key">Name: </div>
+                <div className="value">
+                  <p>{fileToSendInfo.name}</p>
+                </div>
+              </div>
+
+              <div className="prop">
+                <div className="key">Creation Date: </div>
+                <div className="value">
+                  <p>{fileToSendInfo.lastModified}</p>
+                </div>
+              </div>
+
+              <div className="prop">
+                <div className="key">Size: </div>
+                <div className="value">
+                  <p>{fileToSendInfo.size} Bytes</p>
+                </div>
+              </div>
+
+              <div className="prop">
+                <div className="key">Type: </div>
+                <div className="value">
+                  <p>{fileToSendInfo.type}</p>
+                </div>
+              </div>
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="outline-danger" onClick={closeModal}>

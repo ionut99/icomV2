@@ -6,7 +6,7 @@ import * as BsIcons from "react-icons/bs";
 import * as IoIcons2 from "react-icons/io5";
 import * as AiIcons from "react-icons/ai";
 
-import Avatar from "../Search/Avatar";
+import Avatar from "../Avatar/Avatar";
 
 import SendMessage from "./SendMessage";
 import { Spinner } from "react-bootstrap";

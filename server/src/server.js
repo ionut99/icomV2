@@ -104,16 +104,11 @@ io.on("connection", (socket) => {
     io.in(channelID).emit(NEW_CHAT_MESSAGE_EVENT, message);
 
     // salvare mesaj
-    const mes_res = InsertNewMessage(
-      message.ID_message,
-      message.senderID,
-      message.roomID,
-      message.messageBody,
-      message.createdTime
-    );
+    const mes_res = InsertNewMessage(message);
 
     if (mes_res === null) {
       console.log("Error save message !");
+
       socket.emit("error insert message", {
         ID_message: message.ID_message,
         senderID: message.senderID,

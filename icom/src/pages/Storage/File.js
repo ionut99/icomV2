@@ -4,13 +4,13 @@ import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { getUserDetails } from "../../services/user";
-import { monthNames, handleReturnFileIcon } from "./FileIcons";
+import { monthNames, handleReturnFileIcon } from "../../helpers/FileIcons";
 
-import * as MdIcons from "react-icons/md";
+// import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
-import * as FaIcons from "react-icons/fa";
+// import * as FaIcons from "react-icons/fa";
 
-import moment from "moment";
+// import moment from "moment";
 
 import { DownloadFileFromServer } from "../../asyncActions/fileAsyncActions";
 

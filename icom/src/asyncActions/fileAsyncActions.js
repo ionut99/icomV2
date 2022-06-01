@@ -1,18 +1,24 @@
 import { UploadNewStoringFile, DownloadFileService } from "../services/file";
 import { addChildFile } from "../actions/userActions";
+import { v4 as uuidv4 } from "uuid";
 
 // handle upload new file
 export const UploadFileForStoring =
-  (folderId, userId, createdTime, FILE) => async (dispatch) => {
-    const res_addFile = await UploadNewStoringFile(folderId, userId, FILE);
+  (folderId, userId, createdTime,fileId, FILE) => async (dispatch) => {
+    const res_addFile = await UploadNewStoringFile(
+      folderId,
+      userId,
+      fileId,
+      FILE
+    );
     if (res_addFile.status === 200) {
       dispatch(
         addChildFile(
-          res_addFile.data["fileId"],
+          fileId,
           FILE.name,
           createdTime,
           folderId,
-          res_addFile.data["type"],
+          FILE.type,
           userId,
           FILE.type
         )

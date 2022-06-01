@@ -6,6 +6,7 @@ import {
   setPersonSearchList,
   setUserSearchBoxContent,
   UpdateAddUserInGroup,
+  updateMessageChannelList,
 } from "../../actions/userActions";
 
 import {
@@ -21,7 +22,7 @@ import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 import * as BsIcons from "react-icons/bs";
 
-import Avatar from "../Search/Avatar";
+import Avatar from "../Avatar/Avatar";
 
 function Conversation(props) {
   const ref = useRef();
@@ -34,10 +35,18 @@ function Conversation(props) {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
+  const chatObj = useSelector((state) => state.chatRedu);
+  const { channelID } = chatObj;
+
   const CreateMessageDate = new Date(Date.parse(channel.LastMessageTime));
 
   const selectChannel = (roomID) => {
-    dispatch(updateChannelDetails(roomID, user.userId));
+    // works if select different channel
+    if (roomID !== channelID) {
+      dispatch(updateChannelDetails(roomID, user.userId));
+      dispatch(updateMessageChannelList([], "top"));
+    }
+    //
     dispatch(userSetRoomListAsync("", user.userId));
     dispatch(setUserSearchBoxContent(""));
     dispatch(setPersonSearchList([]));

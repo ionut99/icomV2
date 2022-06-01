@@ -5,8 +5,7 @@ import * as FaIcons from "react-icons/fa";
 import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 import { updateCurrentChannel } from "../../actions/userActions";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
-import Avatar from "../Search/Avatar";
-import AddUser from "../AddUserAccount/AddUserAccount";
+import Avatar from "../Avatar/Avatar";
 import ChangePassword from "../ChangePassword/ChangePassword";
 import { Button } from "react-bootstrap";
 
