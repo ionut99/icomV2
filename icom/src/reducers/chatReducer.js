@@ -8,6 +8,7 @@ import {
   USER_RESET_ROOM_LIST,
   USER_ADD_NEW_MESSAGE,
   UPDATE_ADD_USER_IN_GROUP,
+  UPDATE_LAST_MESSAGE,
 } from "../actions/actionTypes";
 
 const ChannelState = {
@@ -126,6 +127,18 @@ const chatRedu = (state = ChannelState, action) => {
             createdTime: createdTime,
           },
         ],
+      };
+
+    case UPDATE_LAST_MESSAGE:
+      const { LastMessage, ID } = action.payload;
+      for (let i = 0; i < state.RoomSearchList.length; i++) {
+        if (state.RoomSearchList[i].RoomID === ID) {
+          state.RoomSearchList[i].LastMessage = LastMessage;
+        }
+      }
+      return {
+        ...state,
+        RoomSearchList: state.RoomSearchList,
       };
 
     default:

@@ -15,6 +15,7 @@ import {
   SET_CHILD_FILES,
   ADD_CHILD_FOLDER,
   ADD_CHILD_FILE,
+  UPDATE_LAST_MESSAGE,
 } from "./actionTypes";
 
 //file system
@@ -172,6 +173,13 @@ export const InsertNewMessageLocal = (
   return {
     type: USER_ADD_NEW_MESSAGE,
     payload: { ID_message, RoomID, senderID, senderName, Body, createdTime },
+  };
+};
+
+export const UpdateLastMessage = (LastMessage, ID) => {
+  return {
+    type: UPDATE_LAST_MESSAGE,
+    payload: { LastMessage, ID },
   };
 };
 

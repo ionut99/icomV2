@@ -22,7 +22,6 @@ function File({ file }) {
 
   const [authName, setauthName] = useState("");
   const [optionButton, setOptionButton] = useState(false);
-  console.log(file);
 
   // const CreateFileDate = Date.parse(file.createdTime);
   // const CreateFileDate = moment(Date.parse(file.CreateFileDate)).format(

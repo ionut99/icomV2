@@ -125,7 +125,6 @@
   background-color: var(--skroll-bar-hover);
 }
 
-
 @media screen and (max-width: 1400px) {
   .left-section {
     width: 36%;
@@ -134,9 +133,9 @@
     margin-top: 0px;
     margin-bottom: 0px;
   }
-  .conversation {
+  /* .conversation {
     max-width: 90%;
-  }
+  } */
 }
 
 @media screen and (max-width: 865px) {

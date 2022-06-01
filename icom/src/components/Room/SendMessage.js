@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Textarea from "react-expanding-textarea";
 import socketIOClient from "socket.io-client";
-import { Form, Button } from "react-bootstrap";
+import { Modal, Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   // faImage,
@@ -11,7 +11,10 @@ import {
   faPaperclip,
 } from "@fortawesome/free-solid-svg-icons";
 import { v4 as uuidv4 } from "uuid";
-import { InsertNewMessageLocal } from "../../actions/userActions";
+import {
+  InsertNewMessageLocal,
+  UpdateLastMessage,
+} from "../../actions/userActions";
 
 import { UploadFileForStoring } from "../../asyncActions/fileAsyncActions";
 import date from "date-and-time";
@@ -31,6 +34,10 @@ function SendMessage(props) {
   const [fileToSendInfo, setFileToSendInfo] = useState({
     currentFile: undefined,
     previewImage: undefined,
+    name: "",
+    size: 0,
+    lastModified: "",
+    type: "",
     progress: 0,
     message: "",
     fileInfos: [],
@@ -38,10 +45,30 @@ function SendMessage(props) {
   //
 
   const [newMessage, setNewMessage] = useState("");
+  //
+  const [open, setOpen] = useState(false);
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID, channelFolderId } = chatObj;
+  const { channelID, channelFolderId, currentChannelName } = chatObj;
+
+  //
+  function closeModal() {
+    // delete old data
+    setNewMessage("");
+    setFileToSendInfo({
+      currentFile: undefined,
+      previewImage: undefined,
+      name: "",
+      size: 0,
+      lastModified: "",
+      type: "",
+      progress: 0,
+      message: "",
+      fileInfos: [],
+    });
+    setOpen(false);
+  }
 
   const handleChange = useCallback((e) => {
     if (e.key !== "Enter") setNewMessage(e.target.value.replace("\n", ""));
@@ -56,16 +83,28 @@ function SendMessage(props) {
   const handleInputChange = (event) => {
     // const imageFilname = event.target.files[0].name;
     // console.log(imageFilname);
+    console.log("Structura fisier:");
+    console.log(event.target.files[0]);
+    //
     setFileToSendInfo({
-      currentFile: event.target.files[0],
+      file: event.target.files[0],
       previewImage: URL.createObjectURL(event.target.files[0]),
+      name: event.target.files[0].name,
+      size: event.target.files[0].size,
+      lastModified: event.target.files[0].lastModified,
+      type: event.target.files[0].type,
       progress: 0,
       message: "",
     });
+
+    setNewMessage(event.target.files[0].name);
+    setOpen(true);
   };
 
-  const handleConfirmation = () => {
+  function handleSubmit(e) {
+    e.preventDefault();
     // upload file here
+
     const createdTime = dayjs();
 
     dispatch(
@@ -73,10 +112,12 @@ function SendMessage(props) {
         channelFolderId,
         user.userId,
         createdTime,
-        fileToSendInfo.currentFile
+        fileToSendInfo.file
       )
     );
-  };
+    handleSendMessage();
+    closeModal();
+  }
 
   // do link with socket ..
   useEffect(() => {
@@ -108,6 +149,7 @@ function SendMessage(props) {
             message.createdTime
           )
         );
+        dispatch(UpdateLastMessage(message.messageBody, message.roomID));
       }
     });
 
@@ -177,6 +219,34 @@ function SendMessage(props) {
           </Button>
         </div>
       </div>
+      <Modal show={open} onHide={closeModal} backdrop="static" keyboard={false}>
+        <Modal.Header closeButton>
+          <Modal.Title>Send file to {currentChannelName}</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleSubmit}>
+          <Modal.Body>
+            <p>Name: {fileToSendInfo.name}</p>
+            <p>Creation Date: {fileToSendInfo.lastModified}</p>
+            <p>Size: {fileToSendInfo.size} Bytes</p>
+            <p>Type: {fileToSendInfo.type}</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="outline-danger" onClick={closeModal}>
+              Discard
+            </Button>
+            <Button variant="outline-light" type="submit">
+              <FontAwesomeIcon
+                icon={faPaperPlane}
+                size="5x"
+                className="folder-icon"
+                style={{
+                  color: "#0969da",
+                }}
+              />
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </div>
   );
 }

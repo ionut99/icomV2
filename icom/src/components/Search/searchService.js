@@ -38,8 +38,8 @@ const SearchService = (userID) => {
     dispatch(userAddNewPersonInGroup(RoomID, userID));
   };
 
-  const ClickChannel = async (roomID, selectedRoomName, dispatch) => {
-    dispatch(updateChannelDetails(roomID, selectedRoomName));
+  const ClickChannel = async (roomID, dispatch) => {
+    dispatch(updateChannelDetails(roomID, userID));
     //
     // dispatch(updateMessageChannelList([], ""));
     //
@@ -52,9 +52,7 @@ const SearchService = (userID) => {
   const ClickPerson = (userSearchListName, userSearchListID, userName) => {
     for (let i = 0; i < RoomSearchList.length; i++) {
       if (RoomSearchList[i]["RoomName"].includes(userSearchListName)) {
-        dispatch(
-          updateChannelDetails(RoomSearchList[i]["RoomID"], userSearchListName)
-        );
+        dispatch(updateChannelDetails(RoomSearchList[i]["RoomID"], userID));
         dispatch(setUserSearchBoxContent(""));
         dispatch(setPersonSearchList([]));
         return;

@@ -88,7 +88,7 @@ async function AddLastMessage(RoomList) {
       )
         .then(function (result) {
           if (result.length === 0) return "";
-          return result[0].Body;
+          return result[0];
         })
         .catch((err) =>
           setImmediate(() => {
@@ -100,7 +100,8 @@ async function AddLastMessage(RoomList) {
         RoomID: RoomList[i].RoomID,
         RoomName: RoomList[i].RoomName,
         Type: RoomList[i].Type,
-        LastMessage: roomMessage,
+        LastMessage: roomMessage.Body,
+        LastMessageTime: roomMessage.createdTime,
       });
     }
 
