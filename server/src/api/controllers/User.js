@@ -203,7 +203,6 @@ async function GetRoomSearchList(req, res) {
       );
 
     userRoomList = await AddLastMessage(userRoomList);
-    console.log(userRoomList);
 
     var userDetails = await GetUserByID(userId);
     var userName = userDetails[0].Surname + " " + userDetails[0].Name;

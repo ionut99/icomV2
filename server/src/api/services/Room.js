@@ -159,20 +159,6 @@ function GetPartListData(ChannelID) {
   });
 }
 
-function GetNOTPartListData(ChannelID, userId) {
-  return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `SELECT DISTINCT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers INNER JOIN participants ON iusers.userId = participants.UserID WHERE participants.RoomID != '${ChannelID}' AND iusers.userId != '${userId}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
-      }
-    );
-  });
-}
-
 module.exports = {
   InsertNewRoomData,
   InsertParticipantData,
@@ -182,5 +168,4 @@ module.exports = {
   GetRoomMessagesData,
   GetRoomFolderID,
   GetPartListData,
-  GetNOTPartListData,
 };

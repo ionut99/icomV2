@@ -91,14 +91,14 @@ const chatRedu = (state = ChannelState, action) => {
       }
       if (position === "top" && state.RoomMessages.length > 7) {
         // append top
-        const newList = RoomMessages.concat(state.RoomMessages.slice(1, 5));
+        const newList = RoomMessages.concat(state.RoomMessages.slice(1, 7));
         return {
           ...state,
           RoomMessages: newList,
         };
       } else if (position === "bottom" && state.RoomMessages.length > 7) {
         //append bottom
-        const newList = state.RoomMessages.slice(-5, -1).concat(RoomMessages);
+        const newList = state.RoomMessages.slice(-7, -1).concat(RoomMessages);
         return {
           ...state,
           RoomMessages: newList,

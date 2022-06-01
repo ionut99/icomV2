@@ -83,6 +83,56 @@
   margin: 0;
 }
 
+.right-section .messages .one_message .message_options {
+  position: relative;
+}
+
+.right-section .messages .one_message .message_options .details_button {
+  position: relative;
+  display: inline-block;
+}
+
+.right-section .messages .one_message .message_options .m-dropdown-content {
+  top: 40px;
+  left: 0px;
+  display: none;
+  position: absolute;
+  min-width: 160px;
+  background-color: white;
+  border-radius: 5%;
+  box-shadow: 8px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.m-dropdown-content .dropdown-instrument {
+  color: black;
+  padding: 10px;
+  text-decoration: none;
+  display: inline-flex;
+  width: 100%;
+}
+
+.dropdown-instrument p {
+  margin: 0px;
+  margin-left: 10px;
+}
+
+.m-dropdown-content .dropdown-instrument:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+.right-section .messages .one_message .message_options .button {
+  /* border: red 1px solid; */
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+.right-section .messages .one_message .message_options svg:hover {
+  color: red;
+  cursor: pointer;
+}
+
 .right-section .messenger_input {
   margin: 15px auto;
   max-height: 18%;

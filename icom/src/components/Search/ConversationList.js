@@ -17,7 +17,7 @@ import Avatar from "../Search/Avatar";
 const ConversationList = () => {
   const dispatch = useDispatch();
   const chatObj = useSelector((state) => state.chatRedu);
-  const { RoomSearchList, addUserInGroup, channelID, RoomMessages } = chatObj;
+  const { RoomSearchList, addUserInGroup, channelID } = chatObj;
 
   const [loaded, setLoaded] = useState(false);
 
@@ -89,7 +89,7 @@ const ConversationList = () => {
                       <p>{RoomSearchList.RoomName}</p>
                     </div>
                     <div className="last-message">
-                      <p>{RoomSearchList.LastMessage}</p>
+                      Last Message: {RoomSearchList.LastMessage}
                     </div>
                   </div>
                   <div className="more_options">

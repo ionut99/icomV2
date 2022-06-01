@@ -9,12 +9,11 @@ import * as AiIcons from "react-icons/ai";
 import Avatar from "../Search/Avatar";
 
 import SendMessage from "./SendMessage";
-import classNames from "classnames";
 import { Spinner } from "react-bootstrap";
-import { monthNames } from "../../pages/Storage/FileIcons";
 import { getMessageListTime } from "../../asyncActions/userAsyncActions";
 import date from "date-and-time";
 import "./room.css";
+import Message from "./Message";
 
 function Room() {
   const dispatch = useDispatch();
@@ -27,6 +26,7 @@ function Room() {
   const chatObj = useSelector((state) => state.chatRedu);
   const { channelID, currentChannelName, channelFolderId, RoomMessages } =
     chatObj;
+  //
 
   //
   const [receiveNewMessage, setReceiveNewMessage] = useState(false);
@@ -136,43 +136,7 @@ function Room() {
           <div className="messages" ref={listInnerRef} onScroll={onScroll}>
             {loaded ? (
               RoomMessages.map((message, index) => {
-                const CreateMessageDate = new Date(
-                  Date.parse(message.createdTime)
-                );
-                return (
-                  <div
-                    key={index}
-                    className={classNames("one_message", {
-                      me: message.senderID === user.userId,
-                    })}
-                  >
-                    <div className="user_picture">
-                      <Avatar userId={message.senderID} roomId={null} />
-                    </div>
-                    <div className="message_body">
-                      <div className="message_author">
-                        {message.senderID === user.userId ? (
-                          <>{` ${
-                            monthNames[CreateMessageDate.getMonth()] +
-                            " " +
-                            CreateMessageDate.getDate() +
-                            " " +
-                            CreateMessageDate.getHours() +
-                            ":" +
-                            CreateMessageDate.getMinutes() +
-                            ":" +
-                            CreateMessageDate.getSeconds()
-                          }`}</>
-                        ) : (
-                          message.senderName
-                        )}
-                      </div>
-                      <div className="message_text">
-                        <p>{message.Body}</p>
-                      </div>
-                    </div>
-                  </div>
-                );
+                return <Message message={message} key={index} />;
               })
             ) : (
               <Spinner animation="border" />
