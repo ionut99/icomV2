@@ -89,10 +89,7 @@ const ConversationList = () => {
                       <p>{RoomSearchList.RoomName}</p>
                     </div>
                     <div className="last-message">
-                      <p>
-                        Laaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaast
-                        Messageeeeeeeeeeeee
-                      </p>
+                      Last Message: {RoomSearchList.LastMessage}
                     </div>
                   </div>
                   <div className="more_options">

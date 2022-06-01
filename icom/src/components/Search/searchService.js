@@ -6,13 +6,13 @@ import {
   setUserSearchBoxContent,
   updateCurrentChannel,
   UpdateAddUserInGroup,
+  // updateMessageChannelList,
 } from "../../actions/userActions";
 
 import {
   updateChannelDetails,
   DeleteConversation,
   userSetRoomListAsync,
-  // userSearchPersonListAsync,
   CreateNewConversation,
   AddNewMemberInGroup,
   getParticipantList,
@@ -35,13 +35,14 @@ const SearchService = (userID) => {
 
   const onAddUser = async (RoomID) => {
     dispatch(UpdateAddUserInGroup(RoomID));
-    //dispatch(userSearchPersonListAsync("Z2V0QGxsVXNlcnM=", userID));
     dispatch(userAddNewPersonInGroup(RoomID, userID));
   };
 
   const ClickChannel = async (roomID, selectedRoomName, dispatch) => {
     dispatch(updateChannelDetails(roomID, selectedRoomName));
-
+    //
+    // dispatch(updateMessageChannelList([], ""));
+    //
     dispatch(userSetRoomListAsync("", userID));
     dispatch(setUserSearchBoxContent(""));
     dispatch(setPersonSearchList([]));
@@ -59,7 +60,7 @@ const SearchService = (userID) => {
         return;
       }
     }
-    var uuidRoom = uuidv4(); // pentru coduri unice
+    var uuidRoom = uuidv4();
     dispatch(
       CreateNewConversation(
         userSearchListName + " # " + userName,

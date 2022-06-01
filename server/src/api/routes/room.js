@@ -2,15 +2,16 @@
 const express = require("express");
 const router = express.Router();
 const { authMiddleware } = require("../middlewares/Auth");
-const { GetRoomSearchList, InsertNewMessage } = require("../controllers/User");
-
+const { GetRoomSearchList } = require("../controllers/User");
+const { InsertNewMessage } = require("../controllers/Message");
 const {
   CreateNewRoom,
   DeleteRoom,
   CreateNewRoom_Group,
   AddNewMemberInGroup,
   GetPartList,
-  GetRoomMessages,
+  GetMessageListInTime,
+  GetRoomFolder,
 } = require("../controllers/Room");
 
 // router.post("/newroom", authMiddleware, CreateNewRoom);
@@ -28,9 +29,9 @@ router.post("/newroom", CreateNewRoom);
 router.post("/deleteroom", DeleteRoom);
 
 router.post("/search", GetRoomSearchList);
-router.post("/messages", GetRoomMessages);
+router.post("/messages", GetMessageListInTime);
+router.post("/details", GetRoomFolder);
 
-router.post("/newmessage", InsertNewMessage);
 router.post("/newgroup", CreateNewRoom_Group);
 router.post("/newmember", AddNewMemberInGroup);
 router.post("/participants", GetPartList);

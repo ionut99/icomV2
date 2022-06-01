@@ -3,23 +3,25 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Textarea from "react-expanding-textarea";
 import socketIOClient from "socket.io-client";
-import { Button } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faImage,
+  // faImage,
   faPaperPlane,
   faPaperclip,
 } from "@fortawesome/free-solid-svg-icons";
 import { v4 as uuidv4 } from "uuid";
 import { InsertNewMessageLocal } from "../../actions/userActions";
-import { InsertNewMessage } from "../../asyncActions/userAsyncActions";
+
+import date from "date-and-time";
 
 const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const { REACT_APP_API_URL } = process.env;
 
-function SendMessage() {
+function SendMessage(props) {
+  const { setReceiveNewMessage } = props;
+  //
   const dispatch = useDispatch();
-
   const socketRef = useRef();
   const textareaRef = useRef(null);
 
@@ -45,6 +47,12 @@ function SendMessage() {
     }
   }
 
+  const handleInputChange = (event) => {
+    // const imageFile = event.target.files[0];
+    const imageFilname = event.target.files[0].name;
+    console.log(imageFilname);
+  };
+
   // do link with socket ..
   useEffect(() => {
     if (channelID === null || channelID === undefined) return;
@@ -57,47 +65,48 @@ function SendMessage() {
     };
   }, [channelID]);
 
+  // send new message
   useEffect(() => {
     if (send === false || newMessage === "" || newMessage === " ") return;
 
     if (socketRef.current === null) return;
-    console.log("vrei sa trimiti??");
-    var uuidMessage = uuidv4();
+    //
     var dataToSend = {
-      body: newMessage,
+      ID_message: uuidv4(),
       senderID: user.userId,
-      channelID: channelID,
-      ID_message: uuidMessage,
+      senderName: user.surname + " " + user.name,
+      roomID: channelID,
+      messageBody: newMessage,
+      createdTime: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
     };
 
-    dispatch(InsertNewMessage(uuidMessage, user.userId, channelID, newMessage));
     socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
 
     setSend(false);
     setNewMessage("");
   }, [send, newMessage]);
 
-  // receive message
+  // receive message from socket and insert in local messages list
 
   useEffect(() => {
     if (channelID === null) return;
     if (socketRef.current === null) return;
 
     socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-      const createdTime = new Date();
-      if (message.channelID != null) {
+      if (message.roomID != null) {
+        setReceiveNewMessage(true);
         dispatch(
           InsertNewMessageLocal(
             message.ID_message,
-            message.channelID,
             message.senderID,
-            message.body,
-            createdTime
+            message.senderName,
+            message.roomID,
+            message.messageBody,
+            message.createdTime
           )
         );
       }
     });
-    // receive document changes
 
     return () => {
       socketRef.current.disconnect();
@@ -114,28 +123,19 @@ function SendMessage() {
     <div className="messenger_input">
       <div className="text_input">
         <div className="actions">
-          <Button variant="outline-light">
-            <FontAwesomeIcon
-              icon={faPaperclip}
-              size="5x"
-              className="folder-icon"
-              style={{
-                color: "#6f6f6f",
-              }}
-            />
-          </Button>
-        </div>
-        <div className="actions">
-          <Button variant="outline-light">
-            <FontAwesomeIcon
-              icon={faImage}
-              size="5x"
-              className="folder-icon"
-              style={{
-                color: "#6f6f6f",
-              }}
-            />
-          </Button>
+          <Form.Group controlId="formFile">
+            <Form.Label variant="outline-light" className="send_file">
+              <FontAwesomeIcon
+                icon={faPaperclip}
+                size="5x"
+                className="folder-icon"
+                style={{
+                  color: "#6f6f6f",
+                }}
+              ></FontAwesomeIcon>
+            </Form.Label>
+            <Form.Control type="file" onChange={handleInputChange} />
+          </Form.Group>
         </div>
         <Textarea
           className="custom-textarea"

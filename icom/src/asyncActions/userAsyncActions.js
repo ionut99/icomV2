@@ -2,8 +2,7 @@ import { userLogout, verifyTokenEnd } from "./../actions/authActions";
 import {
   getSearchRoomService,
   newChatPersonService,
-  getRoomMessages,
-  InsertNewMessageDataBase,
+  getChannelDetails,
   CreateNewRoomDataBase,
   DeleteRoomDataBase,
   CreateNewGroupDataBase,
@@ -14,18 +13,21 @@ import {
   getPersonToAddInGroup,
   getUserDetails,
   getUserAdminList,
+  getRoomMessagesWithTime,
 } from "../services/user";
 
 import {
   setRoomList,
   setPersonSearchList,
   updateCurrentChannel,
+  updateMessageChannelList,
 } from "./../actions/userActions";
 
 import {
   AddUserAccountDataBase,
   EditUserAccountDataBase,
 } from "../services/user";
+
 import { getChildFolders, getFolderByID } from "../services/folder";
 import { getFileList } from "../services/file";
 import {
@@ -36,7 +38,7 @@ import {
 
 import { ROOT_FOLDER } from "../reducers/folderReducer";
 
-// handle get ChildFolderList
+//
 export const userGetFolderDetails = (folderId, userId) => async (dispatch) => {
   if (
     folderId === "root" ||
@@ -71,7 +73,7 @@ export const getUserDetailsAsync = async (userId) => {
   else return null;
 };
 
-// handle get ChildFolderList
+//
 export const userSetFolderList = (folderId, userId) => async (dispatch) => {
   if (
     folderId === null ||
@@ -94,8 +96,6 @@ export const userSetFolderList = (folderId, userId) => async (dispatch) => {
 //
 
 //
-
-// handle get ChildFolderList
 export const userSetFileList = (folderId, userId) => async (dispatch) => {
   if (
     folderId === null ||
@@ -114,8 +114,6 @@ export const userSetFileList = (folderId, userId) => async (dispatch) => {
 
   dispatch(setChildFileList(orderList));
 };
-
-//
 
 //
 
@@ -184,47 +182,21 @@ export const updateChannelDetails =
     if (channelID == null) {
       return [];
     }
-    const messageList = await getRoomMessages(channelID);
+    const channelData = await getChannelDetails(channelID);
 
-    if (messageList.error) {
+    if (channelData.error) {
       dispatch(verifyTokenEnd());
       if (
-        messageList.response &&
-        [401, 403].includes(messageList.response.status)
+        channelData.response &&
+        [401, 403].includes(channelData.response.status)
       )
         dispatch(userLogout());
       return;
     }
 
-    const messageOrderList = messageList.data["messageRoomList"].sort(function (
-      a,
-      b
-    ) {
-      return new Date(a.createdTime) - new Date(b.createdTime);
-    });
+    const roomFolderID = channelData.data["folderId"];
 
-    dispatch(
-      updateCurrentChannel(
-        channelID,
-        currentChannelName,
-        messageOrderList,
-        messageList.data["folderId"]
-      )
-    );
-  };
-
-// handle insert new message in database
-export const InsertNewMessage =
-  (ID_message, senderID, roomID, messageBody) => async (dispatch) => {
-    const varVerify = await InsertNewMessageDataBase(
-      ID_message,
-      senderID,
-      roomID,
-      messageBody
-    );
-
-    // TO DO - display message
-    //console.log(varVerify);
+    dispatch(updateCurrentChannel(channelID, currentChannelName, roomFolderID));
   };
 
 export const CreateNewConversation =
@@ -340,3 +312,22 @@ export const adminSearchList = async (search_text, userId) => {
   if (result.status === 200) return result.data["admin_user_list"];
   else return null;
 };
+
+export const getMessageListTime =
+  (channelID, lastMessageTime, position) => async (dispatch) => {
+    const result = await getRoomMessagesWithTime(
+      channelID,
+      lastMessageTime,
+      position
+    ).then((result) => {
+      return result;
+    });
+    if (result.status !== 200) {
+      console.log("Error fetch message list");
+      return;
+    }
+    dispatch(
+      updateMessageChannelList(result.data["messageRoomList"], position)
+    );
+    //return result.data["messageRoomList"];
+  };

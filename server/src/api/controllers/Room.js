@@ -21,11 +21,10 @@ const {
 
 const { GetRoomMessagesData, GetRoomFolderID } = require("../services/Room");
 
-const { GetAllUsersDataBase } = require("../services/User");
-
 const { handleResponse } = require("../helpers/utils");
-const { GetParticipantByID, GetUserByID } = require("../services/Auth");
-const { is } = require("express/lib/request");
+const { GetParticipantByID } = require("../services/Auth");
+const { GetAllUsersDataBase } = require("../services/User");
+const { CompleteMessageList } = require("../helpers/message_utils");
 
 // --------------------- // -----------------------
 
@@ -379,47 +378,14 @@ async function GetNOTPartList(req, res) {
   }
 }
 
-// return messages from a room
-async function GetRoomMessages(req, res) {
+async function GetRoomFolder(req, res) {
   try {
     const roomID = req.body.ChannelID;
 
     if (roomID === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
-
-    var messageRoomList = await GetRoomMessagesData(roomID)
-      .then(function (result) {
-        return result;
-      })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
-
-    var newMessageList = [];
-    for (message in messageRoomList) {
-      const userDetails = await GetUserByID(messageRoomList[message].senderID)
-        .then(function (result) {
-          return result;
-        })
-        .catch((err) =>
-          setImmediate(() => {
-            throw err;
-          })
-        );
-
-      newMessageList.push({
-        messageID: messageRoomList[message].ID_message,
-        RoomID: messageRoomList[message].RoomID,
-        senderID: messageRoomList[message].senderID,
-        Body: messageRoomList[message].Body,
-        createdTime: messageRoomList[message].createdTime,
-        UserName: userDetails[0].Surname + " " + userDetails[0].Name,
-      });
-    }
-
+    //
     var res_roomId = await GetRoomFolderID(roomID)
       .then(function (result) {
         return result;
@@ -432,8 +398,44 @@ async function GetRoomMessages(req, res) {
 
     const roomId_folder = JSON.parse(JSON.stringify(res_roomId));
     return handleResponse(req, res, 200, {
-      messageRoomList: newMessageList,
       folderId: roomId_folder[0].folderId,
+    });
+  } catch (err) {
+    console.error(err);
+    return handleResponse(req, res, 412, " Failed to fetch room folderID ");
+  }
+}
+
+// return messages from a room
+async function GetMessageListInTime(req, res) {
+  try {
+    const roomID = req.body.ChannelID;
+    const messageTime = req.body.lastTime;
+    const messagesPosition = req.body.position;
+
+    if (roomID === null || messageTime === null) {
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    }
+
+    var messageRoomList = await GetRoomMessagesData(
+      roomID,
+      messageTime,
+      messagesPosition,
+      10
+    )
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    var newMessageList = await CompleteMessageList(messageRoomList);
+
+    return handleResponse(req, res, 200, {
+      messageRoomList: newMessageList,
     });
   } catch (err) {
     console.error(err);
@@ -453,5 +455,6 @@ module.exports = {
   AddNewMemberInGroup,
   GetPartList,
   GetNOTPartList,
-  GetRoomMessages,
+  GetMessageListInTime,
+  GetRoomFolder,
 };

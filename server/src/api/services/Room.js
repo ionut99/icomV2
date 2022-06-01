@@ -43,50 +43,57 @@ function InsertParticipantData(uuidRoom, userID) {
 }
 
 function DeleteAllMessageFromRoom(RoomID) {
+  let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
+  let query = mysql.format(deletQuery, ["messages", "messages.RoomID", RoomID]);
   return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `DELETE FROM messages WHERE messages.RoomID = '${RoomID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return resolve("FAILED");
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
 function DeleteAllParticipantsFromRoom(RoomID) {
+  let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
+  let query = mysql.format(deletQuery, [
+    "participants",
+    "participants.RoomID",
+    RoomID,
+  ]);
   return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `DELETE FROM participants WHERE participants.RoomID = '${RoomID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return resolve("FAILED");
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
 function DeleteRoomData(RoomID) {
+  let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
+  let query = mysql.format(deletQuery, ["room", "room.ID", RoomID]);
   return new Promise((resolve, reject) => {
-    sqlPool.pool.query(
-      `DELETE FROM room WHERE room.ID = '${RoomID}'`,
-      (err, result) => {
-        if (err) {
-          //   return resolve("FAILED");
-          return reject(err);
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
-function GetRoomMessagesData(ChannelID) {
-  let selectQuery = "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ?";
+function GetRoomMessagesData(ChannelID, time, messagesPosition, number) {
+  var selectQuery = "";
+
+  if (messagesPosition === "top")
+    selectQuery =
+      "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? <= ? ORDER BY ?? DESC LIMIT ?";
+  else
+    selectQuery =
+      "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? >= ? ORDER BY ?? ASC LIMIT ?";
   let query = mysql.format(selectQuery, [
     "messages",
     "room",
@@ -94,6 +101,10 @@ function GetRoomMessagesData(ChannelID) {
     "room.ID",
     "room.ID",
     ChannelID,
+    "messages.createdTime",
+    time,
+    "messages.createdTime",
+    number,
   ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
@@ -107,7 +118,7 @@ function GetRoomMessagesData(ChannelID) {
 
 function GetRoomFolderID(ChannelID) {
   let selectQuery =
-    "SELECT ?? FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? = ??";
+    "SELECT ?? FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? = 'root'";
   let query = mysql.format(selectQuery, [
     "folders.folderId",
     "folders",
@@ -117,18 +128,14 @@ function GetRoomFolderID(ChannelID) {
     "foldersusers.RoomIdBeneficiary",
     ChannelID,
     "folders.parentID",
-    "root",
   ]);
   return new Promise((resolve, reject) => {
-    sqlPool.pool.query(
-      `SELECT folders.folderId FROM folders INNER JOIN foldersusers ON folders.folderId = foldersusers.folderIdResource WHERE foldersusers.RoomIdBeneficiary = '${ChannelID}' AND folders.parentID = 'root'`,
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
@@ -152,20 +159,6 @@ function GetPartListData(ChannelID) {
   });
 }
 
-function GetNOTPartListData(ChannelID, userId) {
-  return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `SELECT DISTINCT CONCAT(iusers.Surname, ' ', iusers.Name) as UserName, iusers.userId FROM iusers INNER JOIN participants ON iusers.userId = participants.UserID WHERE participants.RoomID != '${ChannelID}' AND iusers.userId != '${userId}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
-      }
-    );
-  });
-}
-
 module.exports = {
   InsertNewRoomData,
   InsertParticipantData,
@@ -175,5 +168,4 @@ module.exports = {
   GetRoomMessagesData,
   GetRoomFolderID,
   GetPartListData,
-  GetNOTPartListData,
 };

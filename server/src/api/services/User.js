@@ -14,17 +14,30 @@ function GetAllUsersDataBase(userId) {
   });
 }
 
-function GetUserRoomsList(search_box_text, userId) {
+function GetUserRoomsList(userId) {
+  let selectQuery =
+    "SELECT ?? as ??, ?? as ??, ?? as ?? from ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ?";
+  let query = mysql.format(selectQuery, [
+    "room.ID",
+    "RoomID",
+    "room.Name",
+    "RoomName",
+    "room.Private",
+    "Type",
+    "room",
+    "participants",
+    "room.ID",
+    "participants.RoomID",
+    "participants.UserID",
+    userId,
+  ]);
   return new Promise((resolve, reject) => {
-    sqlPool.pool.query(
-      `SELECT room.ID as RoomID, room.Name as RoomName, room.Private as Type from room INNER JOIN participants ON room.ID = participants.RoomID WHERE participants.UserID = '${userId}' AND room.Name LIKE N'%${search_box_text}%'`,
-      (err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
@@ -35,16 +48,28 @@ function InsertNewMessageData(
   messageBody,
   createdTime
 ) {
-  return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `INSERT INTO messages (ID_message, RoomID, senderID, Body, createdTime) VALUES ('${ID_message}', '${roomID}', '${senderID}', '${messageBody}', '${createdTime}');`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+  let insertQuery =
+    "INSERT INTO ?? (??, ??, ??, ??, ??) VALUES (?, ?, ?, ?, ?);";
+  let query = mysql.format(insertQuery, [
+    "messages",
+    "ID_message",
+    "RoomID",
+    "senderID",
+    "Body",
+    "createdTime",
+    ID_message,
+    roomID,
+    senderID,
+    messageBody,
+    createdTime,
+  ]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
@@ -84,31 +109,40 @@ function UpdateAvatarPathData(UserID, Path) {
 
 //Get Room's Avatar Details
 function GetRoomDetails(RoomID) {
+  let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
+  let query = mysql.format(selectQuery, ["room", "room.ID", RoomID]);
   return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `SELECT * FROM room WHERE ID = '${RoomID}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return resolve("FAILED");
       }
-    );
+      return resolve(result);
+    });
   });
 }
 
 //Get Other User Details from Rpivate Room
 function GetParticipantFromPrivateConversation(roomId, userId) {
+  let selectQuery =
+    "SELECT ?? FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? != ?";
+  let query = mysql.format(selectQuery, [
+    "iusers.userId",
+    "participants",
+    "iusers",
+    "participants.UserID",
+    "iusers.userId",
+    "participants.RoomID",
+    roomId,
+    "participants.UserID",
+    userId,
+  ]);
   return new Promise((resolve, reject) => {
-    sqlPool.pool.query(
-      `SELECT iusers.userId FROM participants INNER JOIN iusers ON participants.UserID = iusers.userId WHERE participants.RoomID = '${roomId}' AND participants.UserID != '${userId}'`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
       }
-    );
+      return resolve(result);
+    });
   });
 }
 

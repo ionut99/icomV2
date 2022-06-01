@@ -76,9 +76,9 @@ export const getSearchRoomService = async (search_box_text, userId) => {
 };
 
 // get messages list from a room
-export const getRoomMessages = async (ChannelID) => {
+export const getChannelDetails = async (ChannelID) => {
   try {
-    return await axios.post(`${REACT_APP_API_URL}/room/messages`, {
+    return await axios.post(`${REACT_APP_API_URL}/room/details`, {
       ChannelID,
     });
   } catch (err) {
@@ -89,19 +89,17 @@ export const getRoomMessages = async (ChannelID) => {
   }
 };
 
-// insert new message that was sent in table
-export const InsertNewMessageDataBase = async (
-  ID_message,
-  senderID,
-  roomID,
-  messageBody
+// get messages list from a room
+export const getRoomMessagesWithTime = async (
+  ChannelID,
+  lastTime,
+  position
 ) => {
   try {
-    return await axios.post(`${REACT_APP_API_URL}/room/newmessage`, {
-      ID_message,
-      senderID,
-      roomID,
-      messageBody,
+    return await axios.post(`${REACT_APP_API_URL}/room/messages`, {
+      ChannelID,
+      lastTime,
+      position,
     });
   } catch (err) {
     return {
