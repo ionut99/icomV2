@@ -132,6 +132,16 @@ function SendMessage(props) {
       query: { channelID },
     });
 
+    const dataSend = {
+      userID: user.userId,
+      roomID: channelID,
+    };
+    socketRef.current.emit("join chat room", dataSend, (error) => {
+      if (error) {
+        alert(error);
+      }
+    });
+
     return () => {
       socketRef.current.disconnect();
     };

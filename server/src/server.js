@@ -92,16 +92,36 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
   // Join a conversation
-  const { channelID } = socket.handshake.query;
+  // const { channelID } = socket.handshake.query;
   const { fileID } = socket.handshake.query;
   const { roomID } = socket.handshake.query;
 
   //
-  socket.join(channelID); // grija aici
+  //socket.join(channelID); // grija aici
   //
+
+  socket.on("join chat room", (dataSend, callback) => {
+    const userID = dataSend.userID;
+    const roomID = dataSend.roomID;
+    console.log(userID + "->" + roomID);
+    const { error, user } = addUserInRoom({ id: socket.id, userID, roomID });
+    if (error) return callback(error);
+    socket.join(user.roomID);
+    // io.to(user.roomID).emit("all users", {
+    //   roomID: user.roomID,
+    //   users: getUsersInRoom(user.roomID, user.id),
+    // });
+    // ramane de vazut daca utilizatorii vor primii lista cu toti participantii de fiecare data cand intra cineva nou
+    // de asemenea lista curenta nu contine utilizatorul care doreste sa se conecteze
+    // socket.emit("all users", {
+    //   roomID: user.roomID,
+    //   users: getUsersInRoom(user.roomID, user.id),
+    // });
+    callback();
+  });
   // Listen for new messages
   socket.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-    io.in(channelID).emit(NEW_CHAT_MESSAGE_EVENT, message);
+    io.to(message.roomID).emit(NEW_CHAT_MESSAGE_EVENT, message);
 
     // salvare mesaj
     const mes_res = InsertNewMessage(message);
@@ -109,13 +129,7 @@ io.on("connection", (socket) => {
     if (mes_res === null) {
       console.log("Error save message !");
 
-      socket.emit("error insert message", {
-        ID_message: message.ID_message,
-        senderID: message.senderID,
-        roomID: message.roomID,
-        messageBody: message.messageBody,
-        createdTime: message.createdTime,
-      });
+      socket.emit("error insert message", { message });
     } else {
       console.log(
         "MESSAGE: " +
@@ -143,6 +157,7 @@ io.on("connection", (socket) => {
   socket.on("join video room", (dataSend, callback) => {
     const userID = dataSend.userID;
     const roomID = dataSend.roomID;
+    // se pot adauga verificari daca utilizatorul poate sa aplice la camera respectiva
     const { error, user } = addUserInRoom({ id: socket.id, userID, roomID });
     if (error) return callback(error);
     socket.join(user.roomID);
@@ -153,6 +168,7 @@ io.on("connection", (socket) => {
     // ramane de vazut daca utilizatorii vor primii lista cu toti participantii de fiecare data cand intra cineva nou
     // de asemenea lista curenta nu contine utilizatorul care doreste sa se conecteze
     socket.emit("all users", {
+      //varianta cu emit trimite doar la respectivul
       roomID: user.roomID,
       users: getUsersInRoom(user.roomID, user.id),
     });
