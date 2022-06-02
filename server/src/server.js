@@ -79,15 +79,18 @@ const io = new Server(httpServer, {
 
 //
 
-//
-
 io.on("connection", (socket) => {
   const { fileID } = socket.handshake.query;
 
   socket.on("join chat room", (dataSend, callback) => {
     const userID = dataSend.userID;
     const roomID = dataSend.roomID;
-    console.log("new join " + userID + " -> " + roomID);
+    console.log(
+      "new chat join " +
+        userID.substring(userID.length - 5) +
+        " -> " +
+        roomID.substring(roomID.length - 5)
+    );
     const { error, user } = addUserInRoom({ id: socket.id, userID, roomID });
     if (error) return callback(error);
     socket.join(user.roomID);
@@ -132,10 +135,14 @@ io.on("connection", (socket) => {
   //
 
   socket.on("join video room", (dataSend, callback) => {
-    console.log("joined video");
     const userID = dataSend.userID;
     const roomID = dataSend.roomID;
-    // se pot adauga verificari daca utilizatorul poate sa aplice la camera respectiva
+    console.log(
+      "new video join " +
+        userID.substring(userID.length - 5) +
+        " -> " +
+        roomID.substring(roomID.length - 5)
+    );
     const { error, user } = addUserInRoom({ id: socket.id, userID, roomID });
     if (error) return callback(error);
     socket.join(user.roomID);

@@ -9,12 +9,9 @@ import {
   USER_ADD_NEW_MESSAGE,
   UPDATE_ADD_USER_IN_GROUP,
   UPDATE_LAST_MESSAGE,
-  USER_SET_ACTIVE_CONNECTION_LIST,
 } from "../actions/actionTypes";
 
 const ChannelState = {
-  activeConnections: [],
-
   channelID: null,
   currentChannelName: "",
   RoomMessages: [],
@@ -72,13 +69,6 @@ const chatRedu = (state = ChannelState, action) => {
       return {
         ...state,
         RoomSearchList: [],
-      };
-
-    case USER_SET_ACTIVE_CONNECTION_LIST:
-      const { activeConnections } = action.payload;
-      return {
-        ...state,
-        activeConnections,
       };
 
     // update user status

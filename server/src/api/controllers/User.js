@@ -59,30 +59,7 @@ async function adminGetUserList(req, res) {
       );
     });
 
-    let keyword = search_box_text;
-
-    let admin_user_list = list
-      .filter((prof) => {
-        // Filter results by doing case insensitive match on name here
-        return prof.UserName.toLowerCase().includes(keyword.toLowerCase());
-      })
-      .sort((a, b) => {
-        // Sort results by matching name with keyword position in name
-        if (
-          a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) >
-          b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
-        ) {
-          return 1;
-        } else if (
-          a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) <
-          b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
-        ) {
-          return -1;
-        } else {
-          if (a.UserName > b.UserName) return 1;
-          else return -1;
-        }
-      });
+    let admin_user_list = sortPersonstAfterSearchText(list, search_box_text);
 
     return handleResponse(req, res, 200, { admin_user_list });
   } catch (error) {

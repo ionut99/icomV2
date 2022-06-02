@@ -35,7 +35,12 @@ const removeUser = (id) => {
 
   for (let i = 0; i < users.length; i++) {
     if (users[i].id === id) {
-      console.log("Remove " + users[i].userID + " from " + users[i].roomID);
+      console.log(
+        "Remove " +
+          users[i].userID.substring(users[i].userID.length - 6) +
+          " from " +
+          users[i].roomID.substring(users[i].roomID.length - 6)
+      );
       users.splice(i, 1);
       i--;
       removed = true;

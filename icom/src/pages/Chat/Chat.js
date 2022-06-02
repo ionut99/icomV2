@@ -10,6 +10,8 @@ import {
   setUserSearchBoxContent,
   UpdateAddUserInGroup,
   setPersonSearchList,
+  InsertNewMessageLocal,
+  UpdateLastMessage,
 } from "../../actions/userActions";
 import { setAuthToken } from "../../services/auth";
 import Navbar from "../../components/Navbar/Navbar";
@@ -17,7 +19,6 @@ import Navbar from "../../components/Navbar/Navbar";
 import moment from "moment";
 
 import {
-  userConstantActiveChannelsAsync,
   userSetRoomListAsync,
   userSearchPersonListAsync,
   CreateNewGroup,
@@ -41,9 +42,14 @@ function setSearchBoxContent(search_box_content, dispatch) {
 
 const { REACT_APP_API_URL } = process.env;
 
+// export socket for use in SendMessage.js
+export const socket = socketIOClient(REACT_APP_API_URL);
+//
+
 function Chat() {
   const dispatch = useDispatch();
   const socketRef = useRef();
+  socketRef.current = socket;
   //
   const [newGroup, SetnewGroup] = useState(false);
   const [groupName, SetgroupName] = useState("");
@@ -52,9 +58,11 @@ function Chat() {
   const { user, expiredAt, token } = authObj;
   //
   const [loaded, setLoaded] = useState(false);
+  //
+  const [receiveNewMessage, setReceiveNewMessage] = useState(false);
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { search_box_content, addUserInGroup } = chatObj;
+  const { search_box_content, addUserInGroup, channelID } = chatObj;
 
   const handleCloseChannelOptions = () => {
     dispatch(UpdateAddUserInGroup(""));
@@ -81,11 +89,14 @@ function Chat() {
 
   function handleSubmit(e) {
     e.preventDefault();
-
-    // send data for create new user Accoutn
+    //
     dispatch(CreateNewGroup(groupName, 0, user.userId, uuidv4()));
     closeModal();
   }
+  //
+  const SearchPerson = (event) => {
+    setSearchBoxContent(event.target.value, dispatch);
+  };
   // set timer to renew token
   useEffect(() => {
     setAuthToken(token);
@@ -102,12 +113,7 @@ function Chat() {
     getSearchUserList();
   }, [search_box_content]);
 
-  const SearchPerson = (event) => {
-    setSearchBoxContent(event.target.value, dispatch);
-  };
-
   useEffect(() => {
-    dispatch(userConstantActiveChannelsAsync(user.userId));
     setLoaded(true);
   }, []);
 
@@ -118,7 +124,6 @@ function Chat() {
       const channelsList = await getActiveRoomsService(userId);
       return channelsList.data["activeRoomConnections"];
     };
-    socketRef.current = socketIOClient(REACT_APP_API_URL);
 
     getConnections(user.userId).then((activeConnections) => {
       for (let i = 0; i < activeConnections.length; i++) {
@@ -127,7 +132,6 @@ function Chat() {
           activeConnections[i].RoomID === ""
         )
           continue;
-        // console.log(activeConnections[i].RoomID);
         const dataSend = {
           userID: user.userId,
           roomID: activeConnections[i].RoomID,
@@ -145,6 +149,24 @@ function Chat() {
       socketRef.current.disconnect();
     };
   }, []);
+
+  //
+  // receive message from socket and insert in local messages list
+  useEffect(() => {
+    if (channelID === null) return;
+    if (socketRef.current === null) return;
+
+    socketRef.current.on("send chat message", (message) => {
+      if (message.roomID != null) {
+        dispatch(UpdateLastMessage(message.messageBody, message.roomID));
+        if (message.roomID === channelID) {
+          dispatch(InsertNewMessageLocal(message));
+          setReceiveNewMessage(true);
+        }
+      }
+    });
+  }, [channelID]);
+  // receive message
   //
 
   return (
@@ -214,7 +236,10 @@ function Chat() {
             {loaded ? <PersonList /> : <Spinner animation="border" />}
           </div>
         </div>
-        <Room />
+        <Room
+          receiveNewMessage={receiveNewMessage}
+          setReceiveNewMessage={setReceiveNewMessage}
+        />
       </div>
     </div>
   );

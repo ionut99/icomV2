@@ -123,8 +123,8 @@ const VideoRoom = (props) => {
           }
         });
         socketRef.current.on("all users", (roomData) => {
-          console.log("Primim detaliile despre camera:");
-          console.log(roomData.users);
+          // console.log("Primim detaliile despre camera:");
+          // console.log(roomData.users);
           roomData.users.forEach((user) => {
             // console.log(user.id);
             const peer = createPeer(user.id, socketRef.current.id, stream);
