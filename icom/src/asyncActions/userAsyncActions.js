@@ -14,6 +14,7 @@ import {
   getUserDetails,
   getUserAdminList,
   getRoomMessagesWithTime,
+  getActiveRoomsService,
 } from "../services/user";
 
 import {
@@ -114,8 +115,6 @@ export const userSetFileList = (folderId, userId) => async (dispatch) => {
 
   dispatch(setChildFileList(orderList));
 };
-
-//
 
 // handle RoomList Search
 export const userSetRoomListAsync =

@@ -59,30 +59,7 @@ async function adminGetUserList(req, res) {
       );
     });
 
-    let keyword = search_box_text;
-
-    let admin_user_list = list
-      .filter((prof) => {
-        // Filter results by doing case insensitive match on name here
-        return prof.UserName.toLowerCase().includes(keyword.toLowerCase());
-      })
-      .sort((a, b) => {
-        // Sort results by matching name with keyword position in name
-        if (
-          a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) >
-          b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
-        ) {
-          return 1;
-        } else if (
-          a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) <
-          b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
-        ) {
-          return -1;
-        } else {
-          if (a.UserName > b.UserName) return 1;
-          else return -1;
-        }
-      });
+    let admin_user_list = sortPersonstAfterSearchText(list, search_box_text);
 
     return handleResponse(req, res, 200, { admin_user_list });
   } catch (error) {
@@ -220,6 +197,37 @@ async function GetRoomSearchList(req, res) {
     search_results = sortRoomAfterSearchText(search_results, search_box_text);
 
     return handleResponse(req, res, 200, { search_results });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(
+      req,
+      res,
+      412,
+      " Failed to fetch list with conversations! "
+    );
+  }
+}
+
+// return all active connections
+async function GetActiveRoomConnections(req, res) {
+  try {
+    const userId = req.body.userId;
+
+    if (userId === null) {
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    }
+
+    const activeRoomConnections = await GetUserRoomsList(userId)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    return handleResponse(req, res, 200, { activeRoomConnections });
   } catch (error) {
     console.error(error);
     return handleResponse(
@@ -377,4 +385,5 @@ module.exports = {
   InserNewUserAccount,
   EditUserAccountAsync,
   adminGetUserList,
+  GetActiveRoomConnections,
 };

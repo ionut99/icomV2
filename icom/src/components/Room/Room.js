@@ -15,7 +15,8 @@ import date from "date-and-time";
 import "./room.css";
 import Message from "./Message";
 
-function Room() {
+function Room(props) {
+  const { receiveNewMessage, setReceiveNewMessage } = props;
   const dispatch = useDispatch();
   const messagesEndRef = useRef(null);
   const listInnerRef = useRef();
@@ -26,11 +27,7 @@ function Room() {
   const chatObj = useSelector((state) => state.chatRedu);
   const { channelID, currentChannelName, channelFolderId, RoomMessages } =
     chatObj;
-  //
 
-  //
-  const [receiveNewMessage, setReceiveNewMessage] = useState(false);
-  //
   const [loaded, setLoaded] = useState(false);
   //
   const [lastMessageTime, setLastMessageTime] = useState({
@@ -38,22 +35,17 @@ function Room() {
     pos: "top",
   });
 
-  // fetch messages function
   const getMessages = async () => {
-    // setLoaded(false);
     dispatch(
       getMessageListTime(channelID, lastMessageTime.time, lastMessageTime.pos)
     );
-    setLoaded(true);
   };
-  //
 
   const onScroll = () => {
     if (listInnerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
 
       if (scrollTop === 0) {
-        // console.log("reached top");
         if (RoomMessages.length > 0) {
           setLastMessageTime({
             time: RoomMessages[0].createdTime,
@@ -95,15 +87,8 @@ function Room() {
   //
   useEffect(async () => {
     if (channelID === null || lastMessageTime.time === null) return;
-    let isMounted = true;
-    if (isMounted) {
-      // setLoaded(false);
-      // await timeout(500);
-      getMessages();
-    }
-    return () => {
-      isMounted = false;
-    };
+    getMessages();
+    setLoaded(true);
   }, [lastMessageTime, channelID]);
   //
 
@@ -156,7 +141,7 @@ function Room() {
             <div ref={messagesEndRef} />
           </div>
         </div>
-        <SendMessage setReceiveNewMessage={setReceiveNewMessage} />
+        <SendMessage />
       </div>
     </>
   );

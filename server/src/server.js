@@ -32,6 +32,7 @@ app.use(
 // To Verify cors-origin !!!
 // const server_chat = require("http").Server(app);
 const { Server } = require("socket.io");
+const { use } = require("./api/routes/room");
 
 // const io = require("socket.io")(server_chat, {
 //   cors: {
@@ -67,19 +68,8 @@ const httpServer = app.listen(process.env.SERVER_PORT, () => {
 });
 
 // Start server for chat
-const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
 const SEND_DOCUMENT_CHANGES = "SEND_DOCUMENT_CHANGES";
 const RECEIVE_DOCUMENT_CHANGES = "RECEIVE_DOCUMENT_CHANGES";
-
-const JOIN_VIDEO_CALL = "JOIN_VIDEO_CALL";
-const VIDEO_CALL_FULL = "VIDEO_CALL_FULL";
-const VIDEO_CALL_USERS_LIST = "VIDEO_CALL_USERS_LIST";
-
-const SENDING_SIGNAL = "SENDING_SIGNAL";
-const USER_JOINED = "USER_JOINED";
-
-const RETURNING_SIGNAL = "RETURNING_SIGNAL";
-const RECEIVING_RETURNING_SIGNAL = "RECEIVING_RETURNING_SIGNAL";
 
 const io = new Server(httpServer, {
   cors: {
@@ -87,35 +77,37 @@ const io = new Server(httpServer, {
   },
 });
 
-// const users_in_call = {};
-// const socketToRoom = {};
+//
 
 io.on("connection", (socket) => {
-  // Join a conversation
-  const { channelID } = socket.handshake.query;
   const { fileID } = socket.handshake.query;
-  const { roomID } = socket.handshake.query;
 
-  //
-  socket.join(channelID); // grija aici
-  //
+  socket.on("join chat room", (dataSend, callback) => {
+    const userID = dataSend.userID;
+    const roomID = dataSend.roomID;
+    console.log(
+      "new chat join " +
+        userID.substring(userID.length - 5) +
+        " -> " +
+        roomID.substring(roomID.length - 5)
+    );
+    const { error, user } = addUserInRoom({ id: socket.id, userID, roomID });
+    if (error) return callback(error);
+    socket.join(user.roomID);
+    callback();
+  });
+
   // Listen for new messages
-  socket.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-    io.in(channelID).emit(NEW_CHAT_MESSAGE_EVENT, message);
+  socket.on("send chat message", (message) => {
+    io.to(message.roomID).emit("send chat message", message);
 
-    // salvare mesaj
+    // save message
     const mes_res = InsertNewMessage(message);
 
     if (mes_res === null) {
       console.log("Error save message !");
 
-      socket.emit("error insert message", {
-        ID_message: message.ID_message,
-        senderID: message.senderID,
-        roomID: message.roomID,
-        messageBody: message.messageBody,
-        createdTime: message.createdTime,
-      });
+      socket.emit("error insert message", { message });
     } else {
       console.log(
         "MESSAGE: " +
@@ -129,20 +121,28 @@ io.on("connection", (socket) => {
     // salvare mesaj
     //
   });
+
   //
-  // socket.join(fileID);
-  //
+
   // Listen for new document changes
   socket.on(SEND_DOCUMENT_CHANGES, (delta) => {
     socket.broadcast.to(fileID).emit(RECEIVE_DOCUMENT_CHANGES, delta);
     console.log(delta);
   });
+
   //
-  // socket.join(videoChannelID);
+
+  //
 
   socket.on("join video room", (dataSend, callback) => {
     const userID = dataSend.userID;
     const roomID = dataSend.roomID;
+    console.log(
+      "new video join " +
+        userID.substring(userID.length - 5) +
+        " -> " +
+        roomID.substring(roomID.length - 5)
+    );
     const { error, user } = addUserInRoom({ id: socket.id, userID, roomID });
     if (error) return callback(error);
     socket.join(user.roomID);
@@ -153,6 +153,7 @@ io.on("connection", (socket) => {
     // ramane de vazut daca utilizatorii vor primii lista cu toti participantii de fiecare data cand intra cineva nou
     // de asemenea lista curenta nu contine utilizatorul care doreste sa se conecteze
     socket.emit("all users", {
+      //varianta cu emit trimite doar la respectivul
       roomID: user.roomID,
       users: getUsersInRoom(user.roomID, user.id),
     });

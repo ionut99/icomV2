@@ -6,7 +6,7 @@ const { InsertNewMessageData } = require("../services/User");
 async function InsertNewMessage(message) {
   try {
     // TO DO: - verify if user is int that room, and add midleware
-    var result = await InsertNewMessageData(
+    const result = await InsertNewMessageData(
       message.ID_message,
       message.senderID,
       message.roomID,
@@ -14,7 +14,15 @@ async function InsertNewMessage(message) {
       message.type,
       message.fileId,
       message.createdTime
-    );
+    )
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
     // console.log("Rezultat inserare mesaj baza de date:");
     // console.log(result.affectedRows);
     return result.affectedRows;

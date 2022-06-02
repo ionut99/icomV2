@@ -1,36 +1,29 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-
 import { useSelector, useDispatch } from "react-redux";
 import Textarea from "react-expanding-textarea";
-import socketIOClient from "socket.io-client";
 import { Modal, Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  // faImage,
-  faPaperPlane,
-  faPaperclip,
-} from "@fortawesome/free-solid-svg-icons";
-import { v4 as uuidv4 } from "uuid";
-import {
-  InsertNewMessageLocal,
-  UpdateLastMessage,
-} from "../../actions/userActions";
+import { faPaperPlane, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { handleReturnFileIcon } from "../../helpers/FileIcons";
 import { UploadFileForStoring } from "../../asyncActions/fileAsyncActions";
-import date from "date-and-time";
 import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
+import { socket } from "../../pages/Chat/Chat";
+import { v4 as uuidv4 } from "uuid";
+import date from "date-and-time";
 
-const dayjs = require("dayjs");
-
-const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
-const { REACT_APP_API_URL } = process.env;
-
-function SendMessage(props) {
-  const { setReceiveNewMessage } = props;
+function SendMessage() {
   //
   const dispatch = useDispatch();
-  const socketRef = useRef();
   const textareaRef = useRef(null);
+  //
+  const socketRef = useRef();
+  socketRef.current = socket;
+  //
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
+  //
+  const chatObj = useSelector((state) => state.chatRedu);
+  const { channelID, channelFolderId, currentChannelName } = chatObj;
   //
   //
   const [fileToSendInfo, setFileToSendInfo] = useState({
@@ -50,10 +43,6 @@ function SendMessage(props) {
   const [newMessage, setNewMessage] = useState("");
   //
   const [open, setOpen] = useState(false);
-  const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;
-  const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID, channelFolderId, currentChannelName } = chatObj;
 
   //
   function closeModal() {
@@ -108,7 +97,7 @@ function SendMessage(props) {
   function handleSubmit(e) {
     e.preventDefault();
     // send file to server
-    const createdTime = dayjs();
+    const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
     const fileId = uuidv4();
 
     dispatch(
@@ -125,41 +114,6 @@ function SendMessage(props) {
     closeModal();
   }
 
-  // do link with socket ..
-  useEffect(() => {
-    if (channelID === null || channelID === undefined) return;
-    socketRef.current = socketIOClient(REACT_APP_API_URL, {
-      query: { channelID },
-    });
-
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, [channelID]);
-
-  // receive message from socket and insert in local messages list
-  useEffect(() => {
-    if (channelID === null) return;
-    if (socketRef.current === null) return;
-
-    socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-      if (message.roomID != null) {
-        setReceiveNewMessage(true);
-        dispatch(InsertNewMessageLocal(message));
-        dispatch(UpdateLastMessage(message.messageBody, message.roomID));
-      }
-    });
-
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, [channelID]);
-  // receive message
-
-  useEffect(() => {
-    textareaRef.current.focus();
-  }, []);
-
   const handleSendMessage = (messageType, fileId) => {
     if (newMessage === "" || newMessage === " ") return;
     if (socketRef.current === null) return;
@@ -175,9 +129,13 @@ function SendMessage(props) {
       createdTime: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
     };
 
-    socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
+    socketRef.current.emit("send chat message", dataToSend);
     setNewMessage("");
   };
+
+  useEffect(() => {
+    textareaRef.current.focus();
+  }, []);
 
   return (
     <div className="messenger_input">
