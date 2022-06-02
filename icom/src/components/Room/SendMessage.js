@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import Textarea from "react-expanding-textarea";
-import socketIOClient from "socket.io-client";
 import { Modal, Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -22,8 +21,6 @@ import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
 
 const dayjs = require("dayjs");
 
-const NEW_CHAT_MESSAGE_EVENT = "newChatMessage";
-const { REACT_APP_API_URL } = process.env;
 
 function SendMessage(props) {
   const { setReceiveNewMessage } = props;
@@ -53,7 +50,8 @@ function SendMessage(props) {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID, channelFolderId, currentChannelName } = chatObj;
+  const { channelID, channelFolderId, currentChannelName, activeConnections } =
+    chatObj;
 
   //
   function closeModal() {
@@ -126,44 +124,49 @@ function SendMessage(props) {
   }
 
   // do link with socket ..
-  useEffect(() => {
-    if (channelID === null || channelID === undefined) return;
-    socketRef.current = socketIOClient(REACT_APP_API_URL, {
-      query: { channelID },
-    });
+  // useEffect(() => {
+  //   if (channelID === null || channelID === undefined) return;
+  //   socketRef.current = socketIOClient(REACT_APP_API_URL);
 
-    const dataSend = {
-      userID: user.userId,
-      roomID: channelID,
-    };
-    socketRef.current.emit("join chat room", dataSend, (error) => {
-      if (error) {
-        alert(error);
-      }
-    });
+  //   console.log("Canalele la care ne conectam:");
+  //   console.log(activeConnections);
+  //   console.log("cu socket ul:");
+  //   console.log(socketRef.current);
+  //   const dataSend = {
+  //     userID: user.userId,
+  //     roomID: channelID,
+  //   };
+  //   socketRef.current.emit("join chat room", dataSend, (error) => {
+  //     if (error) {
+  //       alert(error);
+  //     }
+  //   });
 
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, [channelID]);
+  //   console.log("socket dupa connectare:");
+  //   console.log(socketRef.current);
+
+  //   return () => {
+  //     socketRef.current.disconnect();
+  //   };
+  // }, [channelID]);
 
   // receive message from socket and insert in local messages list
-  useEffect(() => {
-    if (channelID === null) return;
-    if (socketRef.current === null) return;
+  // useEffect(() => {
+  //   if (channelID === null) return;
+  //   if (socketRef.current === null) return;
 
-    socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-      if (message.roomID != null) {
-        setReceiveNewMessage(true);
-        dispatch(InsertNewMessageLocal(message));
-        dispatch(UpdateLastMessage(message.messageBody, message.roomID));
-      }
-    });
+  //   socketRef.current.on("send chat message", (message) => {
+  //     if (message.roomID != null) {
+  //       setReceiveNewMessage(true);
+  //       dispatch(InsertNewMessageLocal(message));
+  //       dispatch(UpdateLastMessage(message.messageBody, message.roomID));
+  //     }
+  //   });
 
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, [channelID]);
+  //   return () => {
+  //     socketRef.current.disconnect();
+  //   };
+  // }, [channelID]);
   // receive message
 
   useEffect(() => {
@@ -171,21 +174,21 @@ function SendMessage(props) {
   }, []);
 
   const handleSendMessage = (messageType, fileId) => {
-    if (newMessage === "" || newMessage === " ") return;
-    if (socketRef.current === null) return;
-    //
-    var dataToSend = {
-      ID_message: uuidv4(),
-      senderID: user.userId,
-      senderName: user.surname + " " + user.name,
-      roomID: channelID,
-      messageBody: newMessage,
-      type: messageType,
-      fileId: fileId,
-      createdTime: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
-    };
+    // if (newMessage === "" || newMessage === " ") return;
+    // if (socketRef.current === null) return;
+    // //
+    // var dataToSend = {
+    //   ID_message: uuidv4(),
+    //   senderID: user.userId,
+    //   senderName: user.surname + " " + user.name,
+    //   roomID: channelID,
+    //   messageBody: newMessage,
+    //   type: messageType,
+    //   fileId: fileId,
+    //   createdTime: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),
+    // };
 
-    socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, dataToSend);
+    // socketRef.current.emit("send chat message", dataToSend);
     setNewMessage("");
   };
 

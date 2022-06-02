@@ -16,6 +16,7 @@ import {
   ADD_CHILD_FOLDER,
   ADD_CHILD_FILE,
   UPDATE_LAST_MESSAGE,
+  USER_SET_ACTIVE_CONNECTION_LIST,
 } from "./actionTypes";
 
 //file system
@@ -151,6 +152,15 @@ export const setRoomList = (RoomSearchList) => {
     type: USER_SET_ROOM_LIST,
     payload: {
       RoomSearchList,
+    },
+  };
+};
+
+export const setActiveConnection = (activeConnections) => {
+  return {
+    type: USER_SET_ACTIVE_CONNECTION_LIST,
+    payload: {
+      activeConnections,
     },
   };
 };

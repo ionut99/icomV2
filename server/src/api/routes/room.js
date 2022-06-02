@@ -2,7 +2,10 @@
 const express = require("express");
 const router = express.Router();
 const { authMiddleware } = require("../middlewares/Auth");
-const { GetRoomSearchList } = require("../controllers/User");
+const {
+  GetRoomSearchList,
+  GetActiveRoomConnections,
+} = require("../controllers/User");
 const { InsertNewMessage } = require("../controllers/Message");
 const {
   CreateNewRoom,
@@ -29,6 +32,8 @@ router.post("/newroom", CreateNewRoom);
 router.post("/deleteroom", DeleteRoom);
 
 router.post("/search", GetRoomSearchList);
+router.post("/active", GetActiveRoomConnections);
+
 router.post("/messages", GetMessageListInTime);
 router.post("/details", GetRoomFolder);
 

@@ -14,6 +14,7 @@ import {
   getUserDetails,
   getUserAdminList,
   getRoomMessagesWithTime,
+  getActiveRoomsService,
 } from "../services/user";
 
 import {
@@ -21,6 +22,7 @@ import {
   setPersonSearchList,
   updateCurrentChannel,
   updateMessageChannelList,
+  setActiveConnection,
 } from "./../actions/userActions";
 
 import {
@@ -115,7 +117,22 @@ export const userSetFileList = (folderId, userId) => async (dispatch) => {
   dispatch(setChildFileList(orderList));
 };
 
-//
+//set activ constant room connection
+export const userConstantActiveChannelsAsync = (userId) => async (dispatch) => {
+  const channelsList = await getActiveRoomsService(userId);
+
+  if (channelsList.error) {
+    dispatch(verifyTokenEnd());
+    if (
+      channelsList.response &&
+      [401, 403].includes(channelsList.response.status)
+    )
+      dispatch(userLogout());
+    return;
+  }
+  return channelsList.data["activeRoomConnections"];
+  //dispatch(setActiveConnection(channelsList.data["activeRoomConnections"]));
+};
 
 // handle RoomList Search
 export const userSetRoomListAsync =

@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Modal, Form, Spinner } from "react-bootstrap";
+import socketIOClient from "socket.io-client";
 
 import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 import {
@@ -16,10 +17,13 @@ import Navbar from "../../components/Navbar/Navbar";
 import moment from "moment";
 
 import {
+  userConstantActiveChannelsAsync,
   userSetRoomListAsync,
   userSearchPersonListAsync,
   CreateNewGroup,
 } from "../../asyncActions/userAsyncActions";
+
+import { getActiveRoomsService } from "../../services/user";
 
 import ConversationList from "../../components/Search/ConversationList";
 import PersonList from "../../components/Search/PersonList";
@@ -35,8 +39,11 @@ function setSearchBoxContent(search_box_content, dispatch) {
   dispatch(setUserSearchBoxContent(search_box_content));
 }
 
+const { REACT_APP_API_URL } = process.env;
+
 function Chat() {
   const dispatch = useDispatch();
+  const socketRef = useRef();
   //
   const [newGroup, SetnewGroup] = useState(false);
   const [groupName, SetgroupName] = useState("");
@@ -100,8 +107,45 @@ function Chat() {
   };
 
   useEffect(() => {
+    dispatch(userConstantActiveChannelsAsync(user.userId));
     setLoaded(true);
   }, []);
+
+  // do link with socket ..
+  useEffect(() => {
+    //
+    const getConnections = async (userId) => {
+      const channelsList = await getActiveRoomsService(userId);
+      return channelsList.data["activeRoomConnections"];
+    };
+    socketRef.current = socketIOClient(REACT_APP_API_URL);
+
+    getConnections(user.userId).then((activeConnections) => {
+      for (let i = 0; i < activeConnections.length; i++) {
+        if (
+          activeConnections[i].RoomID === undefined ||
+          activeConnections[i].RoomID === ""
+        )
+          continue;
+        // console.log(activeConnections[i].RoomID);
+        const dataSend = {
+          userID: user.userId,
+          roomID: activeConnections[i].RoomID,
+        };
+        //
+        socketRef.current.emit("join chat room", dataSend, (error) => {
+          if (error) {
+            alert(error);
+          }
+        });
+      }
+    });
+    //
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, []);
+  //
 
   return (
     <div className="page">
