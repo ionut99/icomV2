@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Modal, Form, Spinner } from "react-bootstrap";
-import socketIOClient from "socket.io-client";
+// import socketIOClient from "socket.io-client";
 
 import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 import {
@@ -34,22 +34,24 @@ import * as BsIcons from "react-icons/bs";
 import * as AiIcons from "react-icons/ai";
 import { v4 as uuidv4 } from "uuid";
 
+import { SocketContext } from "../../context/socket";
+
 import "./chat.css";
 
 function setSearchBoxContent(search_box_content, dispatch) {
   dispatch(setUserSearchBoxContent(search_box_content));
 }
 
-const { REACT_APP_API_URL } = process.env;
+// const { REACT_APP_API_URL } = process.env;
 
 // export socket for use in SendMessage.js
-export const socket = socketIOClient(REACT_APP_API_URL);
+// export const socket = socketIOClient(REACT_APP_API_URL);
 //
 
 function Chat() {
   const dispatch = useDispatch();
-  const socketRef = useRef();
-  socketRef.current = socket;
+
+  const socket = useContext(SocketContext);
   //
   const [newGroup, SetnewGroup] = useState(false);
   const [groupName, SetgroupName] = useState("");
@@ -117,46 +119,49 @@ function Chat() {
     setLoaded(true);
   }, []);
 
-  // do link with socket ..
-  useEffect(() => {
-    //
-    const getConnections = async (userId) => {
-      const channelsList = await getActiveRoomsService(userId);
-      return channelsList.data["activeRoomConnections"];
-    };
+  // // do link with socket ..
+  // useEffect(() => {
+  //   console.log("incarca chat page!");
+  //   //
+  //   const getConnections = async (userId) => {
+  //     const channelsList = await getActiveRoomsService(userId);
+  //     return channelsList.data["activeRoomConnections"];
+  //   };
 
-    getConnections(user.userId).then((activeConnections) => {
-      for (let i = 0; i < activeConnections.length; i++) {
-        if (
-          activeConnections[i].RoomID === undefined ||
-          activeConnections[i].RoomID === ""
-        )
-          continue;
-        const dataSend = {
-          userID: user.userId,
-          roomID: activeConnections[i].RoomID,
-        };
-        //
-        socketRef.current.emit("join chat room", dataSend, (error) => {
-          if (error) {
-            alert(error);
-          }
-        });
-      }
-    });
-    //
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, []);
+  //   getConnections(user.userId).then((activeConnections) => {
+  //     for (let i = 0; i < activeConnections.length; i++) {
+  //       if (
+  //         activeConnections[i].RoomID === undefined ||
+  //         activeConnections[i].RoomID === ""
+  //       )
+  //         continue;
+  //       const request = {
+  //         userID: user.userId,
+  //         roomID: activeConnections[i].RoomID,
+  //         type: "chat",
+  //       };
+  //       //
+  //       console.log("alerta...");
+  //       socket.emit("join chat room", request, (error) => {
+  //         if (error) {
+  //           alert(error);
+  //         }
+  //       });
+  //     }
+  //   });
+  //   //
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, [socket]);
 
   //
   // receive message from socket and insert in local messages list
   useEffect(() => {
     if (channelID === null) return;
-    if (socketRef.current === null) return;
+    if (socket === null) return;
 
-    socketRef.current.on("send chat message", (message) => {
+    socket.on("send chat message", (message) => {
       if (message.roomID != null) {
         dispatch(UpdateLastMessage(message.messageBody, message.roomID));
         if (message.roomID === channelID) {

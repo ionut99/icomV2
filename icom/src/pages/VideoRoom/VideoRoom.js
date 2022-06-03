@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -16,6 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { Button } from "react-bootstrap";
+import { SocketContext } from "../../context/socket";
 import "./videoroom.css";
 
 const Container = styled.div`
@@ -77,7 +78,7 @@ const videoConstraints = {
   width: window.innerWidth / 2,
 };
 
-const { REACT_APP_API_URL } = process.env;
+// const { REACT_APP_API_URL } = process.env;
 
 const VideoRoom = (props) => {
   const [microphone, setmicrophone] = useState(true);
@@ -88,6 +89,8 @@ const VideoRoom = (props) => {
   const [usersInRoom, setusersInRoom] = useState([]);
 
   const socketRef = useRef();
+  socketRef.current = useContext(SocketContext);
+
   const userVideo = useRef();
   const peersRef = useRef([]);
   const roomID = props.match.params.roomId;
@@ -96,16 +99,10 @@ const VideoRoom = (props) => {
   const { user, expiredAt, token } = authObj;
 
   // initializare socket
-  useEffect(() => {
-    if (roomID === null || roomID === undefined) return;
-    socketRef.current = socketIOClient(REACT_APP_API_URL, {
-      query: { roomID },
-    });
-
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, [roomID]);
+  // useEffect(() => {
+  //   if (roomID === null || roomID === undefined) return;
+  //   socketRef.current = useContext(SocketContext);
+  // }, [roomID]);
   // initializare socket
 
   useEffect(() => {
@@ -116,6 +113,7 @@ const VideoRoom = (props) => {
         const dataSend = {
           userID: user.userId,
           roomID: roomID,
+          type: "video",
         };
         socketRef.current.emit("join video room", dataSend, (error) => {
           if (error) {

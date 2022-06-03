@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IconContext } from "react-icons";
 import * as FaIcons from "react-icons/fa";
@@ -10,16 +10,27 @@ import ChangePassword from "../ChangePassword/ChangePassword";
 import { Button } from "react-bootstrap";
 
 import Sidebar from "./Sidebar";
+import { setSocketConnectionStatus } from "../../actions/userActions";
+import { getActiveRoomsService } from "../../services/user";
+
+import { SocketContext } from "../../context/socket";
 
 import "./navbar.css";
 
 function Navbar() {
   const ref = useRef();
 
+  const socket = useContext(SocketContext);
+
   const dispatch = useDispatch();
 
   const authObj = useSelector((state) => state.auth);
-  const { user, userAvatar } = authObj;
+  const { user } = authObj;
+
+  //
+
+  const chatObj = useSelector((state) => state.chatRedu);
+  const { ConnectionsStatus } = chatObj;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [sidebar, setSidebar] = useState(false);
@@ -45,6 +56,8 @@ function Navbar() {
   };
 
   function LogOut() {
+    // disconnect socket...
+    socket.disconnect();
     dispatch(userLogoutAsync());
     dispatch(updateCurrentChannel(null, "", []));
   }
@@ -67,6 +80,44 @@ function Navbar() {
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
   }, [isMenuOpen, sidebar]);
+
+  // do link with socket ..
+  useEffect(() => {
+    if (ConnectionsStatus === true) return;
+    console.log("do socket chat links");
+    //
+    const getConnections = async (userId) => {
+      const channelsList = await getActiveRoomsService(userId);
+      return channelsList.data["activeRoomConnections"];
+    };
+
+    getConnections(user.userId).then((activeConnections) => {
+      for (let i = 0; i < activeConnections.length; i++) {
+        if (
+          activeConnections[i].RoomID === undefined ||
+          activeConnections[i].RoomID === ""
+        )
+          continue;
+        const request = {
+          userID: user.userId,
+          roomID: activeConnections[i].RoomID,
+          type: "chat",
+        };
+        //
+        console.log("alerta...");
+        socket.emit("join chat room", request, (error) => {
+          if (error) {
+            alert(error);
+          }
+        });
+      }
+    });
+    dispatch(setSocketConnectionStatus(true));
+    //
+    return () => {
+      // socket.disconnect();
+    };
+  }, [socket]);
 
   return (
     <div className="wrapper" ref={ref}>

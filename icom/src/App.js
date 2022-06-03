@@ -16,6 +16,8 @@ import PublicRoute from "./routes/PublicRoute";
 import { verifyTokenAsync } from "./asyncActions/authAsyncActions";
 import "./index.css";
 
+import { SocketContext, socket } from "./context/socket";
+
 function App() {
   const authObj = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -32,65 +34,67 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <BrowserRouter>
-        <div className="content">
-          <Switch>
-            <PublicRoute
-              path="/login"
-              component={Login}
-              isAuthenticated={isAuthenticated}
-            />
+    <SocketContext.Provider value={socket}>
+      <div className="App">
+        <BrowserRouter>
+          <div className="content">
+            <Switch>
+              <PublicRoute
+                path="/login"
+                component={Login}
+                isAuthenticated={isAuthenticated}
+              />
 
-            {/* <Navbar /> */}
-            <PrivateRoute
-              path="/dashboard"
-              component={Dashboard}
-              isAuthenticated={isAuthenticated}
-            />
-            <PrivateRoute
-              path="/chat"
-              component={ChatWindow}
-              isAuthenticated={isAuthenticated}
-            />
-            <PrivateRoute
-              exact
-              path="/storage"
-              component={Storage}
-              isAuthenticated={isAuthenticated}
-            />
-            <PrivateRoute
-              path="/newdocument/:folderId/:fileId"
-              component={TextEditor}
-              isAuthenticated={isAuthenticated}
-            />
+              {/* <Navbar /> */}
+              <PrivateRoute
+                path="/dashboard"
+                component={Dashboard}
+                isAuthenticated={isAuthenticated}
+              />
+              <PrivateRoute
+                path="/chat"
+                component={ChatWindow}
+                isAuthenticated={isAuthenticated}
+              />
+              <PrivateRoute
+                exact
+                path="/storage"
+                component={Storage}
+                isAuthenticated={isAuthenticated}
+              />
+              <PrivateRoute
+                path="/newdocument/:folderId/:fileId"
+                component={TextEditor}
+                isAuthenticated={isAuthenticated}
+              />
 
-            <PrivateRoute
-              exact
-              path="/storage/folder/:folderId"
-              component={Storage}
-              isAuthenticated={isAuthenticated}
-            />
+              <PrivateRoute
+                exact
+                path="/storage/folder/:folderId"
+                component={Storage}
+                isAuthenticated={isAuthenticated}
+              />
 
-            <PrivateRoute
-              exact
-              path="/roomcall/:roomId"
-              component={VideoRoom}
-              isAuthenticated={isAuthenticated}
-            />
+              <PrivateRoute
+                exact
+                path="/roomcall/:roomId"
+                component={VideoRoom}
+                isAuthenticated={isAuthenticated}
+              />
 
-            <PrivateRoute
-              exact
-              path="/controlpanel"
-              component={ControlPanel}
-              isAuthenticated={isAuthenticated}
-            />
+              <PrivateRoute
+                exact
+                path="/controlpanel"
+                component={ControlPanel}
+                isAuthenticated={isAuthenticated}
+              />
 
-            <Redirect to={isAuthenticated ? "/dashboard" : "/login"} />
-          </Switch>
-        </div>
-      </BrowserRouter>
-    </div>
+              <Redirect to={isAuthenticated ? "/dashboard" : "/login"} />
+            </Switch>
+          </div>
+        </BrowserRouter>
+      </div>
+    </SocketContext.Provider>
   );
 }
 

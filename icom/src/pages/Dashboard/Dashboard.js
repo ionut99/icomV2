@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
+
 
 import {
   verifyTokenAsync,
@@ -16,11 +17,18 @@ import "./dashboard.css";
 
 import UserAvatar from "../../images/userAvatar.png";
 
+import { SocketContext } from "../../context/socket";
+
 function Dashboard() {
   const dispatch = useDispatch();
-  const authObj = useSelector((state) => state.auth);
 
-  const { token, expiredAt } = authObj;
+  const authObj = useSelector((state) => state.auth);
+  const { token, expiredAt, user } = authObj;
+
+  const chatObj = useSelector((state) => state.chatRedu);
+  const { ConnectionsStatus } = chatObj;
+
+  const socket = useContext(SocketContext);
 
   // const [userList, setUserList] = useState([]);
 

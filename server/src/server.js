@@ -20,6 +20,8 @@ const {
 
 const { InsertNewMessage } = require("./api/controllers/Message");
 
+const { GetRoomDetailsData } = require("./api/services/Room");
+
 // To Verify cors-origin !!!
 // enable CORS
 app.use(
@@ -82,16 +84,26 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
   const { fileID } = socket.handshake.query;
 
-  socket.on("join chat room", (dataSend, callback) => {
-    const userID = dataSend.userID;
-    const roomID = dataSend.roomID;
+  socket.on("join chat room", async (request, callback) => {
+    const userID = request.userID;
+    const roomID = request.roomID;
+    const type = request.type;
     console.log(
-      "new chat join " +
+      "new " +
+        type +
+        " join " +
         userID.substring(userID.length - 5) +
+        " // " +
+        socket.id +
         " -> " +
         roomID.substring(roomID.length - 5)
     );
-    const { error, user } = addUserInRoom({ id: socket.id, userID, roomID });
+    const { error, user } = await addUserInRoom({
+      id: socket.id,
+      userID,
+      roomID,
+      type,
+    });
     if (error) return callback(error);
     socket.join(user.roomID);
     callback();
@@ -118,7 +130,7 @@ io.on("connection", (socket) => {
           message.roomID
       );
     }
-    // salvare mesaj
+
     //
   });
 
@@ -134,7 +146,7 @@ io.on("connection", (socket) => {
 
   //
 
-  socket.on("join video room", (dataSend, callback) => {
+  socket.on("join video room", async (dataSend, callback) => {
     const userID = dataSend.userID;
     const roomID = dataSend.roomID;
     console.log(
@@ -143,7 +155,11 @@ io.on("connection", (socket) => {
         " -> " +
         roomID.substring(roomID.length - 5)
     );
-    const { error, user } = addUserInRoom({ id: socket.id, userID, roomID });
+    const { error, user } = await addUserInRoom({
+      id: socket.id,
+      userID,
+      roomID,
+    });
     if (error) return callback(error);
     socket.join(user.roomID);
     // io.to(user.roomID).emit("all users", {

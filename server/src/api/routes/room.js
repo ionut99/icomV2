@@ -2,10 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const { authMiddleware } = require("../middlewares/Auth");
-const {
-  GetRoomSearchList,
-  GetActiveRoomConnections,
-} = require("../controllers/User");
+const { GetRoomSearchList } = require("../controllers/User");
 const { InsertNewMessage } = require("../controllers/Message");
 const {
   CreateNewRoom,
@@ -15,6 +12,7 @@ const {
   GetPartList,
   GetMessageListInTime,
   GetRoomFolder,
+  GetActiveRoomConnections,
 } = require("../controllers/Room");
 
 // router.post("/newroom", authMiddleware, CreateNewRoom);

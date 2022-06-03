@@ -1,6 +1,9 @@
 var uui = require("uuid");
 
-const { AddNewMemberInGroupData } = require("../services/User");
+const {
+  AddNewMemberInGroupData,
+  GetUserRoomsList,
+} = require("../services/User");
 const { GetUserByID } = require("../services/Auth");
 const {
   InsertNewRoomData,
@@ -473,6 +476,82 @@ async function GetMessageListInTime(req, res) {
   }
 }
 
+// return all active connections
+async function GetActiveRoomConnections(req, res) {
+  try {
+    const userId = req.body.userId;
+
+    if (userId === null) {
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    }
+
+    const activeRoomConnections = await GetUserRoomsList(userId)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    return handleResponse(req, res, 200, { activeRoomConnections });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(
+      req,
+      res,
+      412,
+      " Failed to fetch list with conversations! "
+    );
+  }
+}
+
+// check if user can connect to a room
+const roomIsFull = async (roomID, userID, usersAlreadyPresent) => {
+  try {
+    //
+    const activeRoomConnections = await GetUserRoomsList(userID)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    const index = activeRoomConnections.findIndex(
+      (room) => room.RoomID === roomID
+    );
+    if (index === -1) return true;
+
+    console.log("test 2");
+    // extrage detalii camera
+    const roomType = await GetRoomDetailsData(roomID)
+      .then(function (result) {
+        return result[0].Private;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    console.log("current users: ");
+    console.log(usersAlreadyPresent);
+    if (roomType > 0 && usersAlreadyPresent > 1) {
+      return true;
+    }
+
+    return false;
+    //
+  } catch (err) {
+    console.error(err);
+    return true;
+  }
+};
+
 module.exports = {
   CreateNewRoom,
   DeleteRoom,
@@ -482,4 +561,6 @@ module.exports = {
   GetNOTPartList,
   GetMessageListInTime,
   GetRoomFolder,
+  GetActiveRoomConnections,
+  roomIsFull,
 };

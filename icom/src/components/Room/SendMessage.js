@@ -7,7 +7,7 @@ import { faPaperPlane, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { handleReturnFileIcon } from "../../helpers/FileIcons";
 import { UploadFileForStoring } from "../../asyncActions/fileAsyncActions";
 import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
-import { socket } from "../../pages/Chat/Chat";
+// import { socket } from "../../pages/Chat/Chat";
 import { v4 as uuidv4 } from "uuid";
 import date from "date-and-time";
 
@@ -17,7 +17,7 @@ function SendMessage() {
   const textareaRef = useRef(null);
   //
   const socketRef = useRef();
-  socketRef.current = socket;
+  // socketRef.current = socket;
   //
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
