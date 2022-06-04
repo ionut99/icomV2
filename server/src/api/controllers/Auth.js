@@ -78,7 +78,7 @@ async function SignInUser(req, res) {
 
     // generate refresh token
     const refreshToken = generateRefreshToken(userObj.userId);
-    console.log("refreshToken ul este : " + refreshToken);
+    // console.log("refreshToken ul este : " + refreshToken);
 
     // refresh token list to manage the xsrf token
     refreshTokens[refreshToken] = tokenObj.xsrfToken;

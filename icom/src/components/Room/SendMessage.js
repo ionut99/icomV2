@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useContext,
+} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Textarea from "react-expanding-textarea";
 import { Modal, Form, Button } from "react-bootstrap";
@@ -7,7 +13,10 @@ import { faPaperPlane, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { handleReturnFileIcon } from "../../helpers/FileIcons";
 import { UploadFileForStoring } from "../../asyncActions/fileAsyncActions";
 import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
-// import { socket } from "../../pages/Chat/Chat";
+//
+import { SocketContext } from "../../context/socket";
+
+//
 import { v4 as uuidv4 } from "uuid";
 import date from "date-and-time";
 
@@ -16,8 +25,10 @@ function SendMessage() {
   const dispatch = useDispatch();
   const textareaRef = useRef(null);
   //
+  // const socket = useContext(SocketContext);
+  //
   const socketRef = useRef();
-  // socketRef.current = socket;
+  socketRef.current = useContext(SocketContext);
   //
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;

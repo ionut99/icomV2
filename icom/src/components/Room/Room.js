@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -11,15 +11,28 @@ import Avatar from "../Avatar/Avatar";
 import SendMessage from "./SendMessage";
 import { Spinner } from "react-bootstrap";
 import { getMessageListTime } from "../../asyncActions/userAsyncActions";
+
+import {
+  InsertNewMessageLocal,
+  UpdateLastMessage,
+} from "../../actions/userActions";
+
 import date from "date-and-time";
 import "./room.css";
 import Message from "./Message";
+
+import { SocketContext } from "../../context/socket";
 
 function Room(props) {
   const { receiveNewMessage, setReceiveNewMessage } = props;
   const dispatch = useDispatch();
   const messagesEndRef = useRef(null);
   const listInnerRef = useRef();
+
+  //
+  const socketRef = useRef(null);
+  socketRef.current = useContext(SocketContext);
+  //
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
@@ -95,8 +108,33 @@ function Room(props) {
   //
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    setReceiveNewMessage(false);
+
+    return () => {
+      setReceiveNewMessage(false);
+    };
   }, [receiveNewMessage]);
+
+  //
+  // receive message from socket and insert in local messages list
+  useEffect(() => {
+    if (channelID === null) return;
+    if (socketRef.current === null) return;
+
+    socketRef.current.on("receive chat message", (message) => {
+      if (message.roomID != null) {
+        dispatch(UpdateLastMessage(message.messageBody, message.roomID));
+        if (message.roomID === channelID) {
+          dispatch(InsertNewMessageLocal(message));
+          setReceiveNewMessage(true);
+        }
+      }
+    });
+    return () => {
+      socketRef.current.off("receive chat message");
+    };
+  }, [channelID]);
+  // receive message
+  //
 
   return (
     <>

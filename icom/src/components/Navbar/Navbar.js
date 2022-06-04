@@ -5,8 +5,8 @@ import * as FaIcons from "react-icons/fa";
 import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 import { updateCurrentChannel } from "../../actions/userActions";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
-import Avatar from "../Avatar/Avatar";
 import ChangePassword from "../ChangePassword/ChangePassword";
+import Avatar from "../Avatar/Avatar";
 import { Button } from "react-bootstrap";
 
 import Sidebar from "./Sidebar";
@@ -14,21 +14,18 @@ import { setSocketConnectionStatus } from "../../actions/userActions";
 import { getActiveRoomsService } from "../../services/user";
 
 import { SocketContext } from "../../context/socket";
-
 import "./navbar.css";
 
 function Navbar() {
-  const ref = useRef();
-
-  const socket = useContext(SocketContext);
-
+  const navbarRef = useRef();
+  const socketRef = useRef();
   const dispatch = useDispatch();
-
+  //
+  socketRef.current = useContext(SocketContext);
+  //
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
-
   //
-
   const chatObj = useSelector((state) => state.chatRedu);
   const { ConnectionsStatus } = chatObj;
 
@@ -57,7 +54,8 @@ function Navbar() {
 
   function LogOut() {
     // disconnect socket...
-    socket.disconnect();
+    // socketRef.current.disconnect();
+    // dispatch(setSocketConnectionStatus(false));
     dispatch(userLogoutAsync());
     dispatch(updateCurrentChannel(null, "", []));
   }
@@ -66,8 +64,8 @@ function Navbar() {
     const checkIfClickedOutside = (e) => {
       if (
         (isMenuOpen || sidebar) &&
-        ref.current &&
-        !ref.current.contains(e.target)
+        navbarRef.current &&
+        !navbarRef.current.contains(e.target)
       ) {
         setIsMenuOpen(false);
         setSidebar(false);
@@ -84,8 +82,8 @@ function Navbar() {
   // do link with socket ..
   useEffect(() => {
     if (ConnectionsStatus === true) return;
-    console.log("do socket chat links");
     //
+    console.log("socket links");
     const getConnections = async (userId) => {
       const channelsList = await getActiveRoomsService(userId);
       return channelsList.data["activeRoomConnections"];
@@ -104,8 +102,7 @@ function Navbar() {
           type: "chat",
         };
         //
-        console.log("alerta...");
-        socket.emit("join chat room", request, (error) => {
+        socketRef.current.emit("join room", request, (error) => {
           if (error) {
             alert(error);
           }
@@ -117,10 +114,11 @@ function Navbar() {
     return () => {
       // socket.disconnect();
     };
-  }, [socket]);
+  }, [ConnectionsStatus]);
+  // do link with socket ..
 
   return (
-    <div className="wrapper" ref={ref}>
+    <div className="wrapper" ref={navbarRef}>
       <ConfirmDialog
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
@@ -179,14 +177,6 @@ function Navbar() {
                 Email={user.email}
               />
             </div>
-            {/* <div
-              className="dropdown-options"
-              style={{
-                display: user.isAdmin ? "flex" : "none",
-              }}
-            >
-              <AddUser />
-            </div> */}
             <div className="dropdown-options">
               <Button
                 className="user-menu-button"

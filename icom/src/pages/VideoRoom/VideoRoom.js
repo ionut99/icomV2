@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 
 import Peer from "simple-peer";
 import styled from "styled-components";
-import socketIOClient from "socket.io-client";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -16,17 +15,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { Button } from "react-bootstrap";
-import { SocketContext } from "../../context/socket";
+// import { SocketContext } from "../../context/socket";
+import socketIOClient from "socket.io-client";
+import Video from "./Video";
 import "./videoroom.css";
 
-const Container = styled.div`
-  padding: 20px;
-  display: flex;
-  height: 100vh;
-  width: 90%;
-  margin: auto;
-  flex-wrap: wrap;
-`;
+const { REACT_APP_API_URL } = process.env;
 
 const StyledVideo = styled.video`
   height: 300px;
@@ -56,18 +50,6 @@ const configuration = {
   ],
 };
 
-const Video = (props) => {
-  const ref = useRef();
-
-  useEffect(() => {
-    props.peer.on("stream", (stream) => {
-      ref.current.srcObject = stream;
-    });
-  }, []);
-
-  return <StyledVideo playsInline autoPlay ref={ref} />;
-};
-
 // const videoConstraints = {
 //   height: window.innerHeight / 2,
 //   width: window.innerWidth / 2,
@@ -89,66 +71,67 @@ const VideoRoom = (props) => {
   const [usersInRoom, setusersInRoom] = useState([]);
 
   const socketRef = useRef();
-  socketRef.current = useContext(SocketContext);
-
-  const userVideo = useRef();
-  const peersRef = useRef([]);
-  const roomID = props.match.params.roomId;
+  //
+  //pentru utilizarea socketului la nivelul aplicatiei
+  // socketRef.current = useContext(SocketContext);
 
   const authObj = useSelector((state) => state.auth);
   const { user, expiredAt, token } = authObj;
 
-  // initializare socket
-  // useEffect(() => {
-  //   if (roomID === null || roomID === undefined) return;
-  //   socketRef.current = useContext(SocketContext);
-  // }, [roomID]);
-  // initializare socket
+  //
+
+  const userVideo = useRef();
+  const peersRef = useRef(Array(0));
+  const roomID = props.match.params.roomId;
+
+  const [request, setRequest] = useState({
+    userID: user.userId,
+    roomID: roomID,
+    type: "video",
+  });
+
+  useEffect(() => {
+    console.log(roomID);
+    if (roomID === null || roomID === undefined) return;
+    socketRef.current = socketIOClient(REACT_APP_API_URL);
+
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [roomID]);
 
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: videoConstraints, audio: true })
       .then((stream) => {
         userVideo.current.srcObject = stream;
-        const dataSend = {
-          userID: user.userId,
-          roomID: roomID,
-          type: "video",
-        };
-        socketRef.current.emit("join video room", dataSend, (error) => {
+        socketRef.current.emit("join room", request, (error) => {
           if (error) {
             alert(error);
           }
         });
         socketRef.current.on("all users", (roomData) => {
-          // console.log("Primim detaliile despre camera:");
-          // console.log(roomData.users);
+          console.log(roomData.users);
           roomData.users.forEach((user) => {
-            // console.log(user.id);
             const peer = createPeer(user.id, socketRef.current.id, stream);
-            peersRef.current.push({
-              peerID: user.id,
-              peer,
-            });
             const peerObj = {
               peerID: user.id,
               peer,
             };
+            peersRef.current.push(peerObj);
             setPeers((users) => [...users, peerObj]);
           });
         });
 
         socketRef.current.on("user joined", (payload) => {
+          console.log("lista peers:");
+          console.log(peersRef.current);
           const peer = addPeer(payload.signal, payload.callerID, stream);
-          peersRef.current.push({
-            peerID: payload.callerID,
-            peer,
-          });
-
           const peerObj = {
             peerID: payload.callerID,
             peer,
           };
+          peersRef.current.push(peerObj);
 
           setPeers((users) => [...users, peerObj]);
         });
@@ -168,6 +151,10 @@ const VideoRoom = (props) => {
           destroyAllPeers();
         });
       });
+
+    return () => {
+      socketRef.current.off("all users");
+    };
   }, [roomID]);
 
   function createPeer(userToSignal, callerID, stream) {
@@ -207,9 +194,10 @@ const VideoRoom = (props) => {
   }
 
   function removePeer(socket_id) {
-    const peerObj = peersRef.current.find((p) => p.peerID === socket_id);
-    if (peerObj) {
-      peerObj.peer.destroy();
+    const item = peersRef.current.find((p) => p.peerID === socket_id);
+    if (item) {
+      const res = item.peer.destroy();
+      console.log(res);
     }
 
     peersRef.current = peersRef.current.filter((p) => p.peerID !== socket_id);
@@ -239,12 +227,6 @@ const VideoRoom = (props) => {
   };
 
   return (
-    // <Container>
-    //   <StyledVideo muted ref={userVideo} autoPlay playsInline />
-    //   {peers.map((peer, index) => {
-    //     return <Video key={index} peer={peer} />;
-    //   })}
-    // </Container>
     <div className="video-page">
       <div className="buttons-bar">
         <div className="time">

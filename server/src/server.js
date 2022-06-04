@@ -13,7 +13,8 @@ const app = express();
 
 const {
   addUserInRoom,
-  removeUser,
+  removeUserFromList,
+  deleteUser,
   getUser,
   getUsersInRoom,
 } = require("./api/controllers/Socket");
@@ -84,20 +85,11 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
   const { fileID } = socket.handshake.query;
 
-  socket.on("join chat room", async (request, callback) => {
+  socket.on("join room", async (request, callback) => {
     const userID = request.userID;
     const roomID = request.roomID;
     const type = request.type;
-    console.log(
-      "new " +
-        type +
-        " join " +
-        userID.substring(userID.length - 5) +
-        " // " +
-        socket.id +
-        " -> " +
-        roomID.substring(roomID.length - 5)
-    );
+
     const { error, user } = await addUserInRoom({
       id: socket.id,
       userID,
@@ -105,13 +97,22 @@ io.on("connection", (socket) => {
       type,
     });
     if (error) return callback(error);
+
     socket.join(user.roomID);
+
+    if (type === "video") {
+      socket.emit("all users", {
+        //varianta cu emit trimite doar la respectivul
+        roomID: user.roomID,
+        users: getUsersInRoom(user.roomID, user.id, user.type),
+      });
+    }
     callback();
   });
 
   // Listen for new messages
   socket.on("send chat message", (message) => {
-    io.to(message.roomID).emit("send chat message", message);
+    io.to(message.roomID).emit("receive chat message", message);
 
     // save message
     const mes_res = InsertNewMessage(message);
@@ -144,38 +145,6 @@ io.on("connection", (socket) => {
 
   //
 
-  //
-
-  socket.on("join video room", async (dataSend, callback) => {
-    const userID = dataSend.userID;
-    const roomID = dataSend.roomID;
-    console.log(
-      "new video join " +
-        userID.substring(userID.length - 5) +
-        " -> " +
-        roomID.substring(roomID.length - 5)
-    );
-    const { error, user } = await addUserInRoom({
-      id: socket.id,
-      userID,
-      roomID,
-    });
-    if (error) return callback(error);
-    socket.join(user.roomID);
-    // io.to(user.roomID).emit("all users", {
-    //   roomID: user.roomID,
-    //   users: getUsersInRoom(user.roomID, user.id),
-    // });
-    // ramane de vazut daca utilizatorii vor primii lista cu toti participantii de fiecare data cand intra cineva nou
-    // de asemenea lista curenta nu contine utilizatorul care doreste sa se conecteze
-    socket.emit("all users", {
-      //varianta cu emit trimite doar la respectivul
-      roomID: user.roomID,
-      users: getUsersInRoom(user.roomID, user.id),
-    });
-    callback();
-  });
-
   socket.on("sending signal", (payload) => {
     io.to(payload.userToSignal).emit("user joined", {
       signal: payload.signal,
@@ -191,9 +160,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    const user = removeUser(socket.id);
-    if (user) {
-      socket.broadcast.emit("user left", socket.id);
+    const user = getUser(socket.id);
+    const deleted = deleteUser(socket.id);
+    if (deleted) {
+      if (user.type === "video") socket.broadcast.emit("user left", socket.id);
     }
   });
 });

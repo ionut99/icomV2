@@ -1,60 +1,21 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 
-
-import {
-  verifyTokenAsync,
-  // userLogoutAsync,
-} from "../../asyncActions/authAsyncActions";
+import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 
 import { setAuthToken } from "../../services/auth";
 import Navbar from "../../components/Navbar/Navbar";
 
 import "./dashboard.css";
-// import { userLogout, verifyTokenEnd } from "../../actions/authActions";
-// import { getUserListService } from "../../services/user";
 
 import UserAvatar from "../../images/userAvatar.png";
-
-import { SocketContext } from "../../context/socket";
 
 function Dashboard() {
   const dispatch = useDispatch();
 
   const authObj = useSelector((state) => state.auth);
-  const { token, expiredAt, user } = authObj;
-
-  const chatObj = useSelector((state) => state.chatRedu);
-  const { ConnectionsStatus } = chatObj;
-
-  const socket = useContext(SocketContext);
-
-  // const [userList, setUserList] = useState([]);
-
-  // handle click event of the logout button
-  // function LogOut() {
-  //   dispatch(userLogoutAsync());
-  // }
-
-  // get user list
-  // const getUserList = async () => {
-  //   const result = await getUserListService();
-  //   if (result.error) {
-  //     dispatch(verifyTokenEnd());
-  //     if (result.response && [401, 403].includes(result.response.status))
-  //       dispatch(userLogout());
-  //     return;
-  //   }
-  //   setUserList(result.data);
-  // };
-
-  // set timer to renew token
-
-  // get user list on page load
-  // useEffect(() => {
-  //   getUserList();
-  // }, []);
+  const { token, expiredAt } = authObj;
 
   useEffect(() => {
     setAuthToken(token);

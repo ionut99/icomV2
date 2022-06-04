@@ -3,15 +3,12 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Modal, Form, Spinner } from "react-bootstrap";
-// import socketIOClient from "socket.io-client";
 
 import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 import {
   setUserSearchBoxContent,
   UpdateAddUserInGroup,
   setPersonSearchList,
-  InsertNewMessageLocal,
-  UpdateLastMessage,
 } from "../../actions/userActions";
 import { setAuthToken } from "../../services/auth";
 import Navbar from "../../components/Navbar/Navbar";
@@ -24,8 +21,6 @@ import {
   CreateNewGroup,
 } from "../../asyncActions/userAsyncActions";
 
-import { getActiveRoomsService } from "../../services/user";
-
 import ConversationList from "../../components/Search/ConversationList";
 import PersonList from "../../components/Search/PersonList";
 import Room from "../../components/Room/Room";
@@ -33,8 +28,6 @@ import Room from "../../components/Room/Room";
 import * as BsIcons from "react-icons/bs";
 import * as AiIcons from "react-icons/ai";
 import { v4 as uuidv4 } from "uuid";
-
-import { SocketContext } from "../../context/socket";
 
 import "./chat.css";
 
@@ -51,7 +44,6 @@ function setSearchBoxContent(search_box_content, dispatch) {
 function Chat() {
   const dispatch = useDispatch();
 
-  const socket = useContext(SocketContext);
   //
   const [newGroup, SetnewGroup] = useState(false);
   const [groupName, SetgroupName] = useState("");
@@ -72,6 +64,7 @@ function Chat() {
     dispatch(setUserSearchBoxContent(""));
     dispatch(userSetRoomListAsync("", user.userId));
   };
+  //
   function SearchEnter(event) {
     if (event.key === "Enter") {
       getSearchUserList();
@@ -118,61 +111,6 @@ function Chat() {
   useEffect(() => {
     setLoaded(true);
   }, []);
-
-  // // do link with socket ..
-  // useEffect(() => {
-  //   console.log("incarca chat page!");
-  //   //
-  //   const getConnections = async (userId) => {
-  //     const channelsList = await getActiveRoomsService(userId);
-  //     return channelsList.data["activeRoomConnections"];
-  //   };
-
-  //   getConnections(user.userId).then((activeConnections) => {
-  //     for (let i = 0; i < activeConnections.length; i++) {
-  //       if (
-  //         activeConnections[i].RoomID === undefined ||
-  //         activeConnections[i].RoomID === ""
-  //       )
-  //         continue;
-  //       const request = {
-  //         userID: user.userId,
-  //         roomID: activeConnections[i].RoomID,
-  //         type: "chat",
-  //       };
-  //       //
-  //       console.log("alerta...");
-  //       socket.emit("join chat room", request, (error) => {
-  //         if (error) {
-  //           alert(error);
-  //         }
-  //       });
-  //     }
-  //   });
-  //   //
-  //   return () => {
-  //     socket.disconnect();
-  //   };
-  // }, [socket]);
-
-  //
-  // receive message from socket and insert in local messages list
-  useEffect(() => {
-    if (channelID === null) return;
-    if (socket === null) return;
-
-    socket.on("send chat message", (message) => {
-      if (message.roomID != null) {
-        dispatch(UpdateLastMessage(message.messageBody, message.roomID));
-        if (message.roomID === channelID) {
-          dispatch(InsertNewMessageLocal(message));
-          setReceiveNewMessage(true);
-        }
-      }
-    });
-  }, [channelID]);
-  // receive message
-  //
 
   return (
     <div className="page">

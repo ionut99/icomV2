@@ -449,7 +449,7 @@ async function GetMessageListInTime(req, res) {
       roomID,
       messageTime,
       messagesPosition,
-      10
+      15
     )
       .then(function (result) {
         return result;
@@ -526,7 +526,6 @@ const roomIsFull = async (roomID, userID, usersAlreadyPresent) => {
     );
     if (index === -1) return true;
 
-    console.log("test 2");
     // extrage detalii camera
     const roomType = await GetRoomDetailsData(roomID)
       .then(function (result) {
@@ -538,8 +537,6 @@ const roomIsFull = async (roomID, userID, usersAlreadyPresent) => {
         })
       );
 
-    console.log("current users: ");
-    console.log(usersAlreadyPresent);
     if (roomType > 0 && usersAlreadyPresent > 1) {
       return true;
     }

@@ -2,10 +2,10 @@ const { roomIsFull } = require("../controllers/Room");
 
 const users = [];
 
-const getNumberOfUsersInRoom = (roomID) => {
+const getNumberOfUsersInRoom = (roomID, type) => {
   var users_number = 0;
   for (let i = 0; i < users.length; i++) {
-    if (users[i].roomID === roomID) {
+    if (users[i].roomID === roomID && users[i].type === type) {
       users_number = users_number + 1;
     }
   }
@@ -25,8 +25,22 @@ const addUserInRoom = async ({ id, userID, roomID, type }) => {
     return { error: "Invalid roomID" };
   }
 
-  if (type === undefined) {
-    return { error: "Invalid room type" };
+  switch (type) {
+    case "chat":
+      const users_number = getNumberOfUsersInRoom(roomID, type);
+      const isFull = await roomIsFull(roomID, userID, users_number);
+
+      if (isFull) {
+        return { error: "Room is Full" };
+      }
+      break;
+    case "edit":
+      // code block
+      break;
+    case "video":
+      break;
+    default:
+      return { error: "Invalid room type" };
   }
 
   const existingUser = users.find(
@@ -38,28 +52,55 @@ const addUserInRoom = async ({ id, userID, roomID, type }) => {
     return { error: "UserID taken, user is already in room" };
   }
 
-  //const users_number = getNumberOfUsersInRoom(roomID);
-  //const isFull = await roomIsFull(roomID, userID, users_number);
-
-  // console.log("Capacitate:");
-  // console.log(isFull);
-
   const user = { id, userID, roomID, type };
 
   users.push(user);
+
+  //
+  const onU = getNumberOfUsersInRoom(roomID, type);
+  console.log(
+    "new " +
+      type +
+      " join user: " +
+      userID.substring(userID.length - 5) +
+      " // socket: " +
+      id +
+      " -> " +
+      roomID.substring(roomID.length - 5) +
+      " " +
+      "users on: " +
+      onU
+  );
+  //
+
   return { user };
 };
 
-const removeUser = (id) => {
-  // const index = users.findIndex((user) => user.id === id);
-  // if (index !== -1) {
-  //   return users.splice(index, 1)[0];
-  // }
-
+const deleteUser = (id) => {
   var removed = false;
 
   for (let i = 0; i < users.length; i++) {
     if (users[i].id === id) {
+      console.log(
+        "Delete " +
+          users[i].userID.substring(users[i].userID.length - 6) +
+          " from " +
+          users[i].roomID.substring(users[i].roomID.length - 6)
+      );
+      users.splice(i, 1);
+      i--;
+      removed = true;
+    }
+  }
+
+  return removed;
+};
+
+const removeUserFromList = (id, type) => {
+  var removed = false;
+
+  for (let i = 0; i < users.length; i++) {
+    if (users[i].id === id && users[i].type === type) {
       console.log(
         "Remove " +
           users[i].userID.substring(users[i].userID.length - 6) +
@@ -77,7 +118,15 @@ const removeUser = (id) => {
 
 const getUser = (id) => users.find((user) => user.id === id);
 
-const getUsersInRoom = (roomID, id) =>
-  users.filter((user) => user.roomID === roomID && user.id !== id);
+const getUsersInRoom = (roomID, id, type) =>
+  users.filter(
+    (user) => user.roomID === roomID && user.type === type && user.id !== id
+  );
 
-module.exports = { addUserInRoom, removeUser, getUser, getUsersInRoom };
+module.exports = {
+  addUserInRoom,
+  removeUserFromList,
+  getUser,
+  getUsersInRoom,
+  deleteUser,
+};
