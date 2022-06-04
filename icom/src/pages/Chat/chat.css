@@ -4,7 +4,6 @@
   height: 100%;
   width: 100vw;
   min-width: 900px;
-  /* border: solid red; */
 }
 .chat-page {
   height: calc(100% - 60px);
@@ -133,9 +132,6 @@
     margin-top: 0px;
     margin-bottom: 0px;
   }
-  /* .conversation {
-    max-width: 90%;
-  } */
 }
 
 @media screen and (max-width: 865px) {
