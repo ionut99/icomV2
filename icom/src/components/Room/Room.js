@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { Spinner } from "react-bootstrap";
 
 import * as BsIcons from "react-icons/bs";
 import * as IoIcons2 from "react-icons/io5";
 import * as AiIcons from "react-icons/ai";
-
-import Avatar from "../Avatar/Avatar";
-
-import SendMessage from "./SendMessage";
-import { Spinner } from "react-bootstrap";
+//
 import { getMessageListTime } from "../../asyncActions/userAsyncActions";
-
+//
 import {
   InsertNewMessageLocal,
   UpdateLastMessage,
 } from "../../actions/userActions";
+//
+import Avatar from "../Avatar/Avatar";
+import SendMessage from "./SendMessage";
+import Message from "./Message";
 
 import date from "date-and-time";
 import "./room.css";
-import Message from "./Message";
 
 import { SocketContext } from "../../context/socket";
 
@@ -138,49 +138,55 @@ function Room(props) {
 
   return (
     <>
-      <div
-        className="right-section-empty"
-        style={{ display: channelID ? "none" : "block" }}
-      ></div>
-      <div
-        className="right-section"
-        style={{ display: channelID ? "block" : "none" }}
-      >
-        <div className="conversation-details">
-          <div className="user_picture">
-            <Avatar userId={user.userId} roomId={channelID} />
+      {loaded ? (
+        <div
+          className="right-section"
+          style={{ display: channelID ? "block" : "none" }}
+          onLoad={() => setLoaded(true)}
+        >
+          <div className="conversation-details">
+            <div className="user_picture">
+              <Avatar userId={user.userId} roomId={channelID} />
+            </div>
+            <div className="room-name">
+              <p>{currentChannelName}</p>
+            </div>
+            <div className="room-instrument">
+              <Link to={`/storage/folder/${channelFolderId}`}>
+                {<AiIcons.AiOutlineFile />}
+              </Link>
+            </div>
+            <div className="room-instrument">
+              <Link to={`/roomcall/${channelID}`}>
+                <BsIcons.BsCameraVideo />
+              </Link>
+            </div>
+            <div className="room-instrument">
+              <IoIcons2.IoCallOutline />
+            </div>
           </div>
-          <div className="room-name">
-            <p>{currentChannelName}</p>
+          <div className="test-scrollbar">
+            <div className="messages" ref={listInnerRef} onScroll={onScroll}>
+              {loaded ? (
+                RoomMessages.map((message, index) => {
+                  return <Message message={message} key={index} />;
+                })
+              ) : (
+                <Spinner animation="border" />
+              )}
+              <div ref={messagesEndRef} />
+            </div>
           </div>
-          <div className="room-instrument">
-            <Link to={`/storage/folder/${channelFolderId}`}>
-              {<AiIcons.AiOutlineFile />}
-            </Link>
-          </div>
-          <div className="room-instrument">
-            <Link to={`/roomcall/${channelID}`}>
-              <BsIcons.BsCameraVideo />
-            </Link>
-          </div>
-          <div className="room-instrument">
-            <IoIcons2.IoCallOutline />
-          </div>
+          <SendMessage />
         </div>
-        <div className="test-scrollbar">
-          <div className="messages" ref={listInnerRef} onScroll={onScroll}>
-            {loaded ? (
-              RoomMessages.map((message, index) => {
-                return <Message message={message} key={index} />;
-              })
-            ) : (
-              <Spinner animation="border" />
-            )}
-            <div ref={messagesEndRef} />
-          </div>
+      ) : (
+        <div
+          className="right-section-empty"
+          style={{ display: channelID ? "flex" : "none" }}
+        >
+          <Spinner animation="border" />
         </div>
-        <SendMessage />
-      </div>
+      )}
     </>
   );
 }

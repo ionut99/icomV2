@@ -13,15 +13,13 @@ const app = express();
 
 const {
   addUserInRoom,
-  removeUserFromList,
   deleteUser,
   getUser,
   getUsersInRoom,
+  getAllUsers,
 } = require("./api/controllers/Socket");
 
 const { InsertNewMessage } = require("./api/controllers/Message");
-
-const { GetRoomDetailsData } = require("./api/services/Room");
 
 // To Verify cors-origin !!!
 // enable CORS
@@ -35,15 +33,6 @@ app.use(
 // To Verify cors-origin !!!
 // const server_chat = require("http").Server(app);
 const { Server } = require("socket.io");
-const { use } = require("./api/routes/room");
-
-// const io = require("socket.io")(server_chat, {
-//   cors: {
-//     origin: process.env.CLIENT_URL,
-//     methods: ["GET", "POST"],
-//     credentials: true,
-//   },
-// });
 
 //
 //
@@ -69,10 +58,6 @@ app.use("/folder", folder);
 const httpServer = app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server started on port ${process.env.SERVER_PORT}`);
 });
-
-// Start server for chat
-const SEND_DOCUMENT_CHANGES = "SEND_DOCUMENT_CHANGES";
-const RECEIVE_DOCUMENT_CHANGES = "RECEIVE_DOCUMENT_CHANGES";
 
 const io = new Server(httpServer, {
   cors: {
@@ -102,11 +87,18 @@ io.on("connection", (socket) => {
 
     if (type === "video") {
       socket.emit("all users", {
-        //varianta cu emit trimite doar la respectivul
         roomID: user.roomID,
-        users: getUsersInRoom(user.roomID, user.id, user.type),
+        users: getUsersInRoom(user.roomID, user.id, user.type), //except the one who enter
       });
     }
+
+    if (type === "edit") {
+      io.to(user.roomID).emit("all users", {
+        roomID: user.roomID,
+        users: getAllUsers(user.roomID, user.type),
+      });
+    }
+
     callback();
   });
 
@@ -138,8 +130,9 @@ io.on("connection", (socket) => {
   //
 
   // Listen for new document changes
-  socket.on(SEND_DOCUMENT_CHANGES, (delta) => {
-    socket.broadcast.to(fileID).emit(RECEIVE_DOCUMENT_CHANGES, delta);
+  socket.on("send doc edit", (delta) => {
+    const user = getUser(socket.id);
+    socket.broadcast.to(user.roomID).emit("receive doc edit", delta);
     console.log(delta);
   });
 
@@ -159,11 +152,13 @@ io.on("connection", (socket) => {
     });
   });
 
+  //
   socket.on("disconnect", () => {
     const user = getUser(socket.id);
     const deleted = deleteUser(socket.id);
     if (deleted) {
-      if (user.type === "video") socket.broadcast.emit("user left", socket.id);
+      if (user.type === "video" || user.type === "edit")
+        socket.broadcast.emit("user left", socket.id);
     }
   });
 });

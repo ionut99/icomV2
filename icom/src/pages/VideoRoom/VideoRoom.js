@@ -91,7 +91,7 @@ const VideoRoom = (props) => {
   });
 
   useEffect(() => {
-    console.log(roomID);
+    // console.log(roomID);
     if (roomID === null || roomID === undefined) return;
     socketRef.current = socketIOClient(REACT_APP_API_URL);
 
@@ -111,7 +111,8 @@ const VideoRoom = (props) => {
           }
         });
         socketRef.current.on("all users", (roomData) => {
-          console.log(roomData.users);
+          // console.log("users already in room: ");
+          // console.log(roomData);
           roomData.users.forEach((user) => {
             const peer = createPeer(user.id, socketRef.current.id, stream);
             const peerObj = {
@@ -124,15 +125,14 @@ const VideoRoom = (props) => {
         });
 
         socketRef.current.on("user joined", (payload) => {
-          console.log("lista peers:");
-          console.log(peersRef.current);
+          // console.log("lista peers:");
+          // console.log(peersRef.current);
           const peer = addPeer(payload.signal, payload.callerID, stream);
           const peerObj = {
             peerID: payload.callerID,
             peer,
           };
           peersRef.current.push(peerObj);
-
           setPeers((users) => [...users, peerObj]);
         });
 
@@ -153,7 +153,7 @@ const VideoRoom = (props) => {
       });
 
     return () => {
-      socketRef.current.off("all users");
+      // socketRef.current.off("all users");
     };
   }, [roomID]);
 
@@ -196,8 +196,7 @@ const VideoRoom = (props) => {
   function removePeer(socket_id) {
     const item = peersRef.current.find((p) => p.peerID === socket_id);
     if (item) {
-      const res = item.peer.destroy();
-      console.log(res);
+      item.peer.destroy();
     }
 
     peersRef.current = peersRef.current.filter((p) => p.peerID !== socket_id);

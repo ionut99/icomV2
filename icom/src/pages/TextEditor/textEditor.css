@@ -13,8 +13,44 @@
   bottom: 0;
 }
 .edit-window {
-  /* display:inline-flex; */
+  display: block;
+  min-width: 900px;
 }
+
+.edit-window .details-bar {
+  height: 75px;
+  display: inline-flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-window .details-bar .users-box {
+  display: inline-flex;
+  max-width: 50%;
+  min-width: 300px;
+  margin-left: auto;
+  overflow-x: scroll;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.edit-window .details-bar .users-box .user-profile {
+  margin-right: 8px;
+}
+
+.edit-window .details-bar .users-box .user-profile .picture-profile {
+  height: 55px;
+  width: 55px;
+  display: flex;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid;
+  cursor: pointer;
+}
+
 .edit-window .edit-box {
   height: calc(100vh - 60px);
 }
@@ -41,9 +77,8 @@
 }
 
 .edit-window .save-doc-state {
-  position: absolute;
-  top: 120px;
-  right: 40px;
+  margin-left: 20px;
+  margin-right: 40px;
 }
 
 .edit-window .changes-list .one-change {
@@ -61,7 +96,7 @@
 }
 
 .edit-window .online-user-list {
-  height: 95px;
+  height: 300px;
   width: 16%;
   min-width: 80px;
   position: absolute;
@@ -70,26 +105,6 @@
   background-color: var(--bg-color-step-two);
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
   border-color: var(--border-color);
-}
-
-.edit-window .online-user-list .users-box {
-  height: 75px;
-  display: inline-flex;
-  flex-wrap: wrap;
-  overflow-y: auto;
-}
-
-.edit-window .online-user-list .users-box .user-profile .picture-profile {
-  margin: 5px;
-}
-
-.edit-window .online-user-list .users-box .user-profile .picture-profile img {
-  height: 60px;
-  width: 60px;
-  border-radius: 50%;
-  border: 5px solid red;
-  align-self: center !important;
-  cursor: pointer;
 }
 
 .edit-window .online-user-list p {
@@ -124,31 +139,6 @@
     margin: 1rem;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
     background-color: white;
-  }
-
-  .edit-window .changes-list {
-    width: 10%;
-    min-width: 70px;
-  }
-
-  .edit-window .online-user-list {
-    width: 10%;
-    min-width: 70px;
-    height: 250px;
-    left: 2%;
-  }
-
-  .edit-window .online-user-list .users-box {
-    height: 220px;
-  }
-}
-
-@media screen and (max-width: 975px) {
-  .edit-window .changes-list {
-    top: 160px;
-  }
-  .edit-window .online-user-list {
-    top: 160px;
   }
 }
 

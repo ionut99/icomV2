@@ -1,22 +1,31 @@
-import React, { useCallback, useState, useEffect, useRef } from "react";
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+  // useContext,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
+import socketIOClient from "socket.io-client";
 import { useParams } from "react-router-dom";
 import moment from "moment";
-import socketIOClient from "socket.io-client";
+import { Spinner } from "react-bootstrap";
 
 import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 import { setAuthToken } from "../../services/auth";
+//
+import "quill/dist/quill.snow.css";
 import "./textEditor.css";
 
-import "quill/dist/quill.snow.css";
-import * as Quill from "quill";
-
+import Avatar from "../../components/Avatar/Avatar";
 import Navbar from "../../components/Navbar/Navbar";
 import SaveButton from "./SaveButton";
+import * as Quill from "quill";
 
 import { v4 as uuidv4 } from "uuid";
-
 import { getDocumentContentById } from "../../services/file";
+
+// import { SocketContext } from "../../context/socket";
 
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -33,8 +42,8 @@ const TOOLBAR_OPTIONS = [
   ["clean"],
 ];
 
-const SEND_DOCUMENT_CHANGES = "SEND_DOCUMENT_CHANGES";
-const RECEIVE_DOCUMENT_CHANGES = "RECEIVE_DOCUMENT_CHANGES";
+//
+
 const { REACT_APP_API_URL } = process.env;
 
 //
@@ -42,20 +51,22 @@ const { REACT_APP_API_URL } = process.env;
 function TextEditor() {
   const { folderId, fileId } = useParams();
   const fileID = fileId;
-  const socketRef = useRef();
+  //
+  const socketRef = useRef(null);
+  // socketRef.current = useContext(SocketContext);
+  //
   const dispatch = useDispatch();
 
   const [quill, setQuill] = useState();
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [loadList, setLoadList] = useState(false);
 
   const authObj = useSelector((state) => state.auth);
   const { user, expiredAt, token } = authObj;
 
   useEffect(() => {
-    console.log(fileID);
     if (fileID === null || fileID === undefined) return;
-    socketRef.current = socketIOClient(REACT_APP_API_URL, {
-      query: { fileID },
-    });
+    socketRef.current = socketIOClient(REACT_APP_API_URL);
 
     return () => {
       socketRef.current.disconnect();
@@ -65,13 +76,44 @@ function TextEditor() {
   //
 
   useEffect(() => {
+    if (fileID === null || fileID === undefined) return;
+    if (socketRef.current === null) return;
+    const request = {
+      userID: user.userId,
+      roomID: fileID,
+      type: "edit",
+    };
+    //
+    socketRef.current.emit("join room", request, (error) => {
+      if (error) {
+        alert(error);
+      }
+    });
+
+    socketRef.current.on("all users", (roomDetails) => {
+      if (roomDetails.roomID !== fileID) return;
+      setOnlineUsers(roomDetails.users);
+      setLoadList(true);
+    });
+
+    socketRef.current.on("user left", (socketID) => {
+      setOnlineUsers((onlineUsers) =>
+        onlineUsers.filter((online) => online.id !== socketID)
+      );
+      setLoadList(true);
+    });
+  }, []);
+
+  //
+
+  useEffect(() => {
     if (quill == null || socketRef.current == null || fileID == null) return;
-    console.log("loading content:");
+    // console.log("loading content:");
     // loading document!
     return getDocumentContentById(fileID, user.userId)
       .then((result) => {
-        console.log("Contentul paginii este:");
-        console.log(result.data["ContentFile"]);
+        // console.log("Contentul paginii este:");
+        // console.log(result.data["ContentFile"]);
         quill.setContents(result.data["ContentFile"]);
         quill.enable();
       })
@@ -79,8 +121,6 @@ function TextEditor() {
         console.log("Error fetch Document Content!");
       });
   }, [quill, fileID, user.userId]);
-
-  //
 
   //
 
@@ -93,14 +133,12 @@ function TextEditor() {
         quill.updateContents(delta.body);
       }
     };
-    socketRef.current.on(RECEIVE_DOCUMENT_CHANGES, handler);
+    socketRef.current.on("receive doc edit", handler);
 
     return () => {
-      socketRef.current.off(RECEIVE_DOCUMENT_CHANGES, handler);
+      socketRef.current.off("receive doc edit", handler);
     };
   }, [quill, user.userId]);
-
-  //
 
   //
 
@@ -116,7 +154,7 @@ function TextEditor() {
         fileID: fileID,
         change_ID: uuidv4(),
       };
-      socketRef.current.emit(SEND_DOCUMENT_CHANGES, dataToSend);
+      socketRef.current.emit("send doc edit", dataToSend);
     };
     quill.on("text-change", handler);
 
@@ -159,8 +197,37 @@ function TextEditor() {
     <div className="page">
       <Navbar />
       <div className="edit-window">
+        <div className="details-bar">
+          <div className="users-box">
+            {loadList ? (
+              onlineUsers.map((userOnline, index) => {
+                return (
+                  <div
+                    className="user-profile"
+                    key={index}
+                    style={{
+                      display:
+                        userOnline.userID !== user.userId ? "block" : "none",
+                    }}
+                  >
+                    <div
+                      className="picture-profile"
+                      style={{ borderColor: userOnline.color }}
+                    >
+                      {userOnline.userID && (
+                        <Avatar userId={userOnline.userID} roomId={null} />
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <Spinner animation="border" />
+            )}
+          </div>
+          <SaveButton />
+        </div>
         <div className="edit-box" ref={wrapperRef}></div>
-        <SaveButton />
       </div>
     </div>
   );

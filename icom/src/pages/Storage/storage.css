@@ -8,7 +8,7 @@ a {
 .storage-content {
   height: 100vh;
   width: 100vw;
-  min-width: 700px;
+  min-width: 900px;
 }
 
 .f-nav-bar {
@@ -178,7 +178,7 @@ a {
 
 .folder-date {
   width: 30%;
-  min-width: 200px;
+  min-width: 150px;
   font-size: large;
   white-space: nowrap;
 }

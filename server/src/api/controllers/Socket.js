@@ -2,6 +2,15 @@ const { roomIsFull } = require("../controllers/Room");
 
 const users = [];
 
+var userColors = [
+  { color: "red", free: 0 },
+  { color: "blue", free: 0 },
+  { color: "green", free: 0 },
+  { color: "blueviolet", free: 0 },
+  { color: "brown", free: 0 },
+  { color: "chartreuse", free: 0 },
+];
+
 const getNumberOfUsersInRoom = (roomID, type) => {
   var users_number = 0;
   for (let i = 0; i < users.length; i++) {
@@ -27,8 +36,8 @@ const addUserInRoom = async ({ id, userID, roomID, type }) => {
 
   switch (type) {
     case "chat":
-      const users_number = getNumberOfUsersInRoom(roomID, type);
-      const isFull = await roomIsFull(roomID, userID, users_number);
+      const chatUsers = getNumberOfUsersInRoom(roomID, type);
+      const isFull = await roomIsFull(roomID, userID, chatUsers);
 
       if (isFull) {
         return { error: "Room is Full" };
@@ -38,6 +47,10 @@ const addUserInRoom = async ({ id, userID, roomID, type }) => {
       // code block
       break;
     case "video":
+      const videoUsers = getNumberOfUsersInRoom(roomID, type);
+      if (videoUsers > 5) {
+        return { error: "Room is Full" };
+      }
       break;
     default:
       return { error: "Invalid room type" };
@@ -52,8 +65,13 @@ const addUserInRoom = async ({ id, userID, roomID, type }) => {
     return { error: "UserID taken, user is already in room" };
   }
 
-  const user = { id, userID, roomID, type };
+  // assign color to use if he enter in a edit room
+  var color = undefined;
+  if (type === "edit") {
+    color = getColor(id);
+  }
 
+  const user = { id, userID, roomID, type, color: color };
   users.push(user);
 
   //
@@ -76,13 +94,14 @@ const addUserInRoom = async ({ id, userID, roomID, type }) => {
   return { user };
 };
 
+// delete from list when disconnect
 const deleteUser = (id) => {
   var removed = false;
 
   for (let i = 0; i < users.length; i++) {
     if (users[i].id === id) {
       console.log(
-        "Delete " +
+        "Disconnect " +
           users[i].userID.substring(users[i].userID.length - 6) +
           " from " +
           users[i].roomID.substring(users[i].roomID.length - 6)
@@ -90,43 +109,45 @@ const deleteUser = (id) => {
       users.splice(i, 1);
       i--;
       removed = true;
+      //
+      const freeColor = (element) => element.free === id;
+      const index = userColors.findIndex(freeColor);
+      if (index === -1) continue;
+      userColors[index].free = 0;
     }
   }
 
   return removed;
 };
 
-const removeUserFromList = (id, type) => {
-  var removed = false;
-
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].id === id && users[i].type === type) {
-      console.log(
-        "Remove " +
-          users[i].userID.substring(users[i].userID.length - 6) +
-          " from " +
-          users[i].roomID.substring(users[i].roomID.length - 6)
-      );
-      users.splice(i, 1);
-      i--;
-      removed = true;
-    }
-  }
-
-  return removed;
-};
-
+// get a user by socket id
 const getUser = (id) => users.find((user) => user.id === id);
 
+// get users, except the on who enter
 const getUsersInRoom = (roomID, id, type) =>
   users.filter(
     (user) => user.roomID === roomID && user.type === type && user.id !== id
   );
 
+// get all users
+const getAllUsers = (roomID, type) =>
+  users.filter((user) => user.roomID === roomID && user.type === type);
+
+// asign a color
+const getColor = (id) => {
+  const catchColor = (element) => element.free === 0;
+  const index = userColors.findIndex(catchColor);
+
+  if (index !== -1) {
+    userColors[index].free = id;
+    return userColors[index].color;
+  }
+};
+
 module.exports = {
   addUserInRoom,
-  removeUserFromList,
   getUser,
   getUsersInRoom,
   deleteUser,
+  getAllUsers,
 };
