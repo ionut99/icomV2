@@ -103,31 +103,38 @@ io.on("connection", (socket) => {
   });
 
   // Listen for new messages
-  socket.on("send chat message", (message) => {
-    io.to(message.roomID).emit("receive chat message", message);
+  socket.on("send chat message", (request) => {
+    io.to(request.roomID).emit("receive chat message", request);
 
     // save message
-    const mes_res = InsertNewMessage(message);
+    const mes_res = InsertNewMessage(request);
 
     if (mes_res === null) {
       console.log("Error save message !");
 
-      socket.emit("error insert message", { message });
+      socket.emit("error insert message", { request });
     } else {
       console.log(
         "MESSAGE: " +
-          message.messageBody +
+          request.messageBody +
           " by " +
-          message.senderName +
+          request.senderName +
           " on " +
-          message.roomID
+          request.roomID
       );
     }
 
     //
   });
 
-  //
+  //listening for typing
+  socket.on("typing chat message", (request) => {
+    io.to(request.roomID).emit("user typing", request);
+
+    console.log(request);
+
+    //
+  });
 
   // Listen for new document changes
   socket.on("send doc edit", (delta) => {

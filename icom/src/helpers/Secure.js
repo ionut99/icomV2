@@ -30,14 +30,21 @@ const Secure = () => {
 
   const GenerateDiffieHelmanKeys = () => {
     const rprime = getRandPrime(500, 2000);
-    const object = crypto.createDiffieHellman(rprime);
+    const object = crypto.createDiffieHellman(512);
     setInstance(object);
     //
   };
 
   const getPublicKey = () => {
-    if (instance === null) return;
-    return instance.generateKeys("base64");
+    // Defining prime length
+    var prime_length = 60;
+
+    // Creating DiffieHellman keyexchange object
+    var diffHell = crypto.createDiffieHellman(prime_length);
+
+    // Displays keys which are encoded
+    console.log("Result is:");
+    console.log(diffHell.generateKeys("base64"));
   };
 
   const generateSharedKey = (theOtherKey) => {

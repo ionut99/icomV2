@@ -41,6 +41,10 @@ function Room(props) {
   const { channelID, currentChannelName, channelFolderId, RoomMessages } =
     chatObj;
 
+  const [userTyping, setUserTyping] = useState({
+    userName: undefined,
+    userID: undefined,
+  });
   const [loaded, setLoaded] = useState(false);
   //
   const [lastMessageTime, setLastMessageTime] = useState({
@@ -114,14 +118,13 @@ function Room(props) {
     };
   }, [receiveNewMessage]);
 
-  //
   // receive message from socket and insert in local messages list
   useEffect(() => {
     if (channelID === null) return;
     if (socketRef.current === null) return;
 
     socketRef.current.on("receive chat message", (message) => {
-      if (message.roomID != null) {
+      if (message.roomID !== null) {
         dispatch(UpdateLastMessage(message.messageBody, message.roomID));
         if (message.roomID === channelID) {
           dispatch(InsertNewMessageLocal(message));
@@ -134,7 +137,39 @@ function Room(props) {
     };
   }, [channelID]);
   // receive message
-  //
+
+  // receive typing event
+  useEffect(() => {
+    if (channelID === null) return;
+    if (socketRef.current === null) return;
+
+    socketRef.current.on("user typing", (request) => {
+      console.log("receive typing");
+      if (request.roomID === channelID) {
+        setUserTyping(request);
+      }
+    });
+    // setTimeout(setUserTyping(undefined), 2000);
+    return () => {
+      // socketRef.current.off("user typing");
+    };
+  }, [channelID]);
+  // receive typing event
+
+  useEffect(() => {
+    if (channelID === null) return;
+    if (userTyping.userID === undefined) return;
+    const timeoutID = setTimeout(() => {
+      setUserTyping({
+        userName: undefined,
+        userID: undefined,
+      });
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeoutID);
+    };
+  }, [userTyping]);
 
   return (
     <>
@@ -150,6 +185,17 @@ function Room(props) {
             </div>
             <div className="room-name">
               <p>{currentChannelName}</p>
+              <div
+                className="is-typing"
+                style={{
+                  display:
+                    userTyping.userID && userTyping.userID !== user.userId
+                      ? "block"
+                      : "none",
+                }}
+              >
+                <p>{userTyping.userName} is typing ...</p>
+              </div>
             </div>
             <div className="room-instrument">
               <Link to={`/storage/folder/${channelFolderId}`}>

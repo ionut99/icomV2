@@ -3,11 +3,11 @@ import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
 import "./avatar.css";
 import { Spinner } from "react-bootstrap";
 
+import defaultAvatar from "../../images/defaultAvatar.png";
+
 function Avatar(props) {
   const { userId, roomId } = props;
-
   const [actualSrc, setActualSrc] = useState("");
-
   //
   const [loaded, setLoaded] = useState(false);
 
@@ -17,7 +17,9 @@ function Avatar(props) {
 
     const avatarSrc = async (userId) => {
       const avatarSrc = await getAvatarPictureAsync(userId, roomId);
-      if (avatarSrc !== "FAILED") {
+      if (avatarSrc === "failed" || avatarSrc === "default") {
+        return defaultAvatar;
+      } else {
         return avatarSrc;
       }
     };

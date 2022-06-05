@@ -50,9 +50,17 @@ export const userLoginAsync = (email, password) => async (dispatch) => {
 // handle get Avatar Picture
 export const getAvatarPictureAsync = async (userId, roomId) => {
   const resultBlob = await getAvatarPictureService(userId, roomId);
+  //
   return new Promise((resolve) => {
+    //
+    //
+
+    if (resultBlob.status === 422) {
+      return resolve("default");
+    }
+
     if (resultBlob.error === true || userId === undefined) {
-      return resolve("FAILED");
+      return resolve("failed");
     }
     const fileReaderInstance = new FileReader();
     fileReaderInstance.readAsDataURL(resultBlob.data);

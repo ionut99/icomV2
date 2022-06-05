@@ -24,7 +24,6 @@
   padding-top: 5px;
   background-color: var(--white-color);
   border-bottom: 2px solid var(--color-element-hover);
-  /* z-index: 1; */
 }
 
 .user_picture {
@@ -39,7 +38,6 @@
   margin-left: 2px;
   display: flex;
   flex-direction: row;
-  /* border: solid black; */
   border-radius: 10px;
   border: 2px solid var(--color-element-hover);
 }
@@ -156,4 +154,5 @@
 
 .dropdown-content .dropdown-instrument:hover {
   background-color: #ddd;
+  cursor: pointer;
 }

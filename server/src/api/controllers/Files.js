@@ -1,7 +1,6 @@
 const multer = require("multer");
 const path = require("path");
 var fs = require("fs");
-var uui = require("uuid");
 
 const {
   UpdateAvatarPathData,
@@ -20,8 +19,6 @@ const {
   checkFileExists,
   extractProfilePicturePath,
 } = require("../helpers/files_utils");
-
-// const defaultAvatarPicture = path.join(__dirname, "../../../", "users/default/");
 
 const storageFile = multer.diskStorage({
   destination: path.join(__dirname, "../../../users/tempDir/"),
@@ -277,7 +274,6 @@ async function GetProfilePicture(req, res) {
     }
 
     var currentAvatarPath = await extractProfilePicturePath(userId, roomId);
-
     currentAvatarPath = path.join(__dirname, "../../../", currentAvatarPath);
 
     var options = {
