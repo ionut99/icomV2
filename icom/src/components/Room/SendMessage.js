@@ -20,6 +20,8 @@ import { SocketContext } from "../../context/socket";
 import { v4 as uuidv4 } from "uuid";
 import date from "date-and-time";
 
+import Secure from "../../helpers/Secure";
+
 function SendMessage() {
   //
   const dispatch = useDispatch();
@@ -36,6 +38,8 @@ function SendMessage() {
   const chatObj = useSelector((state) => state.chatRedu);
   const { channelID, channelFolderId, currentChannelName } = chatObj;
   //
+  const { GenerateDiffieHelmanKeys, getPublicKey, generateSharedKey } =
+    Secure();
   //
   const [fileToSendInfo, setFileToSendInfo] = useState({
     currentFile: undefined,
@@ -129,6 +133,12 @@ function SendMessage() {
     if (newMessage === "" || newMessage === " ") return;
     if (socketRef.current === null) return;
     //
+
+    GenerateDiffieHelmanKeys();
+    const pket = getPublicKey();
+    console.log("cheie publica: ");
+    console.log(pket);
+
     var dataToSend = {
       ID_message: uuidv4(),
       senderID: user.userId,
