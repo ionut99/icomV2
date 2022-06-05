@@ -38,7 +38,7 @@ function Avatar(props) {
   return (
     <>
       {loaded ? (
-        <img src={actualSrc} alt="userAvatar jmecher" />
+        <img src={actualSrc} alt="cool avatar" />
       ) : (
         <Spinner animation="border" />
       )}

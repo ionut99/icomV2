@@ -12,10 +12,7 @@ const {
   handleResponse,
 } = require("../helpers/utils");
 
-const {
-  generateOfuscatedPassword,
-  generateRandomSalt,
-} = require("../helpers/user_utils");
+const { generateOfuscatedPassword } = require("../helpers/user_utils");
 
 // validate user credentials
 async function SignInUser(req, res) {

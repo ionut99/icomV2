@@ -5,10 +5,16 @@ const { SignInUser, LogOutUser, VerifyToken } = require("../controllers/Auth");
 const {
   getNewUserChatList,
   GetUserDetails,
-  InserNewUserAccount,
   EditUserAccountAsync,
-  adminGetUserList,
 } = require("../controllers/User");
+
+//
+const {
+  InserNewUserAccount,
+  adminGetUserList,
+} = require("../controllers/Admin");
+//
+
 const { GetNOTPartList } = require("../controllers/Room");
 const { UpdateProfilePicture } = require("../controllers/Files");
 const { authMiddleware } = require("../middlewares/Auth");

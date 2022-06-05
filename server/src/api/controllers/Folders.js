@@ -1,5 +1,3 @@
-// return messages from a room
-const { NULL } = require("mysql/lib/protocol/constants/types");
 var uui = require("uuid");
 
 const { handleResponse } = require("../helpers/utils");
@@ -7,7 +5,7 @@ const { handleResponse } = require("../helpers/utils");
 const {
   InsertFolderUserRelationDataBase,
   InsertNewFolderDataBase,
-  GetFolderDetails,
+  GetFolderDetailsService,
   GetSharedPrivateFolders,
   GetSharedGroupFolders,
 } = require("../services/Folders");
@@ -48,7 +46,7 @@ async function AddNewFolder(req, res) {
     // de adaugat si roomId pentru folderele care sunt create la comun
     // adica verificam parentId
     if (parentId !== "root" && typeof path === "object" && path.length > 0) {
-      const parentFolder = await GetFolderDetails(parentId);
+      const parentFolder = await GetFolderDetailsService(parentId);
       if (parentFolder === "FAILED") {
         console.log("Error get details about folder!");
         return handleResponse(req, res, 412, " DataBase Error ");
@@ -95,7 +93,7 @@ async function AddNewFolder(req, res) {
 }
 
 // Get Folder
-async function GetFolderDataBase(req, res) {
+async function GetFolderDetails(req, res) {
   try {
     const folderId = req.body.folderId;
     const userId = req.body.userId;
@@ -103,7 +101,7 @@ async function GetFolderDataBase(req, res) {
     if (folderId === undefined || userId === undefined)
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
 
-    var folderObject = await GetFolderDetails(folderId);
+    var folderObject = await GetFolderDetailsService(folderId);
 
     if (folderObject === "FAILED") {
       return handleResponse(req, res, 412, " DataBase Error ");
@@ -204,7 +202,7 @@ async function GetChildFilesList(req, res) {
 
 module.exports = {
   AddNewFolder,
-  GetFolderDataBase,
+  GetFolderDetails,
   GetChildFolderList,
   GetChildFilesList,
 };

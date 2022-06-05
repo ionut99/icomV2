@@ -129,10 +129,8 @@ io.on("connection", (socket) => {
 
   //listening for typing
   socket.on("typing chat message", (request) => {
+    // verificare
     io.to(request.roomID).emit("user typing", request);
-
-    console.log(request);
-
     //
   });
 

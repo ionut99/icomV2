@@ -13,6 +13,8 @@ import classNames from "classnames";
 import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
 import { handleReturnFileIcon } from "../../helpers/FileIcons";
 
+import { getPicturePreview } from "../../asyncActions/fileAsyncActions";
+
 import "./room.css";
 
 //
@@ -25,7 +27,9 @@ function Message(props) {
   //
 
   const [messageDetails, setmMssageDetails] = useState(false);
-
+  //
+  const [pictureSrc, setPictureSrc] = useState(undefined);
+  //
   useEffect(() => {
     let isMounted = true;
     const checkIfClickedOutside = (e) => {
@@ -46,6 +50,34 @@ function Message(props) {
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
   }, [messageDetails]);
+
+  // return preview of image
+  useEffect(() => {
+    if (message.fileId === undefined) return;
+    //
+    if (
+      message.type !== "image/jpeg" &&
+      message.type !== "image/png" &&
+      message.type !== "image/gif"
+    )
+      return;
+    //
+    let isMounted = true;
+    const getPicture = async (fileId, userId) => {
+      const avatarSrc = await getPicturePreview(fileId, userId);
+      if (avatarSrc === "failed" || avatarSrc === "default") return undefined;
+      else return avatarSrc;
+    };
+
+    getPicture(message.fileId, user.userId).then((result) => {
+      if (isMounted) setPictureSrc(result);
+    });
+
+    // setLoaded(true);
+    return () => {
+      isMounted = false;
+    };
+  }, [message]);
 
   return (
     <div
@@ -69,6 +101,7 @@ function Message(props) {
             : message.senderName}
         </div>
         <div className="message_content">
+          {/* <img src={pictureSrc} alt="message picture" /> */}
           <div
             className="message_icon"
             style={{

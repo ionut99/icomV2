@@ -83,7 +83,7 @@ function InsertFolderUserRelationDataBase(folderId, userId, uuidRoom) {
   }
 }
 
-function GetFolderDetails(folderId) {
+function GetFolderDetailsService(folderId) {
   let selectQuery = "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ?";
   let query = mysql.format(selectQuery, [
     "folders",
@@ -213,7 +213,7 @@ function DeleteRoomFolderAndUserRelation(roomID) {
 
 module.exports = {
   InsertNewFolderDataBase,
-  GetFolderDetails,
+  GetFolderDetailsService,
   InsertFolderUserRelationDataBase,
   GetSharedPrivateFolders,
   GetSharedGroupFolders,

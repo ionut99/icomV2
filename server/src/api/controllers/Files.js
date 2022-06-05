@@ -92,7 +92,6 @@ async function UpdateProfilePicture(req, res) {
             throw err;
           } else {
             console.log("Successfully stored new avatar");
-            // var pathToStore = newPath + "/" + createdTime + " " + fileName;
             var pathToStore = path.join(
               "users/" + userID + "/",
               createdTime + " " + fileName
@@ -111,7 +110,6 @@ async function UpdateProfilePicture(req, res) {
       );
     });
   } catch (err) {
-    //console.log(err);
     return handleResponse(req, res, 190, { UpdateProfilePicture: "FAILED" });
   }
 }

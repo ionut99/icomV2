@@ -86,3 +86,24 @@ export const getDocumentContentById = async (fileId, userId) => {
     };
   }
 };
+
+// get message image preview
+export const getPicturePreviewService = async (fileId, userId) => {
+  try {
+    const response = await axios.post(
+      `${REACT_APP_API_URL}/document/image`,
+      {
+        fileId,
+        userId,
+      },
+      { responseType: "blob" }
+    );
+
+    return response;
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};

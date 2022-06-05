@@ -2,9 +2,11 @@ import { UploadNewStoringFile, DownloadFileService } from "../services/file";
 import { addChildFile } from "../actions/userActions";
 import { v4 as uuidv4 } from "uuid";
 
+import { getPicturePreviewService } from "../services/file";
+
 // handle upload new file
 export const UploadFileForStoring =
-  (folderId, userId, createdTime,fileId, FILE) => async (dispatch) => {
+  (folderId, userId, createdTime, fileId, FILE) => async (dispatch) => {
     const res_addFile = await UploadNewStoringFile(
       folderId,
       userId,
@@ -34,8 +36,6 @@ export const UploadFileForStoring =
 
 // handle download file
 export const DownloadFileFromServer = (file, userId) => async (dispatch) => {
-  // const res_addFile = await DownloadFileService(fileId, userId);
-  // console.log(res_addFile);
   DownloadFileService(file.fileId, userId).then(
     (res) => {
       console.log(res.data);
@@ -54,4 +54,22 @@ export const DownloadFileFromServer = (file, userId) => async (dispatch) => {
       alert("Something went wrong with file download!");
     }
   );
+};
+
+export const getPicturePreview = async (fileId, userId) => {
+  const resultBlob = await getPicturePreviewService(fileId, userId);
+  //
+  return new Promise((resolve) => {
+    //
+
+    if (resultBlob.error === true || userId === undefined) {
+      return resolve("failed");
+    }
+    const fileReaderInstance = new FileReader();
+    fileReaderInstance.readAsDataURL(resultBlob.data);
+    fileReaderInstance.onload = () => {
+      const base64data = fileReaderInstance.result;
+      return resolve(base64data);
+    };
+  });
 };
