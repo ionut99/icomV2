@@ -208,37 +208,6 @@ async function GetRoomSearchList(req, res) {
   }
 }
 
-// return all active connections
-async function GetActiveRoomConnections(req, res) {
-  try {
-    const userId = req.body.userId;
-
-    if (userId === null) {
-      return handleResponse(req, res, 410, "Invalid Request Parameters ");
-    }
-
-    const activeRoomConnections = await GetUserRoomsList(userId)
-      .then(function (result) {
-        return result;
-      })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
-
-    return handleResponse(req, res, 200, { activeRoomConnections });
-  } catch (error) {
-    console.error(error);
-    return handleResponse(
-      req,
-      res,
-      412,
-      " Failed to fetch list with conversations! "
-    );
-  }
-}
-
 //
 
 async function GetUserDetails(req, res) {
@@ -385,5 +354,4 @@ module.exports = {
   InserNewUserAccount,
   EditUserAccountAsync,
   adminGetUserList,
-  GetActiveRoomConnections,
 };

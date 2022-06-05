@@ -1,25 +1,33 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IconContext } from "react-icons";
 import * as FaIcons from "react-icons/fa";
 import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 import { updateCurrentChannel } from "../../actions/userActions";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
-import Avatar from "../Avatar/Avatar";
 import ChangePassword from "../ChangePassword/ChangePassword";
+import Avatar from "../Avatar/Avatar";
 import { Button } from "react-bootstrap";
 
 import Sidebar from "./Sidebar";
+import { setSocketConnectionStatus } from "../../actions/userActions";
+import { getActiveRoomsService } from "../../services/user";
 
+import { SocketContext } from "../../context/socket";
 import "./navbar.css";
 
 function Navbar() {
-  const ref = useRef();
-
+  const navbarRef = useRef();
+  const socketRef = useRef();
   const dispatch = useDispatch();
-
+  //
+  socketRef.current = useContext(SocketContext);
+  //
   const authObj = useSelector((state) => state.auth);
-  const { user, userAvatar } = authObj;
+  const { user } = authObj;
+  //
+  const chatObj = useSelector((state) => state.chatRedu);
+  const { ConnectionsStatus } = chatObj;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [sidebar, setSidebar] = useState(false);
@@ -45,6 +53,9 @@ function Navbar() {
   };
 
   function LogOut() {
+    // disconnect socket...
+    // socketRef.current.disconnect();
+    // dispatch(setSocketConnectionStatus(false));
     dispatch(userLogoutAsync());
     dispatch(updateCurrentChannel(null, "", []));
   }
@@ -53,8 +64,8 @@ function Navbar() {
     const checkIfClickedOutside = (e) => {
       if (
         (isMenuOpen || sidebar) &&
-        ref.current &&
-        !ref.current.contains(e.target)
+        navbarRef.current &&
+        !navbarRef.current.contains(e.target)
       ) {
         setIsMenuOpen(false);
         setSidebar(false);
@@ -68,8 +79,46 @@ function Navbar() {
     };
   }, [isMenuOpen, sidebar]);
 
+  // do link with socket ..
+  useEffect(() => {
+    if (ConnectionsStatus === true) return;
+    //
+    console.log("socket links");
+    const getConnections = async (userId) => {
+      const channelsList = await getActiveRoomsService(userId);
+      return channelsList.data["activeRoomConnections"];
+    };
+
+    getConnections(user.userId).then((activeConnections) => {
+      for (let i = 0; i < activeConnections.length; i++) {
+        if (
+          activeConnections[i].RoomID === undefined ||
+          activeConnections[i].RoomID === ""
+        )
+          continue;
+        const request = {
+          userID: user.userId,
+          roomID: activeConnections[i].RoomID,
+          type: "chat",
+        };
+        //
+        socketRef.current.emit("join room", request, (error) => {
+          if (error) {
+            alert(error);
+          }
+        });
+      }
+    });
+    dispatch(setSocketConnectionStatus(true));
+    //
+    return () => {
+      // socket.disconnect();
+    };
+  }, [ConnectionsStatus]);
+  // do link with socket ..
+
   return (
-    <div className="wrapper" ref={ref}>
+    <div className="wrapper" ref={navbarRef}>
       <ConfirmDialog
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
@@ -128,14 +177,6 @@ function Navbar() {
                 Email={user.email}
               />
             </div>
-            {/* <div
-              className="dropdown-options"
-              style={{
-                display: user.isAdmin ? "flex" : "none",
-              }}
-            >
-              <AddUser />
-            </div> */}
             <div className="dropdown-options">
               <Button
                 className="user-menu-button"

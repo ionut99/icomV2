@@ -159,9 +159,9 @@ function GetPartListData(ChannelID) {
   });
 }
 
-function GetRoomDetailsData(ChannelID) {
+function GetRoomDetailsData(roomID) {
   let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
-  let query = mysql.format(selectQuery, ["room", "room.ID", ChannelID]);
+  let query = mysql.format(selectQuery, ["room", "room.ID", roomID]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
       if (err) {

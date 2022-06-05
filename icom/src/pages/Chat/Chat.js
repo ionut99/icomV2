@@ -1,17 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Modal, Form, Spinner } from "react-bootstrap";
-import socketIOClient from "socket.io-client";
 
 import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 import {
   setUserSearchBoxContent,
   UpdateAddUserInGroup,
   setPersonSearchList,
-  InsertNewMessageLocal,
-  UpdateLastMessage,
 } from "../../actions/userActions";
 import { setAuthToken } from "../../services/auth";
 import Navbar from "../../components/Navbar/Navbar";
@@ -23,8 +20,6 @@ import {
   userSearchPersonListAsync,
   CreateNewGroup,
 } from "../../asyncActions/userAsyncActions";
-
-import { getActiveRoomsService } from "../../services/user";
 
 import ConversationList from "../../components/Search/ConversationList";
 import PersonList from "../../components/Search/PersonList";
@@ -40,16 +35,15 @@ function setSearchBoxContent(search_box_content, dispatch) {
   dispatch(setUserSearchBoxContent(search_box_content));
 }
 
-const { REACT_APP_API_URL } = process.env;
+// const { REACT_APP_API_URL } = process.env;
 
 // export socket for use in SendMessage.js
-export const socket = socketIOClient(REACT_APP_API_URL);
+// export const socket = socketIOClient(REACT_APP_API_URL);
 //
 
 function Chat() {
   const dispatch = useDispatch();
-  const socketRef = useRef();
-  socketRef.current = socket;
+
   //
   const [newGroup, SetnewGroup] = useState(false);
   const [groupName, SetgroupName] = useState("");
@@ -70,6 +64,7 @@ function Chat() {
     dispatch(setUserSearchBoxContent(""));
     dispatch(userSetRoomListAsync("", user.userId));
   };
+  //
   function SearchEnter(event) {
     if (event.key === "Enter") {
       getSearchUserList();
@@ -116,58 +111,6 @@ function Chat() {
   useEffect(() => {
     setLoaded(true);
   }, []);
-
-  // do link with socket ..
-  useEffect(() => {
-    //
-    const getConnections = async (userId) => {
-      const channelsList = await getActiveRoomsService(userId);
-      return channelsList.data["activeRoomConnections"];
-    };
-
-    getConnections(user.userId).then((activeConnections) => {
-      for (let i = 0; i < activeConnections.length; i++) {
-        if (
-          activeConnections[i].RoomID === undefined ||
-          activeConnections[i].RoomID === ""
-        )
-          continue;
-        const dataSend = {
-          userID: user.userId,
-          roomID: activeConnections[i].RoomID,
-        };
-        //
-        socketRef.current.emit("join chat room", dataSend, (error) => {
-          if (error) {
-            alert(error);
-          }
-        });
-      }
-    });
-    //
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, []);
-
-  //
-  // receive message from socket and insert in local messages list
-  useEffect(() => {
-    if (channelID === null) return;
-    if (socketRef.current === null) return;
-
-    socketRef.current.on("send chat message", (message) => {
-      if (message.roomID != null) {
-        dispatch(UpdateLastMessage(message.messageBody, message.roomID));
-        if (message.roomID === channelID) {
-          dispatch(InsertNewMessageLocal(message));
-          setReceiveNewMessage(true);
-        }
-      }
-    });
-  }, [channelID]);
-  // receive message
-  //
 
   return (
     <div className="page">

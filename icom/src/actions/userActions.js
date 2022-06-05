@@ -146,6 +146,15 @@ export const setPersonSearchList = (userSearchList) => {
   };
 };
 
+export const setSocketConnectionStatus = (status) => {
+  return {
+    type: "SET_SOCKET_STATUS",
+    payload: {
+      status,
+    },
+  };
+};
+
 export const setRoomList = (RoomSearchList) => {
   return {
     type: USER_SET_ROOM_LIST,
