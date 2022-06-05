@@ -14,7 +14,7 @@ const {
 } = require("../services/Files");
 //
 const { handleResponse } = require("../helpers/utils");
-const { GetFolderDetails } = require("../services/Folders");
+const { GetFolderDetailsService } = require("../services/Folders");
 const {
   checkFileExists,
   extractProfilePicturePath,
@@ -200,7 +200,7 @@ async function UploadNewStoredFile(req, res) {
             // similarity
 
             if (folderId !== "root") {
-              GetFolderDetails(folderId)
+              GetFolderDetailsService(folderId)
                 .then(function (parentFolder) {
                   //console.log(parentFolder);
                   if (parentFolder[0].RoomIdBeneficiary !== null) {

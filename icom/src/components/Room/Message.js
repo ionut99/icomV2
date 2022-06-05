@@ -64,9 +64,9 @@ function Message(props) {
     //
     let isMounted = true;
     const getPicture = async (fileId, userId) => {
-      const avatarSrc = await getPicturePreview(fileId, userId);
-      if (avatarSrc === "failed" || avatarSrc === "default") return undefined;
-      else return avatarSrc;
+      const pictureSrc = await getPicturePreview(fileId, userId);
+      if (pictureSrc === "failed") return undefined;
+      else return pictureSrc;
     };
 
     getPicture(message.fileId, user.userId).then((result) => {

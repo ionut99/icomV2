@@ -1,5 +1,3 @@
-var uui = require("uuid");
-const date = require("date-and-time");
 const { handleResponse } = require("../helpers/utils");
 
 const {
@@ -15,15 +13,11 @@ const {
   GetUserRoomsList,
   GetUserDetailsData,
 } = require("../services/User");
-
-// const { InsertNewFolderDataBase } = require("../services/Folders");
-
-const {
-  InsertNewUserAccountData,
-  EditUserAccountDataBase,
-} = require("../services/User");
+//
+const { EditUserAccountDataBase } = require("../services/User");
 const { GetUserByID } = require("../services/Auth");
 
+const date = require("date-and-time");
 //
 
 //
