@@ -21,11 +21,7 @@ const {
   extractProfilePicturePath,
 } = require("../helpers/files_utils");
 
-const defaultAvatarPicure = path.join(
-  __dirname,
-  "../../../",
-  "users/default/default_avatar.png"
-);
+// const defaultAvatarPicture = path.join(__dirname, "../../../", "users/default/");
 
 const storageFile = multer.diskStorage({
   destination: path.join(__dirname, "../../../users/tempDir/"),
@@ -282,11 +278,7 @@ async function GetProfilePicture(req, res) {
 
     var currentAvatarPath = await extractProfilePicturePath(userId, roomId);
 
-    if (currentAvatarPath === "") {
-      currentAvatarPath = defaultAvatarPicure;
-    } else {
-      currentAvatarPath = path.join(__dirname, "../../../", currentAvatarPath);
-    }
+    currentAvatarPath = path.join(__dirname, "../../../", currentAvatarPath);
 
     var options = {
       //root: path.join(__dirname, "public"),
@@ -297,7 +289,7 @@ async function GetProfilePicture(req, res) {
       },
     };
 
-    if (currentAvatarPath !== null && currentAvatarPath !== "") {
+    if (currentAvatarPath !== null && currentAvatarPath !== undefined) {
       res.sendFile(currentAvatarPath, options, function (error) {
         if (error) {
           console.error(error);

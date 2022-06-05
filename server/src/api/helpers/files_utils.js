@@ -17,7 +17,7 @@ function checkFileExists(filepath) {
 
 async function extractProfilePicturePath(userId, roomId) {
   if (userId === null || userId === undefined) {
-    return "";
+    return "users/default/defaultAvatar.png";
   }
   if (roomId === null) {
     const userAvatar = await GetUserDetailsData(userId)
@@ -31,7 +31,7 @@ async function extractProfilePicturePath(userId, roomId) {
       );
 
     if (userAvatar === null) {
-      return "";
+      return "users/default/defaultAvatar.png";
     }
     return userAvatar;
   } else if (roomId !== null) {
@@ -65,10 +65,10 @@ async function extractProfilePicturePath(userId, roomId) {
           })
         );
 
-      if (userDetails2.Avatar === null) return "";
+      if (userDetails2.Avatar === null) return "users/default/defaultAvatar.png";
       return userDetails2.Avatar;
     } else {
-      if (roomDetails.Avatar === null) return "";
+      if (roomDetails.Avatar === null) return "users/default/defaultGroupAvatar.png";
       return roomDetails.Avatar;
     }
   }
