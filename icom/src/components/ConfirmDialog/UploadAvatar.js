@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useState } from "react";
 // import { updateUserAvatar } from "../../actions/authActions";
-import { UpdateProfilePicture } from "../../asyncActions/userAsyncActions";
+import { updateProfilePicture } from "../../asyncActions/fileAsyncActions";
 import Avatar from "../Avatar/Avatar";
 
 function UploadAvatar(props) {
@@ -87,7 +87,7 @@ function UploadAvatar(props) {
   };
 
   const handleConfirmation = () => {
-    dispatch(UpdateProfilePicture(user.userId, userInfo.file));
+    dispatch(updateProfilePicture(user.userId, userInfo.file));
     // dispatch(updateUserAvatar(userInfo.filepreview));
     setDiscard(false);
     handleClose();

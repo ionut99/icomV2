@@ -21,8 +21,9 @@ import { selectFolder } from "../../actions/folderActions";
 import {
   userSetFolderList,
   userSetFileList,
-  userGetFolderDetails,
-} from "../../asyncActions/userAsyncActions";
+} from "../../asyncActions/folderAsyncActions";
+
+import { userGetFolderDetails } from "../../asyncActions/folderAsyncActions";
 
 import { ROOT_FOLDER } from "../../reducers/folderReducer";
 

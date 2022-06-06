@@ -12,8 +12,8 @@ import {
 
 import {
   updateChannelDetails,
-  CreateNewConversation,
-  AddNewMemberInGroup,
+  createNewConversation,
+  addNewMemberInGroup,
 } from "../../asyncActions/userAsyncActions";
 
 import { v4 as uuidv4 } from "uuid";
@@ -49,7 +49,7 @@ function PersonList() {
     }
 
     dispatch(
-      CreateNewConversation(
+      createNewConversation(
         userSearchListName + " # " + userName,
         1,
         userSearchListID,
@@ -63,7 +63,7 @@ function PersonList() {
   };
 
   const ClickAddPersonInGroup = (RoomID, userSearchListID) => {
-    dispatch(AddNewMemberInGroup(RoomID, userSearchListID));
+    dispatch(addNewMemberInGroup(RoomID, userSearchListID));
     dispatch(setPersonSearchList([]));
     dispatch(UpdateAddUserInGroup(""));
   };

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Modal, Form, Spinner } from "react-bootstrap";
@@ -18,7 +18,7 @@ import moment from "moment";
 import {
   userSetRoomListAsync,
   userSearchPersonListAsync,
-  CreateNewGroup,
+  createNewGroup,
 } from "../../asyncActions/userAsyncActions";
 
 import ConversationList from "../../components/Search/ConversationList";
@@ -35,12 +35,6 @@ function setSearchBoxContent(search_box_content, dispatch) {
   dispatch(setUserSearchBoxContent(search_box_content));
 }
 
-// const { REACT_APP_API_URL } = process.env;
-
-// export socket for use in SendMessage.js
-// export const socket = socketIOClient(REACT_APP_API_URL);
-//
-
 function Chat() {
   const dispatch = useDispatch();
 
@@ -56,7 +50,7 @@ function Chat() {
   const [receiveNewMessage, setReceiveNewMessage] = useState(false);
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { search_box_content, addUserInGroup, channelID } = chatObj;
+  const { search_box_content, addUserInGroup } = chatObj;
 
   const handleCloseChannelOptions = () => {
     dispatch(UpdateAddUserInGroup(""));
@@ -85,7 +79,7 @@ function Chat() {
   function handleSubmit(e) {
     e.preventDefault();
     //
-    dispatch(CreateNewGroup(groupName, 0, user.userId, uuidv4()));
+    dispatch(createNewGroup(groupName, 0, user.userId, uuidv4()));
     closeModal();
   }
   //

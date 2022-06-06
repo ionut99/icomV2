@@ -2,7 +2,11 @@ import { UploadNewStoringFile, DownloadFileService } from "../services/file";
 import { addChildFile } from "../actions/folderActions";
 // import { v4 as uuidv4 } from "uuid";
 
-import { getPicturePreviewService } from "../services/file";
+import {
+  getDocumentFileService,
+  getPicturePreviewService,
+  updateProfilePictureService,
+} from "../services/file";
 
 // handle upload new file
 export const UploadFileForStoring =
@@ -73,3 +77,19 @@ export const getPicturePreview = async (fileId, userId) => {
     };
   });
 };
+
+// handle getDocument
+export const GetDocumentFile = (FileName, FilePath) => async (dispatch) => {
+  const documentData = await getDocumentFileService(FileName, FilePath);
+  // aici avem nevoie de verificari...
+  const string = documentData.data;
+  //dispatch(GetFileDocument(string));
+  return string;
+};
+
+export const updateProfilePicture =
+  (userID, NewPicture) => async (dispatch) => {
+    const varVerify = await updateProfilePictureService(userID, NewPicture);
+    // TO DO - display message
+    console.log(varVerify);
+  };

@@ -5,7 +5,7 @@ import "./search.css";
 import { Spinner } from "react-bootstrap";
 import { Button, Modal, Form } from "react-bootstrap";
 
-import { DeleteConversation } from "../../asyncActions/userAsyncActions";
+import { deleteConversation } from "../../asyncActions/userAsyncActions";
 import { updateCurrentChannel } from "../../actions/userActions";
 import Conversation from "./Conversation";
 
@@ -31,7 +31,7 @@ const ConversationList = () => {
     if (currentChannel.name === undefined || currentChannel.id === undefined)
       return;
 
-    dispatch(DeleteConversation(currentChannel.id, user.userId));
+    dispatch(deleteConversation(currentChannel.id, user.userId));
     dispatch(updateCurrentChannel(null, "", []));
     closeModal();
   }

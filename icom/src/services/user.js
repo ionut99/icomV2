@@ -90,7 +90,7 @@ export const getActiveRoomsService = async (userId) => {
 };
 
 // get messages list from a room
-export const getChannelDetails = async (ChannelID, userId) => {
+export const getChannelDetailsService = async (ChannelID, userId) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/details`, {
       ChannelID,
@@ -125,7 +125,7 @@ export const getRoomMessagesWithTime = async (
 };
 
 // insert new room in database
-export const CreateNewRoomDataBase = async (
+export const createNewRoomService = async (
   RoomName,
   Private,
   userSearchListID,
@@ -149,7 +149,7 @@ export const CreateNewRoomDataBase = async (
 };
 
 // insert new member in a group in database
-export const AddNewMemberInRoomDataBase = async (RoomID, userSearchListID) => {
+export const addNewMemberInRoomService = async (RoomID, userSearchListID) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/newmember`, {
       RoomID,
@@ -179,7 +179,7 @@ export const getParticipantsListService = async (roomID) => {
 
 // delete room from database
 
-export const DeleteRoomDataBase = async (roomID) => {
+export const deleteRoomService = async (roomID) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/deleteroom`, {
       roomID,
@@ -194,7 +194,7 @@ export const DeleteRoomDataBase = async (roomID) => {
 
 // create new group in database
 
-export const CreateNewGroupDataBase = async (
+export const createNewGroupService = async (
   NewGroupName,
   Type,
   userID,
@@ -215,43 +215,7 @@ export const CreateNewGroupDataBase = async (
   }
 };
 
-// get document data
-export const GetDocumentFileData = async (FileName, FilePath) => {
-  try {
-    return await axios.post(`${REACT_APP_API_URL}/document/getdocument`, {
-      FileName,
-      FilePath,
-    });
-  } catch (err) {
-    return {
-      error: true,
-      response: err.response,
-    };
-  }
-};
-
-// update user picture
-export const UpdateProfilePictureData = async (userID, NewPicture) => {
-  const formdata = new FormData();
-  formdata.append("avatar", NewPicture);
-  formdata.append("userID", userID);
-  try {
-    return await axios.post(
-      `${REACT_APP_API_URL}/users/updatePicture`,
-      formdata,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
-  } catch (err) {
-    return {
-      error: true,
-      response: err.response,
-    };
-  }
-};
-
-export const AddUserAccountDataBase = async (
+export const addUserAccountService = async (
   userSurname,
   userName,
   email,
@@ -272,7 +236,7 @@ export const AddUserAccountDataBase = async (
   }
 };
 
-export const EditUserAccountDataBase = async (
+export const editUserAccountService = async (
   userSurname,
   userName,
   email,

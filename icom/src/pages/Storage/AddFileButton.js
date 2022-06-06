@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from "react-redux";
 
 import { UploadFileForStoring } from "../../asyncActions/fileAsyncActions";
+import { v4 as uuidv4 } from "uuid";
 
 const dayjs = require("dayjs");
 
@@ -26,6 +27,7 @@ export default function AddFileButton({ currentFolder }) {
         currentFolder.folderId,
         user.userId,
         createdTime,
+        uuidv4(),
         file
       )
     );

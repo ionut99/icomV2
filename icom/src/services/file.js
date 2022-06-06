@@ -107,3 +107,39 @@ export const getPicturePreviewService = async (fileId, userId) => {
     };
   }
 };
+
+// get document data
+export const getDocumentFileService = async (FileName, FilePath) => {
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/document/getdocument`, {
+      FileName,
+      FilePath,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
+
+// update user picture
+export const updateProfilePictureService = async (userID, NewPicture) => {
+  const formdata = new FormData();
+  formdata.append("avatar", NewPicture);
+  formdata.append("userID", userID);
+  try {
+    return await axios.post(
+      `${REACT_APP_API_URL}/users/updatePicture`,
+      formdata,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};

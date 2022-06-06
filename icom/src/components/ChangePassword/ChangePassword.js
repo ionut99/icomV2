@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Form } from "react-bootstrap";
 
-import { EditUserAccountInfor } from "../../asyncActions/userAsyncActions";
+import { editUserAccountInfo } from "../../asyncActions/userAsyncActions";
 
 function ChangePassword(props) {
   const dispatch = useDispatch();
@@ -40,7 +40,7 @@ function ChangePassword(props) {
 
     // send data for edit user details
     dispatch(
-      EditUserAccountInfor(
+      editUserAccountInfo(
         userSurname,
         userName,
         email,

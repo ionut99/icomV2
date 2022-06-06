@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Modal, Form } from "react-bootstrap";
 
-import { AddNewUserAccount } from "../../asyncActions/userAsyncActions";
+import { addNewUserAccount } from "../../asyncActions/userAsyncActions";
 
 function AddUser() {
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ function AddUser() {
     e.preventDefault();
 
     // send data for create new user Accoutn
-    dispatch(AddNewUserAccount(userSurname, userName, email, isAdmin));
+    dispatch(addNewUserAccount(userSurname, userName, email, isAdmin));
     closeModal();
   }
   return (
