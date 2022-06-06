@@ -14,7 +14,7 @@ import {
   getUserDetails,
   getUserAdminList,
   getRoomMessagesWithTime,
-  getActiveRoomsService,
+  // getActiveRoomsService,
 } from "../services/user";
 
 import {
@@ -35,7 +35,7 @@ import {
   setChildFolderList,
   setChildFileList,
   updateFolder,
-} from "./../actions/userActions";
+} from "./../actions/folderActions";
 
 import { ROOT_FOLDER } from "../reducers/folderReducer";
 

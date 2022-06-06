@@ -16,7 +16,7 @@ import File from "./File";
 
 import "./storage.css";
 import filedetailsicon from "../../images/filedetailsicon.svg";
-import { selectFolder } from "../../actions/userActions";
+import { selectFolder } from "../../actions/folderActions";
 
 import {
   userSetFolderList,

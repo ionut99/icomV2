@@ -1,5 +1,5 @@
 import { AddNewFolderInDataBase, getFolderByID } from "../services/folder";
-import { addChildFolder } from "../actions/userActions";
+import { addChildFolder } from "../actions/folderActions";
 
 // handle add new folder in system
 export const AddNewFolder =

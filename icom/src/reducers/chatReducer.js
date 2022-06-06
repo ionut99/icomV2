@@ -3,9 +3,7 @@ import {
   USER_MESSAGES_LIST_CHAT,
   USER_SET_SEARCH_BOX_CONTENT,
   USER_SET_PERSON_SEARCH_LIST,
-  USER_RESET_PERSON_SEARCH_LIST,
   USER_SET_ROOM_LIST,
-  USER_RESET_ROOM_LIST,
   USER_ADD_NEW_MESSAGE,
   UPDATE_ADD_USER_IN_GROUP,
   UPDATE_LAST_MESSAGE,
@@ -51,12 +49,6 @@ const chatRedu = (state = ChannelState, action) => {
         ...state,
         userSearchList,
       };
-    // reset Search Person list
-    case USER_RESET_PERSON_SEARCH_LIST:
-      return {
-        ...state,
-        userSearchList: [],
-      };
 
     // set ROOM Person List
     case USER_SET_ROOM_LIST:
@@ -64,12 +56,6 @@ const chatRedu = (state = ChannelState, action) => {
       return {
         ...state,
         RoomSearchList,
-      };
-    // reset ROMM Person list
-    case USER_RESET_ROOM_LIST:
-      return {
-        ...state,
-        RoomSearchList: [],
       };
 
     // update user status
