@@ -1,31 +1,33 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
+import * as AiIcons from "react-icons/ai";
 import * as BsIcons from "react-icons/bs";
 import * as MdIcons from "react-icons/md";
 import * as CgIcons from "react-icons/cg";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import Avatar from "../Avatar/Avatar";
-
-import classNames from "classnames";
+import { getPicturePreview } from "../../asyncActions/fileAsyncActions";
 import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
 import { handleReturnFileIcon } from "../../helpers/FileIcons";
 
-import { getPicturePreview } from "../../asyncActions/fileAsyncActions";
+import { DownloadFileFromServer } from "../../asyncActions/fileAsyncActions";
 
+import Avatar from "../Avatar/Avatar";
+import classNames from "classnames";
 import "./room.css";
 
 //
 function Message(props) {
   const ref = useRef();
+  const dispatch = useDispatch();
+  //
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
   //
   const { message } = props;
   //
-
   const [messageDetails, setmMssageDetails] = useState(false);
   //
   const [pictureSrc, setPictureSrc] = useState(undefined);
@@ -42,7 +44,6 @@ function Message(props) {
         setmMssageDetails(false);
       }
     };
-
     document.addEventListener("mousedown", checkIfClickedOutside);
 
     return () => {
@@ -63,6 +64,7 @@ function Message(props) {
       return;
     //
     let isMounted = true;
+
     const getPicture = async (fileId, userId) => {
       const pictureSrc = await getPicturePreview(fileId, userId);
       if (pictureSrc === "failed") return undefined;
@@ -70,7 +72,10 @@ function Message(props) {
     };
 
     getPicture(message.fileId, user.userId).then((result) => {
-      if (isMounted) setPictureSrc(result);
+      if (isMounted) {
+        //
+        setPictureSrc(result);
+      }
     });
 
     // setLoaded(true);
@@ -78,6 +83,11 @@ function Message(props) {
       isMounted = false;
     };
   }, [message]);
+
+  //
+  const handleDownloadFile = (fileId, fileName, userId) => {
+    dispatch(DownloadFileFromServer(fileId, fileName, userId));
+  };
 
   return (
     <div
@@ -94,29 +104,41 @@ function Message(props) {
       >
         <Avatar userId={message.senderID} roomId={null} />
       </div>
-      <div className="message_body">
+      <div className="message_cassete">
         <div className="message_author">
           {message.senderID === user.userId
             ? handleReturnHumanDateFormat(message.createdTime)
             : message.senderName}
         </div>
         <div className="message_content">
-          {/* <img src={pictureSrc} alt="message picture" /> */}
           <div
-            className="message_icon"
+            className="message_picture"
             style={{
-              display: message.type !== "text" ? "block" : "none",
+              display: pictureSrc !== undefined ? "flex" : "none",
             }}
           >
-            <FontAwesomeIcon
-              icon={handleReturnFileIcon(message.type)}
-              className="icon"
-              style={{
-                color: "#0969da",
-              }}
-            />
+            <img src={pictureSrc} alt="message picture" />
           </div>
-          <p>{message.Body}</p>
+          <div className="message_body">
+            <div
+              className="message_icon"
+              style={{
+                display: message.type !== "text" ? "block" : "none",
+              }}
+            >
+              <FontAwesomeIcon
+                icon={handleReturnFileIcon(message.type)}
+                className="icon"
+                style={{
+                  color: "#0969da",
+                }}
+              />
+            </div>
+
+            <div className="text">
+              <p>{message.Body}</p>
+            </div>
+          </div>
         </div>
       </div>
       <div className="message_options">
@@ -140,6 +162,21 @@ function Message(props) {
             <div className="dropdown-instrument" onClick={() => {}}>
               <CgIcons.CgDetailsMore size={20} />
               <p>Details</p>
+            </div>
+            <div
+              className="dropdown-instrument"
+              onClick={() =>
+                handleDownloadFile(message.fileId, message.Body, user.userId)
+              }
+              style={{
+                display:
+                  message.type !== "text" && message.fileId !== undefined
+                    ? "flex"
+                    : "none",
+              }}
+            >
+              <AiIcons.AiOutlineCloudDownload size={20} />
+              <p>Download</p>
             </div>
             <div className="dropdown-instrument" onClick={() => {}}>
               <MdIcons.MdDeleteOutline size={20} />

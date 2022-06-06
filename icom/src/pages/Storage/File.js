@@ -90,9 +90,8 @@ function File({ file }) {
     };
   }, [optionButton]);
 
-  const handleDownloadFile = () => {
-    // function for download File
-    dispatch(DownloadFileFromServer(file, user.userId));
+  const handleDownloadFile = (fileId, fileName, userId) => {
+    dispatch(DownloadFileFromServer(fileId, fileName, userId));
   };
 
   return (
@@ -140,7 +139,9 @@ function File({ file }) {
             </div> */}
             <div
               className="dropdown-instrument"
-              onClick={() => handleDownloadFile()}
+              onClick={() =>
+                handleDownloadFile(file.fileId, file.fileName, user.userId)
+              }
             >
               <AiIcons.AiOutlineCloudDownload size={20} />
               <p>Download</p>

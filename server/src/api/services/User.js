@@ -176,16 +176,36 @@ function InsertNewUserAccountData(
   salt,
   isAdmin
 ) {
+  //
+  let insertQuery =
+    "INSERT INTO ?? (??, ??, ??, ??, ??, ??, ??, ??) VALUES (?, ?, ?, ?, ?, ?, ?, NULL)";
+  let query = mysql.format(insertQuery, [
+    "iusers",
+    "userId",
+    "Surname",
+    "Name",
+    "Email",
+    "Salt",
+    "Password",
+    "IsAdmin",
+    "Avatar",
+    userId,
+    userSurname,
+    userName,
+    email,
+    salt,
+    password,
+    isAdmin,
+  ]);
+  //
+
   return new Promise((resolve) => {
-    sqlPool.pool.query(
-      `INSERT INTO iusers (userId, Surname, Name, Email, Salt, Password, IsAdmin, Avatar) VALUES ('${userId}', '${userSurname}', '${userName}', '${email}','${salt}', '${password}', '${isAdmin}', NULL)`,
-      (err, result) => {
-        if (err) {
-          return resolve("FAILED");
-        }
-        return resolve(result);
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return resolve("FAILED");
       }
-    );
+      return resolve(result);
+    });
   });
 }
 

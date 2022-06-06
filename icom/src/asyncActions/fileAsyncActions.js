@@ -3,7 +3,6 @@ import { addChildFile } from "../actions/folderActions";
 // import { v4 as uuidv4 } from "uuid";
 
 import {
-  getDocumentFileService,
   getPicturePreviewService,
   updateProfilePictureService,
 } from "../services/file";
@@ -39,26 +38,27 @@ export const UploadFileForStoring =
 //
 
 // handle download file
-export const DownloadFileFromServer = (file, userId) => async (dispatch) => {
-  DownloadFileService(file.fileId, userId).then(
-    (res) => {
-      console.log(res.data);
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      if (typeof window.navigator.msSaveBlob === "function") {
-        window.navigator.msSaveBlob(res.data, file.fileName);
-      } else {
-        link.setAttribute("download", file.fileName);
-        document.body.appendChild(link);
-        link.click();
+export const DownloadFileFromServer =
+  (fileId, fileName, userId) => async (dispatch) => {
+    DownloadFileService(fileId, userId).then(
+      (res) => {
+        console.log(res.data);
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        if (typeof window.navigator.msSaveBlob === "function") {
+          window.navigator.msSaveBlob(res.data, fileName);
+        } else {
+          link.setAttribute("download", fileName);
+          document.body.appendChild(link);
+          link.click();
+        }
+      },
+      (error) => {
+        alert("Something went wrong with file download!");
       }
-    },
-    (error) => {
-      alert("Something went wrong with file download!");
-    }
-  );
-};
+    );
+  };
 
 export const getPicturePreview = async (fileId, userId) => {
   const resultBlob = await getPicturePreviewService(fileId, userId);
@@ -76,15 +76,6 @@ export const getPicturePreview = async (fileId, userId) => {
       return resolve(base64data);
     };
   });
-};
-
-// handle getDocument
-export const GetDocumentFile = (FileName, FilePath) => async (dispatch) => {
-  const documentData = await getDocumentFileService(FileName, FilePath);
-  // aici avem nevoie de verificari...
-  const string = documentData.data;
-  //dispatch(GetFileDocument(string));
-  return string;
 };
 
 export const updateProfilePicture =

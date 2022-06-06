@@ -5,7 +5,6 @@ import {
   USER_LOGIN_FAILURE,
   VERIFY_USER_SUCCESS,
   USER_LOGOUT,
-  USER_UPDATE_AVATAR,
 } from "../actions/actionTypes";
 
 // define initial state of auth reducer
@@ -17,7 +16,7 @@ const initialState = {
   isAuthenticated: false, // consider as a authentication flag
   userLoginLoading: false, // to indicate that the user signin API is in progress
   loginError: null, // manage the error of the user signin API
-  userAvatar: "",
+  //
 };
 
 // update store based on type and payload and return the state
@@ -50,13 +49,6 @@ const auth = (state = initialState, action) => {
         ...state,
         loginError: error,
         userLoginLoading: false,
-      };
-    // handle update profile picure
-    case USER_UPDATE_AVATAR:
-      const { userAvatar } = action.payload;
-      return {
-        ...state,
-        userAvatar,
       };
 
     // verify token - success

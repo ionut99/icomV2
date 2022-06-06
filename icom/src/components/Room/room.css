@@ -63,7 +63,7 @@
   border-radius: 50%;
 }
 
-.right-section .messages .one_message .message_body {
+.right-section .messages .one_message .message_cassete {
   padding-left: 10px;
   max-width: 90%;
 }
@@ -73,8 +73,10 @@
   text-align: left;
 }
 
-.right-section .messages .one_message .message_body .message_content {
-  display: inline-flex;
+.right-section .messages .one_message .message_cassete .message_content {
+  min-width: fit-content;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   background: var(--sender-message-color);
   color: var(--white-color);
@@ -82,16 +84,32 @@
   border-radius: 10px;
 }
 
-.right-section .messages .one_message.me .message_body .message_content {
+.right-section .messages .one_message.me .message_cassete .message_content {
   background-color: var(--me-message-color);
 }
 
-.message_content .message_icon {
+.message_content .message_picture {
+  margin-bottom: 10px;
+}
+
+.message_content .message_picture img {
+  max-width: 400px;
+}
+
+.message_content .message_body {
+  display: inline-flex;
+}
+
+.message_content .message_body .text {
+  padding-top: 5px;
+}
+
+.message_content .message_body .message_icon {
   font-size: 20px;
   margin-right: 10px;
 }
 
-.right-section .messages .one_message .message_body .message_content p {
+.right-section .messages .one_message .message_cassete .message_content p {
   word-wrap: break-word;
   margin: 0;
 }

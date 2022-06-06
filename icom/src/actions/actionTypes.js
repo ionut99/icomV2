@@ -7,7 +7,6 @@ export const USER_LOGIN_FAILURE = "USER_LOGIN_FAILURE";
 
 export const VERIFY_USER_SUCCESS = "VERIFY_USER_SUCCESS";
 export const USER_LOGOUT = "USER_LOGOUT";
-export const USER_UPDATE_AVATAR = "USER_UPDATE_AVATAR";
 // sesion actions
 
 //

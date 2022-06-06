@@ -68,8 +68,6 @@ const io = new Server(httpServer, {
 //
 
 io.on("connection", (socket) => {
-  const { fileID } = socket.handshake.query;
-
   socket.on("join room", async (request, callback) => {
     const userID = request.userID;
     const roomID = request.roomID;

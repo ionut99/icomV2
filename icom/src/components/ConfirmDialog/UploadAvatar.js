@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
-import React, { useState } from "react";
-// import { updateUserAvatar } from "../../actions/authActions";
 import { updateProfilePicture } from "../../asyncActions/fileAsyncActions";
 import Avatar from "../Avatar/Avatar";
+import React, { useState } from "react";
 
 function UploadAvatar(props) {
   const { open, discard, setDiscard, handleClose } = props;
@@ -32,7 +31,7 @@ function UploadAvatar(props) {
       setinvalidImage("Please select valid image JPG,JPEG,PNG");
       return false;
     }
-    reader.onload = (e) => {
+    reader.onload = (event) => {
       const img = new Image();
       img.onload = () => {
         //------------- Resize img code ----------------------------------
@@ -58,7 +57,6 @@ function UploadAvatar(props) {
         }
         canvas.width = width;
         canvas.height = height;
-        //var ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, width, height);
         ctx.canvas.toBlob(
           (blob) => {
@@ -81,14 +79,13 @@ function UploadAvatar(props) {
         setinvalidImage("Invalid image content.");
         return false;
       };
-      img.src = e.target.result;
+      img.src = event.target.result;
     };
     reader.readAsDataURL(imageFile);
   };
 
   const handleConfirmation = () => {
     dispatch(updateProfilePicture(user.userId, userInfo.file));
-    // dispatch(updateUserAvatar(userInfo.filepreview));
     setDiscard(false);
     handleClose();
   };

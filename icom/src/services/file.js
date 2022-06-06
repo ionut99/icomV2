@@ -25,13 +25,9 @@ export const UploadNewStoringFile = async (folderId, userId, fileId, FILE) => {
   formdata.append("userId", userId);
   formdata.append("fileId", fileId);
   try {
-    return await axios.post(
-      `${REACT_APP_API_URL}/document/newStoragefile`,
-      formdata,
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    );
+    return await axios.post(`${REACT_APP_API_URL}/document/newfile`, formdata, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   } catch (err) {
     return {
       error: true,
@@ -72,13 +68,10 @@ export const DownloadFileService = async (fileId, userId) => {
 // get specific document
 export const getDocumentContentById = async (fileId, userId) => {
   try {
-    return await axios.post(
-      `${REACT_APP_API_URL}/document/getdocumentcontent`,
-      {
-        fileId,
-        userId,
-      }
-    );
+    return await axios.post(`${REACT_APP_API_URL}/document/content`, {
+      fileId,
+      userId,
+    });
   } catch (err) {
     return {
       error: true,
@@ -91,7 +84,7 @@ export const getDocumentContentById = async (fileId, userId) => {
 export const getPicturePreviewService = async (fileId, userId) => {
   try {
     const response = await axios.post(
-      `${REACT_APP_API_URL}/document/image`,
+      `${REACT_APP_API_URL}/document/imgpreview`,
       {
         fileId,
         userId,
@@ -100,21 +93,6 @@ export const getPicturePreviewService = async (fileId, userId) => {
     );
 
     return response;
-  } catch (err) {
-    return {
-      error: true,
-      response: err.response,
-    };
-  }
-};
-
-// get document data
-export const getDocumentFileService = async (FileName, FilePath) => {
-  try {
-    return await axios.post(`${REACT_APP_API_URL}/document/getdocument`, {
-      FileName,
-      FilePath,
-    });
   } catch (err) {
     return {
       error: true,

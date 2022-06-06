@@ -272,7 +272,13 @@ async function GetProfilePicture(req, res) {
     }
 
     var currentAvatarPath = await extractProfilePicturePath(userId, roomId);
-    currentAvatarPath = path.join(__dirname, "../../../", currentAvatarPath);
+
+    if (typeof currentAvatarPath == "string")
+      currentAvatarPath = path.join(__dirname, "../../../", currentAvatarPath);
+    else {
+      console.error(" Empty Avatar ");
+      return handleResponse(req, res, 410, "  Err send File  ");
+    }
 
     var options = {
       //root: path.join(__dirname, "public"),
@@ -330,6 +336,11 @@ async function DownLoadFile(req, res) {
         //
         const file_result = JSON.parse(JSON.stringify(filedetails_res));
 
+        if (file_result.length === 0) {
+          console.log("Error get file path ... File.js lin. 340");
+          return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
+        }
+        //
         const DownloadFilePath = path.join(
           __dirname,
           "../../../",
@@ -353,10 +364,67 @@ async function DownLoadFile(req, res) {
   }
 }
 
+// get img preview (for img messages or details view)
+async function GetPicturePreview(req, res) {
+  try {
+    const fileId = req.body.fileId;
+    const userId = req.body.userId;
+
+    if (userId === null || userId === undefined) {
+      return handleResponse(req, res, 410, "Invalid Request Parameters ");
+    }
+
+    var filePath = await GetFileDetailsFromDataBase(fileId, userId)
+      .then(function (result) {
+        if (result.length == 0) {
+          return undefined;
+        }
+        return result[0].systemPath;
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    if (typeof filePath == "string")
+      filePath = path.join(__dirname, "../../../", filePath);
+    else {
+      console.error(" Error preview Image ");
+      return handleResponse(req, res, 410, "  Err send File  ");
+    }
+
+    var options = {
+      //root: path.join(__dirname, "public"),
+      dotfiles: "deny",
+      headers: {
+        "x-timestamp": Date.now(),
+        "x-sent": true,
+      },
+    };
+
+    if (filePath !== null && filePath !== undefined) {
+      res.sendFile(filePath, options, function (error) {
+        if (error) {
+          console.error(error);
+          return handleResponse(req, res, 410, "  Err send File  ");
+        }
+      });
+    } else {
+      console.error(" Error preview Image ");
+      return handleResponse(req, res, 410, "  Err send File  ");
+    }
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 410, "  Err send File  ");
+  }
+}
+
 module.exports = {
   UpdateProfilePicture,
   GetProfilePicture,
   UploadNewStoredFile,
   GetDocumentContent,
   DownLoadFile,
+  GetPicturePreview,
 };

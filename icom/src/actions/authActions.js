@@ -5,7 +5,6 @@ import {
   USER_LOGIN_STARTED,
   USER_LOGIN_FAILURE,
   USER_LOGOUT,
-  USER_UPDATE_AVATAR,
 } from "./actionTypes";
 import { setAuthToken } from "../services/auth";
 
@@ -53,16 +52,6 @@ export const verifyUserSuccess = ({ token, expiredAt, user }) => {
       token,
       expiredAt,
       user,
-    },
-  };
-};
-
-// update avatar picture
-export const updateUserAvatar = (userAvatar) => {
-  return {
-    type: USER_UPDATE_AVATAR,
-    payload: {
-      userAvatar,
     },
   };
 };
