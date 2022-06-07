@@ -31,17 +31,10 @@ function ChangeAvatar(props) {
   let reader = new FileReader();
 
   //
-  const avatarSrc = async (userId) => {
-    const avatarSrc = await getAvatarPictureAsync(userId, null);
-    if (avatarSrc === "failed" || avatarSrc === "default") {
-      return defaultAvatar;
-    } else {
-      return avatarSrc;
-    }
-  };
+
   //
   function openModal() {
-    avatarSrc(userId).then((result) => {
+    getAvatarPictureAsync(userId, null).then((result) => {
       if (result !== undefined) {
         setProfilePicture({
           file: undefined,

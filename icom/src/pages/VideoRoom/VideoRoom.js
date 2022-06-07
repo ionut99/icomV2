@@ -6,6 +6,9 @@ import Peer from "simple-peer";
 import styled from "styled-components";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+//
+
 import {
   faClock,
   faMicrophone,
@@ -19,6 +22,8 @@ import { Button } from "react-bootstrap";
 import socketIOClient from "socket.io-client";
 import Video from "./Video";
 import "./videoroom.css";
+
+import Avatar from "../../components/Avatar/Avatar";
 
 const { REACT_APP_API_URL } = process.env;
 
@@ -87,34 +92,18 @@ const VideoRoom = (props) => {
   // socketRef.current = useContext(SocketContext);
 
   const handleStopVideoStream = () => {
-    setVideoInput(!videoInput);
     if (userVideo.current.srcObject !== null) {
-      var videoTrack = userVideo.current.srcObject
-        .getTracks()
-        .find((track) => track.kind === "video");
-
-      if (videoTrack.enable) {
-        console.log("gaseste ceva");
-        videoTrack.enable = false;
-      } else {
-        videoTrack.enable = true;
-      }
+      userVideo.current.srcObject.getTracks().forEach(function (track) {
+        if (track.readyState === "live" && track.kind === "video") {
+          if (track.enabled === true) {
+            track.enabled = false;
+          } else {
+            track.enabled = true;
+          }
+          setVideoInput(!videoInput);
+        }
+      });
     }
-    // navigator.mediaDevices
-    //   .getUserMedia({ video: videoInput, audio: true })
-    //   .then((stream) => {
-    //     if (stream != null) {
-    //       userVideo.current.srcObject = stream;
-    //     }
-    //   });
-    // setVideoInput(!videoInput);
-
-    // if (videoTrack.enable) {
-    //   console.log("gaseste ceva");
-    //   videoTrack.enable = false;
-    // } else {
-    //   videoTrack.enable = true;
-    // }
   };
 
   //
@@ -274,14 +263,14 @@ const VideoRoom = (props) => {
               icon={faVideo}
               size="lg"
               style={{
-                display: videoInput ? "none" : "block",
+                display: !videoInput ? "none" : "block",
               }}
             />
             <FontAwesomeIcon
               icon={faVideoSlash}
               size="lg"
               style={{
-                display: !videoInput ? "none" : "block",
+                display: videoInput ? "none" : "block",
               }}
             />
           </Button>
@@ -322,7 +311,23 @@ const VideoRoom = (props) => {
       <div className="video-content">
         <div className="video-wrapper">
           <div className="user-video">
-            <StyledVideo muted ref={userVideo} autoPlay playsInline />
+            <StyledVideo
+              muted
+              ref={userVideo}
+              autoPlay
+              playsInline
+              style={{
+                display: videoInput ? "block" : "none",
+              }}
+            />
+            <div
+              className="image_preview"
+              style={{
+                display: !videoInput ? "flex" : "none",
+              }}
+            >
+              <Avatar userId={user.userId} roomId={null} />
+            </div>
           </div>
           {peers.map((peer) => {
             return (
