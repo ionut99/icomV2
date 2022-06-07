@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
-import "./avatar.css";
 import { Spinner } from "react-bootstrap";
 
 import defaultAvatar from "../../images/defaultAvatar.png";
+import "./avatar.css";
 
 function Avatar(props) {
   const { userId, roomId } = props;

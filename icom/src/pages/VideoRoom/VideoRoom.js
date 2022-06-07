@@ -50,11 +50,7 @@ const configuration = {
   ],
 };
 
-// const videoConstraints = {
-//   height: window.innerHeight / 2,
-//   width: window.innerWidth / 2,
-// };
-
+//
 const videoConstraints = {
   height: window.innerHeight / 2,
   width: window.innerWidth / 2,
@@ -63,35 +59,66 @@ const videoConstraints = {
 // const { REACT_APP_API_URL } = process.env;
 
 const VideoRoom = (props) => {
+  //
+  const socketRef = useRef();
+  //
+  const userVideo = useRef();
+  //
+  const peersRef = useRef(Array(0));
+  const roomID = props.match.params.roomId;
+  //
+  const authObj = useSelector((state) => state.auth);
+  const { user, expiredAt, token } = authObj;
+  //
   const [microphone, setmicrophone] = useState(true);
   //
   const [videoInput, setVideoInput] = useState(true);
+  const [userStream, setUserStream] = useState(undefined);
   //
   const [peers, setPeers] = useState([]);
-  const [usersInRoom, setusersInRoom] = useState([]);
-
-  const socketRef = useRef();
   //
-  //pentru utilizarea socketului la nivelul aplicatiei
-  // socketRef.current = useContext(SocketContext);
-
-  const authObj = useSelector((state) => state.auth);
-  const { user, expiredAt, token } = authObj;
-
-  //
-
-  const userVideo = useRef();
-  const peersRef = useRef(Array(0));
-  const roomID = props.match.params.roomId;
-
   const [request, setRequest] = useState({
     userID: user.userId,
     roomID: roomID,
     type: "video",
   });
+  //
+  //pentru utilizarea socketului la nivelul aplicatiei
+  // socketRef.current = useContext(SocketContext);
 
+  const handleStopVideoStream = () => {
+    setVideoInput(!videoInput);
+    if (userVideo.current.srcObject !== null) {
+      var videoTrack = userVideo.current.srcObject
+        .getTracks()
+        .find((track) => track.kind === "video");
+
+      if (videoTrack.enable) {
+        console.log("gaseste ceva");
+        videoTrack.enable = false;
+      } else {
+        videoTrack.enable = true;
+      }
+    }
+    // navigator.mediaDevices
+    //   .getUserMedia({ video: videoInput, audio: true })
+    //   .then((stream) => {
+    //     if (stream != null) {
+    //       userVideo.current.srcObject = stream;
+    //     }
+    //   });
+    // setVideoInput(!videoInput);
+
+    // if (videoTrack.enable) {
+    //   console.log("gaseste ceva");
+    //   videoTrack.enable = false;
+    // } else {
+    //   videoTrack.enable = true;
+    // }
+  };
+
+  //
   useEffect(() => {
-    // console.log(roomID);
     if (roomID === null || roomID === undefined) return;
     socketRef.current = socketIOClient(REACT_APP_API_URL);
 
@@ -102,19 +129,24 @@ const VideoRoom = (props) => {
 
   useEffect(() => {
     navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints, audio: true })
+      .getUserMedia({ video: videoInput, audio: false })
       .then((stream) => {
-        userVideo.current.srcObject = stream;
+        if (stream != null) {
+          userVideo.current.srcObject = stream;
+          setUserStream(stream);
+        }
         socketRef.current.emit("join room", request, (error) => {
           if (error) {
             alert(error);
           }
         });
         socketRef.current.on("all users", (roomData) => {
-          // console.log("users already in room: ");
-          // console.log(roomData);
           roomData.users.forEach((user) => {
-            const peer = createPeer(user.id, socketRef.current.id, stream);
+            const peer = createPeer(
+              user.id,
+              socketRef.current.id,
+              userVideo.current.srcObject
+            );
             const peerObj = {
               peerID: user.id,
               peer,
@@ -125,9 +157,11 @@ const VideoRoom = (props) => {
         });
 
         socketRef.current.on("user joined", (payload) => {
-          // console.log("lista peers:");
-          // console.log(peersRef.current);
-          const peer = addPeer(payload.signal, payload.callerID, stream);
+          const peer = addPeer(
+            payload.signal,
+            payload.callerID,
+            userVideo.current.srcObject
+          );
           const peerObj = {
             peerID: payload.callerID,
             peer,
@@ -220,11 +254,6 @@ const VideoRoom = (props) => {
     setmicrophone(!microphone);
   };
 
-  const handleStopVideoStream = () => {
-    console.log("set user camera on/off");
-    setVideoInput(!videoInput);
-  };
-
   return (
     <div className="video-page">
       <div className="buttons-bar">
@@ -245,14 +274,14 @@ const VideoRoom = (props) => {
               icon={faVideo}
               size="lg"
               style={{
-                display: !videoInput ? "none" : "block",
+                display: videoInput ? "none" : "block",
               }}
             />
             <FontAwesomeIcon
               icon={faVideoSlash}
               size="lg"
               style={{
-                display: videoInput ? "none" : "block",
+                display: !videoInput ? "none" : "block",
               }}
             />
           </Button>
