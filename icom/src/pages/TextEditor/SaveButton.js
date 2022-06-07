@@ -15,9 +15,7 @@ function SaveButton() {
 
   function handleSubmit(e) {
     e.preventDefault();
-
     // send request for save created document !
-    // dispatch(AddNewUserAccount(userSurname, userName, email, isAdmin));
     closeModal();
   }
 
@@ -50,7 +48,7 @@ function SaveButton() {
               Close
             </Button>
             <Button variant="primary" type="submit">
-              SAVE
+              Save
             </Button>
           </Modal.Footer>
         </Form>

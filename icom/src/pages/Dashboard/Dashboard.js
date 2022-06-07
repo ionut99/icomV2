@@ -1,31 +1,16 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
+// import { useDispatch, useSelector } from "react-redux";
 
-import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
-
-import { setAuthToken } from "../../services/auth";
 import Navbar from "../../components/Navbar/Navbar";
+import UserAvatar from "../../images/userAvatar.png";
 
 import "./dashboard.css";
 
-import UserAvatar from "../../images/userAvatar.png";
-
 function Dashboard() {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const authObj = useSelector((state) => state.auth);
-  const { token, expiredAt } = authObj;
-
-  useEffect(() => {
-    setAuthToken(token);
-    const verifyTokenTimer = setTimeout(() => {
-      dispatch(verifyTokenAsync(true));
-    }, moment(expiredAt).diff() - 10 * 1000);
-    return () => {
-      clearTimeout(verifyTokenTimer);
-    };
-  }, [expiredAt, token, dispatch]);
+  // const authObj = useSelector((state) => state.auth);
+  // const { user } = authObj;
 
   var teamlist = [];
   for (let i = 0; i < 20; i++) {

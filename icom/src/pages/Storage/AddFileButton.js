@@ -17,9 +17,7 @@ export default function AddFileButton({ currentFolder }) {
   function handleUpload(e) {
     // const formData = new FormData();
     const file = e.target.files[0];
-
     if (currentFolder == null || file == null) return;
-
     const createdTime = dayjs();
 
     dispatch(

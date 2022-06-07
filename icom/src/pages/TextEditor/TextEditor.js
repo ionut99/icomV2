@@ -27,25 +27,10 @@ import { getDocumentContentById } from "../../services/file";
 
 // import { SocketContext } from "../../context/socket";
 
-const TOOLBAR_OPTIONS = [
-  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-  [{ font: [] }],
-  [{ list: "ordered" }, { list: "bullet" }],
-  ["bold", "italic", "underline", "strike"],
-  ["blockquote", "code-block"],
-  [{ color: [] }, { background: [] }],
-  [{ script: "sub" }, { script: "super" }],
-  [{ indent: "-1" }, { indent: "+1" }],
-  [{ direction: "rtl" }],
-  [{ align: [] }],
-  ["image", "blockquote", "code-block"],
-  ["clean"],
-];
+import { TOOLBAR_OPTIONS } from "../../helpers/editText";
 
 //
-
 const { REACT_APP_API_URL } = process.env;
-
 //
 
 function TextEditor() {
@@ -108,12 +93,8 @@ function TextEditor() {
 
   useEffect(() => {
     if (quill == null || socketRef.current == null || fileID == null) return;
-    // console.log("loading content:");
-    // loading document!
     return getDocumentContentById(fileID, user.userId)
       .then((result) => {
-        // console.log("Contentul paginii este:");
-        // console.log(result.data["ContentFile"]);
         quill.setContents(result.data["ContentFile"]);
         quill.enable();
       })

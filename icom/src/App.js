@@ -12,21 +12,34 @@ import Login from "./pages/Login/Login";
 //
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
+//
 
 import { verifyTokenAsync } from "./asyncActions/authAsyncActions";
+import { setAuthToken } from "./services/auth";
+import moment from "moment";
 import "./index.css";
 
 import { SocketContext, socket } from "./context/socket";
 
 function App() {
-  const authObj = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const { authLoading, isAuthenticated } = authObj;
+  const authObj = useSelector((state) => state.auth);
+  const { expiredAt, token, authLoading, isAuthenticated } = authObj;
 
   // verify token on app load
   useEffect(() => {
     dispatch(verifyTokenAsync());
   }, [dispatch]);
+
+  useEffect(() => {
+    setAuthToken(token);
+    const verifyTokenTimer = setTimeout(() => {
+      dispatch(verifyTokenAsync(true));
+    }, moment(expiredAt).diff() - 10 * 1000);
+    return () => {
+      clearTimeout(verifyTokenTimer);
+    };
+  }, [expiredAt, token, dispatch]);
 
   // checking authentication
   if (authLoading) {

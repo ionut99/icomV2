@@ -23,18 +23,20 @@ a {
 }
 
 .content-drive {
-  height: calc(100% - 80px);
+  height: calc(100% - 100px);
   width: 100%;
   display: inline-flex;
+  margin-bottom: 10px;
 }
 .folder-tree {
+  left: 0px;
+  padding: 10px;
   min-width: 300px;
   max-width: 300px;
-  padding: 10px;
-  background-color: #fff;
-  left: 0px;
-  box-shadow: 0px 8px 8px 0px rgb(0 0 0 / 20%);
   overflow-y: scroll;
+  background-color: #fff;
+  border-bottom-left-radius: 1.4rem;
+  box-shadow: 0px 8px 8px 0px rgb(0 0 0 / 20%);
 }
 .content-folder-list {
   width: 100%;
@@ -78,26 +80,25 @@ a {
 }
 
 .details-bar {
-  border-bottom: solid #dadde0;
   height: 60px;
+  border-bottom: solid #dadde0;
 }
 
 .content-folder-list p {
-  text-align: center;
   margin: 0px;
   font-size: large;
+  text-align: center;
 }
 
 .file__details {
   height: 100%;
   min-width: 300px;
   max-width: 300px;
-  border-left: 2px solid #e8eef2;
+  right: 0px;
   padding: 25px;
   background-color: #fff;
-  right: 0px;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-left: 2px solid #e8eef2;
+  border-bottom-right-radius: 1.4rem;
   box-shadow: 8px 8px 16px 0px rgb(0 0 0 / 20%);
 }
 
@@ -109,10 +110,10 @@ a {
 
 .file__details--inner {
   display: flex;
+  text-align: center;
+  align-items: center;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
 }
 
 .drive-button {
@@ -132,25 +133,30 @@ a {
 }
 
 .folder-element {
-  margin-right: 10px;
-  margin-left: 10px;
   width: 93%;
   min-width: 400px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .file-element {
-  margin-right: 10px;
-  margin-left: 10px;
   width: 93%;
   min-width: 700px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .folder-button {
-  background-color: #fff;
-  min-width: 680px;
-  display: inline-flex;
   width: 100%;
   margin-top: 10px;
+  min-width: 680px;
+  display: inline-flex;
+  background-color: #fff;
+}
+
+.folder-button:hover {
+  background-color: #dadde0;
+  color: inherit;
 }
 
 .folder-icon {
@@ -162,9 +168,9 @@ a {
 
 .folder-name {
   width: 30%;
+  display: flex;
   min-width: 70px;
   font-size: large;
-  display: flex;
   justify-content: center;
 }
 
@@ -185,9 +191,9 @@ a {
 }
 
 .folder-author {
-  padding-left: 10px;
   width: 30%;
   font-size: large;
+  padding-left: 10px;
 }
 
 .folder-author p {
@@ -220,9 +226,9 @@ a {
 }
 
 .f-component {
-  display: inline-flex;
   width: 95%;
   min-width: 400px;
+  display: inline-flex;
 }
 
 .f-dropdown-content {
@@ -238,11 +244,11 @@ a {
 }
 
 .f-dropdown-content .dropdown-instrument {
-  color: black;
+  width: 100%;
   padding: 10px;
+  color: black;
   text-decoration: none;
   display: inline-flex;
-  width: 100%;
 }
 
 .f-dropdown-content p {

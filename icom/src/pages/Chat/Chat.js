@@ -1,19 +1,17 @@
-import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+//
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Modal, Form, Spinner } from "react-bootstrap";
 
-import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 import {
   setUserSearchBoxContent,
   UpdateAddUserInGroup,
   setPersonSearchList,
 } from "../../actions/userActions";
-import { setAuthToken } from "../../services/auth";
-import Navbar from "../../components/Navbar/Navbar";
 
-import moment from "moment";
+import Navbar from "../../components/Navbar/Navbar";
 
 import {
   userSetRoomListAsync,
@@ -37,13 +35,12 @@ function setSearchBoxContent(search_box_content, dispatch) {
 
 function Chat() {
   const dispatch = useDispatch();
-
   //
   const [newGroup, SetnewGroup] = useState(false);
   const [groupName, SetgroupName] = useState("");
   //
   const authObj = useSelector((state) => state.auth);
-  const { user, expiredAt, token } = authObj;
+  const { user } = authObj;
   //
   const [loaded, setLoaded] = useState(false);
   //
@@ -86,16 +83,6 @@ function Chat() {
   const SearchPerson = (event) => {
     setSearchBoxContent(event.target.value, dispatch);
   };
-  // set timer to renew token
-  useEffect(() => {
-    setAuthToken(token);
-    const verifyTokenTimer = setTimeout(() => {
-      dispatch(verifyTokenAsync(true));
-    }, moment(expiredAt).diff() - 10 * 1000);
-    return () => {
-      clearTimeout(verifyTokenTimer);
-    };
-  }, [expiredAt, token, dispatch]);
 
   // get user list on page load
   useEffect(() => {

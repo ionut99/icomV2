@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Navbar from "../../components/Navbar/Navbar";
 import { Button, Form, Dropdown } from "react-bootstrap";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
@@ -8,19 +8,22 @@ import AddUser from "../../components/AddUserAccount/AddUserAccount";
 import {
   getUsersDetailsList,
   getGroupsDetails,
+  getRoomUsersDetailsList,
 } from "../../asyncActions/adminAsyncActions";
 
 import Avatar from "../../components/Avatar/Avatar";
-
 import "./panel.css";
-
 export default function ControlPanel() {
   // const dispatch = useDispatch();
 
   const [search_text, setSearch_text] = useState("");
   const [adminUserList, setAdminUserList] = useState([]);
   //
-  const [selectedTeam, setSelectedTeam] = useState("  Team Name  ");
+  const [selectedTeam, setSelectedTeam] = useState({
+    name: "Group Name",
+    teamId: undefined,
+  });
+
   const [teamsList, setTeamsList] = useState([]);
   //
   const [openDetails, setOpenDetails] = useState(false);
@@ -30,8 +33,34 @@ export default function ControlPanel() {
   const authObj = useSelector((state) => state.auth);
   const { user, expiredAt, token } = authObj;
   //
+
+  const getSearchUserList = async (search_text, userId) => {
+    const userList = await getUsersDetailsList(search_text, userId);
+    if (userList !== undefined) setAdminUserList(userList);
+  };
+
+  const getTeamUserList = async (userId, roomId) => {
+    const userList = await getRoomUsersDetailsList(userId, roomId);
+    if (userList !== undefined) setAdminUserList(userList);
+  };
+  //
+  function SearchEnter(event) {
+    if (event.key === "Enter") {
+      getSearchUserList(search_text, user.userId);
+    }
+  }
+  //
+  //
+  const SearchPerson = (event) => {
+    setSearch_text(event.target.value);
+    setSelectedTeam({
+      name: "Group Name",
+      teamId: undefined,
+    });
+  };
+  //
+
   const handleOpenDetails = (user) => {
-    console.log(user);
     setuserDetails(user);
     setOpenDetails(true);
   };
@@ -39,34 +68,25 @@ export default function ControlPanel() {
   const handleCloseDetails = () => {
     setOpenDetails(false);
   };
-
   //
-  function SearchEnter(event) {
-    if (event.key === "Enter") {
-      getSearchUserList();
-    }
-  }
-  //
-  const getSearchUserList = async () => {
-    const userList = await getUsersDetailsList(search_text, user.userId);
-    setAdminUserList(userList);
+  const handleFilterTeam = (userId, roomName, RoomID) => {
+    // setOpenDetails(false);
+    setSearch_text("");
+    getTeamUserList(userId, RoomID);
+    setSelectedTeam({
+      name: roomName,
+      teamId: RoomID,
+    });
   };
 
   useEffect(() => {
-    getSearchUserList();
+    getSearchUserList(search_text, user.userId);
   }, [search_text]);
-
-  //
-  const SearchPerson = (event) => {
-    setSearch_text(event.target.value);
-  };
-  //
 
   // get details about groups
   useEffect(() => {
     const getGroups = async (userId) => {
       const groupList = await getGroupsDetails(userId);
-      console.log(groupList);
       if (groupList !== undefined) setTeamsList(groupList);
     };
     getGroups(user.userId);
@@ -95,7 +115,7 @@ export default function ControlPanel() {
                   id="dropdown-basic"
                   className="select-group"
                 >
-                  {selectedTeam}
+                  {selectedTeam.name}
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu className="group-option">
@@ -105,6 +125,9 @@ export default function ControlPanel() {
                         href="#/action-1"
                         key={index}
                         className="option"
+                        onClick={() =>
+                          handleFilterTeam(user.userId, team.Name, team.RoomID)
+                        }
                       >
                         <div className="div-option">
                           <div className="team-name">

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Form } from "react-bootstrap";
-
+//
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
-
-import { AddNewFolder } from "../../asyncActions/folderAsyncActions";
-
+//
 import { ROOT_FOLDER } from "../../reducers/folderReducer";
+import { AddNewFolder } from "../../asyncActions/folderAsyncActions";
 
 export default function AddFolderButton({ currentFolder }) {
   const dispatch = useDispatch();

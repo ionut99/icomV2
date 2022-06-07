@@ -303,7 +303,11 @@ async function GetPartList(req, res) {
           const user = { ...x };
           return {
             UserName: user.Surname + " " + user.Name,
+            email: user.Email,
             userId: user.userId,
+            IsAdmin: user.IsAdmin,
+            IsOnline: user.IsOnline,
+            LastOnline: user.LastOnline,
           };
         });
       })
