@@ -5,7 +5,6 @@ import {
   userLoginStarted,
   userLoginFailure,
   userLogout,
-  // updateUserAvatar,
 } from "../actions/authActions";
 import {
   verifyTokenService,
@@ -14,7 +13,6 @@ import {
   getAvatarPictureService,
 } from "../services/auth";
 
-// handle verify token
 export const verifyTokenAsync =
   (silentAuth = false) =>
   async (dispatch) => {
@@ -39,6 +37,8 @@ export const userLoginAsync = (email, password) => async (dispatch) => {
 
   const result = await userLoginService(email, password);
 
+  console.log("afisare rezultat:");
+  console.log(result);
   if (result.error) {
     dispatch(userLoginFailure(result.response.data.message));
     return;
@@ -49,17 +49,15 @@ export const userLoginAsync = (email, password) => async (dispatch) => {
 
 // handle get Avatar Picture
 export const getAvatarPictureAsync = async (userId, roomId) => {
+  if (userId === undefined) return;
   const resultBlob = await getAvatarPictureService(userId, roomId);
   //
   return new Promise((resolve) => {
-    //
-    //
-
     if (resultBlob.status === 422) {
       return resolve("default");
     }
 
-    if (resultBlob.error === true || userId === undefined) {
+    if (resultBlob.error === true) {
       return resolve("failed");
     }
     const fileReaderInstance = new FileReader();

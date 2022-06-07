@@ -15,6 +15,8 @@ const {
   GetActiveRoomConnections,
 } = require("../controllers/Room");
 
+const { GetRoomNamesAdmin } = require("../controllers/Admin");
+
 // router.post("/newroom", authMiddleware, CreateNewRoom);
 // router.post("/deleteroom", authMiddleware, DeleteRoom);
 
@@ -38,5 +40,6 @@ router.post("/details", GetRoomFolder);
 router.post("/newgroup", CreateNewRoom_Group);
 router.post("/newmember", AddNewMemberInGroup);
 router.post("/participants", GetPartList);
+router.post("/groups", GetRoomNamesAdmin);
 
 module.exports = router;

@@ -2,14 +2,27 @@ const room = require("./api/routes/room");
 const user = require("./api/routes/user");
 const document = require("./api/routes/file");
 const folder = require("./api/routes/folder");
+const authCA = require("./api/routes/auth");
 
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-
+const https = require("https");
+const fs = require("fs");
+const path = require("path");
 const app = express();
+
+//
+// const opts = {
+//   key: fs.readFileSync(path.join(__dirname, "server_key.pem")),
+//   cert: fs.readFileSync(path.join(__dirname, "server_cert.pem")),
+//   requestCert: true,
+//   rejectUnauthorized: false, // so we can do own error handling
+//   ca: [fs.readFileSync(path.join(__dirname, "server_cert.pem"))],
+// };
+//
 
 const {
   addUserInRoom,
@@ -30,13 +43,15 @@ app.use(
   })
 );
 
-// To Verify cors-origin !!!
-// const server_chat = require("http").Server(app);
+// app.use(
+//   cors({
+//     origin: "*", // url of the frontend application
+//     // credentials: true, // set credentials true for secure httpOnly cookie
+//   })
+// );
+
 const { Server } = require("socket.io");
 
-//
-//
-// app.use("/peerjs", peerServer);
 //
 // parse application/json
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -54,6 +69,18 @@ app.use("/room", room);
 app.use("/document", document);
 
 app.use("/folder", folder);
+
+// pentru certificate
+app.use("/auth", authCA);
+
+//
+// listens on https
+// const HTTPS_SERVER = https.createServer(opts, app);
+
+// HTTPS_SERVER.listen(process.env.SERVER_PORT, () => {
+//   console.log(`HTTPS Server started on port ${process.env.SERVER_PORT}`);
+// });
+//
 
 const httpServer = app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server started on port ${process.env.SERVER_PORT}`);

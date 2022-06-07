@@ -204,14 +204,6 @@ export const editUserAccountInfo =
     console.log(varVerify);
   };
 
-//admin search user function
-export const adminSearchList = async (search_text, userId) => {
-  const result = await getUserAdminList(search_text, userId);
-
-  if (result.status === 200) return result.data["admin_user_list"];
-  else return null;
-};
-
 export const getMessageListTime =
   (channelID, lastMessageTime, position) => async (dispatch) => {
     const result = await getRoomMessagesWithTime(

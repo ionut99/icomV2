@@ -11,6 +11,8 @@ import {
   faFilePdf,
 } from "@fortawesome/free-solid-svg-icons";
 
+import moment from "moment";
+
 export const monthNames = [
   "January",
   "February",
@@ -28,6 +30,7 @@ export const monthNames = [
 
 export const handleReturnHumanDateFormat = (timestamp) => {
   const CreateMessageDate = new Date(timestamp);
+
   return (
     monthNames[CreateMessageDate.getMonth()] +
     " " +
@@ -35,9 +38,7 @@ export const handleReturnHumanDateFormat = (timestamp) => {
     " " +
     CreateMessageDate.getHours() +
     ":" +
-    CreateMessageDate.getMinutes() +
-    ":" +
-    CreateMessageDate.getSeconds()
+    CreateMessageDate.getMinutes()
   );
 };
 

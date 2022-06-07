@@ -1,0 +1,25 @@
+1. Generare cheie CA ( server):
+	openssl genpkey -algorithm RSA -out server_key.prv -pkeyopt rsa_keygen_bits:2048 -pkeyopt rsa_keygen_pubexp:5 -aes128 -pass pass:abcd
+	openssl rsa -in server_key.prv -pubout -out server_key.pub
+
+
+2. Creare chei utilizatori:
+	Ionut Pavel:
+openssl genrsa -3 -aes-128-cbc -out ionut_pavel.prv -passout pass:abcd 2048
+openssl rsa -in ionut_pavel.prv -pubout -out ionut_pavel.pub
+
+openssl genrsa -3 -aes-128-cbc -out mihnea_vlasceanu.prv -passout pass:abcd 2048
+openssl rsa -in mihnea_vlasceanu.prv -pubout -out mihnea_vlasceanu.pub
+
+3. Creare csr pentru CA (server):
+	openssl req -new -key server_key.prv -out server.csr -days 365
+(creare certificat)
+	openssl x509 -in server.csr -req -signkey server_key.prv -out server.cer 
+4. Creare csr pentru utilizatori:
+	openssl req -new -key ionut_pavel.prv -out ionut_pavel.csr -days 365
+	openssl req -new -key mihnea_vlasceanu.prv -out mihnea_vlasceanu.csr -days 365
+
+5. Semnare CSR utilzatori ⇒ creeaza certificate X.509
+
+openssl x509 -req -in ionut_pavel.csr -out ionut_pavel.cer -CA server.cer -CAkey server_key.prv
+openssl x509 -req -in mihnea_vlasceanu.csr -out mihnea_vlasceanu.cer -CA server.cer -CAkey server_key.prv

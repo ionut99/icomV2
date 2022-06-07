@@ -21,6 +21,7 @@ function AddUser() {
     setUserSurname("");
     setUserName("");
     setEmail("");
+    setIsAdmin(false);
     setOpen(false);
   }
 
@@ -71,8 +72,7 @@ function AddUser() {
               />
               <div className="form-check">
                 <Form.Check
-                  type="radio"
-                  required
+                  type="checkbox"
                   checked={isAdmin}
                   onChange={toggleAdminValue}
                 />

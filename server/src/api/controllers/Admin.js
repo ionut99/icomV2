@@ -6,12 +6,16 @@ const {
   generateOfuscatedPassword,
   generateRandomSalt,
   sortPersonstAfterSearchText,
+  sortRoomAfterType,
+  AddNumberOfParticipants,
 } = require("../helpers/user_utils");
 
 const {
   InsertNewUserAccountData,
   GetAllUsersDataBase,
 } = require("../services/User");
+
+const { GetAllRoomsDetailsData } = require("../services/Room");
 
 async function adminGetUserList(req, res) {
   try {
@@ -106,7 +110,31 @@ async function InserNewUserAccount(req, res) {
   }
 }
 
+//
+async function GetRoomNamesAdmin(req, res) {
+  try {
+    const adminId = req.body.adminId;
+    var teams_res = await GetAllRoomsDetailsData()
+      .then(function (result) {
+        return sortRoomAfterType(result);
+      })
+      .catch((err) =>
+        setImmediate(() => {
+          throw err;
+        })
+      );
+
+    teams_res = await AddNumberOfParticipants(teams_res);
+
+    return handleResponse(req, res, 200, { teams_res });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 412, " Failed to fetch list with groups! ");
+  }
+}
+
 module.exports = {
   InserNewUserAccount,
   adminGetUserList,
+  GetRoomNamesAdmin,
 };

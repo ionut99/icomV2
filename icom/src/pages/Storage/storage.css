@@ -8,7 +8,7 @@ a {
 .storage-content {
   height: 100vh;
   width: 100vw;
-  min-width: 900px;
+  min-width: 1100px;
 }
 
 .f-nav-bar {
@@ -142,11 +142,12 @@ a {
   margin-right: 10px;
   margin-left: 10px;
   width: 93%;
-  min-width: 400px;
+  min-width: 700px;
 }
 
 .folder-button {
   background-color: #fff;
+  min-width: 680px;
   display: inline-flex;
   width: 100%;
   margin-top: 10px;
@@ -178,7 +179,7 @@ a {
 
 .folder-date {
   width: 30%;
-  min-width: 150px;
+  min-width: 120px;
   font-size: large;
   white-space: nowrap;
 }
@@ -291,7 +292,7 @@ a {
   overflow-x: hidden;
 }
 
-.folder-tree-file-element{
+.folder-tree-file-element {
   margin-top: 3px;
 }
 
@@ -330,7 +331,7 @@ a {
   margin-top: 5px;
 }
 
-@media screen and (max-width: 1100px) {
+@media screen and (max-width: 1400px) {
   .file__details {
     display: none;
   }

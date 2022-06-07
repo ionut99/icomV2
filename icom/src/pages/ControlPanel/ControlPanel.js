@@ -5,7 +5,10 @@ import { Button, Form, Dropdown } from "react-bootstrap";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddUser from "../../components/AddUserAccount/AddUserAccount";
-import { adminSearchList } from "../../asyncActions/userAsyncActions";
+import {
+  getUsersDetailsList,
+  getGroupsDetails,
+} from "../../asyncActions/adminAsyncActions";
 
 import Avatar from "../../components/Avatar/Avatar";
 
@@ -16,7 +19,10 @@ export default function ControlPanel() {
 
   const [search_text, setSearch_text] = useState("");
   const [adminUserList, setAdminUserList] = useState([]);
-  const [teamName, setTeamName] = useState("  Team Name  ");
+  //
+  const [selectedTeam, setSelectedTeam] = useState("  Team Name  ");
+  const [teamsList, setTeamsList] = useState([]);
+  //
   const [openDetails, setOpenDetails] = useState(false);
   //
   const [userDetails, setuserDetails] = useState({});
@@ -42,7 +48,7 @@ export default function ControlPanel() {
   }
   //
   const getSearchUserList = async () => {
-    const userList = await adminSearchList(search_text, user.userId);
+    const userList = await getUsersDetailsList(search_text, user.userId);
     setAdminUserList(userList);
   };
 
@@ -54,6 +60,17 @@ export default function ControlPanel() {
   const SearchPerson = (event) => {
     setSearch_text(event.target.value);
   };
+  //
+
+  // get details about groups
+  useEffect(() => {
+    const getGroups = async (userId) => {
+      const groupList = await getGroupsDetails(userId);
+      console.log(groupList);
+      if (groupList !== undefined) setTeamsList(groupList);
+    };
+    getGroups(user.userId);
+  }, []);
   //
   return (
     <div className="panel-page">
@@ -73,18 +90,31 @@ export default function ControlPanel() {
               />
               <AddUser />
               <Dropdown className="drop-menu">
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                  {teamName}
+                <Dropdown.Toggle
+                  variant="success"
+                  id="dropdown-basic"
+                  className="select-group"
+                >
+                  {selectedTeam}
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu>
-                  <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                  <Dropdown.Item href="#/action-2">
-                    Another action
-                  </Dropdown.Item>
-                  <Dropdown.Item href="#/action-3">
-                    Something else
-                  </Dropdown.Item>
+                <Dropdown.Menu className="group-option">
+                  {teamsList.map((team, index) => {
+                    return (
+                      <Dropdown.Item
+                        href="#/action-1"
+                        key={index}
+                        className="option"
+                      >
+                        <div className="div-option">
+                          <div className="team-name">
+                            <p>{team.Name}</p>
+                          </div>
+                          <div className="team-part">Users: {team.Part}</div>
+                        </div>
+                      </Dropdown.Item>
+                    );
+                  })}
                 </Dropdown.Menu>
               </Dropdown>
             </Form>

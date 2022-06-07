@@ -281,7 +281,6 @@ async function GetProfilePicture(req, res) {
     }
 
     var options = {
-      //root: path.join(__dirname, "public"),
       dotfiles: "deny",
       headers: {
         "x-timestamp": Date.now(),

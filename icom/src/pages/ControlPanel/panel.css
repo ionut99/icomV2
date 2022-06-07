@@ -7,19 +7,20 @@
 .panel-page .panel-content {
   height: calc(100% - 60px);
   width: 100%;
-  background-image: url("../../images/loginBackground.jpg");
-  background-position: center;
+  min-width: 900px;
   display: flex;
   justify-content: center;
   align-content: center;
+  background-image: url("../../images/loginBackground.jpg");
+  background-position: center;
 }
 
 .panel-page .panel-content .content {
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .panel-page .panel-content .content .user-section {
@@ -32,13 +33,56 @@
 
 .panel-page .panel-content .content .user-section .search-bar {
   display: flex;
-  justify-content: center;
   margin-top: 20px;
   margin-bottom: 20px;
+  justify-content: center;
 }
 
 .panel-page .panel-content .content .user-section .drop-menu {
   margin-left: 30px;
+}
+
+.select-group {
+  width: 430px;
+}
+
+.group-option {
+  width: 450px;
+  max-height: 500px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.group-option .option {
+  width: inherit;
+  height: 45px;
+  padding-top: 10px;
+  justify-content: center;
+  border-bottom: #dadde0 1px solid;
+}
+
+.group-option .option .div-option {
+  width: 95%;
+  display: inline-flex;
+}
+
+.group-option .option .div-option .team-name {
+  width: 100%;
+  font-weight: 700;
+}
+
+.team-name p {
+  margin: 0px;
+  overflow: hidden;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.group-option .option .div-option .team-part {
+  margin-left: auto;
+  margin-right: 25px;
+  width: 70px;
 }
 
 .panel-page .panel-content .content .user-section .search-bar .user-search {
@@ -107,7 +151,7 @@
   overflow: hidden;
   margin: auto;
   margin-top: 30px;
-  box-shadow: 8px 8px 16px 0px rgb(0 0 0 / 20%);
+  border: 2px solid #9c9c9c;
 }
 
 .panel-page .panel-content .content .right-side .view-user-details .user-data {
@@ -136,6 +180,11 @@
   border: 1px solid #666666;
   border-spacing: 5px;
   border-radius: 1rem;
+}
+
+.div-table-row-description .div-table-col {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .div-table .user-list {
@@ -169,21 +218,44 @@
 
 .div-table-col {
   height: 60px;
-  float: left; /* fix for  buggy browsers */
-  display: table-column;
+  float: left;
+  display: flex;
   min-width: 100px;
   width: 100%;
   background-color: #ccc;
+  justify-content: flex-start;
 }
 
 .div-table-col p {
   padding-top: 20px;
   font-size: larger;
   margin-bottom: 0px;
+  margin-left: 0px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 @media screen and (max-width: 1500px) {
   .panel-page .panel-content .content .right-side {
     display: none;
   }
+
+  .select-group {
+    width: fit-content;
+  }
+
+  .group-option {
+    width: 300px;
+  }
+
+  
+.team-name {
+  max-width: 200px;
+  margin: 0px;
+  overflow: hidden;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 }

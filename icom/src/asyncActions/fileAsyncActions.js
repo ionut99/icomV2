@@ -35,14 +35,11 @@ export const UploadFileForStoring =
 
 //
 
-//
-
 // handle download file
 export const DownloadFileFromServer =
   (fileId, fileName, userId) => async (dispatch) => {
     DownloadFileService(fileId, userId).then(
       (res) => {
-        console.log(res.data);
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");
         link.href = url;

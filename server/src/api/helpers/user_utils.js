@@ -1,6 +1,9 @@
 const date = require("date-and-time");
 var sha512 = require("js-sha512");
-const { GetRoomMessagesData } = require("../services/Room");
+const {
+  GetRoomMessagesData,
+  GetNumberOfParticipantsOfRoom,
+} = require("../services/Room");
 
 const Characters =
   "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*_-=+";
@@ -75,6 +78,30 @@ function sortRoomAfterSearchText(list, keyword) {
     });
 }
 
+function sortRoomAfterType(list) {
+  return list
+    .sort((a, b) => {
+      if (a.Name > b.Name) {
+        return 1;
+      } else if (a.Name < b.Name) {
+        return -1;
+      } else {
+        if (a.Name > b.Name) return 1;
+        else return -1;
+      }
+    })
+    .sort((a, b) => {
+      if (a.Private > b.Private) {
+        return 1;
+      } else if (a.Private < b.Private) {
+        return -1;
+      } else {
+        if (a.Private > b.Private) return 1;
+        else return -1;
+      }
+    });
+}
+
 async function AddLastMessage(RoomList) {
   try {
     var room_result = [];
@@ -112,10 +139,41 @@ async function AddLastMessage(RoomList) {
   }
 }
 
+async function AddNumberOfParticipants(RoomList) {
+  try {
+    var room_result = [];
+    for (let i = 0; i < RoomList.length; i++) {
+      const partNumber = await GetNumberOfParticipantsOfRoom(RoomList[i].ID)
+        .then(function (result) {
+          return result.length;
+        })
+        .catch((err) =>
+          setImmediate(() => {
+            throw err;
+          })
+        );
+
+      room_result.push({
+        RoomID: RoomList[i].ID,
+        Name: RoomList[i].Name,
+        Type: RoomList[i].Private,
+        Part: partNumber,
+      });
+    }
+
+    return room_result;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
 module.exports = {
   generateRandomSalt,
   generateOfuscatedPassword,
   sortPersonstAfterSearchText,
   sortRoomAfterSearchText,
   AddLastMessage,
+  sortRoomAfterType,
+  AddNumberOfParticipants,
 };

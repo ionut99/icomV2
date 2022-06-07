@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { getUserDetails } from "../../services/user";
 import { monthNames, handleReturnFileIcon } from "../../helpers/FileIcons";
-
+import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
 // import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
 // import * as FaIcons from "react-icons/fa";
@@ -15,6 +15,7 @@ import * as AiIcons from "react-icons/ai";
 import { DownloadFileFromServer } from "../../asyncActions/fileAsyncActions";
 
 function File({ file }) {
+  console.log(file);
   const ref = useRef();
   const dispatch = useDispatch();
   const authObj = useSelector((state) => state.auth);
@@ -23,28 +24,13 @@ function File({ file }) {
   const [authName, setauthName] = useState("");
   const [optionButton, setOptionButton] = useState(false);
 
-  // const CreateFileDate = Date.parse(file.createdTime);
-  // const CreateFileDate = moment(Date.parse(file.CreateFileDate)).format(
-  //   "MM/DD/YYYY hh:MM"
-  // );
   const CreateFileDate = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
-    month: "numeric",
+    month: "long",
     day: "numeric",
     hour: "numeric",
     minute: "numeric",
-    second: "numeric",
-  }).format(file.CreateFileDate);
-  // const finalFileDate =
-  //   monthNames[CreateFileDate.getMonth()] +
-  //   " " +
-  //   CreateFileDate.getDate() +
-  //   " " +
-  //   CreateFileDate.getHours() +
-  //   ":" +
-  //   CreateFileDate.getMinutes() +
-  //   ":" +
-  //   CreateFileDate.getSeconds();
+  }).format(file.createdTime);
 
   useEffect(() => {
     let isMounted = true;

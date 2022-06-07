@@ -172,6 +172,36 @@ function GetRoomDetailsData(roomID) {
   });
 }
 
+function GetAllRoomsDetailsData() {
+  let selectQuery = "SELECT * FROM ??";
+  let query = mysql.format(selectQuery, ["room"]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(result);
+    });
+  });
+}
+
+function GetNumberOfParticipantsOfRoom(roomID) {
+  let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
+  let query = mysql.format(selectQuery, [
+    "participants",
+    "participants.RoomID",
+    roomID,
+  ]);
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(result);
+    });
+  });
+}
+
 module.exports = {
   InsertNewRoomData,
   InsertParticipantData,
@@ -182,4 +212,6 @@ module.exports = {
   GetRoomFolderID,
   GetPartListData,
   GetRoomDetailsData,
+  GetAllRoomsDetailsData,
+  GetNumberOfParticipantsOfRoom,
 };
