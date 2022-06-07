@@ -35,8 +35,8 @@ function ChangePassword(props) {
     setOpen(false);
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleSubmit(event) {
+    event.preventDefault();
 
     // send data for edit user details
     dispatch(

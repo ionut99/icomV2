@@ -4,8 +4,8 @@ import { IconContext } from "react-icons";
 import * as FaIcons from "react-icons/fa";
 import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 import { updateCurrentChannel } from "../../actions/userActions";
-import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import ChangePassword from "../ChangePassword/ChangePassword";
+import ChangeAvatar from "../ChangeAvatar/ChangeAvatar";
 import Avatar from "../Avatar/Avatar";
 import { Button } from "react-bootstrap";
 
@@ -33,24 +33,7 @@ function Navbar() {
   const [sidebar, setSidebar] = useState(false);
   const [discard, setDiscard] = useState(false);
 
-  const [confirmDialog, setConfirmDialog] = useState({
-    uploadPicture: false,
-    isOpen: false,
-    title: "",
-    subTitle: "",
-  });
-
   const showSidebar = () => setSidebar(!sidebar);
-
-  const handleChangePicture = () => {
-    setIsMenuOpen(false);
-    setConfirmDialog({
-      uploadPicture: true,
-      isOpen: true,
-      title: "Upload new profile photo",
-      subTitle: "You can preview picture below:",
-    });
-  };
 
   function LogOut() {
     // disconnect socket...
@@ -119,12 +102,6 @@ function Navbar() {
 
   return (
     <div className="wrapper" ref={navbarRef}>
-      <ConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-        discard={discard}
-        setDiscard={setDiscard}
-      />
       <IconContext.Provider value={{ color: "#fff" }}>
         <div className="my-my-navbar">
           <div className="left_section">
@@ -162,13 +139,7 @@ function Navbar() {
             <div className="user-details">Sign in as {user.name}</div>
 
             <div className="dropdown-options">
-              <Button
-                className="user-menu-button"
-                variant="btn btn-outline-primary btn-sm"
-                onClick={handleChangePicture}
-              >
-                Change Avatar
-              </Button>
+              <ChangeAvatar userId={user.userId} />
             </div>
             <div className="dropdown-options">
               <ChangePassword
