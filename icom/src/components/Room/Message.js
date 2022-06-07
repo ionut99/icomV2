@@ -65,16 +65,9 @@ function Message(props) {
     //
     let isMounted = true;
 
-    const getPicture = async (fileId, userId) => {
-      const pictureSrc = await getPicturePreview(fileId, userId);
-      if (pictureSrc === "failed") return undefined;
-      else return pictureSrc;
-    };
-
-    getPicture(message.fileId, user.userId).then((result) => {
+    getPicturePreview(message.fileId, user.userId).then((result) => {
       if (isMounted) {
-        //
-        setPictureSrc(result);
+        if (pictureSrc !== "failed") setPictureSrc(result);
       }
     });
 
@@ -86,7 +79,9 @@ function Message(props) {
 
   //
   const handleDownloadFile = (fileId, fileName, userId) => {
-    dispatch(DownloadFileFromServer(fileId, fileName, userId));
+    if (message.type !== "text" && message.fileId !== undefined)
+      dispatch(DownloadFileFromServer(fileId, fileName, userId));
+    else return;
   };
 
   return (
@@ -130,12 +125,25 @@ function Message(props) {
                 icon={handleReturnFileIcon(message.type)}
                 className="icon"
                 style={{
+                  display:
+                    message.type !== "image/jpeg" &&
+                    message.type !== "image/png" &&
+                    message.type !== "image/gif"
+                      ? "block"
+                      : "none",
                   color: "#0969da",
                 }}
               />
             </div>
 
-            <div className="text">
+            <div
+              className={classNames("text", {
+                link: message.type !== "text" && message.fileId !== undefined,
+              })}
+              onClick={() => {
+                handleDownloadFile(message.fileId, message.Body, user.userId);
+              }}
+            >
               <p>{message.Body}</p>
             </div>
           </div>

@@ -26,7 +26,7 @@ const ConversationList = () => {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
-  function handleSubmit(e) {
+  function handleSubmitDeleteGroup(e) {
     e.preventDefault();
     if (currentChannel.name === undefined || currentChannel.id === undefined)
       return;
@@ -57,12 +57,14 @@ const ConversationList = () => {
       }}
     >
       <Modal show={open} onHide={closeModal}>
-        <Form onSubmit={handleSubmit}>
-          <Modal.Body>
-            Delete Conversation with {currentChannel.name}?
-          </Modal.Body>
+        <Form onSubmit={handleSubmitDeleteGroup}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              Delete Conversation with {currentChannel.name}?
+            </Modal.Title>
+          </Modal.Header>
           <Modal.Footer>
-            <Button variant="secondary" onClick={closeModal}>
+            <Button variant="outline-primary" onClick={closeModal}>
               No
             </Button>
             <Button variant="outline-danger" type="submit">

@@ -13,22 +13,19 @@ function Avatar(props) {
 
   useEffect(() => {
     if (userId === null) return;
+    //
     let isMounted = true;
 
-    const avatarSrc = async (userId) => {
-      const avatarSrc = await getAvatarPictureAsync(userId, roomId);
-      if (avatarSrc === "failed" || avatarSrc === "default") {
-        return defaultAvatar;
-      } else {
-        return avatarSrc;
+    getAvatarPictureAsync(userId, roomId).then((result) => {
+      if (isMounted) {
+        if (result === "failed" || result === "default") {
+          setActualSrc(defaultAvatar);
+        } else {
+          setActualSrc(result);
+        }
+        setLoaded(true);
       }
-    };
-
-    avatarSrc(userId).then((result) => {
-      if (isMounted) setActualSrc(result);
     });
-
-    setLoaded(true);
 
     return () => {
       isMounted = false;

@@ -37,8 +37,6 @@ export const userLoginAsync = (email, password) => async (dispatch) => {
 
   const result = await userLoginService(email, password);
 
-  console.log("afisare rezultat:");
-  console.log(result);
   if (result.error) {
     dispatch(userLoginFailure(result.response.data.message));
     return;

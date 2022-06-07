@@ -48,17 +48,10 @@ a {
   box-shadow: 8px 8px 16px 0px rgb(0 0 0 / 20%);
 }
 
-.folder-list p {
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-}
-
-.file-list p {
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.content-folder-list p {
+  margin: 0px;
+  font-size: large;
+  text-align: center;
 }
 
 .folder-list {
@@ -70,6 +63,13 @@ a {
   align-items: center;
 }
 
+.folder-list p {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+}
+
 .file-list {
   width: auto;
   height: 100%;
@@ -79,15 +79,15 @@ a {
   align-items: center;
 }
 
+.file-list p {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .details-bar {
   height: 60px;
   border-bottom: solid #dadde0;
-}
-
-.content-folder-list p {
-  margin: 0px;
-  font-size: large;
-  text-align: center;
 }
 
 .file__details {

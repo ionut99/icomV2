@@ -5,7 +5,6 @@ import { Button, Modal, Form } from "react-bootstrap";
 import { updateProfilePicture } from "../../asyncActions/fileAsyncActions";
 
 import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
-import defaultAvatar from "../../images/defaultAvatar.png";
 import { Spinner } from "react-bootstrap";
 
 import "./change.css";
@@ -26,11 +25,8 @@ function ChangeAvatar(props) {
 
   //
   const [invalidImage, setinvalidImage] = useState(undefined);
-
   //
   let reader = new FileReader();
-
-  //
 
   //
   function openModal() {
@@ -139,7 +135,7 @@ function ChangeAvatar(props) {
       >
         Change Avatar
       </Button>
-      <Modal show={open} onHide={closeModal} controlId="modalAvatar">
+      <Modal show={open} onHide={closeModal} controlid="modalAvatar">
         <Modal.Header closeButton>
           <Modal.Title>Change profile picture?</Modal.Title>
         </Modal.Header>

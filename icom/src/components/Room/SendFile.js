@@ -124,7 +124,7 @@ export default function SendFile(props) {
         onHide={closeModal}
         backdrop="static"
         keyboard={false}
-        controlId="modalSend"
+        controlid="modalSend"
       >
         <Modal.Header closeButton>
           <Modal.Title>Send file to {currentChannelName}?</Modal.Title>

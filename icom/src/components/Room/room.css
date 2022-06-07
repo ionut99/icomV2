@@ -6,6 +6,7 @@
   width: 70%;
   height: 98%;
   display: block;
+  position: relative;
   text-align: center;
   background-image: url("../../images/chat_background.png");
   background-position: center;
@@ -104,7 +105,20 @@
   padding-top: 5px;
 }
 
+.message_content .message_body .text.link {
+  /* color: #0969da; */
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: medium;
+}
+
+.text.link:hover {
+  color: #0969da;
+  -webkit-transform: scale(1.02);
+}
+
 .message_content .message_body .message_icon {
+  margin-top: 5px;
   font-size: 20px;
   margin-right: 10px;
 }
@@ -165,32 +179,33 @@
 }
 
 .right-section .messenger_input {
+  position: absolute;
   margin: 15px auto;
-  max-height: 18%;
   min-height: 75px;
+  max-height: 18%;
   width: 68%;
-  position: relative;
+  left: 20%;
+  bottom: 0px;
 }
 
 .right-section .messenger_input .text_input {
-  width: 100%;
-  max-height: 100%;
-  position: absolute;
-  bottom: 0px;
   display: flex;
+  max-height: 100%;
+  width: 100%;
+  bottom: 0px;
 }
 
 .right-section .messenger_input .text_input .custom-textarea {
-  border: 0 none;
-  border: 2px solid var(--border-color-less-intense);
-  border-radius: 10px;
-  font-size: 18px;
-  padding-left: 20px;
-  padding-top: 10px;
   width: 100%;
   height: 100%;
+  border: 0 none;
+  font-size: 18px;
+  padding-top: 10px;
+  padding-left: 20px;
+  border-radius: 10px;
   max-height: 120px;
   margin-top: 3px;
+  border: 2px solid var(--border-color-less-intense);
 }
 
 .right-section .messenger_input .toolbar-send {
@@ -264,10 +279,10 @@
 .conversation-details {
   height: 60px;
   width: 100%;
+  padding-right: 15px;
   display: inline-flex;
   background-color: var(--white-color);
   border-bottom-right-radius: 1.4rem;
-  padding-right: 15px;
   border-bottom: 2px solid var(--color-element-hover);
 }
 
@@ -358,11 +373,5 @@
 @media screen and (max-height: 900px) {
   .right-section .test-scrollbar {
     max-height: 500px;
-  }
-}
-
-@media screen and (max-height: 760px) {
-  .right-section .test-scrollbar {
-    max-height: 480px;
   }
 }

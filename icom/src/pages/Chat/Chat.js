@@ -73,7 +73,7 @@ function Chat() {
     SetnewGroup(false);
   }
 
-  function handleSubmit(e) {
+  function handleSubmitCreateGroup(e) {
     e.preventDefault();
     //
     dispatch(createNewGroup(groupName, 0, user.userId, uuidv4()));
@@ -134,10 +134,12 @@ function Chat() {
               <FontAwesomeIcon icon={faArrowLeft} className="w-100 h-100" />
             </Button>
             <Modal show={newGroup} onHide={closeModal}>
-              <Form onSubmit={handleSubmit}>
+              <Modal.Header closeButton>
+                <Modal.Title>Enter New Channel Name:</Modal.Title>
+              </Modal.Header>
+              <Form onSubmit={handleSubmitCreateGroup}>
                 <Modal.Body>
                   <Form.Group>
-                    <Form.Label>Enter New Channel Name:</Form.Label>
                     <Form.Control
                       type="text"
                       required
@@ -147,10 +149,10 @@ function Chat() {
                   </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
-                  <Button variant="secondary" onClick={closeModal}>
+                  <Button variant="outline-danger" onClick={closeModal}>
                     Close
                   </Button>
-                  <Button variant="success" type="submit">
+                  <Button variant="outline-primary" type="submit">
                     Create New Group
                   </Button>
                 </Modal.Footer>
