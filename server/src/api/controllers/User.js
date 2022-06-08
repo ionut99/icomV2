@@ -195,7 +195,7 @@ async function GetUserDetails(req, res) {
 async function EditUserAccountAsync(req, res) {
   try {
     const surname = req.body.surname;
-    const userName = req.body.userName;
+    const name = req.body.name;
     const email = req.body.email;
     const currentPassword = req.body.currentPassword;
     const newPassword = req.body.newPassword;
@@ -203,7 +203,7 @@ async function EditUserAccountAsync(req, res) {
 
     const userDetails = await GetUserDetailsData(userId)
       .then(function (result) {
-        if (result.length > 0) return result;
+        if (result.length > 0) return result[0];
         else return undefined;
       })
       .catch((err) =>
@@ -218,10 +218,10 @@ async function EditUserAccountAsync(req, res) {
 
     const ofuscatedPassword = generateOfuscatedPassword(
       currentPassword,
-      userDetails[0].Salt
+      userDetails.salt
     );
 
-    if (userDetails[0].password !== ofuscatedPassword) {
+    if (userDetails.password !== ofuscatedPassword) {
       return handleResponse(req, res, 200, {
         EditUserAccount: "FAILED",
         Message: "Wrong Password",
@@ -234,7 +234,7 @@ async function EditUserAccountAsync(req, res) {
 
     const result = await EditUserAccountDataBase(
       surname,
-      userName,
+      name,
       email,
       newServerPassword,
       newsalt,

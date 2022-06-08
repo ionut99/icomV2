@@ -75,8 +75,8 @@ function ChangeAvatar(props) {
         var ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
 
-        var MAX_WIDTH = 200;
-        var MAX_HEIGHT = 200;
+        var MAX_WIDTH = 300;
+        var MAX_HEIGHT = 300;
         var width = img.width;
         var height = img.height;
 
@@ -129,7 +129,7 @@ function ChangeAvatar(props) {
   return (
     <>
       <Button
-        className="add-user-button"
+        className="user-menu-button"
         variant="btn btn-outline-primary btn-sm"
         onClick={openModal}
       >

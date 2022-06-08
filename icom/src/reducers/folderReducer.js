@@ -47,7 +47,7 @@ const folderRedu = (state = SystemState, action) => {
         childFiles: fileList,
       };
     case ADD_CHILD_FOLDER:
-      const { folderID, folderName, createdAt, parentID, path, userID } =
+      const { id, folderName, createdAt, parentId, path, userId } =
         action.payload;
       return {
         ...state,
@@ -56,10 +56,10 @@ const folderRedu = (state = SystemState, action) => {
           {
             name: folderName,
             createdTime: createdAt,
-            folderId: folderID,
-            parentID: parentID,
+            folderId: id,
+            parentId: parentId,
             path: path,
-            userID: userID,
+            userId: userId,
           },
         ],
       };

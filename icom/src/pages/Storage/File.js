@@ -10,7 +10,7 @@ import * as AiIcons from "react-icons/ai";
 // import * as FaIcons from "react-icons/fa";
 
 import { DownloadFileFromServer } from "../../asyncActions/fileAsyncActions";
-
+import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
 function File({ file }) {
   const ref = useRef();
   const dispatch = useDispatch();
@@ -20,13 +20,7 @@ function File({ file }) {
   const [authName, setauthName] = useState("");
   const [optionButton, setOptionButton] = useState(false);
 
-  const CreateFileDate = new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-  }).format(file.createdTime);
+  const CreateFileDate = handleReturnHumanDateFormat(file.createdTime);
 
   useEffect(() => {
     let isMounted = true;
@@ -37,9 +31,9 @@ function File({ file }) {
       .then((result) => {
         if (isMounted) {
           setauthName(
-            result.data["userDetails"][0].Name +
+            result.data["userDetails"].name +
               " " +
-              result.data["userDetails"][0].Surname
+              result.data["userDetails"].surname
           );
         }
       })

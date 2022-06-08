@@ -202,12 +202,12 @@ async function UploadNewStoredFile(req, res) {
               GetFolderDetailsService(folderId)
                 .then(function (parentFolder) {
                   //console.log(parentFolder);
-                  if (parentFolder[0].RoomIdBeneficiary !== null) {
+                  if (parentFolder[0].roomIdBeneficiary !== null) {
                     //similarity
                     InsertNewFileRelationDataBase(
                       fileId,
                       userId,
-                      parentFolder[0].RoomIdBeneficiary
+                      parentFolder[0].roomIdBeneficiary
                     )
                       .then(function (result) {
                         //console.log(result);

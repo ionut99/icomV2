@@ -188,11 +188,11 @@ export const addNewUserAccount =
   };
 
 export const editUserAccountInfo =
-  (userSurname, userName, email, currentPassword, newPassword, userId) =>
+  (surname, name, email, currentPassword, newPassword, userId) =>
   async (dispatch) => {
     const varVerify = await editUserAccountService(
-      userSurname,
-      userName,
+      surname,
+      name,
       email,
       currentPassword,
       newPassword,

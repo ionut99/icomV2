@@ -222,8 +222,8 @@ export const addUserAccountService = async (
 };
 
 export const editUserAccountService = async (
-  userSurname,
-  userName,
+  surname,
+  name,
   email,
   currentPassword,
   newPassword,
@@ -231,8 +231,8 @@ export const editUserAccountService = async (
 ) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/users/edit`, {
-      userSurname,
-      userName,
+      surname,
+      name,
       email,
       currentPassword,
       newPassword,

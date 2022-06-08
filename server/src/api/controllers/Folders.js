@@ -1,4 +1,5 @@
 var uui = require("uuid");
+var date = require("date-and-time");
 
 const { handleResponse } = require("../helpers/utils");
 
@@ -23,7 +24,7 @@ async function AddNewFolder(req, res) {
     const parentId = req.body.parentId;
     const userId = req.body.userId;
     const path = req.body.path;
-    const createdAt = new Date();
+    const createdAt = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
 
     if (name === undefined || userId === undefined)
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
@@ -46,32 +47,58 @@ async function AddNewFolder(req, res) {
     // de adaugat si roomId pentru folderele care sunt create la comun
     // adica verificam parentId
     if (parentId !== "root" && typeof path === "object" && path.length > 0) {
-      const parentFolder = await GetFolderDetailsService(parentId);
-      if (parentFolder === "FAILED") {
+      const parentFolder = await GetFolderDetailsService(parentId)
+        .then(function (result) {
+          return result[0];
+        })
+        .catch((err) => {
+          throw err;
+        });
+      if (parentFolder === undefined) {
         console.log("Error get details about folder!");
         return handleResponse(req, res, 412, " DataBase Error ");
       }
 
-      if (parentFolder[0].RoomIdBeneficiary !== null) {
+      if (parentFolder.roomIdBeneficiary !== null) {
         result = await InsertFolderUserRelationDataBase(
           folderId,
           userId,
-          parentFolder[0].RoomIdBeneficiary
-        );
-        if (result === "FAILED") {
+          parentFolder.roomIdBeneficiary
+        )
+          .then(function (result) {
+            return result;
+          })
+          .catch((err) => {
+            throw err;
+          });
+        //
+        if (result === undefined) {
           console.log("Error storage folder configuration!");
           return handleResponse(req, res, 412, " DataBase Error ");
         }
       } else {
-        result = await InsertFolderUserRelationDataBase(folderId, userId, null);
-        if (result === "FAILED") {
+        result = await InsertFolderUserRelationDataBase(folderId, userId, null)
+          .then(function (result) {
+            return result;
+          })
+          .catch((err) => {
+            throw err;
+          });
+        //
+        if (result === undefined) {
           console.log("Error storage folder configuration!");
           return handleResponse(req, res, 412, " DataBase Error ");
         }
       }
     } else {
-      result = await InsertFolderUserRelationDataBase(folderId, userId, null);
-      if (result === "FAILED") {
+      result = await InsertFolderUserRelationDataBase(folderId, userId, null)
+        .then(function (result) {
+          return result;
+        })
+        .catch((err) => {
+          throw err;
+        });
+      if (result === undefined) {
         console.log("Error storage folder configuration!");
         return handleResponse(req, res, 412, " DataBase Error ");
       }

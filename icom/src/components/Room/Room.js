@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 import * as BsIcons from "react-icons/bs";
 import * as IoIcons2 from "react-icons/io5";
@@ -144,7 +144,6 @@ function Room(props) {
     if (socketRef.current === null) return;
 
     socketRef.current.on("user typing", (request) => {
-      console.log("receive typing");
       if (request.roomId === channelId) {
         setUserTyping({
           userName: request.userName,
@@ -152,12 +151,12 @@ function Room(props) {
         });
       }
     });
-    // setTimeout(setUserTyping(undefined), 2000);
     return () => {
       // socketRef.current.off("user typing");
     };
   }, [channelId]);
-  // receive typing event
+
+  //
 
   useEffect(() => {
     if (channelId === null) return;

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { UploadFileForStoring } from "../../asyncActions/fileAsyncActions";
 import { v4 as uuidv4 } from "uuid";
 
-const dayjs = require("dayjs");
+import date from "date-and-time";
 
 export default function AddFileButton({ currentFolder }) {
   const dispatch = useDispatch();
@@ -18,7 +18,7 @@ export default function AddFileButton({ currentFolder }) {
     // const formData = new FormData();
     const file = e.target.files[0];
     if (currentFolder == null || file == null) return;
-    const createdTime = dayjs();
+    const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
 
     dispatch(
       UploadFileForStoring(

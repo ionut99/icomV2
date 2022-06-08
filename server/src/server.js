@@ -96,7 +96,6 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
   socket.on("join room", async (request, callback) => {
-    console.log(request);
     const userId = request.userId;
     const roomId = request.roomId;
     const type = request.type;
@@ -130,7 +129,6 @@ io.on("connection", (socket) => {
 
   // Listen for new messages
   socket.on("send chat message", (message) => {
-    // console.log(message);
     io.to(message.roomId).emit("receive chat message", message);
 
     // save message

@@ -22,10 +22,11 @@ function generateToken(user) {
   //2. Use the information that are useful in other parts
   if (!user) return null;
 
-  const u = {
+  const userData = {
     userId: user.userId,
     name: user.name,
     surname: user.surname,
+    email: user.email,
     isAdmin: user.isAdmin,
   };
 
@@ -36,7 +37,7 @@ function generateToken(user) {
   const privateKey = process.env.JWT_SECRET + xsrfToken;
 
   // generate access token and expiry date
-  const token = jwt.sign(u, privateKey, {
+  const token = jwt.sign(userData, privateKey, {
     expiresIn: process.env.ACCESS_TOKEN_LIFE,
   });
 
@@ -75,6 +76,7 @@ function getCleanUser(user) {
     userId: user.userId,
     name: user.name,
     surname: user.surname,
+    email: user.email,
     isAdmin: user.isAdmin,
   };
 }
