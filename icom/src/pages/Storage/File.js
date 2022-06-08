@@ -1,16 +1,21 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "react-bootstrap";
+//
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+//
 import { getUserDetails } from "../../services/user";
 import { handleReturnFileIcon } from "../../helpers/FileIcons";
-// import * as MdIcons from "react-icons/md";
+//
+import * as MdIcons from "react-icons/md";
 import * as AiIcons from "react-icons/ai";
-// import * as FaIcons from "react-icons/fa";
 
 import { DownloadFileFromServer } from "../../asyncActions/fileAsyncActions";
 import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
+
+//
+
 function File({ file }) {
   const ref = useRef();
   const dispatch = useDispatch();
@@ -77,7 +82,6 @@ function File({ file }) {
           file.userId === user.userId ? "outline-success" : "outline-primary"
         }
         className="folder-button"
-        // as={Link}
       >
         <div className="folder-details">
           <FontAwesomeIcon
@@ -109,10 +113,6 @@ function File({ file }) {
             className="f-dropdown-content"
             style={{ display: optionButton ? "block" : "none" }}
           >
-            {/* <div className="dropdown-instrument" onClick={() => {}}>
-              <FaIcons.FaShare size={20} />
-              <p>Share</p>
-            </div> */}
             <div
               className="dropdown-instrument"
               onClick={() =>
@@ -122,18 +122,18 @@ function File({ file }) {
               <AiIcons.AiOutlineCloudDownload size={20} />
               <p>Download</p>
             </div>
-            {/* <div className="dropdown-instrument" onClick={() => {}}>
+            <div className="dropdown-instrument" onClick={() => {}}>
               <MdIcons.MdDeleteOutline size={20} />
               <p>Delete</p>
-            </div> */}
-            {/* <div className="dropdown-instrument" onClick={() => {}}>
+            </div>
+            <div className="dropdown-instrument" onClick={() => {}}>
               <AiIcons.AiOutlinePushpin size={20} />
               <p>Pin to top</p>
             </div>
             <div className="dropdown-instrument" onClick={() => {}}>
               <MdIcons.MdDriveFileRenameOutline size={20} />
               <p>Rename</p>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700|Poppins:400,500&display=swap");
+
 * {
   margin: 0;
   padding: 0;
@@ -69,17 +70,6 @@
 .space {
   margin-top: 16px;
 }
-
-/* .show {
-  position: absolute;
-  right: 13px;
-  font-size: 13px;
-  font-weight: 700;
-  color: #222;
-  display: none;
-  cursor: pointer;
-  font-family: "Montserrat", sans-serif;
-} */
 
 .pass-key:valid ~ .show {
   display: block;

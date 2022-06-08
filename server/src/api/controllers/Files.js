@@ -7,24 +7,20 @@ const {
   GetUserDetailsData,
 } = require("../services/User");
 //
-const {
-  InsertNewFileDataBase,
-  InsertNewFileRelationDataBase,
-  GetFileDetailsFromDataBase,
-} = require("../services/Files");
-//
+const { GetFileDetailsFromDataBase } = require("../services/Files");
 const { handleResponse } = require("../helpers/utils");
-const { GetFolderDetailsService } = require("../services/Folders");
+//
 const {
   checkFileExists,
   extractProfilePicturePath,
+  saveFileConfiguration,
 } = require("../helpers/files_utils");
 
 const storageFile = multer.diskStorage({
   destination: path.join(__dirname, "../../../users/tempDir/"),
   filename: function (req, file, cb) {
-    // null as first argument means no error
     cb(null, file.originalname);
+    // null as first argument means no error
   },
 });
 
@@ -84,31 +80,36 @@ async function UpdateProfilePicture(req, res) {
       } catch (err) {
         throw err;
       }
-      const createdTime = Date.now();
-      fs.rename(
-        oldPath,
-        newPath + "/" + createdTime + " " + fileName,
-        async function (err) {
-          if (err) {
-            throw err;
-          } else {
-            console.log("Successfully stored new avatar");
-            var pathToStore = path.join(
-              "users/" + userId + "/",
-              createdTime + " " + fileName
-            );
-            pathToStore = pathToStore.replace(/\\/g, "\\\\");
+      //
+      try {
+        const createdTime = Date.now();
+        fs.rename(
+          oldPath,
+          newPath + "/" + createdTime + " " + fileName,
+          async function (err) {
+            if (err) {
+              throw err;
+            } else {
+              console.log("Successfully stored new avatar");
+              var pathToStore = path.join(
+                "users/" + userId + "/",
+                createdTime + " " + fileName
+              );
+              pathToStore = pathToStore.replace(/\\/g, "\\\\");
 
-            const result = await UpdateAvatarPathData(userId, pathToStore);
-            if (result === "FAILED")
-              return handleResponse(req, res, 412, " DataBase Error ");
+              const result = await UpdateAvatarPathData(userId, pathToStore);
+              if (result === "FAILED")
+                return handleResponse(req, res, 412, " DataBase Error ");
 
-            return handleResponse(req, res, 200, {
-              UpdateProfilePicture: "SUCCESS",
-            });
+              return handleResponse(req, res, 200, {
+                UpdateProfilePicture: "SUCCESS",
+              });
+            }
           }
-        }
-      );
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   } catch (err) {
     return handleResponse(req, res, 190, { UpdateProfilePicture: "FAILED" });
@@ -146,109 +147,31 @@ async function UploadNewStoredFile(req, res) {
       const userId = req.body.userId;
       // const createdTime = req.body.createdTime;
 
-      const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
-      const newPath = path.join(__dirname, "../../../users/", userId);
-
-      try {
-        if (!(await checkFileExists(newPath))) {
-          console.log("Nu exista folderr...");
-          fs.mkdir(newPath, { recursive: true }, (err) => {
-            if (err) {
-              return console.error(err);
-            }
-            console.log("Directory created successfully!");
-          });
-        }
-      } catch (err) {
-        throw err;
-      }
-      const createdTime = Date.now();
-      fs.rename(
-        oldPath,
-        newPath + "/" + createdTime + " " + fileName,
-        async function (err) {
-          if (err) {
-            throw err;
-          } else {
-            console.log("Successfully storage the file!");
-
-            var pathToStore = path.join(
-              "users/" + userId + "/",
-              createdTime + " " + fileName
-            );
-            pathToStore = pathToStore.replace(/\\/g, "\\\\");
-
-            //Store File details in database
-            //similarity
-            InsertNewFileDataBase(
-              fileId,
-              fileType,
-              fileName,
-              folderId,
-              createdTime,
-              userId,
-              fileSize,
-              pathToStore
-            )
-              .then(function (result) {
-                //console.log(result);
-              })
-              .catch((err) => {
-                throw err;
-              });
-            // similarity
-
-            if (folderId !== "root") {
-              GetFolderDetailsService(folderId)
-                .then(function (parentFolder) {
-                  //console.log(parentFolder);
-                  if (parentFolder[0].roomIdBeneficiary !== null) {
-                    //similarity
-                    InsertNewFileRelationDataBase(
-                      fileId,
-                      userId,
-                      parentFolder[0].roomIdBeneficiary
-                    )
-                      .then(function (result) {
-                        //console.log(result);
-                      })
-                      .catch((err) => {
-                        throw err;
-                      });
-                    //similarity
-                  } else {
-                    InsertNewFileRelationDataBase(fileId, userId, null)
-                      .then(function (result) {
-                        //console.log(result);
-                      })
-                      .catch((err) => {
-                        throw err;
-                      });
-                  }
-                })
-                .catch((err) => {
-                  throw err;
-                });
-            } else {
-              InsertNewFileRelationDataBase(fileId, userId, null)
-                .then(function (result) {
-                  //console.log(result);
-                })
-                .catch((err) => {
-                  throw err;
-                });
-            }
-
-            return handleResponse(req, res, 200, {
-              StorageFile: "SUCCESS",
-              fileId: fileId,
-              type: fileType,
-            });
-          }
-        }
+      // store details about file
+      const save_rez = await saveFileConfiguration(
+        userId,
+        fileName,
+        fileId,
+        fileType,
+        fileSize,
+        folderId
       );
+
+      if (!save_rez)
+        return handleResponse(req, res, 190, { StorageFile: "FAILED" });
+      //
+
+      //
+      console.log("Successfully storage the file!");
+      return handleResponse(req, res, 200, {
+        StorageFile: "SUCCESS",
+        fileId: fileId,
+        type: fileType,
+      });
+      // store configuration
     });
   } catch (err) {
+    console.error(err);
     return handleResponse(req, res, 190, { StorageFile: "FAILED" });
   }
 }

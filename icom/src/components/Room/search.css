@@ -1,5 +1,5 @@
-@import "../../cssFiles/chat.css";
-@import "../../cssFiles/colors.css";
+@import "../../pages/Chat/chat.css";
+@import "../../index.css";
 
 .RoomDelimiter {
   top: 0;

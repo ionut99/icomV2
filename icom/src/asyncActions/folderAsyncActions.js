@@ -38,19 +38,7 @@ export const AddNewFolder =
         )
       );
     }
-    // console.log(res_addFolder.data["AddNewFolder"]);
-    // de adaugat noul folder in lista
   };
-
-// // handle search folder
-// export const GetFolder = (folderId, userId) => async (dispatch) => {
-//   const folderObject = await getFolderByID(folderId, userId);
-
-//   // console.log("Rezultatul intors la cautarea folderului este: ");
-//   // console.log(folderObject);
-
-//   return folderObject;
-// };
 
 //
 export const userGetFolderDetails = (folderId, userId) => async (dispatch) => {
@@ -65,15 +53,9 @@ export const userGetFolderDetails = (folderId, userId) => async (dispatch) => {
   }
 
   const result = await getFolderByID(folderId, userId);
-
   if (result.data !== undefined) {
     const formattedDoc = {
-      name: result.data["folderObject"].name,
-      createdTime: result.data["folderObject"].createdTime,
-      folderId: result.data["folderObject"].folderId,
-      parentId: result.data["folderObject"].parentId,
-      path: JSON.parse(result.data["folderObject"].path),
-      userID: result.data["folderObject"].userId,
+      ...result.data["folderObject"],
     };
 
     dispatch(updateFolder(formattedDoc));

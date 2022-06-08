@@ -30,6 +30,7 @@ function App() {
   // useEffect(() => {
   //   dispatch(verifyTokenAsync());
   // }, [dispatch]);
+  // dispatch used from when we want to reload the page
 
   useEffect(() => {
     setAuthToken(token);

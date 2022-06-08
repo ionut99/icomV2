@@ -1,5 +1,5 @@
 @import "../../pages/Chat/chat.css";
-@import "../../cssFiles/colors.css";
+@import "../../index.css";
 
 .back-button {
   margin: 10px;

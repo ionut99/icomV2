@@ -1,6 +1,5 @@
 import { UploadNewStoringFile, DownloadFileService } from "../services/file";
 import { addChildFile } from "../actions/folderActions";
-// import { v4 as uuidv4 } from "uuid";
 
 import {
   getPicturePreviewService,
@@ -36,10 +35,10 @@ export const UploadFileForStoring =
 //
 
 // handle download file
-export const DownloadFileFromServer =
-  (fileId, fileName, userId) => async (dispatch) => {
-    DownloadFileService(fileId, userId).then(
-      (res) => {
+export const DownloadFileFromServer = async (fileId, fileName, userId) => {
+  try {
+    DownloadFileService(fileId, userId)
+      .then((res) => {
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");
         link.href = url;
@@ -50,12 +49,15 @@ export const DownloadFileFromServer =
           document.body.appendChild(link);
           link.click();
         }
-      },
-      (error) => {
+      })
+      .catch((error) => {
         alert("Something went wrong with file download!");
-      }
-    );
-  };
+        throw error;
+      });
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const getPicturePreview = async (fileId, userId) => {
   const resultBlob = await getPicturePreviewService(fileId, userId);

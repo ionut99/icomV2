@@ -1,4 +1,4 @@
-@import "../../cssFiles/colors.css";
+@import "../../index.css";
 
 a {
   text-decoration: none;
@@ -343,7 +343,7 @@ a {
   }
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1300px) {
   .folder-tree {
     display: none;
   }

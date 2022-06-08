@@ -201,31 +201,10 @@ async function GetChildFilesList(req, res) {
     const folderId = req.body.folderId;
     const userId = req.body.userId;
 
-    var userFileList = [];
+    const sharedGroupFileList = await GetSharedGroupFiles(folderId, userId);
+    const userPrivateFileList = await GetSharedPrivateFiles(folderId, userId);
 
-    // group files
-
-    var sharedGroupFileList = await GetSharedGroupFiles(folderId, userId);
-    if (sharedGroupFileList === "FAILED") {
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
-
-    sharedGroupFileList.map((x) => {
-      const sharedGroupFile = { ...x };
-
-      userFileList.push(sharedGroupFile);
-    });
-
-    // private files
-    var userPrivateFileList = await GetSharedPrivateFiles(folderId, userId);
-    if (userPrivateFileList === "FAILED") {
-      return handleResponse(req, res, 412, " DataBase Error ");
-    }
-
-    userPrivateFileList.map((x) => {
-      const file = { ...x };
-      userFileList.push(file);
-    });
+    const userFileList = sharedGroupFileList.concat(userPrivateFileList);
 
     return handleResponse(req, res, 200, { userFileList });
   } catch (error) {

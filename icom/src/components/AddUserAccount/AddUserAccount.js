@@ -17,7 +17,6 @@ function AddUser() {
     setOpen(true);
   }
   function closeModal() {
-    // delete old data
     setUserSurname("");
     setUserName("");
     setEmail("");
@@ -30,7 +29,6 @@ function AddUser() {
   function handleSubmit(e) {
     e.preventDefault();
 
-    // send data for create new user Accoutn
     dispatch(addNewUserAccount(userSurname, userName, email, isAdmin));
     closeModal();
   }

@@ -1,10 +1,21 @@
+const path = require("path");
 var fs = require("fs");
-
+//
+var date = require("date-and-time");
+//
 const {
   GetUserDetailsData,
   GetRoomDetails,
   GetParticipantFromPrivateConversation,
 } = require("../services/User");
+
+const {
+  InsertNewFileDataBase,
+  InsertNewFileRelationDataBase,
+} = require("../services/Files");
+
+//
+const { GetFolderDetailsService } = require("../services/Folders");
 
 // returns a promise which resolves true if file exists:
 function checkFileExists(filepath) {
@@ -34,6 +45,7 @@ async function extractProfilePicturePath(userId, roomId) {
         return "users/default/defaultAvatar.png";
       }
       return userAvatar;
+      //
     } else if (roomId !== null) {
       const roomDetails = await GetRoomDetails(roomId)
         .then(function (result) {
@@ -80,16 +92,125 @@ async function extractProfilePicturePath(userId, roomId) {
   }
 }
 
-// returns profile picture path
-// if roomId != null extract from room table
-function jsonStringParse(dataBaseResponse) {
-  if (dataBaseResponse === null) return "";
-  const result = JSON.parse(JSON.stringify(dataBaseResponse));
-  return result[0];
-}
+const saveFileConfiguration = async (
+  userId,
+  fileName,
+  fileId,
+  fileType,
+  fileSize,
+  folderId
+) => {
+  try {
+    const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
+    const newPath = path.join(__dirname, "../../../users/", userId);
+
+    try {
+      if (!(await checkFileExists(newPath))) {
+        console.log("Nu exista folderr...");
+        fs.mkdir(newPath, { recursive: true }, async function (err) {
+          if (err) throw err;
+          console.log("Directory created successfully!");
+        });
+      }
+    } catch (err) {
+      throw err;
+    }
+
+    //
+    const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
+    const numericTime = Date.now();
+    //
+    try {
+      fs.rename(
+        oldPath,
+        newPath + "/" + numericTime + " " + fileName,
+        async function (err) {
+          if (err) throw err;
+        }
+      );
+    } catch (err) {
+      throw err;
+    }
+
+    // store file
+
+    var pathToStore = path.join(
+      "users/" + userId + "/",
+      numericTime + " " + fileName
+    );
+    pathToStore = pathToStore.replace(/\\/g, "\\\\");
+
+    //Store File details in database
+    var res_service = await InsertNewFileDataBase(
+      fileId,
+      fileType,
+      fileName,
+      folderId,
+      createdTime,
+      userId,
+      fileSize,
+      pathToStore
+    )
+      .then(function (result) {
+        return result.affectedRows;
+      })
+      .catch((err) => {
+        throw err;
+      });
+
+    if (res_service !== 1) return res_service;
+
+    if (folderId === "root") {
+      return InsertNewFileRelationDataBase(fileId, userId, null)
+        .then(function (result) {
+          return result.affectedRows;
+        })
+        .catch((err) => {
+          throw err;
+        });
+    } else {
+      const parentId = await GetFolderDetailsService(folderId)
+        .then(function (result) {
+          if (result.length > 0) return result[0];
+          else return undefined;
+        })
+        .catch((err) => {
+          throw err;
+        });
+
+      if (parentId === undefined) return 0;
+      //
+      if (parentId.roomIdBeneficiary !== null) {
+        //
+        return InsertNewFileRelationDataBase(
+          fileId,
+          userId,
+          parentId.roomIdBeneficiary
+        )
+          .then(function (result) {
+            return result.affectedRows;
+          })
+          .catch((err) => {
+            throw err;
+          });
+      } else {
+        //
+        return InsertNewFileRelationDataBase(fileId, userId, null)
+          .then(function (result) {
+            return result.affectedRows;
+          })
+          .catch((err) => {
+            throw err;
+          });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 module.exports = {
   checkFileExists,
   extractProfilePicturePath,
-  jsonStringParse,
+  saveFileConfiguration,
 };

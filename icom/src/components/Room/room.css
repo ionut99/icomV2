@@ -1,5 +1,5 @@
 @import "../../pages/Chat/chat.css";
-@import "../../cssFiles/colors.css";
+@import "../../index.css";
 
 .chat-page .right-section {
   bottom: 0;
