@@ -108,7 +108,7 @@ function SubFolder({ currentFolder }) {
                   color: " #F8D775",
                 }}
               />
-              {currentFolder.Name}
+              {currentFolder.name}
             </Breadcrumb.Item>
           )}
         </Breadcrumb>

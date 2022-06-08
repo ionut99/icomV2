@@ -32,22 +32,22 @@ function sortPersonstAfterSearchText(list, keyword) {
   return list
     .filter((prof) => {
       // Filter results by doing case insensitive match on name here
-      return prof.UserName.toLowerCase().includes(keyword.toLowerCase());
+      return prof.userName.toLowerCase().includes(keyword.toLowerCase());
     })
     .sort((a, b) => {
       // Sort results by matching name with keyword position in name
       if (
-        a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) >
-        b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
+        a.userName.toLowerCase().indexOf(keyword.toLowerCase()) >
+        b.userName.toLowerCase().indexOf(keyword.toLowerCase())
       ) {
         return 1;
       } else if (
-        a.UserName.toLowerCase().indexOf(keyword.toLowerCase()) <
-        b.UserName.toLowerCase().indexOf(keyword.toLowerCase())
+        a.userName.toLowerCase().indexOf(keyword.toLowerCase()) <
+        b.userName.toLowerCase().indexOf(keyword.toLowerCase())
       ) {
         return -1;
       } else {
-        if (a.UserName > b.UserName) return 1;
+        if (a.userName > b.userName) return 1;
         else return -1;
       }
     });
@@ -57,22 +57,22 @@ function sortRoomAfterSearchText(list, keyword) {
   return list
     .filter((prof) => {
       // Filter results by doing case insensitive match on name here
-      return prof.RoomName.toLowerCase().includes(keyword.toLowerCase());
+      return prof.roomName.toLowerCase().includes(keyword.toLowerCase());
     })
     .sort((a, b) => {
       // Sort results by matching name with keyword position in name
       if (
-        a.RoomName.toLowerCase().indexOf(keyword.toLowerCase()) >
-        b.RoomName.toLowerCase().indexOf(keyword.toLowerCase())
+        a.roomName.toLowerCase().indexOf(keyword.toLowerCase()) >
+        b.roomName.toLowerCase().indexOf(keyword.toLowerCase())
       ) {
         return 1;
       } else if (
-        a.RoomName.toLowerCase().indexOf(keyword.toLowerCase()) <
-        b.RoomName.toLowerCase().indexOf(keyword.toLowerCase())
+        a.roomName.toLowerCase().indexOf(keyword.toLowerCase()) <
+        b.roomName.toLowerCase().indexOf(keyword.toLowerCase())
       ) {
         return -1;
       } else {
-        if (a.RoomName > b.RoomName) return 1;
+        if (a.roomName > b.roomName) return 1;
         else return -1;
       }
     });
@@ -108,7 +108,7 @@ async function AddLastMessage(RoomList) {
     for (let i = 0; i < RoomList.length; i++) {
       const timevar = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
       const roomMessage = await GetRoomMessagesData(
-        RoomList[i].RoomID,
+        RoomList[i].roomId,
         timevar,
         "top",
         1
@@ -117,25 +117,23 @@ async function AddLastMessage(RoomList) {
           if (result.length === 0) return "";
           return result[0];
         })
-        .catch((err) =>
-          setImmediate(() => {
-            throw err;
-          })
-        );
+        .catch((err) => {
+          throw err;
+        });
 
       room_result.push({
-        RoomID: RoomList[i].RoomID,
-        RoomName: RoomList[i].RoomName,
-        Type: RoomList[i].Type,
-        LastMessage: roomMessage.Body,
-        LastMessageTime: roomMessage.createdTime,
+        roomId: RoomList[i].roomId,
+        roomName: RoomList[i].roomName,
+        type: RoomList[i].type,
+        lastMessage: roomMessage.body,
+        lastMessageTime: roomMessage.createdTime,
       });
     }
 
     return room_result;
   } catch (err) {
     console.error(err);
-    return null;
+    return [];
   }
 }
 

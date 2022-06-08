@@ -16,64 +16,68 @@ function checkFileExists(filepath) {
 }
 
 async function extractProfilePicturePath(userId, roomId) {
-  if (userId === null || userId === undefined) {
-    return "users/default/defaultAvatar.png";
-  }
-  if (roomId === null) {
-    const userAvatar = await GetUserDetailsData(userId)
-      .then(function (result) {
-        return result[0].Avatar;
-      })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
-
-    if (userAvatar === null) {
+  try {
+    if (userId === null || userId === undefined) {
       return "users/default/defaultAvatar.png";
     }
-    return userAvatar;
-  } else if (roomId !== null) {
-    const roomDetails = await GetRoomDetails(roomId)
-      .then(function (result) {
-        return result[0];
-      })
-      .catch((err) =>
-        setImmediate(() => {
+    if (roomId === null) {
+      const userAvatar = await GetUserDetailsData(userId)
+        .then(function (result) {
+          if (result.length > 0) return result[0].avatar;
+          else return undefined;
+        })
+        .catch((err) => {
           throw err;
-        })
-      );
+        });
 
-    if (roomDetails.Private > 0) {
-      const part2 = await GetParticipantFromPrivateConversation(roomId, userId)
+      if (userAvatar === undefined || userAvatar === null) {
+        return "users/default/defaultAvatar.png";
+      }
+      return userAvatar;
+    } else if (roomId !== null) {
+      const roomDetails = await GetRoomDetails(roomId)
         .then(function (result) {
-          return result[0];
+          if (result.length > 0) return result[0];
+          else return undefined;
         })
-        .catch((err) =>
-          setImmediate(() => {
-            throw err;
-          })
-        );
-      const userDetails2 = await GetUserDetailsData(part2.userId)
-        .then(function (result) {
-          return result[0];
-        })
-        .catch((err) =>
-          setImmediate(() => {
-            throw err;
-          })
-        );
+        .catch((err) => {
+          throw err;
+        });
 
-      if (userDetails2.Avatar === null) return "users/default/defaultAvatar.png";
-      return userDetails2.Avatar;
-    } else {
-      if (roomDetails.Avatar === null) return "users/default/defaultGroupAvatar.png";
-      return roomDetails.Avatar;
+      if (roomDetails.private > 0) {
+        const part2 = await GetParticipantFromPrivateConversation(
+          roomId,
+          userId
+        )
+          .then(function (result) {
+            if (result.length > 0) return result[0];
+            else return undefined;
+          })
+          .catch((err) => {
+            throw err;
+          });
+        const userDetails2 = await GetUserDetailsData(part2.userId)
+          .then(function (result) {
+            if (result.length > 0) return result[0];
+            else return undefined;
+          })
+          .catch((err) => {
+            throw err;
+          });
+
+        if (userDetails2.avatar === null)
+          return "users/default/defaultAvatar.png";
+        return userDetails2.avatar;
+      } else {
+        if (roomDetails.avatar === null)
+          return "users/default/defaultGroupAvatar.png";
+        return roomDetails.avatar;
+      }
     }
+    return "users/default/defaultGroupAvatar.png";
+  } catch (error) {
+    console.error(error);
   }
-
-  return "";
 }
 
 // returns profile picture path

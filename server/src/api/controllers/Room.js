@@ -35,61 +35,91 @@ const { CompleteMessageList } = require("../helpers/message_utils");
 // create new conversation (private group) - folders functions was updated
 async function CreateNewRoom(req, res) {
   try {
-    const RoomName = req.body.RoomName;
-    const Private = req.body.Private;
-    const userSearchListID = req.body.userSearchListID;
-    const userID = req.body.userID;
+    const roomName = req.body.roomName;
+    const type = req.body.type;
+    const userSearchListId = req.body.userSearchListId;
+    const userId = req.body.userId;
     const uuidRoom = req.body.uuidRoom;
 
     if (
-      RoomName === "" ||
-      Private === null ||
-      userSearchListID === null ||
-      userID === null
+      roomName === "" ||
+      type === null ||
+      userSearchListId === null ||
+      userId === null
     ) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    const roomResult = await InsertNewRoomData(RoomName, Private, uuidRoom);
+    const roomResult = await InsertNewRoomData(roomName, type, uuidRoom)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) => {
+        throw err;
+      });
 
-    if (roomResult === "FAILED") {
+    if (roomResult === undefined) {
       return handleResponse(req, res, 412, " DataBase Error ");
     }
 
-    var partResult = await InsertParticipantData(uuidRoom, userSearchListID);
-    if (partResult === "FAILED")
+    var partResult = await InsertParticipantData(uuidRoom, userSearchListId)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) => {
+        throw err;
+      });
+
+    if (partResult === undefined)
       return handleResponse(req, res, 412, " DataBase Error ");
-    partResult = await InsertParticipantData(uuidRoom, userID);
-    if (partResult === "FAILED")
+    //
+    partResult = await InsertParticipantData(uuidRoom, userId)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) => {
+        throw err;
+      });
+    if (partResult === undefined)
       return handleResponse(req, res, 412, " DataBase Error ");
 
     // folder Creation
-    const folderId = uui.v4();
     const path = [];
+    const folderId = uui.v4();
     const createdAt = new Date();
-    const parentID = "root";
+    const parentId = "root";
 
     var folderResult = await InsertNewFolderDataBase(
       folderId,
-      RoomName,
-      parentID,
-      userID,
+      roomName,
+      parentId,
+      userId,
       path,
       createdAt
-    );
-    if (folderResult === "FAILED") {
-      console.log("Error storage folder configuration!");
+    )
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) => {
+        throw err;
+      });
+    if (folderResult === undefined) {
       return handleResponse(req, res, 412, " DataBase Error ");
     }
 
-    // add folder relation for user whicj initiate conversation
+    // new folder
     folderResult = await InsertFolderUserRelationDataBase(
       folderId,
       null,
       uuidRoom
-    );
-    if (folderResult === "FAILED") {
-      console.log("Error storage folder configuration!");
+    )
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) => {
+        throw err;
+      });
+    if (folderResult === undefined) {
       return handleResponse(req, res, 412, " DataBase Error ");
     }
 
@@ -102,27 +132,36 @@ async function CreateNewRoom(req, res) {
   }
 }
 
-// --------------------- // -----------------------
-
 // delete group or private conversation (room)
 async function DeleteRoom(req, res) {
   try {
-    const roomID = req.body.roomID;
+    const roomId = req.body.roomId;
 
-    if (roomID === null) {
+    if (roomId === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    var res_deletemes = await DeleteAllMessageFromRoom(roomID);
-    if (res_deletemes === "FAILED") {
-      console.log("FAILED to delete messages from room!");
-      return handleResponse(req, res, 412, " DataBase Error ");
+    var res_deletemes = await DeleteAllMessageFromRoom(roomId)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) => {
+        throw err;
+      });
+
+    if (res_deletemes === undefined) {
+      return handleResponse(req, res, 412, " Delete messages Error ");
     }
 
-    var res_deletepart = await DeleteAllParticipantsFromRoom(roomID);
-    if (res_deletepart === "FAILED") {
-      console.log("FAILED to delete participants from room!");
-      return handleResponse(req, res, 412, " DataBase Error ");
+    var res_deletepart = await DeleteAllParticipantsFromRoom(roomId)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) => {
+        throw err;
+      });
+    if (res_deletepart === undefined) {
+      return handleResponse(req, res, 412, " Delete participants Error ");
     }
 
     // delete room folder
@@ -140,16 +179,27 @@ async function DeleteRoom(req, res) {
     // }
 
     // delete folder and relation
-    var res_del_room_folder = await DeleteRoomFolderAndUserRelation(roomID);
-    if (res_del_room_folder === "FAILED") {
-      console.log("FAILED to delete room Relation and FolderRoom!");
-      return handleResponse(req, res, 412, " DataBase Error ");
+    var res_del_room_folder = await DeleteRoomFolderAndUserRelation(roomId)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) => {
+        throw err;
+      });
+    if (res_del_room_folder === undefined) {
+      return handleResponse(req, res, 412, " Delete Room Elements Error ");
     }
 
     // delete subfolders??
 
-    var res_deleteroom = await DeleteRoomData(roomID);
-    if (res_deleteroom === "FAILED") {
+    var res_deleteroom = await DeleteRoomData(roomId)
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) => {
+        throw err;
+      });
+    if (res_deleteroom === undefined) {
       return handleResponse(req, res, 412, " DataBase Error ");
     }
 
@@ -163,76 +213,81 @@ async function DeleteRoom(req, res) {
 // Create a new room (group) - folders functions was updated
 async function CreateNewRoom_Group(req, res) {
   try {
-    const NewGroupName = req.body.NewGroupName;
-    const Type = req.body.Type;
-    const userID = req.body.userID;
+    const newGroupName = req.body.newGroupName;
+    const type = req.body.type;
+    const userId = req.body.userId;
     const uuidRoom = req.body.uuidRoom;
 
+    console.log(newGroupName);
+    console.log(type);
+    console.log(userId);
+    console.log(uuidRoom);
+
     if (
-      NewGroupName === "" ||
-      Type === null ||
-      userID === null ||
+      newGroupName === "" ||
+      type === null ||
+      userId === null ||
       uuidRoom === null
     ) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
     // adaugare camera noua in tabela
-    var roomResult = await InsertNewRoomData(NewGroupName, Type, uuidRoom)
+    var roomResult = await InsertNewRoomData(newGroupName, type, uuidRoom)
       .then(function (result) {
         return result;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     // adaugare participant la camera creata mai sus
-    if (userID !== null) {
-      var partResult = await InsertParticipantData(uuidRoom, userID)
+    if (userId !== null) {
+      var partResult = await InsertParticipantData(uuidRoom, userId)
         .then(function (result) {
           return result;
         })
-        .catch((err) =>
-          setImmediate(() => {
-            throw err;
-          })
-        );
+        .catch((err) => {
+          throw err;
+        });
     }
 
     // folder Creation for new group
-    const folderId = uui.v4();
     const path = [];
+    const folderId = uui.v4();
     const createdAt = new Date();
-    const parentID = "root";
+    const parentId = "root";
 
     var create_folder_res = await InsertNewFolderDataBase(
       folderId,
-      NewGroupName,
-      parentID,
-      userID,
+      newGroupName,
+      parentId,
+      userId,
       path,
       createdAt
     )
       .then(function (result) {
         return result;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     // add folder relation for user whicj initiate conversation
     var folderResult = await InsertFolderUserRelationDataBase(
       folderId,
       null,
       uuidRoom
-    );
-    if (folderResult === "FAILED") {
-      console.log("Error storage folder configuration!");
-      return handleResponse(req, res, 412, " DataBase Error ");
+    )
+      .then(function (result) {
+        if (result.length > 0) return result[0];
+        else return undefined;
+      })
+      .catch((err) => {
+        throw err;
+      });
+    if (folderResult === undefined) {
+      return handleResponse(req, res, 412, " Error storage folder ");
     }
 
     return handleResponse(req, res, 200, "New Group Created successful");
@@ -245,33 +300,30 @@ async function CreateNewRoom_Group(req, res) {
 // add a new member in a room (group) - without folder functions (use sql tables)
 async function AddNewMemberInGroup(req, res) {
   try {
-    const roomID = req.body.RoomID;
+    const roomId = req.body.roomId;
     const userSearchListID = req.body.userSearchListID;
 
-    if (roomID === "" || userSearchListID === null) {
+    if (roomId === "" || userSearchListID === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    var participantDetails = await GetParticipantByID(userSearchListID, roomID)
+    var participantDetails = await GetParticipantByID(userSearchListID, roomId)
       .then(function (result) {
-        return result;
+        if (result.length > 0) return result;
+        else return undefined;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
-    if (!participantDetails.length) {
-      var result = await AddNewMemberInGroupData(roomID, userSearchListID)
+    if (participantDetails !== undefined) {
+      var result = await AddNewMemberInGroupData(roomId, userSearchListID)
         .then(function (result) {
-          return result;
+          if (result.length > 0) return result;
         })
-        .catch((err) =>
-          setImmediate(() => {
-            throw err;
-          })
-        );
+        .catch((err) => {
+          throw err;
+        });
       if (result.length > 0)
         return handleResponse(req, res, 200, { AddParticipant: "SUCCES" });
     } else {
@@ -291,18 +343,18 @@ async function AddNewMemberInGroup(req, res) {
 // return participants from a room (group)
 async function GetPartList(req, res) {
   try {
-    const roomID = req.body.roomID;
+    const roomId = req.body.roomId;
 
-    if (roomID === null) {
+    if (roomId === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    const participantsRoomList = await GetPartListData(roomID)
+    const participantsRoomList = await GetPartListData(roomId)
       .then(function (result) {
         return result.map((x) => {
           const user = { ...x };
           return {
-            UserName: user.Surname + " " + user.Name,
+            userName: user.Surname + " " + user.Name,
             email: user.Email,
             userId: user.userId,
             IsAdmin: user.IsAdmin,
@@ -311,11 +363,9 @@ async function GetPartList(req, res) {
           };
         });
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     return handleResponse(req, res, 200, { participantsRoomList });
   } catch (error) {
@@ -326,29 +376,27 @@ async function GetPartList(req, res) {
 
 async function GetNOTPartList(req, res) {
   try {
-    const RoomID = req.body.RoomID;
+    const roomId = req.body.roomId;
     const userId = req.body.userId;
 
-    if (RoomID === null || userId === null) {
+    if (roomId === null || userId === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
     // participants
-    const participantsRoomList = await GetPartListData(RoomID)
+    const participantsRoomList = await GetPartListData(roomId)
       .then(function (result) {
         return result.map((x) => {
           const user = { ...x };
           return {
-            UserName: user.Surname + " " + user.Name,
+            userName: user.surname + " " + user.name,
             userId: user.userId,
           };
         });
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     // all users
     var NOTparticipantsRoomList = await GetAllUsersDataBase(userId)
@@ -356,16 +404,14 @@ async function GetNOTPartList(req, res) {
         return result.map((x) => {
           const user = { ...x };
           return {
-            UserName: user.Surname + " " + user.Name,
+            userName: user.surname + " " + user.name,
             userId: user.userId,
           };
         });
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     NOTparticipantsRoomList = NOTparticipantsRoomList.filter(function (item) {
       for (var p in participantsRoomList) {
@@ -388,42 +434,39 @@ async function GetNOTPartList(req, res) {
 
 async function GetRoomFolder(req, res) {
   try {
-    const roomID = req.body.ChannelID;
+    const roomId = req.body.roomId;
     const userId = req.body.userId;
 
-    if (roomID === null) {
+    if (roomId === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
     //
-    var room_folder = await GetRoomFolderID(roomID)
+    var room_folder = await GetRoomFolderID(roomId)
       .then(function (result) {
-        return result[0];
+        if (result.length > 0) return result[0];
+        else return undefined;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
-    var roomName = await GetRoomDetailsData(roomID)
+    var roomName = await GetRoomDetailsData(roomId)
       .then(function (result) {
-        return result[0].Name;
+        if (result.length > 0) return result[0].name;
+        else return undefined;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     var userName = await GetUserByID(userId)
       .then(function (result) {
-        return result[0].Surname + " " + result[0].Name;
+        if (result.length > 0) return result[0].surname + " " + result[0].name;
+        else return undefined;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     roomName = roomName.replace(userName, "");
     roomName = roomName.replace("#", "");
@@ -441,16 +484,16 @@ async function GetRoomFolder(req, res) {
 // return messages from a room
 async function GetMessageListInTime(req, res) {
   try {
-    const roomID = req.body.ChannelID;
+    const roomId = req.body.channelId;
     const messageTime = req.body.lastTime;
     const messagesPosition = req.body.position;
 
-    if (roomID === null || messageTime === null) {
+    if (roomId === null || messageTime === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
     var messageRoomList = await GetRoomMessagesData(
-      roomID,
+      roomId,
       messageTime,
       messagesPosition,
       15
@@ -458,11 +501,9 @@ async function GetMessageListInTime(req, res) {
       .then(function (result) {
         return result;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     var newMessageList = await CompleteMessageList(messageRoomList);
 
@@ -493,11 +534,9 @@ async function GetActiveRoomConnections(req, res) {
       .then(function (result) {
         return result;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     return handleResponse(req, res, 200, { activeRoomConnections });
   } catch (error) {
@@ -512,34 +551,31 @@ async function GetActiveRoomConnections(req, res) {
 }
 
 // check if user can connect to a room
-const roomIsFull = async (roomID, userID, usersAlreadyPresent) => {
+const roomIsFull = async (roomId, userId, usersAlreadyPresent) => {
   try {
     //
-    const activeRoomConnections = await GetUserRoomsList(userID)
+    const activeRoomConnections = await GetUserRoomsList(userId)
       .then(function (result) {
         return result;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     const index = activeRoomConnections.findIndex(
-      (room) => room.RoomID === roomID
+      (room) => room.roomId === roomId
     );
     if (index === -1) return true;
 
     // extrage detalii camera
-    const roomType = await GetRoomDetailsData(roomID)
+    const roomType = await GetRoomDetailsData(roomId)
       .then(function (result) {
-        return result[0].Private;
+        if (result.length > 0) return result[0].private;
+        else return 1;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     if (roomType > 0 && usersAlreadyPresent > 1) {
       return true;

@@ -11,10 +11,10 @@ var userColors = [
   { color: "chartreuse", free: 0 },
 ];
 
-const getNumberOfUsersInRoom = (roomID, type) => {
+const getNumberOfUsersInRoom = (roomId, type) => {
   var users_number = 0;
   for (let i = 0; i < users.length; i++) {
-    if (users[i].roomID === roomID && users[i].type === type) {
+    if (users[i].roomId === roomId && users[i].type === type) {
       users_number = users_number + 1;
     }
   }
@@ -22,22 +22,22 @@ const getNumberOfUsersInRoom = (roomID, type) => {
   return users_number;
 };
 
-const addUserInRoom = async ({ id, userID, roomID, type }) => {
-  // userID = userID.trim().toLowerCase();
-  // roomID = roomID.trim().toLowerCase();
+const addUserInRoom = async ({ id, userId, roomId, type }) => {
+  // userId = userId.trim().toLowerCase();
+  // roomId = roomId.trim().toLowerCase();
 
-  if (userID === "" || userID === undefined) {
-    return { error: "Invalid userID" };
+  if (userId === "" || userId === undefined) {
+    return { error: "Invalid userId" };
   }
 
-  if (roomID === "" || roomID === undefined) {
-    return { error: "Invalid roomID" };
+  if (roomId === "" || roomId === undefined) {
+    return { error: "Invalid roomId" };
   }
 
   switch (type) {
     case "chat":
-      const chatUsers = getNumberOfUsersInRoom(roomID, type);
-      const isFull = await roomIsFull(roomID, userID, chatUsers);
+      const chatUsers = getNumberOfUsersInRoom(roomId, type);
+      const isFull = await roomIsFull(roomId, userId, chatUsers);
 
       if (isFull) {
         return { error: "Room is Full" };
@@ -47,7 +47,7 @@ const addUserInRoom = async ({ id, userID, roomID, type }) => {
       // code block
       break;
     case "video":
-      const videoUsers = getNumberOfUsersInRoom(roomID, type);
+      const videoUsers = getNumberOfUsersInRoom(roomId, type);
       if (videoUsers > 5) {
         return { error: "Room is Full" };
       }
@@ -58,11 +58,11 @@ const addUserInRoom = async ({ id, userID, roomID, type }) => {
 
   const existingUser = users.find(
     (user) =>
-      user.roomID === roomID && user.userID === userID && user.type === type
+      user.roomId === roomId && user.userId === userId && user.type === type
   );
 
   if (existingUser) {
-    return { error: "UserID taken, user is already in room" };
+    return { error: "userId taken, user is already in room" };
   }
 
   // assign color to use if he enter in a edit room
@@ -71,20 +71,20 @@ const addUserInRoom = async ({ id, userID, roomID, type }) => {
     color = getColor(id);
   }
 
-  const user = { id, userID, roomID, type, color: color };
+  const user = { id, userId, roomId, type, color: color };
   users.push(user);
 
   //
-  const onU = getNumberOfUsersInRoom(roomID, type);
+  const onU = getNumberOfUsersInRoom(roomId, type);
   console.log(
     "new " +
       type +
       " join user: " +
-      userID.substring(userID.length - 5) +
+      userId.substring(userId.length - 5) +
       " // socket: " +
       id +
       " -> " +
-      roomID.substring(roomID.length - 5) +
+      roomId.substring(roomId.length - 5) +
       " " +
       "users on: " +
       onU
@@ -102,9 +102,9 @@ const deleteUser = (id) => {
     if (users[i].id === id) {
       console.log(
         "Disconnect " +
-          users[i].userID.substring(users[i].userID.length - 6) +
+          users[i].userId.substring(users[i].userId.length - 6) +
           " from " +
-          users[i].roomID.substring(users[i].roomID.length - 6)
+          users[i].roomId.substring(users[i].roomId.length - 6)
       );
       users.splice(i, 1);
       i--;
@@ -124,14 +124,14 @@ const deleteUser = (id) => {
 const getUser = (id) => users.find((user) => user.id === id);
 
 // get users, except the on who enter
-const getUsersInRoom = (roomID, id, type) =>
+const getUsersInRoom = (roomId, id, type) =>
   users.filter(
-    (user) => user.roomID === roomID && user.type === type && user.id !== id
+    (user) => user.roomId === roomId && user.type === type && user.id !== id
   );
 
 // get all users
-const getAllUsers = (roomID, type) =>
-  users.filter((user) => user.roomID === roomID && user.type === type);
+const getAllUsers = (roomId, type) =>
+  users.filter((user) => user.roomId === roomId && user.type === type);
 
 // asign a color
 const getColor = (id) => {

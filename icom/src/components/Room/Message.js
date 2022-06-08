@@ -27,6 +27,9 @@ function Message(props) {
   const { user } = authObj;
   //
   const { message } = props;
+
+  // console.log("Corpul mesajului este:");
+  // console.log(message);
   //
   const [messageDetails, setmMssageDetails] = useState(false);
   //
@@ -87,21 +90,21 @@ function Message(props) {
   return (
     <div
       className={classNames("one_message", {
-        me: message.senderID === user.userId,
+        me: message.senderId === user.userId,
       })}
       ref={ref}
     >
       <div
         className="user_picture"
         style={{
-          display: message.senderID !== user.userId ? "flex" : "none",
+          display: message.senderId !== user.userId ? "flex" : "none",
         }}
       >
-        <Avatar userId={message.senderID} roomId={null} />
+        <Avatar userId={message.senderId} roomId={null} />
       </div>
       <div className="message_cassete">
         <div className="message_author">
-          {message.senderID === user.userId
+          {message.senderId === user.userId
             ? handleReturnHumanDateFormat(message.createdTime)
             : message.senderName}
         </div>
@@ -141,10 +144,10 @@ function Message(props) {
                 link: message.type !== "text" && message.fileId !== undefined,
               })}
               onClick={() => {
-                handleDownloadFile(message.fileId, message.Body, user.userId);
+                handleDownloadFile(message.fileId, message.body, user.userId);
               }}
             >
-              <p>{message.Body}</p>
+              <p>{message.body}</p>
             </div>
           </div>
         </div>
@@ -174,7 +177,7 @@ function Message(props) {
             <div
               className="dropdown-instrument"
               onClick={() =>
-                handleDownloadFile(message.fileId, message.Body, user.userId)
+                handleDownloadFile(message.fileId, message.body, user.userId)
               }
               style={{
                 display:

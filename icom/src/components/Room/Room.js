@@ -26,24 +26,23 @@ import { SocketContext } from "../../context/socket";
 function Room(props) {
   const { receiveNewMessage, setReceiveNewMessage } = props;
   const dispatch = useDispatch();
+  //
   const messagesEndRef = useRef(null);
   const listInnerRef = useRef();
-
   //
   const socketRef = useRef(null);
   socketRef.current = useContext(SocketContext);
   //
-
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID, currentChannelName, channelFolderId, RoomMessages } =
+  const { channelId, currentChannelName, channelFolderId, roomMessages } =
     chatObj;
 
   const [userTyping, setUserTyping] = useState({
     userName: undefined,
-    userID: undefined,
+    userId: undefined,
   });
   const [loaded, setLoaded] = useState(false);
   //
@@ -54,7 +53,7 @@ function Room(props) {
 
   const getMessages = async () => {
     dispatch(
-      getMessageListTime(channelID, lastMessageTime.time, lastMessageTime.pos)
+      getMessageListTime(channelId, lastMessageTime.time, lastMessageTime.pos)
     );
   };
 
@@ -63,9 +62,9 @@ function Room(props) {
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
 
       if (scrollTop === 0) {
-        if (RoomMessages.length > 0) {
+        if (roomMessages.length > 0) {
           setLastMessageTime({
-            time: RoomMessages[0].createdTime,
+            time: roomMessages[0].createdTime,
             pos: "top",
           });
         } else {
@@ -76,9 +75,9 @@ function Room(props) {
         }
       }
       if (scrollTop + clientHeight === scrollHeight) {
-        if (RoomMessages.length > 0) {
+        if (roomMessages.length > 0) {
           setLastMessageTime({
-            time: RoomMessages[RoomMessages.length - 1].createdTime,
+            time: roomMessages[roomMessages.length - 1].createdTime,
             pos: "bottom",
           });
         } else {
@@ -93,20 +92,20 @@ function Room(props) {
 
   // set current time for messages
   useEffect(() => {
-    if (channelID === null) return;
+    if (channelId === null) return;
     var timevar = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
     setLastMessageTime({
       time: timevar,
       pos: "top",
     });
-  }, [channelID]);
+  }, [channelId]);
 
   //
   useEffect(async () => {
-    if (channelID === null || lastMessageTime.time === null) return;
+    if (channelId === null || lastMessageTime.time === null) return;
     getMessages();
     setLoaded(true);
-  }, [lastMessageTime, channelID]);
+  }, [lastMessageTime, channelId]);
   //
 
   //
@@ -120,13 +119,14 @@ function Room(props) {
 
   // receive message from socket and insert in local messages list
   useEffect(() => {
-    if (channelID === null) return;
+    if (channelId === null) return;
     if (socketRef.current === null) return;
 
     socketRef.current.on("receive chat message", (message) => {
-      if (message.roomID !== null) {
-        dispatch(UpdateLastMessage(message.messageBody, message.roomID));
-        if (message.roomID === channelID) {
+      console.log("am primit un mesaj");
+      if (message.roomId !== null) {
+        dispatch(UpdateLastMessage(message.body, message.roomId));
+        if (message.roomId === channelId) {
           dispatch(InsertNewMessageLocal(message));
           setReceiveNewMessage(true);
         }
@@ -135,34 +135,37 @@ function Room(props) {
     return () => {
       socketRef.current.off("receive chat message");
     };
-  }, [channelID]);
+  }, [channelId]);
   // receive message
 
   // receive typing event
   useEffect(() => {
-    if (channelID === null) return;
+    if (channelId === null) return;
     if (socketRef.current === null) return;
 
     socketRef.current.on("user typing", (request) => {
       console.log("receive typing");
-      if (request.roomID === channelID) {
-        setUserTyping(request);
+      if (request.roomId === channelId) {
+        setUserTyping({
+          userName: request.userName,
+          userId: request.userId,
+        });
       }
     });
     // setTimeout(setUserTyping(undefined), 2000);
     return () => {
       // socketRef.current.off("user typing");
     };
-  }, [channelID]);
+  }, [channelId]);
   // receive typing event
 
   useEffect(() => {
-    if (channelID === null) return;
-    if (userTyping.userID === undefined) return;
+    if (channelId === null) return;
+    if (userTyping.userId === undefined) return;
     const timeoutID = setTimeout(() => {
       setUserTyping({
         userName: undefined,
-        userID: undefined,
+        userId: undefined,
       });
     }, 1000);
 
@@ -176,12 +179,12 @@ function Room(props) {
       {loaded ? (
         <div
           className="right-section"
-          style={{ display: channelID ? "block" : "none" }}
+          style={{ display: channelId ? "block" : "none" }}
           onLoad={() => setLoaded(true)}
         >
           <div className="conversation-details">
             <div className="user_picture">
-              <Avatar userId={user.userId} roomId={channelID} />
+              <Avatar userId={user.userId} roomId={channelId} />
             </div>
             <div className="room-name">
               <p>{currentChannelName}</p>
@@ -189,7 +192,7 @@ function Room(props) {
                 className="is-typing"
                 style={{
                   display:
-                    userTyping.userID && userTyping.userID !== user.userId
+                    userTyping.userId && userTyping.userId !== user.userId
                       ? "block"
                       : "none",
                 }}
@@ -203,7 +206,7 @@ function Room(props) {
               </Link>
             </div>
             <div className="room-instrument">
-              <Link to={`/roomcall/${channelID}`}>
+              <Link to={`/roomcall/${channelId}`}>
                 <BsIcons.BsCameraVideo />
               </Link>
             </div>
@@ -214,7 +217,7 @@ function Room(props) {
           <div className="test-scrollbar">
             <div className="messages" ref={listInnerRef} onScroll={onScroll}>
               {loaded ? (
-                RoomMessages.map((message, index) => {
+                roomMessages.map((message, index) => {
                   return <Message message={message} key={index} />;
                 })
               ) : (
@@ -228,7 +231,7 @@ function Room(props) {
       ) : (
         <div
           className="right-section-empty"
-          style={{ display: channelID ? "flex" : "none" }}
+          style={{ display: channelId ? "flex" : "none" }}
         >
           <Spinner animation="border" />
         </div>

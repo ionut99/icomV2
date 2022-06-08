@@ -96,31 +96,32 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
   socket.on("join room", async (request, callback) => {
-    const userID = request.userID;
-    const roomID = request.roomID;
+    console.log(request);
+    const userId = request.userId;
+    const roomId = request.roomId;
     const type = request.type;
 
     const { error, user } = await addUserInRoom({
       id: socket.id,
-      userID,
-      roomID,
+      userId,
+      roomId,
       type,
     });
     if (error) return callback(error);
 
-    socket.join(user.roomID);
+    socket.join(user.roomId);
 
     if (type === "video") {
       socket.emit("all users", {
-        roomID: user.roomID,
-        users: getUsersInRoom(user.roomID, user.id, user.type), //except the one who enter
+        roomId: user.roomId,
+        users: getUsersInRoom(user.roomId, user.id, user.type), //except the one who enter
       });
     }
 
     if (type === "edit") {
-      io.to(user.roomID).emit("all users", {
-        roomID: user.roomID,
-        users: getAllUsers(user.roomID, user.type),
+      io.to(user.roomId).emit("all users", {
+        roomId: user.roomId,
+        users: getAllUsers(user.roomId, user.type),
       });
     }
 
@@ -128,24 +129,25 @@ io.on("connection", (socket) => {
   });
 
   // Listen for new messages
-  socket.on("send chat message", (request) => {
-    io.to(request.roomID).emit("receive chat message", request);
+  socket.on("send chat message", (message) => {
+    // console.log(message);
+    io.to(message.roomId).emit("receive chat message", message);
 
     // save message
-    const mes_res = InsertNewMessage(request);
+    const mes_res = InsertNewMessage(message);
 
     if (mes_res === null) {
       console.log("Error save message !");
 
-      socket.emit("error insert message", { request });
+      socket.emit("error insert message", { message });
     } else {
       console.log(
         "MESSAGE: " +
-          request.messageBody +
+          message.body +
           " by " +
-          request.senderName +
+          message.senderName +
           " on " +
-          request.roomID
+          message.roomId
       );
     }
 
@@ -155,14 +157,14 @@ io.on("connection", (socket) => {
   //listening for typing
   socket.on("typing chat message", (request) => {
     // verificare
-    io.to(request.roomID).emit("user typing", request);
+    io.to(request.roomId).emit("user typing", request);
     //
   });
 
   // Listen for new document changes
   socket.on("send doc edit", (delta) => {
     const user = getUser(socket.id);
-    socket.broadcast.to(user.roomID).emit("receive doc edit", delta);
+    socket.broadcast.to(user.roomId).emit("receive doc edit", delta);
     console.log(delta);
   });
 

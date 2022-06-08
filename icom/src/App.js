@@ -1,12 +1,12 @@
-import { BrowserRouter, Switch, Redirect } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { BrowserRouter, Switch, Redirect } from "react-router-dom";
 
 import ControlPanel from "./pages/ControlPanel/ControlPanel";
-import Storage from "./pages/Storage/Storage";
 import TextEditor from "./pages/TextEditor/TextEditor";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import VideoRoom from "./pages/VideoRoom/VideoRoom";
+import Storage from "./pages/Storage/Storage";
 import ChatWindow from "./pages/Chat/Chat";
 import Login from "./pages/Login/Login";
 //
@@ -27,9 +27,9 @@ function App() {
   const { expiredAt, token, authLoading, isAuthenticated } = authObj;
 
   // verify token on app load
-  useEffect(() => {
-    dispatch(verifyTokenAsync());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(verifyTokenAsync());
+  // }, [dispatch]);
 
   useEffect(() => {
     setAuthToken(token);

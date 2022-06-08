@@ -22,7 +22,7 @@ async function adminGetUserList(req, res) {
     const search_box_text = req.body.search_box_text;
     const userId = req.body.userId;
 
-    if (userId === null) {
+    if (userId === null || !userId) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
@@ -31,24 +31,22 @@ async function adminGetUserList(req, res) {
         return result.map((x) => {
           const user = { ...x };
           return {
-            UserName: user.Surname + " " + user.Name,
-            email: user.Email,
+            userName: user.surname + " " + user.name,
+            email: user.email,
             userId: user.userId,
-            IsAdmin: user.IsAdmin,
-            IsOnline: user.IsOnline,
-            LastOnline: user.LastOnline,
+            isAdmin: user.isAdmin,
+            isOnline: user.isOnline,
+            lastOnline: user.lastOnline,
           };
         });
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
     list = list.filter(function (user) {
-      return user.UserName.toLowerCase().includes(
-        search_box_text.toLowerCase()
-      );
+      return user.userName
+        .toLowerCase()
+        .includes(search_box_text.toLowerCase());
     });
 
     let admin_user_list = sortPersonstAfterSearchText(list, search_box_text);
@@ -63,7 +61,7 @@ async function adminGetUserList(req, res) {
 // insert new User Account
 async function InserNewUserAccount(req, res) {
   try {
-    const userSurname = req.body.userSurname;
+    const surname = req.body.userSurname;
     const userName = req.body.userName;
     const email = req.body.email;
     const isAdmin = req.body.isAdmin;
@@ -73,8 +71,8 @@ async function InserNewUserAccount(req, res) {
     const ofuscatedPassword = generateOfuscatedPassword("parola", newsalt);
 
     if (
-      userSurname === null ||
-      userSurname === undefined ||
+      surname === null ||
+      surname === undefined ||
       userName === null ||
       userName === undefined ||
       email === null ||
@@ -90,13 +88,19 @@ async function InserNewUserAccount(req, res) {
 
     const res_add_user = await InsertNewUserAccountData(
       userId,
-      userSurname,
+      surname,
       userName,
       email,
       ofuscatedPassword,
       newsalt,
       isAdminInt
-    );
+    )
+      .then(function (result) {
+        return result;
+      })
+      .catch((err) => {
+        throw err;
+      });
 
     if (res_add_user === "FAILED") {
       console.log("FAILED - Add New User Account ");
@@ -118,11 +122,9 @@ async function GetRoomNamesAdmin(req, res) {
       .then(function (result) {
         return sortRoomAfterType(result);
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     teams_res = await AddNumberOfParticipants(teams_res);
 

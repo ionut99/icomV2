@@ -115,21 +115,6 @@ function Storage() {
                   </div>
                 ))}
             </div>
-
-            {/* {childFolders.length > 0 && childFiles.length > 0 && <hr />}
-            {childFiles.length > 0 && (
-              <div className="file-list">
-                {childFiles.map((childFile, index) => (
-                  <div
-                    // key={folder.folderID}
-                    key={index}
-                    className="file-element"
-                  >
-                    <File file={childFile} />
-                  </div>
-                ))}
-              </div>
-            )} */}
           </div>
           <div
             className={true ? "file__details empty__details" : "file__details"}

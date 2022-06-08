@@ -10,26 +10,26 @@ import {
 } from "../actions/actionTypes";
 
 const ChannelState = {
-  ConnectionsStatus: false,
-  channelID: null,
+  connectionsStatus: false,
+  channelId: null,
   currentChannelName: "",
-  RoomMessages: [],
+  roomMessages: [],
   channelFolderId: null,
 
   search_box_content: "",
   addUserInGroup: "",
   userSearchList: [],
-  RoomSearchList: [],
+  roomSearchList: [],
 };
 
 const chatRedu = (state = ChannelState, action) => {
   switch (action.type) {
     // update chat room ID
     case USER_UPDATE_CHAT:
-      const { channelID, currentChannelName, channelFolderId } = action.payload;
+      const { channelId, currentChannelName, channelFolderId } = action.payload;
       return {
         ...state,
-        channelID,
+        channelId,
         currentChannelName,
         channelFolderId,
       };
@@ -52,10 +52,10 @@ const chatRedu = (state = ChannelState, action) => {
 
     // set ROOM Person List
     case USER_SET_ROOM_LIST:
-      const { RoomSearchList } = action.payload;
+      const { roomSearchList } = action.payload;
       return {
         ...state,
-        RoomSearchList,
+        roomSearchList,
       };
 
     // update user status
@@ -67,58 +67,58 @@ const chatRedu = (state = ChannelState, action) => {
       };
 
     case USER_MESSAGES_LIST_CHAT:
-      const { RoomMessages, position } = action.payload;
-      if (RoomMessages.length === 1 && state.RoomMessages.length === 0) {
+      const { roomMessages, position } = action.payload;
+      if (roomMessages.length === 1 && state.roomMessages.length === 0) {
         return {
           ...state,
-          RoomMessages,
+          roomMessages,
         };
       }
-      if (RoomMessages.length === 1 && state.RoomMessages.length > 0) {
+      if (roomMessages.length === 1 && state.roomMessages.length > 0) {
         return state;
       }
-      if (position === "top" && state.RoomMessages.length > 7) {
+      if (position === "top" && state.roomMessages.length > 7) {
         // append top
-        const newList = RoomMessages.concat(state.RoomMessages.slice(1, 7));
+        const newList = roomMessages.concat(state.roomMessages.slice(1, 7));
         return {
           ...state,
-          RoomMessages: newList,
+          roomMessages: newList,
         };
-      } else if (position === "bottom" && state.RoomMessages.length > 7) {
+      } else if (position === "bottom" && state.roomMessages.length > 7) {
         //append bottom
-        const newList = state.RoomMessages.slice(-7, -1).concat(RoomMessages);
+        const newList = state.roomMessages.slice(-7, -1).concat(roomMessages);
         return {
           ...state,
-          RoomMessages: newList,
+          roomMessages: newList,
         };
       } else {
         return {
           ...state,
-          RoomMessages,
+          roomMessages,
         };
       }
 
     case USER_ADD_NEW_MESSAGE:
       const {
         ID_message,
-        RoomID,
-        senderID,
+        roomId,
+        senderId,
         senderName,
-        Body,
+        body,
         type,
         fileId,
         createdTime,
       } = action.payload;
       return {
         ...state,
-        RoomMessages: [
-          ...state.RoomMessages,
+        roomMessages: [
+          ...state.roomMessages,
           {
             ID_message: ID_message,
-            RoomID: RoomID,
-            senderID: senderID,
+            roomId: roomId,
+            senderId: senderId,
             senderName: senderName,
-            Body: Body,
+            body: body,
             type: type,
             fileId: fileId,
             createdTime: createdTime,
@@ -128,21 +128,21 @@ const chatRedu = (state = ChannelState, action) => {
 
     case UPDATE_LAST_MESSAGE:
       const { LastMessage, ID } = action.payload;
-      for (let i = 0; i < state.RoomSearchList.length; i++) {
-        if (state.RoomSearchList[i].RoomID === ID) {
-          state.RoomSearchList[i].LastMessage = LastMessage;
+      for (let i = 0; i < state.roomSearchList.length; i++) {
+        if (state.roomSearchList[i].roomId === ID) {
+          state.roomSearchList[i].LastMessage = LastMessage;
         }
       }
       return {
         ...state,
-        RoomSearchList: state.RoomSearchList,
+        roomSearchList: state.roomSearchList,
       };
 
     case "SET_SOCKET_STATUS":
       const { status } = action.payload;
       return {
         ...state,
-        ConnectionsStatus: status,
+        connectionsStatus: status,
       };
 
     default:

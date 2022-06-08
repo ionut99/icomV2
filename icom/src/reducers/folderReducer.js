@@ -7,7 +7,7 @@ import {
   ADD_CHILD_FILE,
 } from "../actions/actionTypes";
 
-export const ROOT_FOLDER = { Name: "My Drive", folderId: "root", path: [] };
+export const ROOT_FOLDER = { name: "My Drive", folderId: "root", path: [] };
 
 const SystemState = {
   folderId: "root",
@@ -54,7 +54,7 @@ const folderRedu = (state = SystemState, action) => {
         childFolders: [
           ...state.childFolders,
           {
-            Name: folderName,
+            name: folderName,
             createdTime: createdAt,
             folderId: folderID,
             parentID: parentID,

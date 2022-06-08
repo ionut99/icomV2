@@ -10,25 +10,25 @@ import {
 } from "./actionTypes";
 
 export const updateCurrentChannel = (
-  channelID,
+  channelId,
   currentChannelName,
   channelFolderId
 ) => {
   return {
     type: USER_UPDATE_CHAT,
     payload: {
-      channelID,
+      channelId,
       currentChannelName,
       channelFolderId,
     },
   };
 };
 
-export const updateMessageChannelList = (RoomMessages, position) => {
+export const updateMessageChannelList = (roomMessages, position) => {
   return {
     type: USER_MESSAGES_LIST_CHAT,
     payload: {
-      RoomMessages,
+      roomMessages,
       position,
     },
   };
@@ -52,11 +52,11 @@ export const setPersonSearchList = (userSearchList) => {
   };
 };
 
-export const setRoomList = (RoomSearchList) => {
+export const setRoomList = (roomSearchList) => {
   return {
     type: USER_SET_ROOM_LIST,
     payload: {
-      RoomSearchList,
+      roomSearchList,
     },
   };
 };
@@ -66,10 +66,10 @@ export const InsertNewMessageLocal = (message) => {
     type: USER_ADD_NEW_MESSAGE,
     payload: {
       ID_message: message.ID_message,
-      RoomID: message.roomID,
-      senderID: message.senderID,
+      roomId: message.roomId,
+      senderId: message.senderId,
       senderName: message.senderName,
-      Body: message.messageBody,
+      body: message.body,
       type: message.type,
       fileId: message.fileId,
       createdTime: message.createdTime,
@@ -77,10 +77,10 @@ export const InsertNewMessageLocal = (message) => {
   };
 };
 
-export const UpdateLastMessage = (LastMessage, ID) => {
+export const UpdateLastMessage = (lastMessage, Id) => {
   return {
     type: UPDATE_LAST_MESSAGE,
-    payload: { LastMessage, ID },
+    payload: { lastMessage, Id },
   };
 };
 

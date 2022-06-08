@@ -8,9 +8,9 @@ async function InsertNewMessage(message) {
     // TO DO: - verify if user is int that room, and add midleware
     const result = await InsertNewMessageData(
       message.ID_message,
-      message.senderID,
-      message.roomID,
-      message.messageBody,
+      message.senderId,
+      message.roomId,
+      message.body,
       message.type,
       message.fileId,
       message.createdTime
@@ -18,11 +18,9 @@ async function InsertNewMessage(message) {
       .then(function (result) {
         return result;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
     // console.log("Rezultat inserare mesaj baza de date:");
     // console.log(result.affectedRows);
     return result.affectedRows;

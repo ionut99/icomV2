@@ -1,13 +1,15 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
+//
 import { IconContext } from "react-icons";
 import * as FaIcons from "react-icons/fa";
+import { Button } from "react-bootstrap";
+//
 import { userLogoutAsync } from "../../asyncActions/authAsyncActions";
 import { updateCurrentChannel } from "../../actions/userActions";
 import ChangePassword from "../ChangePassword/ChangePassword";
 import ChangeAvatar from "../ChangeAvatar/ChangeAvatar";
 import Avatar from "../Avatar/Avatar";
-import { Button } from "react-bootstrap";
 
 import Sidebar from "./Sidebar";
 import { setSocketConnectionStatus } from "../../actions/userActions";
@@ -27,11 +29,10 @@ function Navbar() {
   const { user } = authObj;
   //
   const chatObj = useSelector((state) => state.chatRedu);
-  const { ConnectionsStatus } = chatObj;
+  const { connectionsStatus } = chatObj;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [sidebar, setSidebar] = useState(false);
-  const [discard, setDiscard] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
 
@@ -64,24 +65,20 @@ function Navbar() {
 
   // do link with socket ..
   useEffect(() => {
-    if (ConnectionsStatus === true) return;
-    //
+    if (connectionsStatus === true) return;
     console.log("socket links");
-    const getConnections = async (userId) => {
-      const channelsList = await getActiveRoomsService(userId);
-      return channelsList.data["activeRoomConnections"];
-    };
 
-    getConnections(user.userId).then((activeConnections) => {
+    getActiveRoomsService(user.userId).then((result) => {
+      const activeConnections = result.data["activeRoomConnections"];
       for (let i = 0; i < activeConnections.length; i++) {
         if (
-          activeConnections[i].RoomID === undefined ||
-          activeConnections[i].RoomID === ""
+          activeConnections[i].roomId === undefined ||
+          activeConnections[i].roomId === ""
         )
           continue;
         const request = {
-          userID: user.userId,
-          roomID: activeConnections[i].RoomID,
+          userId: user.userId,
+          roomId: activeConnections[i].roomId,
           type: "chat",
         };
         //
@@ -97,7 +94,7 @@ function Navbar() {
     return () => {
       // socket.disconnect();
     };
-  }, [ConnectionsStatus]);
+  }, [connectionsStatus]);
   // do link with socket ..
 
   return (

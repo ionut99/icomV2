@@ -101,10 +101,17 @@ async function GetFolderDetails(req, res) {
     if (folderId === undefined || userId === undefined)
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
 
-    var folderObject = await GetFolderDetailsService(folderId);
+    var folderObject = await GetFolderDetailsService(folderId)
+      .then(function (result) {
+        if (result.length > 0) return result[0];
+        else return undefined;
+      })
+      .catch((err) => {
+        throw err;
+      });
 
-    if (folderObject === "FAILED") {
-      return handleResponse(req, res, 412, " DataBase Error ");
+    if (folderObject === undefined) {
+      return handleResponse(req, res, 412, " GET Folder Details Error ");
     }
 
     return handleResponse(req, res, 200, { folderObject });
@@ -137,8 +144,8 @@ async function GetChildFolderList(req, res) {
     sharedGroupFoldersList.map((x) => {
       const sharedGroupFolder = { ...x };
 
-      sharedGroupFolder.Name = sharedGroupFolder.Name.replace(userName, "");
-      sharedGroupFolder.Name = sharedGroupFolder.Name.replace("#", "");
+      sharedGroupFolder.name = sharedGroupFolder.name.replace(userName, "");
+      sharedGroupFolder.name = sharedGroupFolder.name.replace("#", "");
 
       userFolderList.push(sharedGroupFolder);
     });

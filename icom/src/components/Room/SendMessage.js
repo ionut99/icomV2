@@ -32,7 +32,7 @@ function SendMessage() {
   const { user } = authObj;
   //
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID } = chatObj;
+  const { channelId } = chatObj;
   //
   // const { GenerateDiffieHelmanKeys, getPublicKey, generateSharedKey } =
   //   Secure();
@@ -46,9 +46,9 @@ function SendMessage() {
     if (e.key !== "Enter") {
       setNewMessage(e.target.value.replace("\n", ""));
       const request = {
-        roomID: channelID,
-        userID: user.userId,
         userName: user.name,
+        roomId: channelId,
+        userId: user.userId,
       };
       //
       socketRef.current.emit("typing chat message", request);
@@ -71,10 +71,10 @@ function SendMessage() {
 
     var request = {
       ID_message: uuidv4(),
-      senderID: user.userId,
+      senderId: user.userId,
       senderName: user.surname + " " + user.name,
-      roomID: channelID,
-      messageBody: newMessage,
+      roomId: channelId,
+      body: newMessage,
       type: messageType,
       fileId: fileId,
       createdTime: date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS"),

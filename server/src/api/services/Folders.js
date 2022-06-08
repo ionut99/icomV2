@@ -16,9 +16,9 @@ function InsertNewFolderDataBase(
   let query = mysql.format(insertQuery, [
     "folders",
     "folderId",
-    "Name",
-    "parentID",
-    "userID",
+    "name",
+    "parentId",
+    "userId",
     "path",
     "createdTime",
     folderId,
@@ -44,7 +44,7 @@ function InsertFolderUserRelationDataBase(folderId, userId, uuidRoom) {
   if (uuidRoom === null) {
     return new Promise((resolve) => {
       sqlPool.pool.query(
-        `INSERT INTO foldersusers (ID, folderIdResource, userIdBeneficiary, RoomIdBeneficiary) VALUES (NULL, '${folderId}', '${userId}', NULL)`,
+        `INSERT INTO foldersusers (ID, folderIdResource, userIdBeneficiary, roomIdBeneficiary) VALUES (NULL, '${folderId}', '${userId}', NULL)`,
         (err, result) => {
           if (err) {
             console.error(err);
@@ -57,7 +57,7 @@ function InsertFolderUserRelationDataBase(folderId, userId, uuidRoom) {
   } else if (userId === null) {
     return new Promise((resolve) => {
       sqlPool.pool.query(
-        `INSERT INTO foldersusers (ID, folderIdResource, userIdBeneficiary, RoomIdBeneficiary) VALUES (NULL, '${folderId}', NULL, '${uuidRoom}')`,
+        `INSERT INTO foldersusers (ID, folderIdResource, userIdBeneficiary, roomIdBeneficiary) VALUES (NULL, '${folderId}', NULL, '${uuidRoom}')`,
         (err, result) => {
           if (err) {
             console.error(err);
@@ -70,7 +70,7 @@ function InsertFolderUserRelationDataBase(folderId, userId, uuidRoom) {
   } else if (userId !== null && uuidRoom !== null) {
     return new Promise((resolve) => {
       sqlPool.pool.query(
-        `INSERT INTO foldersusers (ID, folderIdResource, userIdBeneficiary, RoomIdBeneficiary) VALUES (NULL, '${folderId}', '${userId}', '${uuidRoom}')`,
+        `INSERT INTO foldersusers (ID, folderIdResource, userIdBeneficiary, roomIdBeneficiary) VALUES (NULL, '${folderId}', '${userId}', '${uuidRoom}')`,
         (err, result) => {
           if (err) {
             console.error(err);
@@ -108,9 +108,9 @@ function GetSharedPrivateFolders(userId, parentId) {
     "SELECT ??, ??, ??, ??, ??, ?? FROM ?? INNER JOIN ?? ON ?? = ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? = ? AND ?? IS NULL";
   let query = mysql.format(selectQuery, [
     "folders.folderId",
-    "folders.Name",
-    "folders.parentID",
-    "folders.userID",
+    "folders.name",
+    "folders.parentId",
+    "folders.userId",
     "folders.createdTime",
     "folders.path",
     "folders",
@@ -122,7 +122,7 @@ function GetSharedPrivateFolders(userId, parentId) {
     "foldersusers.userIdBeneficiary",
     "foldersusers.userIdBeneficiary",
     userId,
-    "folders.parentID",
+    "folders.parentId",
     parentId,
     "foldersusers.RoomIdBeneficiary",
   ]);
@@ -141,22 +141,22 @@ function GetSharedGroupFolders(userId, parentId) {
     "SELECT DISTINCT ??, ??, ??, ??, ??, ?? FROM ?? INNER JOIN ?? ON ?? = ?? INNER JOIN ?? ON ?? = ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? = ?";
   let query = mysql.format(selectQuery, [
     "folders.folderId",
-    "folders.Name",
-    "folders.parentID",
-    "folders.userID",
+    "folders.name",
+    "folders.parentId",
+    "folders.userId",
     "folders.createdTime",
     "folders.path",
     "iusers",
     "participants",
     "iusers.userId",
-    "participants.UserID",
+    "participants.userId",
     "foldersusers",
-    "participants.RoomID",
-    "foldersusers.RoomIdBeneficiary",
+    "participants.roomId",
+    "foldersusers.roomIdBeneficiary",
     "folders",
     "foldersusers.folderIdResource",
     "folders.folderId",
-    "folders.parentID",
+    "folders.parentId",
     parentId,
     "iusers.userId",
     userId,
@@ -175,7 +175,7 @@ function DeleteFolderUserRelation(roomID) {
   let deleteQuery = "DELETE FROM ?? WHERE ?? = ?";
   let query = mysql.format(deleteQuery, [
     "foldersusers",
-    "RoomIdBeneficiary",
+    "roomIdBeneficiary",
     roomID,
   ]);
   return new Promise((resolve, reject) => {
@@ -188,7 +188,7 @@ function DeleteFolderUserRelation(roomID) {
   });
 }
 
-function DeleteRoomFolderAndUserRelation(roomID) {
+function DeleteRoomFolderAndUserRelation(roomId) {
   let deleteQuery =
     "DELETE ??, ?? FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ?";
   let query = mysql.format(deleteQuery, [
@@ -198,8 +198,8 @@ function DeleteRoomFolderAndUserRelation(roomID) {
     "foldersusers",
     "folders.folderId",
     "foldersusers.folderIdResource",
-    "foldersusers.RoomIdBeneficiary",
-    roomID,
+    "foldersusers.roomIdBeneficiary",
+    roomId,
   ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {

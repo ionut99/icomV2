@@ -25,7 +25,7 @@ export const UploadFileForStoring =
           folderId,
           FILE.type,
           userId,
-          FILE.type
+          FILE.size
         )
       );
     } else {
@@ -76,8 +76,8 @@ export const getPicturePreview = async (fileId, userId) => {
 };
 
 export const updateProfilePicture =
-  (userID, NewPicture) => async (dispatch) => {
-    const varVerify = await updateProfilePictureService(userID, NewPicture);
+  (userId, newPicture) => async (dispatch) => {
+    const varVerify = await updateProfilePictureService(userId, newPicture);
     // TO DO - display message
     console.log(varVerify);
   };

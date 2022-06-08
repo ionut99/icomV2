@@ -9,7 +9,7 @@ export default function FolderBreadcrumbs({ currentFolder }) {
   const { user } = authObj;
 
   const userDetails = user.surname + " " + user.name;
-
+  //
   let path = currentFolder === ROOT_FOLDER ? [] : [ROOT_FOLDER];
 
   if (currentFolder && typeof currentFolder.path !== "string") {
@@ -39,7 +39,7 @@ export default function FolderBreadcrumbs({ currentFolder }) {
             fontSize: "25px",
           }}
         >
-          {folder.Name.replace(userDetails, "").replace(" # ", " ")}
+          {folder.name.replace(userDetails, "").replace(" # ", " ")}
         </Breadcrumb.Item>
       ))}
       {currentFolder && (
@@ -48,7 +48,7 @@ export default function FolderBreadcrumbs({ currentFolder }) {
           style={{ maxWidth: "200px", fontSize: "25px" }}
           active
         >
-          {currentFolder.Name.replace(userDetails, "").replace(" # ", " ")}
+          {currentFolder.name.replace(userDetails, "").replace(" # ", " ")}
         </Breadcrumb.Item>
       )}
     </Breadcrumb>

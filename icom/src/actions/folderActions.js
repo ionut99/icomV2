@@ -8,22 +8,22 @@ import {
 } from "./actionTypes";
 
 export const addChildFolder = (
-  folderID,
+  folderId,
   folderName,
   createdAt,
-  parentID,
+  parentId,
   path,
-  userID
+  userId
 ) => {
   return {
     type: ADD_CHILD_FOLDER,
     payload: {
-      folderID,
+      folderId,
       folderName,
       createdAt,
-      parentID,
+      parentId,
       path,
-      userID,
+      userId,
     },
   };
 };

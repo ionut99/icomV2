@@ -24,26 +24,26 @@ function Folder({ folder }) {
 
   useEffect(() => {
     let isMounted = true;
-    if (folder.userID == null) {
+    if (folder.userId == null) {
       return;
     }
-    getUserDetails(folder.userID)
+    getUserDetails(folder.userId)
       .then((result) => {
         if (isMounted) {
           setauthName(
-            result.data["userDetails"][0].Name +
+            result.data["userDetails"].name +
               " " +
-              result.data["userDetails"][0].Surname
+              result.data["userDetails"].surname
           );
         }
       })
-      .catch(() => {
-        console.log("Error when try to retriev data about user");
+      .catch((err) => {
+        console.log("Error Set Folder Author Name");
       });
     return () => {
       isMounted = false;
     };
-  }, [folder.userID]);
+  }, [folder.userId]);
 
   useEffect(() => {
     let isMounted = true;
@@ -74,7 +74,7 @@ function Folder({ folder }) {
           state: { folder: folder },
         }}
         variant={
-          folder.userID === user.userId ? "outline-dark" : "outline-primary"
+          folder.userId === user.userId ? "outline-dark" : "outline-primary"
         }
         className="folder-button"
         as={Link}
@@ -88,7 +88,7 @@ function Folder({ folder }) {
             }}
           />
           <div className="folder-name">
-            <p>{`  ${folder.Name}`}</p>
+            <p>{`  ${folder.name}`}</p>
           </div>
           <div className="folder-date">
             <p>{` ${
@@ -122,10 +122,6 @@ function Folder({ folder }) {
             className="f-dropdown-content"
             style={{ display: optionButton ? "block" : "none" }}
           >
-            {/* <div className="dropdown-instrument" onClick={() => {}}>
-              <FaIcons.FaShare size={20} />
-              <p>Share</p>
-            </div> */}
             <div className="dropdown-instrument" onClick={() => {}}>
               <AiIcons.AiOutlineCloudDownload size={20} />
               <p>Download</p>

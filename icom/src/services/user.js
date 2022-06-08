@@ -75,10 +75,10 @@ export const getActiveRoomsService = async (userId) => {
 };
 
 // get messages list from a room
-export const getChannelDetailsService = async (ChannelID, userId) => {
+export const getChannelDetailsService = async (roomId, userId) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/details`, {
-      ChannelID,
+      roomId,
       userId,
     });
   } catch (err) {
@@ -91,13 +91,13 @@ export const getChannelDetailsService = async (ChannelID, userId) => {
 
 // get messages list from a room
 export const getRoomMessagesWithTime = async (
-  ChannelID,
+  channelId,
   lastTime,
   position
 ) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/messages`, {
-      ChannelID,
+      channelId,
       lastTime,
       position,
     });
@@ -111,18 +111,18 @@ export const getRoomMessagesWithTime = async (
 
 // insert new room in database
 export const createNewRoomService = async (
-  RoomName,
-  Private,
-  userSearchListID,
-  userID,
+  roomName,
+  type,
+  userSearchListId,
+  userId,
   uuidRoom
 ) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/newroom`, {
-      RoomName,
-      Private,
-      userSearchListID,
-      userID,
+      roomName,
+      type,
+      userSearchListId,
+      userId,
       uuidRoom,
     });
   } catch (err) {
@@ -149,10 +149,10 @@ export const addNewMemberInRoomService = async (RoomID, userSearchListID) => {
 };
 
 // get list of participants from a room
-export const getParticipantsListService = async (roomID) => {
+export const getParticipantsListService = async (roomId) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/participants`, {
-      roomID,
+      roomId,
     });
   } catch (err) {
     return {
@@ -164,10 +164,10 @@ export const getParticipantsListService = async (roomID) => {
 
 // delete room from database
 
-export const deleteRoomService = async (roomID) => {
+export const deleteRoomService = async (roomId) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/deleteroom`, {
-      roomID,
+      roomId,
     });
   } catch (err) {
     return {
@@ -180,16 +180,16 @@ export const deleteRoomService = async (roomID) => {
 // create new group in database
 
 export const createNewGroupService = async (
-  NewGroupName,
-  Type,
-  userID,
+  newGroupName,
+  type,
+  userId,
   uuidRoom
 ) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/newgroup`, {
-      NewGroupName,
-      Type,
-      userID,
+      newGroupName,
+      type,
+      userId,
       uuidRoom,
     });
   } catch (err) {

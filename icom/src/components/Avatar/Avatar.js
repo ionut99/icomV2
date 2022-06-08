@@ -18,7 +18,7 @@ function Avatar(props) {
 
     getAvatarPictureAsync(userId, roomId).then((result) => {
       if (isMounted) {
-        if (result === "failed" || result === "default") {
+        if (result === undefined) {
           setActualSrc(defaultAvatar);
         } else {
           setActualSrc(result);

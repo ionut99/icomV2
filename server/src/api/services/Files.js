@@ -1,7 +1,6 @@
 const mysql = require("mysql");
 var sqlPool = require("./sql.js");
 
-
 function InsertNewFileDataBase(
   fileId,
   type,
@@ -116,10 +115,10 @@ function GetSharedGroupFiles(folderId, userId) {
     "filesusers.fileResourceId",
     "participants",
     "filesusers.roomBeneficiaryId",
-    "participants.RoomID",
+    "participants.roomId",
     "file.folderId",
     folderId,
-    "participants.UserID",
+    "participants.userId",
     userId,
   ]);
   return new Promise((resolve, reject) => {

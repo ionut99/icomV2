@@ -29,21 +29,23 @@ function Conversation(props) {
 
   const dispatch = useDispatch();
 
-  const { channel, setOpen, setCurrentChannel } = props;
+  const { channel, setChannelToDelete } = props;
+  //
   const [optionButton, setOptionButton] = useState(false);
+  //
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { channelID } = chatObj;
+  const { channelId } = chatObj;
 
-  const CreateMessageDate = new Date(Date.parse(channel.LastMessageTime));
+  const CreateMessageDate = new Date(Date.parse(channel.lastMessageTime));
 
-  const selectChannel = (roomID) => {
+  const selectChannel = (roomId) => {
     // works if select different channel
-    if (roomID !== channelID) {
-      dispatch(updateChannelDetails(roomID, user.userId));
+    if (roomId !== channelId) {
+      dispatch(updateChannelDetails(roomId, user.userId));
       dispatch(updateMessageChannelList([], "top"));
     }
     //
@@ -52,22 +54,22 @@ function Conversation(props) {
     dispatch(setPersonSearchList([]));
   };
 
-  const handleAddUserInGroup = (RoomID) => {
-    dispatch(UpdateAddUserInGroup(RoomID));
-    dispatch(userAddNewPersonInGroup(RoomID, user.userId));
+  const handleAddUserInGroup = (roomId) => {
+    dispatch(UpdateAddUserInGroup(roomId));
+    dispatch(userAddNewPersonInGroup(roomId, user.userId));
   };
 
-  const handleShowParticipants = (RoomID) => {
-    dispatch(getParticipantList(RoomID));
-    dispatch(UpdateAddUserInGroup(RoomID));
+  const handleShowParticipants = (roomId) => {
+    dispatch(getParticipantList(roomId));
+    dispatch(UpdateAddUserInGroup(roomId));
   };
 
   const handleDeleteChannel = (channelName, channelId) => {
-    setCurrentChannel({
-      name: channelName,
+    setChannelToDelete({
       id: channelId,
+      name: channelName,
+      openModal: true,
     });
-    setOpen(true);
   };
 
   useEffect(() => {
@@ -94,19 +96,19 @@ function Conversation(props) {
   return (
     <div
       className="conversation"
-      onClick={() => selectChannel(channel.RoomID)}
+      onClick={() => selectChannel(channel.roomId)}
       ref={ref}
     >
       <div className="user_picture">
-        <Avatar userId={user.userId} roomId={channel.RoomID} />
+        <Avatar userId={user.userId} roomId={channel.roomId} />
       </div>
 
       <div className="conversation-user-details">
         <div className="name">
-          <p>{channel.RoomName}</p>
+          <p>{channel.roomName}</p>
         </div>
         <div className="last-message">
-          <p>Last: {channel.LastMessage}</p>
+          <p>Last: {channel.lastMessage}</p>
         </div>
       </div>
 
@@ -129,7 +131,7 @@ function Conversation(props) {
             <div
               className="dropdown-instrument"
               onClick={() => {
-                handleDeleteChannel(channel.RoomName, channel.RoomID);
+                handleDeleteChannel(channel.roomName, channel.roomId);
               }}
             >
               <MdIcons.MdDeleteOutline size={20} />
@@ -138,9 +140,9 @@ function Conversation(props) {
             <div
               className="dropdown-instrument"
               style={{
-                display: channel.Type ? "none" : "flex",
+                display: channel.type ? "none" : "flex",
               }}
-              onClick={() => handleAddUserInGroup(channel.RoomID)}
+              onClick={() => handleAddUserInGroup(channel.roomId)}
             >
               <AiIcons.AiOutlineUserAdd size={20} />
               <p>Add User</p>
@@ -148,9 +150,9 @@ function Conversation(props) {
             <div
               className="dropdown-instrument"
               style={{
-                display: channel.Type ? "none" : "flex",
+                display: channel.type ? "none" : "flex",
               }}
-              onClick={() => handleShowParticipants(channel.RoomID)}
+              onClick={() => handleShowParticipants(channel.roomId)}
             >
               <BsIcons.BsPeople size={20} />
               <p>Participants</p>
@@ -162,7 +164,7 @@ function Conversation(props) {
           </div>
         </div>
         <div className="conversation-last-seen">
-          {channel.LastMessageTime !== undefined ? (
+          {channel.lastMessageTime !== undefined ? (
             <>{` ${
               CreateMessageDate.getHours() +
               ":" +

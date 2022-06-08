@@ -8,15 +8,6 @@ const dev = process.env.NODE_ENV !== "production";
 // refresh token list to manage the xsrf token
 const refreshTokens = {};
 
-const userData = {
-  userId: "",
-  password: "",
-  surname: "",
-  name: "",
-  email: "",
-  isAdmin: false,
-};
-
 // cookie options to create refresh token
 const COOKIE_OPTIONS = {
   // domain: "localhost",
@@ -35,7 +26,6 @@ function generateToken(user) {
     userId: user.userId,
     name: user.name,
     surname: user.surname,
-    email: user.email,
     isAdmin: user.isAdmin,
   };
 
@@ -83,11 +73,9 @@ function getCleanUser(user) {
 
   return {
     userId: user.userId,
-    surname: user.surname,
     name: user.name,
-    email: user.email,
+    surname: user.surname,
     isAdmin: user.isAdmin,
-    isOnline: 1,
   };
 }
 
@@ -98,11 +86,6 @@ function handleResponse(req, res, statusCode, data, message) {
   switch (statusCode) {
     case 204:
       return res.sendStatus(204);
-    // case 300:
-    //   res.download(data, function (error) {
-    //     console.log("Error : ", error);
-    //   });
-    //   break;
     case 400:
       isError = true;
       break;
@@ -116,7 +99,6 @@ function handleResponse(req, res, statusCode, data, message) {
       errorMessage = message || "Access to this resource is denied.";
       clearTokens(req, res);
       break;
-
     default:
       break;
   }
@@ -138,7 +120,6 @@ function clearTokens(req, res) {
 }
 
 module.exports = {
-  userData,
   refreshTokens,
   COOKIE_OPTIONS,
   generateToken,

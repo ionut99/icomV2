@@ -102,10 +102,10 @@ export const getPicturePreviewService = async (fileId, userId) => {
 };
 
 // update user picture
-export const updateProfilePictureService = async (userID, NewPicture) => {
+export const updateProfilePictureService = async (userId, newPicture) => {
   const formdata = new FormData();
-  formdata.append("avatar", NewPicture);
-  formdata.append("userID", userID);
+  formdata.append("avatar", newPicture);
+  formdata.append("userId", userId);
   try {
     return await axios.post(
       `${REACT_APP_API_URL}/users/updatePicture`,

@@ -12,14 +12,14 @@ import {
 } from "../../actions/userActions";
 
 import Navbar from "../../components/Navbar/Navbar";
-
+import DeleteChannel from "../../components/DeleteConversation/DeleteChannel";
 import {
   userSetRoomListAsync,
   userSearchPersonListAsync,
   createNewGroup,
 } from "../../asyncActions/userAsyncActions";
 
-import ConversationList from "../../components/Search/ConversationList";
+import Conversation from "../../components/Search/Conversation";
 import PersonList from "../../components/Search/PersonList";
 import Room from "../../components/Room/Room";
 
@@ -45,9 +45,15 @@ function Chat() {
   const [loaded, setLoaded] = useState(false);
   //
   const [receiveNewMessage, setReceiveNewMessage] = useState(false);
+  //
+  const [channelToDelete, setChannelToDelete] = useState({
+    id: undefined,
+    name: undefined,
+    openModal: false,
+  });
 
   const chatObj = useSelector((state) => state.chatRedu);
-  const { search_box_content, addUserInGroup } = chatObj;
+  const { search_box_content, addUserInGroup, roomSearchList } = chatObj;
 
   const handleCloseChannelOptions = () => {
     dispatch(UpdateAddUserInGroup(""));
@@ -73,8 +79,8 @@ function Chat() {
     SetnewGroup(false);
   }
 
-  function handleSubmitCreateGroup(e) {
-    e.preventDefault();
+  function handleSubmitCreateGroup(event) {
+    event.preventDefault();
     //
     dispatch(createNewGroup(groupName, 0, user.userId, uuidv4()));
     closeModal();
@@ -135,7 +141,7 @@ function Chat() {
             </Button>
             <Modal show={newGroup} onHide={closeModal}>
               <Modal.Header closeButton>
-                <Modal.Title>Enter New Channel Name:</Modal.Title>
+                <Modal.Title>Enter New Group Name:</Modal.Title>
               </Modal.Header>
               <Form onSubmit={handleSubmitCreateGroup}>
                 <Modal.Body>
@@ -158,7 +164,40 @@ function Chat() {
                 </Modal.Footer>
               </Form>
             </Modal>
-            {loaded ? <ConversationList /> : <Spinner animation="border" />}
+            {loaded ? (
+              <div
+                style={{
+                  display:
+                    addUserInGroup === "" && roomSearchList.length
+                      ? "block"
+                      : "none",
+                }}
+              >
+                <DeleteChannel
+                  channelToDelete={channelToDelete}
+                  setChannelToDelete={setChannelToDelete}
+                  userId={user.userId}
+                />
+                <div className="RoomDelimiter">
+                  <p>Conversations</p>
+                </div>
+                {loaded ? (
+                  roomSearchList.map((channel, index) => {
+                    return (
+                      <Conversation
+                        key={index}
+                        channel={channel}
+                        setChannelToDelete={setChannelToDelete}
+                      />
+                    );
+                  })
+                ) : (
+                  <Spinner animation="border" />
+                )}
+              </div>
+            ) : (
+              <Spinner animation="border" />
+            )}
             {loaded ? <PersonList /> : <Spinner animation="border" />}
           </div>
         </div>

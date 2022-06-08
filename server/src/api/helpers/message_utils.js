@@ -5,26 +5,26 @@ async function CompleteMessageList(messageList) {
   try {
     var newMessageList = [];
     for (let i = 0; i < messageList.length; i++) {
-      const userDetails = await GetUserByID(messageList[i].senderID)
+      const userDetails = await GetUserByID(messageList[i].senderId)
         .then(function (result) {
-          return result;
+          if (result.length > 0) return result[0];
+          else return undefined;
         })
-        .catch((err) =>
-          setImmediate(() => {
-            throw err;
-          })
-        );
+        .catch((err) => {
+          throw err;
+        });
 
-      newMessageList.push({
-        messageID: messageList[i].ID_message,
-        RoomID: messageList[i].RoomID,
-        senderID: messageList[i].senderID,
-        Body: messageList[i].Body,
-        createdTime: messageList[i].createdTime,
-        type: messageList[i].type,
-        fileId: messageList[i].fileId,
-        senderName: userDetails[0].Surname + " " + userDetails[0].Name,
-      });
+      if (userDetails !== undefined)
+        newMessageList.push({
+          ID_message: messageList[i].ID_message,
+          roomId: messageList[i].roomId,
+          senderId: messageList[i].senderId,
+          body: messageList[i].body,
+          type: messageList[i].type,
+          fileId: messageList[i].fileId,
+          createdTime: messageList[i].createdTime,
+          senderName: userDetails.surname + " " + userDetails.name,
+        });
     }
 
     return newMessageList.sort(function (a, b) {
@@ -32,7 +32,7 @@ async function CompleteMessageList(messageList) {
     });
   } catch (err) {
     console.error(err);
-    return null;
+    return [];
   }
 }
 

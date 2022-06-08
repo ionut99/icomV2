@@ -37,19 +37,19 @@ export const getUserDetailsAsync = async (userId) => {
 // handle RoomList Search
 export const userSetRoomListAsync =
   (search_box_content, userId) => async (dispatch) => {
-    const Roomresult = await getSearchRoomService(search_box_content, userId);
+    const resultList = await getSearchRoomService(search_box_content, userId);
 
-    if (Roomresult.error) {
+    if (resultList.error) {
       dispatch(verifyTokenEnd());
       if (
-        Roomresult.response &&
-        [401, 403].includes(Roomresult.response.status)
+        resultList.response &&
+        [401, 403].includes(resultList.response.status)
       )
         dispatch(userLogout());
       return;
     }
 
-    dispatch(setRoomList(Roomresult.data["search_results"]));
+    dispatch(setRoomList(resultList.data["search_results"]));
   };
 
 // handle Person Search
@@ -74,8 +74,8 @@ export const userSearchPersonListAsync =
   };
 
 // handle List Person to add in group
-export const userAddNewPersonInGroup = (RoomID, userId) => async (dispatch) => {
-  const Personresult = await getPersonToAddInGroup(RoomID, userId);
+export const userAddNewPersonInGroup = (roomId, userId) => async (dispatch) => {
+  const Personresult = await getPersonToAddInGroup(roomId, userId);
 
   if (Personresult.error) {
     dispatch(verifyTokenEnd());
@@ -94,11 +94,11 @@ export const userAddNewPersonInGroup = (RoomID, userId) => async (dispatch) => {
 };
 
 // handle to select channel and fetch messages from data-base
-export const updateChannelDetails = (channelID, userId) => async (dispatch) => {
-  if (channelID == null) {
+export const updateChannelDetails = (channelId, userId) => async (dispatch) => {
+  if (channelId == null) {
     return [];
   }
-  const channelData = await getChannelDetailsService(channelID, userId);
+  const channelData = await getChannelDetailsService(channelId, userId);
 
   if (channelData.error) {
     dispatch(verifyTokenEnd());
@@ -113,34 +113,32 @@ export const updateChannelDetails = (channelID, userId) => async (dispatch) => {
   const roomFolderID = channelData.data["folderId"];
   const currentChannelName = channelData.data["roomName"];
 
-  dispatch(updateCurrentChannel(channelID, currentChannelName, roomFolderID));
+  dispatch(updateCurrentChannel(channelId, currentChannelName, roomFolderID));
 };
 
 export const createNewConversation =
-  (RoomName, Private, userSearchListID, userID, uuidRoom) =>
-  async (dispatch) => {
+  (roomName, type, userSearchListId, userId, uuidRoom) => async (dispatch) => {
     const result = await createNewRoomService(
-      RoomName,
-      Private,
-      userSearchListID,
-      userID,
+      roomName,
+      type,
+      userSearchListId,
+      userId,
       uuidRoom
     );
 
     if (result.status === 200) {
-      dispatch(updateChannelDetails(uuidRoom, userID));
+      dispatch(updateChannelDetails(uuidRoom, userId));
     }
-    dispatch(userSetRoomListAsync("", userID));
+    dispatch(userSetRoomListAsync("", userId));
     // TO DO - display message
-    // console.log(varVerify);
   };
-//
 
 //
-export const deleteConversation = (RoomID, userID) => async (dispatch) => {
-  const varVerify = await deleteRoomService(RoomID);
 
-  dispatch(userSetRoomListAsync("", userID));
+export const deleteConversation = (roomId, userId) => async (dispatch) => {
+  const varVerify = await deleteRoomService(roomId);
+
+  dispatch(userSetRoomListAsync("", userId));
   // TO DO - display message
   console.log(varVerify);
 };
@@ -148,30 +146,30 @@ export const deleteConversation = (RoomID, userID) => async (dispatch) => {
 
 // Create new group
 export const createNewGroup =
-  (NewGroupName, Type, userID, uuiRoom) => async (dispatch) => {
+  (newGroupName, type, userId, uuiRoom) => async (dispatch) => {
     const varVerify = await createNewGroupService(
-      NewGroupName,
-      Type,
-      userID,
+      newGroupName,
+      type,
+      userId,
       uuiRoom
     );
 
     // TO DO - display message
     console.log(varVerify);
-    dispatch(userSetRoomListAsync("", userID));
+    dispatch(userSetRoomListAsync("", userId));
   };
 
 // handle add new member in a group
 export const addNewMemberInGroup =
-  (RoomID, userSearchListID) => async (dispatch) => {
-    const varVerify = await addNewMemberInRoomService(RoomID, userSearchListID);
+  (roomId, userSearchListID) => async (dispatch) => {
+    const varVerify = await addNewMemberInRoomService(roomId, userSearchListID);
     // TO DO - display message
     console.log(varVerify);
   };
 
 // get participants from room list
-export const getParticipantList = (RoomID) => async (dispatch) => {
-  const result = await getParticipantsListService(RoomID);
+export const getParticipantList = (roomId) => async (dispatch) => {
+  const result = await getParticipantsListService(roomId);
   // TO DO - display message
   // console.log(result.data);
   dispatch(setPersonSearchList(result.data["participantsRoomList"]));
@@ -205,9 +203,9 @@ export const editUserAccountInfo =
   };
 
 export const getMessageListTime =
-  (channelID, lastMessageTime, position) => async (dispatch) => {
+  (channelId, lastMessageTime, position) => async (dispatch) => {
     const result = await getRoomMessagesWithTime(
-      channelID,
+      channelId,
       lastMessageTime,
       position
     ).then((result) => {

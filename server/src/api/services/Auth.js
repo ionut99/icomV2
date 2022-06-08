@@ -29,14 +29,14 @@ function GetUserByID(userId) {
   });
 }
 
-function GetParticipantByID(participantId, roomID) {
+function GetParticipantByID(participantId, roomId) {
   let selectQuery = "SELECT * FROM ?? WHERE ?? = ? AND ?? = ?";
   let query = mysql.format(selectQuery, [
     "participants",
-    "UserID",
+    "userId",
     participantId,
-    "RoomID",
-    roomID,
+    "roomId",
+    roomId,
   ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {

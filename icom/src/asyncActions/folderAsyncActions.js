@@ -68,12 +68,12 @@ export const userGetFolderDetails = (folderId, userId) => async (dispatch) => {
 
   if (result.data !== undefined) {
     const formattedDoc = {
-      Name: result.data["folderObject"][0].Name,
-      createdTime: result.data["folderObject"][0].createdTime,
-      folderId: result.data["folderObject"][0].folderId,
-      parentID: result.data["folderObject"][0].parentID,
-      path: JSON.parse(result.data["folderObject"][0].path),
-      userID: result.data["folderObject"][0].userID,
+      name: result.data["folderObject"].name,
+      createdTime: result.data["folderObject"].createdTime,
+      folderId: result.data["folderObject"].folderId,
+      parentId: result.data["folderObject"].parentId,
+      path: JSON.parse(result.data["folderObject"].path),
+      userID: result.data["folderObject"].userId,
     };
 
     dispatch(updateFolder(formattedDoc));

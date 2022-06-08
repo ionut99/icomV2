@@ -1,17 +1,17 @@
 const mysql = require("mysql");
 var sqlPool = require("./sql.js");
 
-function InsertNewRoomData(RoomName, Private, uuidRoom) {
+function InsertNewRoomData(roomName, private, uuidRoom) {
   let insertQuery = "INSERT INTO ?? (??, ??, ??, ??) VALUES (?, ?, ?, NULL)";
   let query = mysql.format(insertQuery, [
     "room",
     "ID",
-    "Name",
-    "Private",
-    "Avatar",
+    "name",
+    "private",
+    "avatar",
     uuidRoom,
-    RoomName,
-    Private,
+    roomName,
+    private,
   ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
@@ -42,9 +42,9 @@ function InsertParticipantData(uuidRoom, userID) {
   });
 }
 
-function DeleteAllMessageFromRoom(RoomID) {
+function DeleteAllMessageFromRoom(roomId) {
   let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
-  let query = mysql.format(deletQuery, ["messages", "messages.RoomID", RoomID]);
+  let query = mysql.format(deletQuery, ["messages", "messages.RoomID", roomId]);
   return new Promise((resolve) => {
     sqlPool.pool.query(query, (err, result) => {
       if (err) {
@@ -55,12 +55,12 @@ function DeleteAllMessageFromRoom(RoomID) {
   });
 }
 
-function DeleteAllParticipantsFromRoom(RoomID) {
+function DeleteAllParticipantsFromRoom(roomId) {
   let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
   let query = mysql.format(deletQuery, [
     "participants",
     "participants.RoomID",
-    RoomID,
+    roomId,
   ]);
   return new Promise((resolve) => {
     sqlPool.pool.query(query, (err, result) => {
@@ -72,9 +72,9 @@ function DeleteAllParticipantsFromRoom(RoomID) {
   });
 }
 
-function DeleteRoomData(RoomID) {
+function DeleteRoomData(roomId) {
   let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
-  let query = mysql.format(deletQuery, ["room", "room.ID", RoomID]);
+  let query = mysql.format(deletQuery, ["room", "room.ID", roomId]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
       if (err) {
@@ -85,7 +85,7 @@ function DeleteRoomData(RoomID) {
   });
 }
 
-function GetRoomMessagesData(ChannelID, time, messagesPosition, number) {
+function GetRoomMessagesData(roomId, messageTime, messagesPosition, number) {
   var selectQuery = "";
 
   if (messagesPosition === "top")
@@ -97,12 +97,12 @@ function GetRoomMessagesData(ChannelID, time, messagesPosition, number) {
   let query = mysql.format(selectQuery, [
     "messages",
     "room",
-    "messages.RoomID",
+    "messages.roomId",
     "room.ID",
     "room.ID",
-    ChannelID,
+    roomId,
     "messages.createdTime",
-    time,
+    messageTime,
     "messages.createdTime",
     number,
   ]);

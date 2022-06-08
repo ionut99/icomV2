@@ -50,25 +50,26 @@ async function UpdateProfilePicture(req, res) {
           "Please select an image to upload"
         );
       }
+
       // file details
       const fileName = req.file.originalname;
-      const userID = req.body.userID;
-      // Check user ID
-      const userDetails = await GetUserDetailsData(userID)
-        .then(function (userDetails) {
-          return userDetails;
+      const userId = req.body.userId;
+
+      const userDetails = await GetUserDetailsData(userId)
+        .then(function (result) {
+          if (result.length > 0) return result[0];
+          else return undefined;
         })
-        .catch((err) =>
-          setImmediate(() => {
-            throw err;
-          })
-        );
-      if (userDetails.length === 0) {
+        .catch((err) => {
+          throw err;
+        });
+      //
+      if (userDetails === undefined) {
         return handleResponse(req, res, 410, " Wrong USER ID! ");
       }
       // verific daca exista folderul unde se va salva avatarul
       const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
-      const newPath = path.join(__dirname, "../../../users/", userID);
+      const newPath = path.join(__dirname, "../../../users/", userId);
 
       try {
         if (!(await checkFileExists(newPath))) {
@@ -81,7 +82,7 @@ async function UpdateProfilePicture(req, res) {
           });
         }
       } catch (err) {
-        console.error(err);
+        throw err;
       }
       const createdTime = Date.now();
       fs.rename(
@@ -93,12 +94,12 @@ async function UpdateProfilePicture(req, res) {
           } else {
             console.log("Successfully stored new avatar");
             var pathToStore = path.join(
-              "users/" + userID + "/",
+              "users/" + userId + "/",
               createdTime + " " + fileName
             );
             pathToStore = pathToStore.replace(/\\/g, "\\\\");
 
-            const result = await UpdateAvatarPathData(userID, pathToStore);
+            const result = await UpdateAvatarPathData(userId, pathToStore);
             if (result === "FAILED")
               return handleResponse(req, res, 412, " DataBase Error ");
 
@@ -159,7 +160,7 @@ async function UploadNewStoredFile(req, res) {
           });
         }
       } catch (err) {
-        console.error(err);
+        throw err;
       }
       const createdTime = Date.now();
       fs.rename(
@@ -192,11 +193,9 @@ async function UploadNewStoredFile(req, res) {
               .then(function (result) {
                 //console.log(result);
               })
-              .catch((err) =>
-                setImmediate(() => {
-                  throw err;
-                })
-              );
+              .catch((err) => {
+                throw err;
+              });
             // similarity
 
             if (folderId !== "root") {
@@ -213,39 +212,31 @@ async function UploadNewStoredFile(req, res) {
                       .then(function (result) {
                         //console.log(result);
                       })
-                      .catch((err) =>
-                        setImmediate(() => {
-                          throw err;
-                        })
-                      );
+                      .catch((err) => {
+                        throw err;
+                      });
                     //similarity
                   } else {
                     InsertNewFileRelationDataBase(fileId, userId, null)
                       .then(function (result) {
                         //console.log(result);
                       })
-                      .catch((err) =>
-                        setImmediate(() => {
-                          throw err;
-                        })
-                      );
+                      .catch((err) => {
+                        throw err;
+                      });
                   }
                 })
-                .catch((err) =>
-                  setImmediate(() => {
-                    throw err;
-                  })
-                );
+                .catch((err) => {
+                  throw err;
+                });
             } else {
               InsertNewFileRelationDataBase(fileId, userId, null)
                 .then(function (result) {
                   //console.log(result);
                 })
-                .catch((err) =>
-                  setImmediate(() => {
-                    throw err;
-                  })
-                );
+                .catch((err) => {
+                  throw err;
+                });
             }
 
             return handleResponse(req, res, 200, {
@@ -330,33 +321,32 @@ async function DownLoadFile(req, res) {
     const fileId = req.body.fileId;
     const userId = req.body.userId;
 
-    GetFileDetailsFromDataBase(fileId, userId)
-      .then(function (filedetails_res) {
+    const resDetails = await GetFileDetailsFromDataBase(fileId, userId)
+      .then(function (result) {
+        if (result.length > 0) return result[0];
+        else return undefined;
         //
-        const file_result = JSON.parse(JSON.stringify(filedetails_res));
-
-        if (file_result.length === 0) {
-          console.log("Error get file path ... File.js lin. 340");
-          return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
-        }
-        //
-        const DownloadFilePath = path.join(
-          __dirname,
-          "../../../",
-          file_result[0].systemPath
-        );
-
-        res.download(DownloadFilePath, (err) => {
-          if (err) {
-            return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
-          }
-        });
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
+
+    if (resDetails === undefined) {
+      console.log("Error get file path ... File.js lin. 340");
+      return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
+    }
+    //
+    const DownloadFilePath = path.join(
+      __dirname,
+      "../../../",
+      resDetails.systemPath
+    );
+
+    res.download(DownloadFilePath, (err) => {
+      if (err) {
+        return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
+      }
+    });
   } catch (error) {
     console.error(error);
     return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
@@ -380,11 +370,9 @@ async function GetPicturePreview(req, res) {
         }
         return result[0].systemPath;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     if (typeof filePath == "string")
       filePath = path.join(__dirname, "../../../", filePath);

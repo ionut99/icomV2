@@ -13,6 +13,10 @@ import {
   getAvatarPictureService,
 } from "../services/auth";
 
+import { setSocketConnectionStatus } from "../actions/userActions";
+
+import { socket } from "../context/socket";
+
 export const verifyTokenAsync =
   (silentAuth = false) =>
   async (dispatch) => {
@@ -22,8 +26,9 @@ export const verifyTokenAsync =
 
     if (result.error) {
       dispatch(verifyTokenEnd());
-      if (result.response && [401, 403].includes(result.response.status))
+      if (result.response && [401, 403].includes(result.response.status)) {
         dispatch(userLogout());
+      }
       return;
     }
 
@@ -51,12 +56,8 @@ export const getAvatarPictureAsync = async (userId, roomId) => {
   const resultBlob = await getAvatarPictureService(userId, roomId);
   //
   return new Promise((resolve) => {
-    if (resultBlob.status === 422) {
-      return resolve("default");
-    }
-
-    if (resultBlob.error === true) {
-      return resolve("failed");
+    if (resultBlob.error === true || resultBlob.status === 422) {
+      return undefined;
     }
     const fileReaderInstance = new FileReader();
     fileReaderInstance.readAsDataURL(resultBlob.data);

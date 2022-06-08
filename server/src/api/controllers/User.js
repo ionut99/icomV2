@@ -35,59 +35,54 @@ async function getNewUserChatList(req, res) {
         return result.map((x) => {
           const user = { ...x };
           return {
-            UserName: user.Surname + " " + user.Name,
+            userName: user.surname + " " + user.name,
             userId: user.userId,
           };
         });
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
     search_results = search_results.filter(function (user) {
-      return user.UserName.toLowerCase().includes(
-        search_box_text.toLowerCase()
-      );
+      return user.userName
+        .toLowerCase()
+        .includes(search_box_text.toLowerCase());
     });
 
     var userRoomList = [];
     userRoomList = await GetUserRoomsList(userId)
       .then(function (result) {
         return result.filter(function (room) {
-          return room.RoomName.toLowerCase().includes(
-            search_box_text.toLowerCase()
-          );
+          return room.roomName
+            .toLowerCase()
+            .includes(search_box_text.toLowerCase());
         });
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     var userDetails = await GetUserByID(userId)
       .then(function (result) {
-        return result;
+        if (result.length > 0) return result[0];
+        else return undefined;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
-    var userName = userDetails[0].Surname + " " + userDetails[0].Name;
+      .catch((err) => {
+        throw err;
+      });
+    var userName = userDetails.surname + " " + userDetails.name;
 
     const Roomlist = userRoomList.map((x) => {
       const room = { ...x };
 
-      room.RoomName = room.RoomName.replace(userName, "");
-      room.RoomName = room.RoomName.replace("#", "");
+      room.roomName = room.roomName.replace(userName, "");
+      room.roomName = room.roomName.replace("#", "");
       return room;
     });
 
     for (let j = 0; j < Roomlist.length; j++) {
       for (let i = 0; i < search_results.length; i++) {
-        if (Roomlist[j].RoomName.indexOf(search_results[i].UserName) != -1) {
+        if (Roomlist[j].roomName.indexOf(search_results[i].userName) != -1) {
           search_results.splice(i, 1);
           continue;
         }
@@ -113,35 +108,40 @@ async function GetRoomSearchList(req, res) {
     const search_box_text = req.body.search_box_text;
     const userId = req.body.userId;
 
-    if (userId === null) {
+    if (userId === null || userId === undefined) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
     var userRoomList = await GetUserRoomsList(userId)
       .then(function (result) {
         return result.filter(function (room) {
-          return room.RoomName.toLowerCase().includes(
-            search_box_text.toLowerCase()
-          );
+          return room.roomName
+            .toLowerCase()
+            .includes(search_box_text.toLowerCase());
         });
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     userRoomList = await AddLastMessage(userRoomList);
 
-    var userDetails = await GetUserByID(userId);
-    var userName = userDetails[0].Surname + " " + userDetails[0].Name;
+    var userDetails = await GetUserByID(userId)
+      .then(function (result) {
+        return result[0];
+      })
+      .catch((err) => {
+        throw err;
+      });
+    //
+    var userName = userDetails.surname + " " + userDetails.name;
 
     var search_results = userRoomList.map((x) => {
       const room = { ...x };
-      if (room.Type === 0) return room;
-      if (room.Type === 1) {
-        room.RoomName = room.RoomName.replace(userName, "");
-        room.RoomName = room.RoomName.replace("#", "");
+      if (room.type === 0) return room;
+      if (room.type === 1) {
+        room.roomName = room.roomName.replace(userName, "");
+        room.roomName = room.roomName.replace("#", "");
       }
       return room;
     });
@@ -170,10 +170,16 @@ async function GetUserDetails(req, res) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    const userDetails = await GetUserDetailsData(userId);
-    if (userDetails === "FAILED") {
-      console.log("FAILED - get user Details ");
-      return handleResponse(req, res, 412, " DataBase Error ");
+    const userDetails = await GetUserDetailsData(userId)
+      .then(function (result) {
+        if (result.length > 0) return result[0];
+        else return undefined;
+      })
+      .catch((err) => {
+        throw err;
+      });
+    if (userDetails === undefined) {
+      return handleResponse(req, res, 412, " Get User Details Error ");
     }
 
     // TO DO:
@@ -188,7 +194,7 @@ async function GetUserDetails(req, res) {
 // edit User Account Data
 async function EditUserAccountAsync(req, res) {
   try {
-    const userSurname = req.body.userSurname;
+    const surname = req.body.surname;
     const userName = req.body.userName;
     const email = req.body.email;
     const currentPassword = req.body.currentPassword;
@@ -197,7 +203,8 @@ async function EditUserAccountAsync(req, res) {
 
     const userDetails = await GetUserDetailsData(userId)
       .then(function (result) {
-        return result;
+        if (result.length > 0) return result;
+        else return undefined;
       })
       .catch((err) =>
         setImmediate(() => {
@@ -205,7 +212,7 @@ async function EditUserAccountAsync(req, res) {
         })
       );
 
-    if (userDetails.length === 0) {
+    if (userDetails === undefined) {
       return handleResponse(req, res, 200, { EditUserAccount: "FAILED" });
     }
 
@@ -214,7 +221,7 @@ async function EditUserAccountAsync(req, res) {
       userDetails[0].Salt
     );
 
-    if (userDetails[0].Password !== ofuscatedPassword) {
+    if (userDetails[0].password !== ofuscatedPassword) {
       return handleResponse(req, res, 200, {
         EditUserAccount: "FAILED",
         Message: "Wrong Password",
@@ -226,7 +233,7 @@ async function EditUserAccountAsync(req, res) {
     const newServerPassword = generateOfuscatedPassword(newPassword, newsalt);
 
     const result = await EditUserAccountDataBase(
-      userSurname,
+      surname,
       userName,
       email,
       newServerPassword,
@@ -236,11 +243,9 @@ async function EditUserAccountAsync(req, res) {
       .then(function (result) {
         return result;
       })
-      .catch((err) =>
-        setImmediate(() => {
-          throw err;
-        })
-      );
+      .catch((err) => {
+        throw err;
+      });
 
     return handleResponse(req, res, 200, { EditUserAccount: "SUCCESS" });
   } catch (error) {

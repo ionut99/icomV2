@@ -9,9 +9,9 @@ export const GetFileDocument = (documentData) => {
 };
 
 // file DELTA document update
-export const UpdateDeltaFile = (delta, senderID) => {
+export const UpdateDeltaFile = (delta, senderId) => {
   return {
     type: UPDATE_FILE_DELTA,
-    payload: { delta, senderID },
+    payload: { delta, senderId },
   };
 };

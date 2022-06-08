@@ -21,7 +21,7 @@ import { v4 as uuidv4 } from "uuid";
 function PersonList() {
   const dispatch = useDispatch();
   const chatObj = useSelector((state) => state.chatRedu);
-  const { userSearchList, addUserInGroup, RoomSearchList } = chatObj;
+  const { userSearchList, addUserInGroup, roomSearchList } = chatObj;
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
@@ -37,10 +37,10 @@ function PersonList() {
   };
 
   const ClickPerson = (userSearchListName, userSearchListID, userName) => {
-    for (let i = 0; i < RoomSearchList.length; i++) {
-      if (RoomSearchList[i]["RoomName"].includes(userSearchListName)) {
+    for (let i = 0; i < roomSearchList.length; i++) {
+      if (roomSearchList[i]["roomName"].includes(userSearchListName)) {
         dispatch(
-          updateChannelDetails(RoomSearchList[i]["RoomID"], user.userId)
+          updateChannelDetails(roomSearchList[i]["roomId"], user.userId)
         );
         dispatch(setUserSearchBoxContent(""));
         dispatch(setPersonSearchList([]));
@@ -62,8 +62,8 @@ function PersonList() {
     dispatch(setPersonSearchList([]));
   };
 
-  const ClickAddPersonInGroup = (RoomID, userSearchListID) => {
-    dispatch(addNewMemberInGroup(RoomID, userSearchListID));
+  const ClickAddPersonInGroup = (roomId, userSearchListID) => {
+    dispatch(addNewMemberInGroup(roomId, userSearchListID));
     dispatch(setPersonSearchList([]));
     dispatch(UpdateAddUserInGroup(""));
   };
@@ -88,7 +88,7 @@ function PersonList() {
               key={index}
               onClick={() =>
                 handleClickPerson(
-                  userSearchList.UserName,
+                  userSearchList.userName,
                   userSearchList.userId,
                   user.surname + " " + user.name
                 )
@@ -100,7 +100,7 @@ function PersonList() {
               <div className="conversation-details-left">
                 <div className="conversation-header">
                   <div className="conversation-user-details">
-                    <p>{userSearchList.UserName}</p>
+                    <p>{userSearchList.userName}</p>
                   </div>
                 </div>
               </div>
