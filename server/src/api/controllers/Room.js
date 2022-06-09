@@ -218,11 +218,6 @@ async function CreateNewRoom_Group(req, res) {
     const userId = req.body.userId;
     const uuidRoom = req.body.uuidRoom;
 
-    console.log(newGroupName);
-    console.log(type);
-    console.log(userId);
-    console.log(uuidRoom);
-
     if (
       newGroupName === "" ||
       type === null ||

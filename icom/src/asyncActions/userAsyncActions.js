@@ -10,7 +10,6 @@ import {
   getParticipantsListService,
   getPersonToAddInGroup,
   getUserDetails,
-  getUserAdminList,
   getRoomMessagesWithTime,
 } from "../services/user";
 

@@ -29,7 +29,7 @@ const {
   deleteUser,
   getUser,
   getUsersInRoom,
-  getAllUsers,
+  // getAllUsers,
 } = require("./api/controllers/Socket");
 
 const { InsertNewMessage } = require("./api/controllers/Message");
@@ -118,12 +118,13 @@ io.on("connection", (socket) => {
     }
 
     if (type === "edit") {
-      io.to(user.roomId).emit("all users", {
+      socket.emit("all users edit", {
         roomId: user.roomId,
-        users: getAllUsers(user.roomId, user.type),
+        users: getUsersInRoom(user.roomId, user.id, user.type),
       });
+      //
+      socket.broadcast.to(user.roomId).emit("user joined edit", user);
     }
-
     callback();
   });
 
