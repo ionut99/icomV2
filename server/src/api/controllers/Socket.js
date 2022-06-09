@@ -2,32 +2,6 @@ const { roomIsFull } = require("../controllers/Room");
 
 const users = [];
 
-var userColors = [
-  { color: "red", free: 0 },
-  { color: "blue", free: 0 },
-  { color: "green", free: 0 },
-  { color: "blueviolet", free: 0 },
-  { color: "brown", free: 0 },
-  { color: "chartreuse", free: 0 },
-  { color: "burlywood", free: 0 },
-  { color: "chocolate", free: 0 },
-  { color: "coral", free: 0 },
-  { color: "crimson", free: 0 },
-  { color: "cyan", free: 0 },
-  { color: "darkgreen", free: 0 },
-  { color: "DarkKhaki", free: 0 },
-  { color: "DarkMagenta", free: 0 },
-  { color: "DarkOliveGreen", free: 0 },
-  { color: "DarkOrange", free: 0 },
-  { color: "DarkOrchid", free: 0 },
-  { color: "DarkRed", free: 0 },
-  { color: "DarkSalmon", free: 0 },
-  { color: "DeepPink", free: 0 },
-  { color: "DeepSkyBlue", free: 0 },
-  { color: "FireBrick", free: 0 },
-  { color: "GoldenRod", free: 0 },
-  { color: "GreenYellow", free: 0 },
-];
 
 const getNumberOfUsersInRoom = (roomId, type) => {
   var users_number = 0;
@@ -81,13 +55,7 @@ const addUserInRoom = async ({ id, userId, roomId, type }) => {
     return { error: "userId taken, user is already in room" };
   }
 
-  // assign color to use if he enter in a edit room
-  var color = undefined;
-  if (type === "edit") {
-    color = getColor(id);
-  }
-
-  const user = { id, userId, roomId, type, color: color };
+  const user = { id, userId, roomId, type };
   users.push(user);
 
   //
@@ -126,10 +94,6 @@ const deleteUser = (id) => {
       i--;
       removed = true;
       //
-      const freeColor = (element) => element.free === id;
-      const index = userColors.findIndex(freeColor);
-      if (index === -1) continue;
-      userColors[index].free = 0;
     }
   }
 
@@ -144,17 +108,6 @@ const getUsersInRoom = (roomId, id, type) =>
   users.filter(
     (user) => user.roomId === roomId && user.type === type && user.id !== id
   );
-
-// asign a color
-const getColor = (id) => {
-  const catchColor = (element) => element.free === 0;
-  const index = userColors.findIndex(catchColor);
-
-  if (index !== -1) {
-    userColors[index].free = id;
-    return userColors[index].color;
-  }
-};
 
 module.exports = {
   addUserInRoom,

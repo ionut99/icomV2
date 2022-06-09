@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 //
 import { useDispatch, useSelector } from "react-redux";
 import socketIOClient from "socket.io-client";
@@ -10,6 +10,7 @@ import "./textEditor.css";
 
 import Avatar from "../../components/Avatar/Avatar";
 import Navbar from "../../components/Navbar/Navbar";
+import cloneDeep from "lodash/cloneDeep";
 import SaveButton from "./SaveButton";
 import * as Quill from "quill";
 
@@ -18,28 +19,110 @@ import { v4 as uuidv4 } from "uuid";
 
 import { TOOLBAR_OPTIONS } from "../../helpers/editText";
 import QuillCursors from "quill-cursors";
+import { constants } from "buffer";
 
 //
 const { REACT_APP_API_URL } = process.env;
 //
+
+//
+const colors = [
+  "blue",
+  "green",
+  "blueviolet",
+  "brown",
+  "chartreuse",
+  "burlywood",
+  "red",
+  "chocolate",
+  "coral",
+  "crimson",
+  "cyan",
+  "darkgreen",
+  "DarkKhaki",
+  "DarkMagenta",
+  "DarkOliveGreen",
+  "DarkOrange",
+  "DarkOrchid",
+  "DarkRed",
+  "DarkSalmon",
+  "DeepPink",
+  "DeepSkyBlue",
+  "FireBrick",
+  "GoldenRod",
+  "GreenYellow",
+];
+
+const getUserColor = (index) => colors[index % colors.length];
 
 function TextEditor() {
   Quill.register("modules/cursors", QuillCursors);
 
   const { folderId, fileId } = useParams();
   //
-  const socketRef = useRef(null);
-  //
-
-  const [quill, setQuill] = useState();
-  //
-  const [onlineUsers, setOnlineUsers] = useState([]);
-  //
-  const [loadList, setLoadList] = useState(false);
 
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
+  //
 
+  const socketRef = useRef(null);
+  const editorRef = useRef(null);
+  //
+  const mousePointerRef = useRef(null);
+  const editorCursorRef = useRef(null);
+  //
+
+  // const [user, setUser] = useState(null);
+  const [doc, setDoc] = useState(null);
+  const [presences, setPresences] = useState({});
+
+  //
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [loadList, setLoadList] = useState(false);
+
+  //
+  const getUsersPresence = (id, data) => {
+    if (!data) {
+      // if data is empty, then delete this presence, because the user is offline
+      setPresences((prev) => {
+        const newState = cloneDeep(prev);
+        delete newState[id];
+
+        if (editorRef.current) {
+          const cursors = editorRef.current.getModule("cursors");
+          cursors.removeCursor(id);
+        }
+        return newState;
+      });
+    } else if (data.userName && data.userId) {
+      setPresences((prev) => {
+        const newState = cloneDeep(prev);
+        newState[id] = {
+          id,
+          ...data,
+        };
+
+        const index = Object.keys(newState).findIndex((item) => item === id);
+        var Ucolor = getUserColor(index);
+
+        newState[id].color = Ucolor;
+        //
+        if (editorRef.current) {
+          const cursors = editorRef.current.getModule("cursors");
+          if (data.editorCursor) {
+            cursors.createCursor(id, data.userName, Ucolor);
+            cursors.moveCursor(id, data.editorCursor);
+            cursors.toggleFlag(id, true);
+          } else {
+            cursors.removeCursor(id);
+          }
+        }
+        return newState;
+      });
+    }
+  };
+
+  //
   useEffect(() => {
     if (fileId === null || fileId === undefined) return;
     socketRef.current = socketIOClient(REACT_APP_API_URL);
@@ -50,11 +133,10 @@ function TextEditor() {
   }, [fileId]);
 
   //
-
   useEffect(() => {
     //
-    if (fileId === null || fileId === undefined) return;
-    if (socketRef.current === null) return;
+    if (fileId == null) return;
+    if (socketRef.current == null) return;
     const request = {
       userId: user.userId,
       roomId: fileId,
@@ -67,6 +149,7 @@ function TextEditor() {
       }
     });
 
+    //
     socketRef.current.on("all users edit", (roomDetails) => {
       if (roomDetails.roomId !== fileId) return;
       setOnlineUsers(roomDetails.users);
@@ -75,11 +158,22 @@ function TextEditor() {
 
     socketRef.current.on("user joined edit", (newUser) => {
       if (newUser.roomId !== fileId) return;
-
       setOnlineUsers((onlineUsers) => [...onlineUsers, newUser]);
-      console.log(onlineUsers);
       setLoadList(true);
     });
+
+    //
+    socketRef.current.on("receive doc presence", (data) => {
+      if (data.fileId !== fileId) return;
+      getUsersPresence(socketRef.current.id, data);
+    });
+
+    //
+    socketRef.current.on("receive doc pointer", (data) => {
+      if (data.fileId !== fileId) return;
+      getUsersPresence(socketRef.current.id, data);
+    });
+    //
 
     socketRef.current.on("user left", (socketId) => {
       setOnlineUsers((onlineUsers) =>
@@ -87,87 +181,127 @@ function TextEditor() {
       );
       setLoadList(true);
     });
+    //
   }, []);
 
-  useEffect(() => {
-    if (quill == null || socketRef.current == null || fileId == null) return;
-    return getDocumentContentById(fileId, user.userId)
-      .then((result) => {
-        quill.setContents(result.data["ContentFile"]);
-        quill.enable();
-      })
-      .catch(() => {
-        console.log("Error fetch Document Content!");
-      });
-  }, [quill, fileId, user.userId]);
-
   //
-
   // receive changes
   useEffect(() => {
-    if (quill == null || socketRef.current == null) return;
-
-    const handler = (delta) => {
-      if (delta.senderId !== user.userId) {
-        quill.updateContents(delta.body);
+    if (editorRef.current == null || socketRef.current == null) return;
+    let isMounted = true;
+    //
+    const handler = (data) => {
+      if (data.userId !== user.userId && isMounted) {
+        editorRef.current.updateContents(data.body);
       }
-      //
     };
-
+    //
     socketRef.current.on("receive doc edit", handler);
-
     return () => {
       socketRef.current.off("receive doc edit", handler);
+      isMounted = false;
     };
-  }, [quill, user.userId]);
-  //
+  }, [socketRef]);
 
-  // send document changes useEffect()
   useEffect(() => {
-    if (quill == null || socketRef.current == null) return;
+    if (editorRef.current == null) {
+      const editor = new Quill("#editor-container", {
+        theme: "snow",
+        modules: {
+          toolbar: TOOLBAR_OPTIONS,
+          cursors: {
+            transformOnTextChange: true,
+          },
+        },
+      });
+      editorRef.current = editor;
+    }
+  }, []);
 
-    quill.on("text-change", (delta, oldDelta, source) => {
+  // init quill
+  useEffect(() => {
+    //
+    if (editorRef == null) return;
+    //
+    editorRef.current.on("text-change", (delta, oldDelta, source) => {
       if (source !== "user") return;
-      var dataToSend = {
-        body: delta,
-        senderId: user.userId,
-        fileId: fileId,
-        change_ID: uuidv4(),
-      };
-      socketRef.current.emit("send doc edit", dataToSend);
-    });
+      const contents = editorRef.current.getContents();
 
-    return () => {
-      quill.off("text-change");
-    };
-  }, [quill, fileId, user.userId]);
+      console.log("text-change ", delta, contents, source);
+      delta.type = "rich-text";
+      if (socketRef.current) {
+        // send modification to the others
+        const request = {
+          body: delta,
+          fileId: fileId,
+          userId: user.userId,
+        };
+        //
+        socketRef.current.emit("send doc edit", request);
+      }
+    });
+    editorRef.current.on(
+      "selection-change",
+      function (range, oldRange, source) {
+        editorCursorRef.current = range;
+        if (socketRef.current) {
+          //
+          const request = {
+            fileId: fileId,
+            userId: user.userId,
+            userName: user.name,
+            editorCursor: range,
+            mousePointer: mousePointerRef.current,
+          };
+          //
+          socketRef.current.emit("send doc pointer", request);
+        }
+      }
+    );
+  }, [editorRef]);
 
   //
-
-  // quill
-  const wrapperRef = useCallback((wrapper) => {
-    if (wrapper == null) return;
-    wrapper.innerHTML = "";
-    const editor = document.createElement("div");
-    wrapper.append(editor);
-    const q = new Quill(editor, {
-      theme: "snow",
-      modules: {
-        toolbar: TOOLBAR_OPTIONS,
-        cursors: {
-          hideDelayMs: 5000,
-          hideSpeedMs: 0,
-          selectionChangeSource: null,
-          transformOnTextChange: true,
-        },
-      },
-    });
-    q.disable();
-    q.setText(" Loading...");
-
+  useEffect(() => {
     //
-    setQuill(q);
-  }, []);
+    const container = document.querySelector("#editor-container");
+    const handler = (e) => {
+      if (!container) return;
+      const containerRect = container.getBoundingClientRect();
+      // calculate relative position of the mouse in the container
+      var left = e.clientX - containerRect.left;
+      var top = e.clientY - containerRect.top;
+      const value = {
+        left,
+        top,
+      };
+      mousePointerRef.current = value;
+      if (socketRef.current) {
+        //
+        const request = {
+          fileId: fileId,
+          userId: user.userId,
+          userName: user.name,
+          mousePointer: value,
+          mousePointer: editorCursorRef.current,
+        };
+        //
+        socketRef.current.emit("send doc presence", request);
+      }
+    };
+
+    window.addEventListener("mousemove", handler);
+    return () => {
+      window.removeEventListener("mousemove", handler);
+    };
+  }, [editorRef]);
+  //
+
+  useEffect(() => {
+    if (doc && editorRef.current) {
+      console.log("Editor update", doc);
+      editorRef.current.setContents(doc);
+    }
+  }, [editorRef, doc]);
 
   return (
     <div className="page">
@@ -204,7 +338,7 @@ function TextEditor() {
           </div>
           <SaveButton />
         </div>
-        <div className="edit-box" ref={wrapperRef}></div>
+        <div className="edit-box" id="editor-container"></div>
       </div>
     </div>
   );

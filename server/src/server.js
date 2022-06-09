@@ -50,6 +50,7 @@ app.use(
 // );
 
 const { Server } = require("socket.io");
+const { use } = require("./api/routes/room");
 
 //
 // parse application/json
@@ -129,8 +130,10 @@ io.on("connection", (socket) => {
 
   // Listen for new messages
   socket.on("send chat message", (message) => {
+    const user = getUser(socket.id);
+    if (user === undefined) return;
+    //
     io.to(message.roomId).emit("receive chat message", message);
-
     // save message
     const mes_res = InsertNewMessage(message);
 
@@ -154,20 +157,54 @@ io.on("connection", (socket) => {
 
   //listening for typing
   socket.on("typing chat message", (request) => {
-    // verificare
+    const user = getUser(socket.id);
+    if (user === undefined) return;
+    //
     io.to(request.roomId).emit("user typing", request);
     //
   });
 
+  //
+
+  // edit text
+  // Document Actions
+
   // Listen for new document changes
   socket.on("send doc edit", (delta) => {
     const user = getUser(socket.id);
+    if (user === undefined) return;
+    //
     socket.broadcast.to(user.roomId).emit("receive doc edit", delta);
     console.log(delta);
   });
 
   //
 
+  // Listen for new document changes
+  socket.on("send doc pointer", (delta) => {
+    const user = getUser(socket.id);
+    if (user === undefined) return;
+    //
+    socket.broadcast.to(user.roomId).emit("receive doc pointer", delta);
+    // console.log(delta);
+  });
+
+  //
+
+  // Listen for new document changes
+  socket.on("send doc presence", (delta) => {
+    const user = getUser(socket.id);
+    if (user === undefined) return;
+    //
+    socket.broadcast.to(user.roomId).emit("receive doc presence", delta);
+    // console.log(delta);
+  });
+  //
+
+  //
+
+  //
+  //
   socket.on("sending signal", (payload) => {
     io.to(payload.userToSignal).emit("user joined", {
       signal: payload.signal,
