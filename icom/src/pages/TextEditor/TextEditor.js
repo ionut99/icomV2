@@ -75,7 +75,7 @@ function TextEditor() {
   // const [user, setUser] = useState(null);
   const [doc, setDoc] = useState(null);
   const [presences, setPresences] = useState({});
-
+  const [update, setUpdate] = useState(null);
   //
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [loadList, setLoadList] = useState(false);
@@ -188,20 +188,28 @@ function TextEditor() {
   // receive changes
   useEffect(() => {
     if (editorRef.current == null || socketRef.current == null) return;
-    let isMounted = true;
     //
     const handler = (data) => {
-      if (data.userId !== user.userId && isMounted) {
+      if (data.userId !== user.userId) {
         editorRef.current.updateContents(data.body);
+        // setUpdate(data.body);
       }
     };
     //
     socketRef.current.on("receive doc edit", handler);
     return () => {
       socketRef.current.off("receive doc edit", handler);
-      isMounted = false;
     };
-  }, [socketRef]);
+  }, [socketRef.current]); // asa e ok ... de facut handler pentru toate eventurile
+
+  //
+  // useEffect(() => {
+  //   if (update == null) return;
+  //   editorRef.current.updateContents(update);
+  //   return () => {
+  //     setUpdate(null);
+  //   };
+  // }, [update]);
 
   useEffect(() => {
     if (editorRef.current == null) {
