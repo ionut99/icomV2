@@ -1,19 +1,10 @@
-import React, {
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-  // useContext,
-} from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
+//
 import { useDispatch, useSelector } from "react-redux";
 import socketIOClient from "socket.io-client";
 import { useParams } from "react-router-dom";
-import moment from "moment";
 import { Spinner } from "react-bootstrap";
 
-import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
-import { setAuthToken } from "../../services/auth";
-//
 import "quill/dist/quill.snow.css";
 import "./textEditor.css";
 
@@ -22,13 +13,10 @@ import Navbar from "../../components/Navbar/Navbar";
 import SaveButton from "./SaveButton";
 import * as Quill from "quill";
 
-import { v4 as uuidv4 } from "uuid";
 import { getDocumentContentById } from "../../services/file";
-
-// import { SocketContext } from "../../context/socket";
+import { v4 as uuidv4 } from "uuid";
 
 import { TOOLBAR_OPTIONS } from "../../helpers/editText";
-
 import QuillCursors from "quill-cursors";
 
 //
@@ -41,14 +29,10 @@ function TextEditor() {
   const { folderId, fileId } = useParams();
   //
   const socketRef = useRef(null);
-  // socketRef.current = useContext(SocketContext);
   //
-  const dispatch = useDispatch();
 
   const [quill, setQuill] = useState();
-  const cursorRef = useRef(Array(0));
   //
-  const [cursorPrim, setCursorPrim] = useState();
   const [onlineUsers, setOnlineUsers] = useState([]);
   //
   const [loadList, setLoadList] = useState(false);
@@ -68,6 +52,7 @@ function TextEditor() {
   //
 
   useEffect(() => {
+    //
     if (fileId === null || fileId === undefined) return;
     if (socketRef.current === null) return;
     const request = {
@@ -91,22 +76,6 @@ function TextEditor() {
     socketRef.current.on("user joined edit", (newUser) => {
       if (newUser.roomId !== fileId) return;
 
-      // console.log("creaza cursor nou");
-      // //Creare cursor:
-      // if (quill === null || quill == undefined) return;
-      // const newCursor = quill.getModule("cursors");
-      // newCursor.createCursor(newUser.id, newUser.userId, newUser.color);
-      // //
-      // const cursorObj = {
-      //   id: newUser.id,
-      //   userId: newUser.userId,
-      //   color: newUser.color,
-      //   cursor: newCursor,
-      // };
-      // //
-      // cursorRef.current.push(cursorObj);
-      // console.log(cursorRef.current);
-
       setOnlineUsers((onlineUsers) => [...onlineUsers, newUser]);
       console.log(onlineUsers);
       setLoadList(true);
@@ -119,22 +88,6 @@ function TextEditor() {
       setLoadList(true);
     });
   }, []);
-
-  //
-  function selectionChangeHandler(cursors) {
-    // const debouncedUpdate = debounce(updateCursor, 500);
-    // console.log("hai cu cursorul alaaaaaaaaaaaaaa");
-    return function (range, oldRange, source) {
-      // console.log("hai cu cursorul alaaaaaaaaaaaaaa");
-      if (source !== "user")
-        setTimeout(() => cursors.moveCursor("cursor", range), 1000);
-    };
-
-    // function updateCursor(range) {
-    //   console.log("hai cu cursorul alaaaaaaaaaaaaaa");
-    //   setTimeout(() => cursors.moveCursor("cursor", range), 1000);
-    // }
-  }
 
   useEffect(() => {
     if (quill == null || socketRef.current == null || fileId == null) return;
@@ -150,7 +103,7 @@ function TextEditor() {
 
   //
 
-  // RECEIVE document changes useEffect()
+  // receive changes
   useEffect(() => {
     if (quill == null || socketRef.current == null) return;
 
@@ -159,17 +112,14 @@ function TextEditor() {
         quill.updateContents(delta.body);
       }
       //
-      // const item = cursorRef.current.find((p) => p.userId === delta.senderId);
     };
 
     socketRef.current.on("receive doc edit", handler);
-    quill.on("selection-change", selectionChangeHandler(cursorPrim));
 
     return () => {
       socketRef.current.off("receive doc edit", handler);
     };
   }, [quill, user.userId]);
-
   //
 
   // send document changes useEffect()
@@ -215,14 +165,6 @@ function TextEditor() {
     q.disable();
     q.setText(" Loading...");
 
-    //
-    const cursorsOne = q.getModule("cursors");
-    const cursorsTwo = q.getModule("cursors");
-
-    cursorsOne.createCursor("cursor", "User 2", "blue");
-    cursorsTwo.createCursor("cursor", "User 1", "red");
-    //
-    setCursorPrim(cursorsOne);
     //
     setQuill(q);
   }, []);

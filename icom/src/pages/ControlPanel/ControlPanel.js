@@ -69,13 +69,13 @@ export default function ControlPanel() {
     setOpenDetails(false);
   };
   //
-  const handleFilterTeam = (userId, roomName, RoomID) => {
+  const handleFilterTeam = (userId, roomName, roomId) => {
     // setOpenDetails(false);
     setSearch_text("");
-    getTeamUserList(userId, RoomID);
+    getTeamUserList(userId, roomId);
     setSelectedTeam({
       name: roomName,
-      teamId: RoomID,
+      teamId: roomId,
     });
   };
 
@@ -126,14 +126,14 @@ export default function ControlPanel() {
                         key={index}
                         className="option"
                         onClick={() =>
-                          handleFilterTeam(user.userId, team.Name, team.RoomID)
+                          handleFilterTeam(user.userId, team.name, team.roomId)
                         }
                       >
                         <div className="div-option">
                           <div className="team-name">
-                            <p>{team.Name}</p>
+                            <p>{team.name}</p>
                           </div>
-                          <div className="team-part">Users: {team.Part}</div>
+                          <div className="team-part">Users: {team.part}</div>
                         </div>
                       </Dropdown.Item>
                     );
@@ -173,13 +173,13 @@ export default function ControlPanel() {
                         </div>
                       </div>
                       <div className="div-table-col">
-                        <p>{user.UserName}</p>
+                        <p>{user.userName}</p>
                       </div>
                       <div className="div-table-col">
                         <p>{user.email}</p>
                       </div>
                       <div className="div-table-col">
-                        <p>{user.IsOnline}</p>
+                        <p>{user.isOnline}</p>
                       </div>
                       <div className="div-table-col">
                         <p>Delete / Edit</p>
@@ -210,19 +210,19 @@ export default function ControlPanel() {
               </div>
               <div className="user-data">
                 <div>
-                  Name: <p>{userDetails.UserName}</p>
+                  Name: <p>{userDetails.userName}</p>
                 </div>
                 <div>
                   Email: <p>{userDetails.email}</p>
                 </div>
                 <div>
-                  Last seen: <p>{userDetails.LastOnline}</p>
+                  Last seen: <p>{userDetails.lastOnline}</p>
                 </div>
                 <div>
-                  Status: <p>{userDetails.IsOnline}</p>
+                  Status: <p>{userDetails.isOnline}</p>
                 </div>
                 <div>
-                  Role: <p>{userDetails.IsAdmin}</p>
+                  Role: <p>{userDetails.isAdmin}</p>
                 </div>
                 <div>
                   Teams involved: <p>team 1</p> <p>team 2</p>

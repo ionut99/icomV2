@@ -349,12 +349,12 @@ async function GetPartList(req, res) {
         return result.map((x) => {
           const user = { ...x };
           return {
-            userName: user.Surname + " " + user.Name,
-            email: user.Email,
+            userName: user.surname + " " + user.name,
+            email: user.email,
             userId: user.userId,
-            IsAdmin: user.IsAdmin,
-            IsOnline: user.IsOnline,
-            LastOnline: user.LastOnline,
+            isAdmin: user.IsAdmin,
+            isOnline: user.IsOnline,
+            lastOnline: user.LastOnline,
           };
         });
       })

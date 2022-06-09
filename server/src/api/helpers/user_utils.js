@@ -137,11 +137,11 @@ async function AddLastMessage(RoomList) {
   }
 }
 
-async function AddNumberOfParticipants(RoomList) {
+async function AddNumberOfParticipants(roomList) {
   try {
     var room_result = [];
-    for (let i = 0; i < RoomList.length; i++) {
-      const partNumber = await GetNumberOfParticipantsOfRoom(RoomList[i].ID)
+    for (let i = 0; i < roomList.length; i++) {
+      const partNumber = await GetNumberOfParticipantsOfRoom(roomList[i].ID)
         .then(function (result) {
           return result.length;
         })
@@ -152,10 +152,10 @@ async function AddNumberOfParticipants(RoomList) {
         );
 
       room_result.push({
-        RoomID: RoomList[i].ID,
-        Name: RoomList[i].Name,
-        Type: RoomList[i].Private,
-        Part: partNumber,
+        roomId: roomList[i].ID,
+        name: roomList[i].name,
+        type: roomList[i].private,
+        part: partNumber,
       });
     }
 

@@ -70,26 +70,25 @@ const VideoRoom = (props) => {
   const userVideo = useRef();
   //
   const peersRef = useRef(Array(0));
-  const roomID = props.match.params.roomId;
+  const roomId = props.match.params.roomId;
   //
   const authObj = useSelector((state) => state.auth);
-  const { user, expiredAt, token } = authObj;
+  const { user } = authObj;
   //
   const [microphone, setmicrophone] = useState(true);
   //
   const [videoInput, setVideoInput] = useState(true);
-  const [userStream, setUserStream] = useState(undefined);
+  // const [userStream, setUserStream] = useState(undefined);
   //
   const [peers, setPeers] = useState([]);
   //
-  const [request, setRequest] = useState({
-    userID: user.userId,
-    roomID: roomID,
+  const request = {
+    userId: user.userId,
+    roomId: roomId,
     type: "video",
-  });
+  };
+
   //
-  //pentru utilizarea socketului la nivelul aplicatiei
-  // socketRef.current = useContext(SocketContext);
 
   const handleStopVideoStream = () => {
     if (userVideo.current.srcObject !== null) {
@@ -108,13 +107,15 @@ const VideoRoom = (props) => {
 
   //
   useEffect(() => {
-    if (roomID === null || roomID === undefined) return;
+    if (roomId === null || roomId === undefined) return;
     socketRef.current = socketIOClient(REACT_APP_API_URL);
 
     return () => {
       socketRef.current.disconnect();
     };
-  }, [roomID]);
+  }, [roomId]);
+
+  //
 
   useEffect(() => {
     navigator.mediaDevices
@@ -122,7 +123,7 @@ const VideoRoom = (props) => {
       .then((stream) => {
         if (stream != null) {
           userVideo.current.srcObject = stream;
-          setUserStream(stream);
+          // setUserStream(stream);
         }
         socketRef.current.emit("join room", request, (error) => {
           if (error) {
@@ -178,7 +179,9 @@ const VideoRoom = (props) => {
     return () => {
       // socketRef.current.off("all users");
     };
-  }, [roomID]);
+  }, [roomId]);
+
+  //
 
   function createPeer(userToSignal, callerID, stream) {
     const peer = new Peer({
@@ -199,6 +202,8 @@ const VideoRoom = (props) => {
     return peer;
   }
 
+  //
+
   function addPeer(incomingSignal, callerID, stream) {
     const peer = new Peer({
       initiator: false,
@@ -215,6 +220,8 @@ const VideoRoom = (props) => {
 
     return peer;
   }
+
+  //
 
   function removePeer(socket_id) {
     const item = peersRef.current.find((p) => p.peerID === socket_id);

@@ -9,6 +9,24 @@ var userColors = [
   { color: "blueviolet", free: 0 },
   { color: "brown", free: 0 },
   { color: "chartreuse", free: 0 },
+  { color: "burlywood", free: 0 },
+  { color: "chocolate", free: 0 },
+  { color: "coral", free: 0 },
+  { color: "crimson", free: 0 },
+  { color: "cyan", free: 0 },
+  { color: "darkgreen", free: 0 },
+  { color: "DarkKhaki", free: 0 },
+  { color: "DarkMagenta", free: 0 },
+  { color: "DarkOliveGreen", free: 0 },
+  { color: "DarkOrange", free: 0 },
+  { color: "DarkOrchid", free: 0 },
+  { color: "DarkRed", free: 0 },
+  { color: "DarkSalmon", free: 0 },
+  { color: "DeepPink", free: 0 },
+  { color: "DeepSkyBlue", free: 0 },
+  { color: "FireBrick", free: 0 },
+  { color: "GoldenRod", free: 0 },
+  { color: "GreenYellow", free: 0 },
 ];
 
 const getNumberOfUsersInRoom = (roomId, type) => {
@@ -23,9 +41,7 @@ const getNumberOfUsersInRoom = (roomId, type) => {
 };
 
 const addUserInRoom = async ({ id, userId, roomId, type }) => {
-  // userId = userId.trim().toLowerCase();
-  // roomId = roomId.trim().toLowerCase();
-
+  //
   if (userId === "" || userId === undefined) {
     return { error: "Invalid userId" };
   }
@@ -129,10 +145,6 @@ const getUsersInRoom = (roomId, id, type) =>
     (user) => user.roomId === roomId && user.type === type && user.id !== id
   );
 
-// get all users
-const getAllUsers = (roomId, type) =>
-  users.filter((user) => user.roomId === roomId && user.type === type);
-
 // asign a color
 const getColor = (id) => {
   const catchColor = (element) => element.free === 0;
@@ -149,5 +161,4 @@ module.exports = {
   getUser,
   getUsersInRoom,
   deleteUser,
-  getAllUsers,
 };

@@ -29,7 +29,6 @@ const {
   deleteUser,
   getUser,
   getUsersInRoom,
-  // getAllUsers,
 } = require("./api/controllers/Socket");
 
 const { InsertNewMessage } = require("./api/controllers/Message");
