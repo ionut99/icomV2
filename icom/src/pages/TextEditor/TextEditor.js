@@ -147,7 +147,6 @@ function TextEditor() {
       type: "edit",
     };
     //
-    console.log(editConnected);
     if (!editConnected) connectSocketToChannel(request);
     //
     return () => {
