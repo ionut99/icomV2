@@ -55,6 +55,7 @@ export const userLoginAsync = (email, password) => async (dispatch) => {
   // connect chat channels
   establishSocketConnection();
   dispatch(connectChatChannels(userData.data["user"].userId, false));
+  dispatch(connectSocket());
   dispatch(verifyUserSuccess(userData.data));
 };
 

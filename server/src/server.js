@@ -106,14 +106,17 @@ io.on("connection", (socket) => {
       roomId,
       type,
     });
-    if (error) return callback(error);
-
+    //
+    if (error) {
+      console.log("failed:");
+      return callback(error);
+    }
     socket.join(user.roomId);
 
     if (type === "video") {
       socket.emit("all users", {
         roomId: user.roomId,
-        users: getUsersInRoom(user.roomId, user.id, user.type), //except the one who enter
+        users: getUsersInRoom(user.roomId, user.id, user.type),
       });
     }
 
@@ -130,6 +133,7 @@ io.on("connection", (socket) => {
 
   // Listen for new messages
   socket.on("send chat message", (message) => {
+    //
     const user = getUser(socket.id);
     if (user === undefined) return;
     //
@@ -175,7 +179,6 @@ io.on("connection", (socket) => {
     if (user === undefined) return;
     //
     socket.broadcast.to(user.roomId).emit("receive doc edit", delta);
-    console.log(delta);
   });
 
   //
@@ -186,7 +189,6 @@ io.on("connection", (socket) => {
     if (user === undefined) return;
     //
     socket.broadcast.to(user.roomId).emit("receive doc pointer", delta);
-    // console.log(delta);
   });
 
   //
@@ -197,7 +199,6 @@ io.on("connection", (socket) => {
     if (user === undefined) return;
     //
     socket.broadcast.to(user.roomId).emit("receive doc presence", delta);
-    // console.log(delta);
   });
   //
 

@@ -1,13 +1,13 @@
 //
 //
-
 import { socket } from "../context/socket";
 
 export const connectSocketToChannel = (request) => {
   try {
     socket.emit("join room", request, (error) => {
       if (error) {
-        alert(error);
+        // alert(error);
+        console.log(error);
       }
     });
   } catch (err) {

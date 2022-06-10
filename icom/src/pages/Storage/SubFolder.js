@@ -20,20 +20,21 @@ function SubFolder({ currentFolder }) {
 
   useEffect(() => {
     let isMounted = true;
-    return getChildFolders(currentFolder.folderId, user.userId)
+    getChildFolders(currentFolder.folderId, user.userId)
       .then((result) => {
         const orderList = result.data["userFolderList"].sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
         });
 
         if (isMounted) setchildFolders(orderList);
-        return () => {
-          isMounted = false;
-        };
       })
       .catch(() => {
         console.log("Error fetch child folders for folder tree!");
       });
+
+    return () => {
+      isMounted = false;
+    };
   }, [currentFolder.folderId, user.userId]);
 
   useEffect(() => {

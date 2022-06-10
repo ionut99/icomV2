@@ -35,12 +35,9 @@ function Navbar() {
   }
 
   useEffect(() => {
-    if (chatConnected == true) return;
-
-    dispatch(connectChatChannels(user.userId, false));
-    return () => {
-      dispatch(connectSocket());
-    };
+    if (chatConnected) return;
+    dispatch(connectChatChannels(user.userId, chatConnected));
+    dispatch(connectSocket());
   }, []);
 
   useEffect(() => {
