@@ -3,22 +3,21 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
-
+//
+import { TOOLBAR_OPTIONS } from "../../helpers/editText";
+import QuillCursors from "quill-cursors";
 import "quill/dist/quill.snow.css";
+import * as Quill from "quill";
 import "./textEditor.css";
 
 import Avatar from "../../components/Avatar/Avatar";
 import Navbar from "../../components/Navbar/Navbar";
 import cloneDeep from "lodash/cloneDeep";
 import SaveButton from "./SaveButton";
-import * as Quill from "quill";
 import AppUsers from "./AppUsers";
 
 import { getDocumentContentById } from "../../services/file";
 import { v4 as uuidv4 } from "uuid";
-
-import { TOOLBAR_OPTIONS } from "../../helpers/editText";
-import QuillCursors from "quill-cursors";
 
 //
 import { SocketContext } from "../../context/socket";
@@ -77,29 +76,22 @@ function TextEditor() {
   const mousePointerRef = useRef(null);
   const editorCursorRef = useRef(null);
   //
-
   const [presences, setPresences] = useState({});
-  //
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const usersRef = useRef(Array(0));
+  //
 
   // users handler
   const setUsers = (usersList) => {
     setOnlineUsers(usersList);
-    usersRef.current = usersList;
   };
 
   const addUser = (newUser) => {
     setOnlineUsers((onlineUsers) => [...onlineUsers, newUser]);
-    usersRef.current.push(newUser);
   };
 
   const removeUser = (socketId) => {
     setOnlineUsers((onlineUsers) =>
       onlineUsers.filter((online) => online.id !== socketId)
-    );
-    usersRef.current = usersRef.current.filter(
-      (online) => online.id !== socketId
     );
   };
 
@@ -155,6 +147,7 @@ function TextEditor() {
       type: "edit",
     };
     //
+    console.log(editConnected);
     if (!editConnected) connectSocketToChannel(request);
     //
     return () => {

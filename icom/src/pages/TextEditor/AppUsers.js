@@ -6,7 +6,6 @@ const AppUsers = ({ presences }) => {
     <>
       {Object.keys(presences).map((presenceId) => {
         const presence = presences[presenceId];
-        console.log(presence);
         const userColor = presence.color;
         let left = 0;
         let top = 0;
@@ -21,7 +20,7 @@ const AppUsers = ({ presences }) => {
 
         return (
           <div className="online-item" key={presenceId}>
-            <svg
+            {/* <svg
               width="10"
               fill={userColor}
               focusable="false"
@@ -31,7 +30,7 @@ const AppUsers = ({ presences }) => {
             >
               <circle cx="5" cy="5" r="5"></circle>
             </svg>
-            {presence.userName}
+            {presence.userName} */}
             {presence.mousePointer && presence.mousePointer.left != null && (
               <div id="cursor" className="cursor-block" style={{ left, top }}>
                 <MousePointer color={userColor} />
