@@ -63,3 +63,15 @@ export const userLogout = () => {
     type: USER_LOGOUT,
   };
 };
+
+export const connectSocket = () => {
+  return {
+    type: "CONNECT_SOCKET",
+  };
+};
+
+export const disconnectSocket = () => {
+  return {
+    type: "DISCONNECT_SOCKET",
+  };
+};

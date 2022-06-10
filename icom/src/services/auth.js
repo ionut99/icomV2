@@ -97,3 +97,17 @@ export const getAvatarPictureService = async (userId, roomId) => {
     };
   }
 };
+
+// get all rooms open
+export const getActiveRoomsService = async (userId) => {
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/room/active`, {
+      userId,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};

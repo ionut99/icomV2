@@ -90,12 +90,3 @@ export const UpdateAddUserInGroup = (addUserInGroup) => {
     payload: { addUserInGroup },
   };
 };
-
-export const setSocketConnectionStatus = (status) => {
-  return {
-    type: "SET_SOCKET_STATUS",
-    payload: {
-      status,
-    },
-  };
-};

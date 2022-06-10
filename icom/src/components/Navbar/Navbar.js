@@ -12,24 +12,15 @@ import ChangeAvatar from "../ChangeAvatar/ChangeAvatar";
 import Avatar from "../Avatar/Avatar";
 
 import Sidebar from "./Sidebar";
-import { setSocketConnectionStatus } from "../../actions/userActions";
-import { getActiveRoomsService } from "../../services/user";
-
-import { SocketContext } from "../../context/socket";
 import "./navbar.css";
 
 function Navbar() {
   const navbarRef = useRef();
-  const socketRef = useRef();
   const dispatch = useDispatch();
   //
-  socketRef.current = useContext(SocketContext);
-  //
   const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;
+  const { user, socketConnected } = authObj;
   //
-  const chatObj = useSelector((state) => state.chatRedu);
-  const { connectionsStatus } = chatObj;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [sidebar, setSidebar] = useState(false);
@@ -37,9 +28,6 @@ function Navbar() {
   const showSidebar = () => setSidebar(!sidebar);
 
   function LogOut() {
-    // disconnect socket...
-    // socketRef.current.disconnect();
-    // dispatch(setSocketConnectionStatus(false));
     dispatch(userLogoutAsync());
     dispatch(updateCurrentChannel(null, "", []));
   }
@@ -64,37 +52,31 @@ function Navbar() {
   }, [isMenuOpen, sidebar]);
 
   // do link with socket ..
-  useEffect(() => {
-    if (connectionsStatus === true) return;
-    console.log("socket links");
+  // useEffect(() => {
+  //   if (socketConnected === false) return;
+  //   console.log("socket links");
 
-    getActiveRoomsService(user.userId).then((result) => {
-      const activeConnections = result.data["activeRoomConnections"];
-      for (let i = 0; i < activeConnections.length; i++) {
-        if (
-          activeConnections[i].roomId === undefined ||
-          activeConnections[i].roomId === ""
-        )
-          continue;
-        const request = {
-          userId: user.userId,
-          roomId: activeConnections[i].roomId,
-          type: "chat",
-        };
-        //
-        socketRef.current.emit("join room", request, (error) => {
-          if (error) {
-            alert(error);
-          }
-        });
-      }
-    });
-    dispatch(setSocketConnectionStatus(true));
-    //
-    return () => {
-      // socket.disconnect();
-    };
-  }, [connectionsStatus]);
+  //   getActiveRoomsService(user.userId).then((result) => {
+  //     const activeConnections = result.data["activeRoomConnections"];
+  //     for (let i = 0; i < activeConnections.length; i++) {
+  //       if (
+  //         activeConnections[i].roomId === undefined ||
+  //         activeConnections[i].roomId === ""
+  //       )
+  //         continue;
+  //       const request = {
+  //         userId: user.userId,
+  //         roomId: activeConnections[i].roomId,
+  //         type: "chat",
+  //       };
+  //       //
+  //       connectSocketToChannel(request);
+  //       //
+  //     }
+  //   });
+
+  //   return () => {};
+  // }, []);
   // do link with socket ..
 
   return (

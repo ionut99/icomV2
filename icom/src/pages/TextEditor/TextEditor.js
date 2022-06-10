@@ -29,9 +29,9 @@ const { REACT_APP_API_URL } = process.env;
 const colors = [
   "blue",
   "green",
-  "blueviolet",
   "brown",
   "chartreuse",
+  "blueviolet",
   "burlywood",
   "red",
   "chocolate",
@@ -133,10 +133,13 @@ function TextEditor() {
   }, [fileId]);
 
   //
+
+  //
   useEffect(() => {
     //
     if (fileId == null) return;
     if (socketRef.current == null) return;
+    //
     const request = {
       userId: user.userId,
       roomId: fileId,
@@ -161,6 +164,26 @@ function TextEditor() {
       setOnlineUsers((onlineUsers) => [...onlineUsers, newUser]);
       setLoadList(true);
     });
+    //
+    socketRef.current.on("user left", (socketId) => {
+      setOnlineUsers((onlineUsers) =>
+        onlineUsers.filter((online) => online.id !== socketId)
+      );
+      setLoadList(true);
+    });
+  }, []);
+
+  //
+  useEffect(() => {
+    //
+    if (socketRef.current == null) return;
+
+    socketRef.current.on("receive doc edit", (data) => {
+      if (data.userId !== user.userId) {
+        editorRef.current.updateContents(data.body);
+      }
+      //
+    });
 
     //
     socketRef.current.on("receive doc presence", (data) => {
@@ -175,32 +198,8 @@ function TextEditor() {
     });
     //
 
-    socketRef.current.on("user left", (socketId) => {
-      setOnlineUsers((onlineUsers) =>
-        onlineUsers.filter((online) => online.id !== socketId)
-      );
-      setLoadList(true);
-    });
     //
   }, []);
-
-  //
-  // receive changes
-  useEffect(() => {
-    if (editorRef.current == null || socketRef.current == null) return;
-    //
-    const handler = (data) => {
-      if (data.userId !== user.userId) {
-        editorRef.current.updateContents(data.body);
-        // setUpdate(data.body);
-      }
-    };
-    //
-    socketRef.current.on("receive doc edit", handler);
-    return () => {
-      socketRef.current.off("receive doc edit", handler);
-    };
-  }, [socketRef.current]); // asa e ok ... de facut handler pentru toate eventurile
 
   //
   // useEffect(() => {
@@ -331,7 +330,7 @@ function TextEditor() {
                   >
                     <div
                       className="picture-profile"
-                      style={{ borderColor: userOnline.color }}
+                      style={{ borderColor: getUserColor(index) }}
                     >
                       {userOnline.userId && (
                         <Avatar userId={userOnline.userId} roomId={null} />

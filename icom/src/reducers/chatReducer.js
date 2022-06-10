@@ -10,7 +10,7 @@ import {
 } from "../actions/actionTypes";
 
 const ChannelState = {
-  connectionsStatus: false,
+  //
   channelId: null,
   currentChannelName: "",
   roomMessages: [],
@@ -136,13 +136,6 @@ const chatRedu = (state = ChannelState, action) => {
       return {
         ...state,
         roomSearchList: state.roomSearchList,
-      };
-
-    case "SET_SOCKET_STATUS":
-      const { status } = action.payload;
-      return {
-        ...state,
-        connectionsStatus: status,
       };
 
     default:

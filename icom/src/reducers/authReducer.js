@@ -9,6 +9,8 @@ import {
 
 // define initial state of auth reducer
 const initialState = {
+  socketConnected: false,
+  //
   token: null, // manage the access token
   expiredAt: null, // manage expiry time of the access token
   user: null, // manage the user details
@@ -68,6 +70,18 @@ const auth = (state = initialState, action) => {
       return {
         ...initialState,
         authLoading: false,
+      };
+
+    case "CONNECT_SOCKET":
+      return {
+        ...state,
+        socketConnected: true,
+      };
+
+    case "DISCONNECT_SOCKET":
+      return {
+        ...state,
+        socketConnected: false,
       };
     default:
       return state;
