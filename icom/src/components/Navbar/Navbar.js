@@ -11,6 +11,8 @@ import ChangePassword from "../ChangePassword/ChangePassword";
 import ChangeAvatar from "../ChangeAvatar/ChangeAvatar";
 import Avatar from "../Avatar/Avatar";
 
+import { connectChatChannels } from "../../asyncActions/authAsyncActions";
+import { connectSocket } from "../../actions/authActions";
 import Sidebar from "./Sidebar";
 import "./navbar.css";
 
@@ -19,7 +21,7 @@ function Navbar() {
   const dispatch = useDispatch();
   //
   const authObj = useSelector((state) => state.auth);
-  const { user, socketConnected } = authObj;
+  const { user, chatConnected } = authObj;
   //
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,6 +33,15 @@ function Navbar() {
     dispatch(userLogoutAsync());
     dispatch(updateCurrentChannel(null, "", []));
   }
+
+  useEffect(() => {
+    if (chatConnected == true) return;
+
+    dispatch(connectChatChannels(user.userId, false));
+    return () => {
+      dispatch(connectSocket());
+    };
+  }, []);
 
   useEffect(() => {
     const checkIfClickedOutside = (e) => {
@@ -50,34 +61,6 @@ function Navbar() {
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
   }, [isMenuOpen, sidebar]);
-
-  // do link with socket ..
-  // useEffect(() => {
-  //   if (socketConnected === false) return;
-  //   console.log("socket links");
-
-  //   getActiveRoomsService(user.userId).then((result) => {
-  //     const activeConnections = result.data["activeRoomConnections"];
-  //     for (let i = 0; i < activeConnections.length; i++) {
-  //       if (
-  //         activeConnections[i].roomId === undefined ||
-  //         activeConnections[i].roomId === ""
-  //       )
-  //         continue;
-  //       const request = {
-  //         userId: user.userId,
-  //         roomId: activeConnections[i].roomId,
-  //         type: "chat",
-  //       };
-  //       //
-  //       connectSocketToChannel(request);
-  //       //
-  //     }
-  //   });
-
-  //   return () => {};
-  // }, []);
-  // do link with socket ..
 
   return (
     <div className="wrapper" ref={navbarRef}>

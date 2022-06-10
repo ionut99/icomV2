@@ -6,6 +6,22 @@
   box-sizing: border-box;
 }
 
+.cursor-block {
+  position: absolute;
+}
+.cursor-name-container {
+  position: relative;
+}
+.cursor-name {
+  position: absolute;
+  left: 16px;
+  top: -10px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 2px 8px;
+}
+
 .page {
   height: 100%;
   width: 100vw;

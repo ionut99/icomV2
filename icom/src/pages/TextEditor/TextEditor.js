@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 //
 import { useDispatch, useSelector } from "react-redux";
-import socketIOClient from "socket.io-client";
 import { useParams } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 
@@ -13,16 +12,19 @@ import Navbar from "../../components/Navbar/Navbar";
 import cloneDeep from "lodash/cloneDeep";
 import SaveButton from "./SaveButton";
 import * as Quill from "quill";
+import AppUsers from "./AppUsers";
 
 import { getDocumentContentById } from "../../services/file";
 import { v4 as uuidv4 } from "uuid";
 
 import { TOOLBAR_OPTIONS } from "../../helpers/editText";
 import QuillCursors from "quill-cursors";
-import { constants } from "buffer";
 
 //
-const { REACT_APP_API_URL } = process.env;
+import { SocketContext } from "../../context/socket";
+import { connectSocketToChannel } from "../../services/socket";
+//
+import { connectEditRoom, disconnectEditRoom } from "../../actions/authActions";
 //
 
 //
@@ -56,29 +58,50 @@ const colors = [
 const getUserColor = (index) => colors[index % colors.length];
 
 function TextEditor() {
-  Quill.register("modules/cursors", QuillCursors);
+  Quill.register("modules/cursors", QuillCursors, true);
 
+  const dispatch = useDispatch();
   const { folderId, fileId } = useParams();
+
   //
 
   const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;
+  const { user, editConnected } = authObj;
   //
 
   const socketRef = useRef(null);
+  socketRef.current = useContext(SocketContext);
+  //
   const editorRef = useRef(null);
   //
   const mousePointerRef = useRef(null);
   const editorCursorRef = useRef(null);
   //
 
-  // const [user, setUser] = useState(null);
-  const [doc, setDoc] = useState(null);
   const [presences, setPresences] = useState({});
-  const [update, setUpdate] = useState(null);
   //
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [loadList, setLoadList] = useState(false);
+  const usersRef = useRef(Array(0));
+
+  // users handler
+  const setUsers = (usersList) => {
+    setOnlineUsers(usersList);
+    usersRef.current = usersList;
+  };
+
+  const addUser = (newUser) => {
+    setOnlineUsers((onlineUsers) => [...onlineUsers, newUser]);
+    usersRef.current.push(newUser);
+  };
+
+  const removeUser = (socketId) => {
+    setOnlineUsers((onlineUsers) =>
+      onlineUsers.filter((online) => online.id !== socketId)
+    );
+    usersRef.current = usersRef.current.filter(
+      (online) => online.id !== socketId
+    );
+  };
 
   //
   const getUsersPresence = (id, data) => {
@@ -103,8 +126,7 @@ function TextEditor() {
         };
 
         const index = Object.keys(newState).findIndex((item) => item === id);
-        var Ucolor = getUserColor(index);
-
+        const Ucolor = getUserColor(index);
         newState[id].color = Ucolor;
         //
         if (editorRef.current) {
@@ -122,58 +144,47 @@ function TextEditor() {
     }
   };
 
-  //
-  useEffect(() => {
-    if (fileId === null || fileId === undefined) return;
-    socketRef.current = socketIOClient(REACT_APP_API_URL);
-
-    return () => {
-      socketRef.current.disconnect();
-    };
-  }, [fileId]);
-
-  //
-
-  //
+  //connect
   useEffect(() => {
     //
-    if (fileId == null) return;
     if (socketRef.current == null) return;
-    //
+
     const request = {
       userId: user.userId,
       roomId: fileId,
       type: "edit",
     };
     //
-    socketRef.current.emit("join room", request, (error) => {
-      if (error) {
-        alert(error);
-      }
-    });
-
+    if (!editConnected) connectSocketToChannel(request);
     //
+    return () => {
+      dispatch(connectEditRoom());
+    };
+    //
+  }, []);
+
+  //manage users join
+  useEffect(() => {
+    //
+    if (socketRef.current == null) return;
+    //
+
     socketRef.current.on("all users edit", (roomDetails) => {
       if (roomDetails.roomId !== fileId) return;
-      setOnlineUsers(roomDetails.users);
-      setLoadList(true);
+      setUsers(roomDetails.users);
     });
 
     socketRef.current.on("user joined edit", (newUser) => {
       if (newUser.roomId !== fileId) return;
-      setOnlineUsers((onlineUsers) => [...onlineUsers, newUser]);
-      setLoadList(true);
+      addUser(newUser);
     });
     //
     socketRef.current.on("user left", (socketId) => {
-      setOnlineUsers((onlineUsers) =>
-        onlineUsers.filter((online) => online.id !== socketId)
-      );
-      setLoadList(true);
+      removeUser(socketId);
     });
   }, []);
 
-  //
+  //menage users activity
   useEffect(() => {
     //
     if (socketRef.current == null) return;
@@ -201,15 +212,7 @@ function TextEditor() {
     //
   }, []);
 
-  //
-  // useEffect(() => {
-  //   if (update == null) return;
-  //   editorRef.current.updateContents(update);
-  //   return () => {
-  //     setUpdate(null);
-  //   };
-  // }, [update]);
-
+  // init edit box
   useEffect(() => {
     if (editorRef.current == null) {
       const editor = new Quill("#editor-container", {
@@ -232,12 +235,8 @@ function TextEditor() {
     //
     editorRef.current.on("text-change", (delta, oldDelta, source) => {
       if (source !== "user") return;
-      const contents = editorRef.current.getContents();
-
-      console.log("text-change ", delta, contents, source);
       delta.type = "rich-text";
       if (socketRef.current) {
-        // send modification to the others
         const request = {
           body: delta,
           fileId: fileId,
@@ -247,6 +246,9 @@ function TextEditor() {
         socketRef.current.emit("send doc edit", request);
       }
     });
+
+    //
+
     editorRef.current.on(
       "selection-change",
       function (range, oldRange, source) {
@@ -289,7 +291,7 @@ function TextEditor() {
           userId: user.userId,
           userName: user.name,
           mousePointer: value,
-          mousePointer: editorCursorRef.current,
+          editorCursor: editorCursorRef.current,
         };
         //
         socketRef.current.emit("send doc presence", request);
@@ -303,20 +305,13 @@ function TextEditor() {
   }, [editorRef]);
   //
 
-  useEffect(() => {
-    if (doc && editorRef.current) {
-      console.log("Editor update", doc);
-      editorRef.current.setContents(doc);
-    }
-  }, [editorRef, doc]);
-
   return (
     <div className="page">
       <Navbar />
       <div className="edit-window">
         <div className="details-bar">
           <div className="users-box">
-            {loadList ? (
+            {true ? (
               onlineUsers.map((userOnline, index) => {
                 return (
                   <div
@@ -330,7 +325,7 @@ function TextEditor() {
                   >
                     <div
                       className="picture-profile"
-                      style={{ borderColor: getUserColor(index) }}
+                      style={{ borderColor: userOnline.color }}
                     >
                       {userOnline.userId && (
                         <Avatar userId={userOnline.userId} roomId={null} />
@@ -346,6 +341,7 @@ function TextEditor() {
           <SaveButton />
         </div>
         <div className="edit-box" id="editor-container"></div>
+        <AppUsers presences={presences} />
       </div>
     </div>
   );

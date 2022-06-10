@@ -1,3 +1,4 @@
+import { faLeaf } from "@fortawesome/free-solid-svg-icons";
 import {
   VERIFY_TOKEN_STARTED,
   VERIFY_TOKEN_END,
@@ -9,8 +10,12 @@ import {
 
 // define initial state of auth reducer
 const initialState = {
-  socketConnected: false,
+  chatConnected: false,
   //
+  editConnected: false,
+  //
+  videoConnected: false,
+
   token: null, // manage the access token
   expiredAt: null, // manage expiry time of the access token
   user: null, // manage the user details
@@ -75,14 +80,27 @@ const auth = (state = initialState, action) => {
     case "CONNECT_SOCKET":
       return {
         ...state,
-        socketConnected: true,
+        chatConnected: true,
       };
 
     case "DISCONNECT_SOCKET":
       return {
         ...state,
-        socketConnected: false,
+        chatConnected: false,
       };
+
+    case "CONNECT_EDIT":
+      return {
+        ...state,
+        editConnected: true,
+      };
+
+    case "DISCONNECT_EDIT":
+      return {
+        ...state,
+        editConnected: false,
+      };
+    //
     default:
       return state;
   }

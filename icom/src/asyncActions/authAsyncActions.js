@@ -38,12 +38,7 @@ export const verifyTokenAsync =
     }
 
     if (result.status === 204) dispatch(verifyTokenEnd());
-    else {
-      // connect chat channels
-      dispatch(verifyUserSuccess(result.data));
-      // connect chat channels
-      dispatch(connectChatChannels(result.data["user"].userId, false));
-    }
+    else dispatch(verifyUserSuccess(result.data));
   };
 
 // handle user login
@@ -60,8 +55,6 @@ export const userLoginAsync = (email, password) => async (dispatch) => {
   // connect chat channels
   establishSocketConnection();
   dispatch(connectChatChannels(userData.data["user"].userId, false));
-  // connect chat channels
-
   dispatch(verifyUserSuccess(userData.data));
 };
 

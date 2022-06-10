@@ -75,3 +75,17 @@ export const disconnectSocket = () => {
     type: "DISCONNECT_SOCKET",
   };
 };
+
+// edit room
+
+export const connectEditRoom = () => {
+  return {
+    type: "CONNECT_EDIT",
+  };
+};
+
+export const disconnectEditRoom = () => {
+  return {
+    type: "DISCONNECT_EDIT",
+  };
+};

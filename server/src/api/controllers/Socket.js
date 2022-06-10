@@ -1,17 +1,43 @@
 const { roomIsFull } = require("../controllers/Room");
 
+//
+const colors = [
+  "blue",
+  "green",
+  "brown",
+  "chartreuse",
+  "blueviolet",
+  "burlywood",
+  "red",
+  "chocolate",
+  "coral",
+  "crimson",
+  "cyan",
+  "darkgreen",
+  "DarkKhaki",
+  "DarkMagenta",
+  "DarkOliveGreen",
+  "DarkOrange",
+  "DarkOrchid",
+  "DarkRed",
+  "DarkSalmon",
+  "DeepPink",
+  "DeepSkyBlue",
+  "FireBrick",
+  "GoldenRod",
+  "GreenYellow",
+];
+
+const getUserColor = (index) => colors[index % colors.length];
+
 const users = [];
 
-
 const getNumberOfUsersInRoom = (roomId, type) => {
-  var users_number = 0;
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].roomId === roomId && users[i].type === type) {
-      users_number = users_number + 1;
-    }
-  }
-
-  return users_number;
+  //
+  return users.filter(function (element) {
+    return element.type === type && element.roomId === roomId;
+  }).length;
+  //
 };
 
 const addUserInRoom = async ({ id, userId, roomId, type }) => {
@@ -24,28 +50,7 @@ const addUserInRoom = async ({ id, userId, roomId, type }) => {
     return { error: "Invalid roomId" };
   }
 
-  switch (type) {
-    case "chat":
-      const chatUsers = getNumberOfUsersInRoom(roomId, type);
-      const isFull = await roomIsFull(roomId, userId, chatUsers);
-
-      if (isFull) {
-        return { error: "Room is Full" };
-      }
-      break;
-    case "edit":
-      // code block
-      break;
-    case "video":
-      const videoUsers = getNumberOfUsersInRoom(roomId, type);
-      if (videoUsers > 5) {
-        return { error: "Room is Full" };
-      }
-      break;
-    default:
-      return { error: "Invalid room type" };
-  }
-
+  // verify if user already exist
   const existingUser = users.find(
     (user) =>
       user.roomId === roomId && user.userId === userId && user.type === type
@@ -55,7 +60,31 @@ const addUserInRoom = async ({ id, userId, roomId, type }) => {
     return { error: "userId taken, user is already in room" };
   }
 
-  const user = { id, userId, roomId, type };
+  const currentUsersNumber = getNumberOfUsersInRoom(roomId, type);
+
+  switch (type) {
+    case "chat":
+      const isFull = await roomIsFull(roomId, userId, currentUsersNumber);
+
+      if (isFull) {
+        return { error: "Room is Full" };
+      }
+      break;
+    case "edit":
+      // code block
+      break;
+    case "video":
+      if (currentUsersNumber > 5) {
+        return { error: "Room is Full" };
+      }
+      break;
+    default:
+      return { error: "Invalid room type" };
+  }
+
+  // in special for user in edit room
+  const userColor = getUserColor(currentUsersNumber);
+  const user = { id, userId, roomId, type, color: userColor };
   users.push(user);
 
   //
