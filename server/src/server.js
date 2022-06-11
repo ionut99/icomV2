@@ -109,9 +109,10 @@ io.on("connection", (socket) => {
     });
     //
     if (error) {
-      console.log("failed:");
+      console.log("refuse user to join in room..");
       return callback(error);
     }
+    //
     socket.join(user.roomId);
 
     if (type === "video") {
@@ -125,7 +126,7 @@ io.on("connection", (socket) => {
       socket.emit("all users edit", {
         roomId: user.roomId,
         users: getUsersInRoom(user.roomId, user.id, user.type),
-        color: getUserColor(user.roomId, user.type),
+        color: getUserColor(user.roomId, user.userId, user.type),
       });
       //
       socket.broadcast.to(user.roomId).emit("user joined edit", user);
@@ -170,9 +171,6 @@ io.on("connection", (socket) => {
     //
   });
 
-  //
-
-  // edit text
   // Document Actions
 
   // Listen for new document changes

@@ -61,7 +61,6 @@ const videoConstraints = {
   width: window.innerWidth / 2,
 };
 
-// const { REACT_APP_API_URL } = process.env;
 
 const VideoRoom = (props) => {
   //

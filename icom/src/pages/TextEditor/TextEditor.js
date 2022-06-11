@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef } from "react";
+//
+import socketIOClient from "socket.io-client";
 //
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -6,13 +8,12 @@ import { Spinner } from "react-bootstrap";
 //
 import { TOOLBAR_OPTIONS } from "../../helpers/editText";
 import QuillCursors from "quill-cursors";
-import "quill/dist/quill.snow.css";
 import * as Quill from "quill";
-import "./textEditor.css";
+import cloneDeep from "lodash/cloneDeep";
+import "quill/dist/quill.snow.css";
 
 import Avatar from "../../components/Avatar/Avatar";
 import Navbar from "../../components/Navbar/Navbar";
-import cloneDeep from "lodash/cloneDeep";
 import SaveButton from "./SaveButton";
 import AppUsers from "./AppUsers";
 
@@ -20,41 +21,13 @@ import { getDocumentContentById } from "../../services/file";
 import { v4 as uuidv4 } from "uuid";
 
 //
-import { SocketContext } from "../../context/socket";
 import { connectSocketToChannel } from "../../services/socket";
 //
-import { connectEditRoom, disconnectEditRoom } from "../../actions/authActions";
-//
+import "./textEditor.css";
+
+const { REACT_APP_API_URL } = process.env;
 
 //
-const colors = [
-  "blue",
-  "green",
-  "brown",
-  "chartreuse",
-  "blueviolet",
-  "burlywood",
-  "red",
-  "chocolate",
-  "coral",
-  "crimson",
-  "cyan",
-  "darkgreen",
-  "DarkKhaki",
-  "DarkMagenta",
-  "DarkOliveGreen",
-  "DarkOrange",
-  "DarkOrchid",
-  "DarkRed",
-  "DarkSalmon",
-  "DeepPink",
-  "DeepSkyBlue",
-  "FireBrick",
-  "GoldenRod",
-  "GreenYellow",
-];
-
-const getUserColor = (index) => colors[index % colors.length];
 
 function TextEditor() {
   Quill.register("modules/cursors", QuillCursors, true);
@@ -65,11 +38,10 @@ function TextEditor() {
   //
 
   const authObj = useSelector((state) => state.auth);
-  const { user, editConnected } = authObj;
+  const { user } = authObj;
   //
 
   const socketRef = useRef(null);
-  socketRef.current = useContext(SocketContext);
   //
   const editorRef = useRef(null);
   //
@@ -130,8 +102,6 @@ function TextEditor() {
           ...data,
         };
 
-        const index = Object.keys(newState).findIndex((item) => item === id);
-        const Ucolor = getUserColor(index);
         newState[id].color = data.color;
         //
         if (editorRef.current) {
@@ -149,36 +119,40 @@ function TextEditor() {
     }
   };
 
-  //connect
+  //create socket...
   useEffect(() => {
-    //
-    if (socketRef.current == null) return;
+    if (fileId === null || fileId === undefined) return;
+    socketRef.current = socketIOClient(REACT_APP_API_URL);
 
-    const request = {
-      userId: user.userId,
-      roomId: fileId,
-      type: "edit",
-    };
-    //
-    if (!editConnected) connectSocketToChannel(request);
-    //
     return () => {
-      dispatch(connectEditRoom());
+      socketRef.current.disconnect();
     };
-    //
-  }, []);
+  }, [fileId]);
 
-  //manage users join
+  //join room..
   useEffect(() => {
     //
     if (socketRef.current == null) return;
     //
-
-    socketRef.current.on("all users edit", (roomDetails) => {
-      if (roomDetails.roomId !== fileId) return;
-      setUsers(roomDetails.users);
-      colorRef.current = roomDetails.color;
-      console.log(roomDetails.color);
+    socketRef.current.emit(
+      "join room",
+      {
+        userId: user.userId,
+        roomId: fileId,
+        type: "edit",
+      },
+      (error) => {
+        if (error) {
+          // alert(error);
+          console.log(error);
+        }
+      }
+    );
+    //
+    socketRef.current.on("all users edit", (data) => {
+      if (data.roomId !== fileId) return;
+      colorRef.current = data.color;
+      setUsers(data.users);
     });
 
     socketRef.current.on("user joined edit", (newUser) => {
@@ -189,9 +163,10 @@ function TextEditor() {
     socketRef.current.on("user left", (socketId) => {
       removeUser(socketId);
     });
+    //
   }, []);
 
-  //menage users activity
+  //manage users activity
   useEffect(() => {
     //
     if (socketRef.current == null) return;
@@ -203,7 +178,6 @@ function TextEditor() {
       }
       //
     });
-
     //
     socketRef.current.on("receive doc presence", (data) => {
       if (itMounted && data.fileId !== fileId) return;

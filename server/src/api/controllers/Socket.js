@@ -127,7 +127,9 @@ const deleteUser = (id) => {
 };
 
 // get a user by socket id
-const getUser = (id) => users.find((user) => user.id === id);
+const getUser = (id) => {
+  return users.find((user) => user.id === id);
+};
 
 // get users, except the on who enter
 const getUsersInRoom = (roomId, id, type) =>
@@ -135,9 +137,11 @@ const getUsersInRoom = (roomId, id, type) =>
     (user) => user.roomId === roomId && user.type === type && user.id !== id
   );
 
-const getUserColor = (roomId, type) => {
-  const index = getNumberOfUsersInRoom(roomId, type);
-  console.log(colors[index % colors.length]);
+const getUserColor = (roomId, userId, type) => {
+  const index = users.findIndex(
+    (user) =>
+      user.roomId === roomId && user.type === type && user.userId === userId
+  );
   return colors[index % colors.length];
 };
 
