@@ -4,6 +4,7 @@ import { addChildFile } from "../actions/folderActions";
 import {
   getPicturePreviewService,
   updateProfilePictureService,
+  SaveFileStateService,
 } from "../services/file";
 
 // handle upload new file
@@ -82,4 +83,37 @@ export const updateProfilePicture =
     const varVerify = await updateProfilePictureService(userId, newPicture);
     // TO DO - display message
     console.log(varVerify);
+  };
+
+// // save editor text file
+
+export const saveTextFileAsync =
+  (userId, fileId, folderId, fileName, fileSize, fileContent, createdTime) =>
+  async (dispatch) => {
+    //
+
+    const res_addFile = await SaveFileStateService(
+      userId,
+      folderId,
+      fileId,
+      fileName,
+      fileSize,
+      fileContent
+    );
+    //
+    // if (res_addFile.status === 200) {
+    //   dispatch(
+    //     addChildFile(
+    //       fileId,
+    //       fileName,
+    //       createdTime,
+    //       folderId,
+    //       "text/plain",
+    //       userId,
+    //       fileSize
+    //     )
+    //   );
+    // } else {
+    //   console.log("Erro add File to database");
+    // }
   };

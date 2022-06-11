@@ -11,6 +11,8 @@ import QuillCursors from "quill-cursors";
 import * as Quill from "quill";
 import cloneDeep from "lodash/cloneDeep";
 import "quill/dist/quill.snow.css";
+//
+import { saveTextFileAsync } from "../../asyncActions/fileAsyncActions";
 
 import Avatar from "../../components/Avatar/Avatar";
 import Navbar from "../../components/Navbar/Navbar";
@@ -70,14 +72,31 @@ function TextEditor() {
   //
 
   //
-  const saveDocumentState = () => {
+  const saveDocumentState = (
+    userId,
+    fileId,
+    folderId,
+    fileName,
+    createdTime
+  ) => {
     if (editorRef.current == null) return;
     //
-    const delta = editorRef.current.getContents();
-    const deltaLength = editorRef.current.getLength();
+    // extract file content
+    const fileContent = editorRef.current.getContents();
+    const fileSize = editorRef.current.getLength();
 
-    console.log(delta);
-    console.log(deltaLength);
+    // save file...
+    dispatch(
+      saveTextFileAsync(
+        userId,
+        fileId,
+        folderId,
+        fileName,
+        fileSize,
+        fileContent,
+        createdTime
+      )
+    );
   };
 
   //

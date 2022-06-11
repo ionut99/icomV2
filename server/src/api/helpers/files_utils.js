@@ -92,74 +92,9 @@ async function extractProfilePicturePath(userId, roomId) {
   }
 }
 
-const saveFileConfiguration = async (
-  userId,
-  fileName,
-  fileId,
-  fileType,
-  fileSize,
-  folderId
-) => {
+const CreateFileUserRelation = async (folderId, fileId, userId) => {
+  //
   try {
-    const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
-    const newPath = path.join(__dirname, "../../../users/", userId);
-
-    try {
-      if (!(await checkFileExists(newPath))) {
-        console.log("Nu exista folderr...");
-        fs.mkdir(newPath, { recursive: true }, async function (err) {
-          if (err) throw err;
-          console.log("Directory created successfully!");
-        });
-      }
-    } catch (err) {
-      throw err;
-    }
-
-    //
-    const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
-    const numericTime = Date.now();
-    //
-    try {
-      fs.rename(
-        oldPath,
-        newPath + "/" + numericTime + " " + fileName,
-        async function (err) {
-          if (err) throw err;
-        }
-      );
-    } catch (err) {
-      throw err;
-    }
-
-    // store file
-
-    var pathToStore = path.join(
-      "users/" + userId + "/",
-      numericTime + " " + fileName
-    );
-    pathToStore = pathToStore.replace(/\\/g, "\\\\");
-
-    //Store File details in database
-    var res_service = await InsertNewFileDataBase(
-      fileId,
-      fileType,
-      fileName,
-      folderId,
-      createdTime,
-      userId,
-      fileSize,
-      pathToStore
-    )
-      .then(function (result) {
-        return result.affectedRows;
-      })
-      .catch((err) => {
-        throw err;
-      });
-
-    if (res_service !== 1) return res_service;
-
     if (folderId === "root") {
       return InsertNewFileRelationDataBase(fileId, userId, null)
         .then(function (result) {
@@ -209,8 +144,134 @@ const saveFileConfiguration = async (
   }
 };
 
+const saveFileConfiguration = async (
+  userId,
+  fileName,
+  fileId,
+  fileType,
+  fileSize,
+  folderId
+) => {
+  try {
+    const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
+    const newPath = path.join(__dirname, "../../../users/", userId);
+
+    try {
+      if (!(await checkFileExists(newPath))) {
+        console.log("Nu exista folderr...");
+        fs.mkdir(newPath, { recursive: true }, async function (err) {
+          if (err) throw err;
+          console.log("Directory created successfully!");
+        });
+      } else {
+        console.log("File with same name already exist...");
+      }
+    } catch (err) {
+      throw err;
+    }
+
+    //
+    const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
+    const numericTime = Date.now();
+    //
+    try {
+      fs.rename(
+        oldPath,
+        newPath + "/" + numericTime + " " + fileName,
+        async function (err) {
+          if (err) throw err;
+        }
+      );
+    } catch (err) {
+      throw err;
+    }
+
+    // store file
+
+    var pathToStore = path.join(
+      "users/" + userId + "/",
+      numericTime + " " + fileName
+    );
+    pathToStore = pathToStore.replace(/\\/g, "\\\\");
+
+    //Store File details in database
+    var res_service = await InsertNewFileDataBase(
+      fileId,
+      fileType,
+      fileName,
+      folderId,
+      createdTime,
+      userId,
+      fileSize,
+      pathToStore
+    )
+      .then(function (result) {
+        return result.affectedRows;
+      })
+      .catch((err) => {
+        throw err;
+      });
+
+    if (res_service !== 1) return res_service;
+
+    return await CreateFileUserRelation(folderId, fileId, userId);
+    //
+    //
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+//
+//read custom text file
+async function readFile(filePath) {
+  try {
+    const data = await fs.promises.readFile(filePath, "utf8");
+    return JSON.parse(data);
+  } catch (err) {
+    return false;
+  }
+}
+
+//write custom text file ...(before write check if file already is in system)
+async function writeCustomFile(userId, fileName, writedata) {
+  try {
+    const filePath = path.join(__dirname, "../../../users/", userId);
+
+    try {
+      if (!(await checkFileExists(filePath))) {
+        fs.mkdir(filePath, { recursive: true }, async function (err) {
+          if (err) throw err;
+          console.log("Directory created successfully!");
+        });
+      }
+    } catch (err) {
+      throw err;
+    }
+
+    //
+    try {
+      await fs.promises.writeFile(
+        filePath + "/" + fileName,
+        JSON.stringify(writedata, null, 4),
+        "utf8"
+      );
+    } catch (err) {
+      throw err;
+    }
+    return true;
+  } catch (err) {
+    //
+    console.error(err);
+    return false;
+  }
+}
+
 module.exports = {
   checkFileExists,
   extractProfilePicturePath,
   saveFileConfiguration,
+  readFile,
+  writeCustomFile,
+  CreateFileUserRelation,
 };

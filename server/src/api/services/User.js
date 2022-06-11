@@ -199,10 +199,10 @@ function InsertNewUserAccountData(
   ]);
   //
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
       if (err) {
-        return resolve("FAILED");
+        return reject(err);
       }
       return resolve(result);
     });

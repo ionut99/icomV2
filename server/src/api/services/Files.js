@@ -1,3 +1,4 @@
+const e = require("express");
 const mysql = require("mysql");
 var sqlPool = require("./sql.js");
 
@@ -144,10 +145,69 @@ function GetFileDetailsFromDataBase(fileId, userId) {
   });
 }
 
+//
+function VerifyIfExist(fileName, folderId, userId) {
+  //
+  let selectQuery = "SELECT * FROM ?? WHERE ?? = ? AND ?? = ?";
+  let query = "";
+  if (folderId === "root") {
+    query = mysql.format(selectQuery, [
+      "file",
+      "file.fileName",
+      fileName,
+      "file.userId",
+      userId,
+    ]);
+  } else {
+    query = mysql.format(selectQuery, [
+      "file",
+      "file.fileName",
+      fileName,
+      "file.folderId",
+      folderId,
+    ]);
+  }
+
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(result);
+    });
+  });
+}
+
+function UpdateFileDetails(fileId, userId, fileSize, createdTime) {
+  let updateQuery = "UPDATE ?? SET ?? = ?, ?? = ?, ?? = ? WHERE ?? = ?";
+  let query = mysql.format(updateQuery, [
+    "file",
+    "userId",
+    userId,
+    "size",
+    fileSize,
+    "createdTime",
+    createdTime,
+    "file.fileId",
+    fileId,
+  ]);
+
+  return new Promise((resolve, reject) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(result);
+    });
+  });
+}
+
 module.exports = {
   InsertNewFileDataBase,
   InsertNewFileRelationDataBase,
   GetSharedPrivateFiles,
   GetSharedGroupFiles,
   GetFileDetailsFromDataBase,
+  VerifyIfExist,
+  UpdateFileDetails,
 };

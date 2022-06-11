@@ -1,26 +1,39 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, Form } from "react-bootstrap";
+
+//
+import date from "date-and-time";
+//
 
 function SaveButton(props) {
   //
   const { fileId, folderId, saveDocumentState } = props;
   //
   // const dispatch = useDispatch();
+  //
+
+  //
+  const authObj = useSelector((state) => state.auth);
+  const { user } = authObj;
+  //
   const [open, setOpen] = useState(false);
   const [fileName, setfileName] = useState("");
+  //
   function openModal() {
     setOpen(true);
   }
+
   function closeModal() {
     setOpen(false);
   }
 
   function handleSubmit(event) {
     event.preventDefault();
-    // send request for save created document !
-    saveDocumentState();
-    // console.log("de cate ori?");
+    //
+    const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
+    //
+    saveDocumentState(user.userId, fileId, folderId, fileName, createdTime);
     closeModal();
   }
 

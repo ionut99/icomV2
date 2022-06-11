@@ -23,7 +23,7 @@ async function adminGetUserList(req, res) {
     const userId = req.body.userId;
 
     if (userId === null || !userId) {
-      return handleResponse(req, res, 410, "Invalid Request Parameters ");
+      throw new Error("Invalid Request Parameters ");
     }
 
     var list = await GetAllUsersDataBase(userId)
@@ -52,6 +52,7 @@ async function adminGetUserList(req, res) {
     let admin_user_list = sortPersonstAfterSearchText(list, search_box_text);
 
     return handleResponse(req, res, 200, { admin_user_list });
+    //
   } catch (error) {
     console.error(error);
     return handleResponse(req, res, 412, " Failed to fetch admin user list! ");
@@ -80,7 +81,7 @@ async function InserNewUserAccount(req, res) {
       isAdmin === null ||
       isAdmin === undefined
     ) {
-      return handleResponse(req, res, 410, "Invalid Request Parameters ");
+      return new Error("Invalid Request Parameters ");
     }
 
     var isAdminInt = 0;
@@ -96,18 +97,18 @@ async function InserNewUserAccount(req, res) {
       isAdminInt
     )
       .then(function (result) {
-        return result;
+        return result.affectedRows;
       })
       .catch((err) => {
         throw err;
       });
 
-    if (res_add_user === "FAILED") {
-      console.log("FAILED - Add New User Account ");
-      return handleResponse(req, res, 412, " DataBase Error ");
+    if (res_add_user !== 1) {
+      return new Error("FAILED - Add New User Account ");
     }
 
     return handleResponse(req, res, 200, { AddNewUserAccount: "SUCCESS" });
+    //
   } catch (error) {
     console.error(error);
     return handleResponse(req, res, 412, " Failed to add new user account! ");

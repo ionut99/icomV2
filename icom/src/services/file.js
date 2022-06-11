@@ -37,7 +37,32 @@ export const UploadNewStoringFile = async (folderId, userId, fileId, FILE) => {
 };
 
 //
-
+export const SaveFileStateService = async (
+  userId,
+  folderId,
+  fileId,
+  fileName,
+  fileSize,
+  fileContent
+) => {
+  // send to server
+  // params for saving file
+  try {
+    return await axios.post(`${REACT_APP_API_URL}/document/savetext`, {
+      userId,
+      folderId,
+      fileId,
+      fileName,
+      fileSize,
+      fileContent,
+    });
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};
 //
 
 // download file from server

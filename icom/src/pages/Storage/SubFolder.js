@@ -39,7 +39,7 @@ function SubFolder({ currentFolder }) {
 
   useEffect(() => {
     let isMounted = true;
-    return getFileList(currentFolder.folderId, user.userId)
+    getFileList(currentFolder.folderId, user.userId)
       .then((result) => {
         const orderList = result.data["userFileList"].sort(function (a, b) {
           return new Date(b.createdTime) - new Date(a.createdTime);
@@ -52,6 +52,9 @@ function SubFolder({ currentFolder }) {
       .catch(() => {
         console.log("error fetch child folders");
       });
+    return () => {
+      isMounted = false;
+    };
   }, [currentFolder.folderId, user.userId]);
 
   return (

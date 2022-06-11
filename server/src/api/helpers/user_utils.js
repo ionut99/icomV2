@@ -29,28 +29,32 @@ function generateOfuscatedPassword(plainText, salt) {
 }
 
 function sortPersonstAfterSearchText(list, keyword) {
-  return list
-    .filter((prof) => {
-      // Filter results by doing case insensitive match on name here
-      return prof.userName.toLowerCase().includes(keyword.toLowerCase());
-    })
-    .sort((a, b) => {
-      // Sort results by matching name with keyword position in name
-      if (
-        a.userName.toLowerCase().indexOf(keyword.toLowerCase()) >
-        b.userName.toLowerCase().indexOf(keyword.toLowerCase())
-      ) {
-        return 1;
-      } else if (
-        a.userName.toLowerCase().indexOf(keyword.toLowerCase()) <
-        b.userName.toLowerCase().indexOf(keyword.toLowerCase())
-      ) {
-        return -1;
-      } else {
-        if (a.userName > b.userName) return 1;
-        else return -1;
-      }
-    });
+  try {
+    return list
+      .filter((prof) => {
+        // Filter results by doing case insensitive match on name here
+        return prof.userName.toLowerCase().includes(keyword.toLowerCase());
+      })
+      .sort((a, b) => {
+        // Sort results by matching name with keyword position in name
+        if (
+          a.userName.toLowerCase().indexOf(keyword.toLowerCase()) >
+          b.userName.toLowerCase().indexOf(keyword.toLowerCase())
+        ) {
+          return 1;
+        } else if (
+          a.userName.toLowerCase().indexOf(keyword.toLowerCase()) <
+          b.userName.toLowerCase().indexOf(keyword.toLowerCase())
+        ) {
+          return -1;
+        } else {
+          if (a.userName > b.userName) return 1;
+          else return -1;
+        }
+      });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function sortRoomAfterSearchText(list, keyword) {

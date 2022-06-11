@@ -1,19 +1,27 @@
 const multer = require("multer");
 const path = require("path");
 var fs = require("fs");
+var date = require("date-and-time");
 
 const {
   UpdateAvatarPathData,
   GetUserDetailsData,
 } = require("../services/User");
 //
-const { GetFileDetailsFromDataBase } = require("../services/Files");
+const {
+  GetFileDetailsFromDataBase,
+  VerifyIfExist,
+  InsertNewFileDataBase,
+  UpdateFileDetails,
+} = require("../services/Files");
 const { handleResponse } = require("../helpers/utils");
 //
 const {
   checkFileExists,
   extractProfilePicturePath,
   saveFileConfiguration,
+  writeCustomFile,
+  CreateFileUserRelation,
 } = require("../helpers/files_utils");
 
 const storageFile = multer.diskStorage({
@@ -173,6 +181,111 @@ async function UploadNewStoredFile(req, res) {
   } catch (err) {
     console.error(err);
     return handleResponse(req, res, 190, { StorageFile: "FAILED" });
+  }
+}
+
+// handle Upload New File
+async function SaveCustomTextFile(req, res) {
+  try {
+    const userId = req.body.userId;
+    const folderId = req.body.folderId;
+    const fileId = req.body.fileId;
+    const fileName = req.body.fileName;
+    const fileSize = req.body.fileSize;
+    const fileContent = req.body.fileContent;
+
+    if (fileContent.length < 1 || fileSize < 1)
+      throw new Error("Text size is not good ..");
+
+    if (
+      userId == null ||
+      fileId == null ||
+      folderId == null ||
+      fileName == null
+    )
+      throw new Error("Undefined parameteres");
+
+    const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
+    //
+    var res_check = await VerifyIfExist(fileName, folderId, userId);
+
+    if (res_check.length == 0) {
+      // daca nu exista ->  insereaza intrare noua in tabela
+      console.log("custom text file nu exist..");
+
+      // write new file
+      const newFileName = Date.now() + " " + fileName;
+      //
+      var res_write = await writeCustomFile(userId, newFileName, fileContent);
+
+      if (res_write == false)
+        throw new Error("Error write custom text content to file...");
+
+      var pathToStore = path.join("users/" + userId + "/", newFileName);
+      pathToStore = pathToStore.replace(/\\/g, "\\\\");
+      //
+
+      //
+
+      var res_service = await InsertNewFileDataBase(
+        fileId,
+        "text/plain",
+        fileName,
+        folderId,
+        createdTime,
+        userId,
+        fileSize,
+        pathToStore
+      )
+        .then(function (result) {
+          return result.affectedRows;
+        })
+        .catch((err) => {
+          throw err;
+        });
+
+      if (res_service !== 1)
+        return new Error("Error insert file data in database ...");
+
+      res_service = await CreateFileUserRelation(folderId, fileId, userId);
+      //
+      if (!res_service)
+        return new Error("Error insert file user relation in database ...");
+      //
+    } else {
+      //  exista -> modifica dimensiunea si created time
+      console.log("custom text file exist .. trebuie modificat");
+      const existFileName = res_check[0].systemPath.split("\\\\").slice(-1);
+      //
+      var res_update = await UpdateFileDetails(
+        fileId,
+        userId,
+        fileSize,
+        createdTime
+      )
+        .then(function (result) {
+          return result.affectedRows;
+        })
+        .catch((err) => {
+          throw err;
+        });
+
+      if (res_update < 1)
+        return new Error("Error update file data in database ...");
+
+      //
+      var res_write = await writeCustomFile(userId, existFileName, fileContent);
+
+      if (res_write == false)
+        throw new Error("Error write custom text content to file...");
+    }
+
+    //
+
+    return handleResponse(req, res, 190, { SaveTextFile: "SUCCES" });
+  } catch (error) {
+    console.error(error);
+    return handleResponse(req, res, 190, { SaveTextFile: "FAILED" });
   }
 }
 
@@ -337,4 +450,5 @@ module.exports = {
   GetDocumentContent,
   DownLoadFile,
   GetPicturePreview,
+  SaveCustomTextFile,
 };
