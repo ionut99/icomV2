@@ -28,8 +28,6 @@ const colors = [
   "GreenYellow",
 ];
 
-const getUserColor = (index) => colors[index % colors.length];
-
 const users = [];
 
 const getNumberOfUsersInRoom = (roomId, type) => {
@@ -83,8 +81,7 @@ const addUserInRoom = async ({ id, userId, roomId, type }) => {
   }
 
   // in special for user in edit room
-  const userColor = getUserColor(currentUsersNumber);
-  const user = { id, userId, roomId, type, color: userColor };
+  const user = { id, userId, roomId, type };
   users.push(user);
 
   //
@@ -138,9 +135,16 @@ const getUsersInRoom = (roomId, id, type) =>
     (user) => user.roomId === roomId && user.type === type && user.id !== id
   );
 
+const getUserColor = (roomId, type) => {
+  const index = getNumberOfUsersInRoom(roomId, type);
+  console.log(colors[index % colors.length]);
+  return colors[index % colors.length];
+};
+
 module.exports = {
   addUserInRoom,
   getUser,
   getUsersInRoom,
   deleteUser,
+  getUserColor,
 };

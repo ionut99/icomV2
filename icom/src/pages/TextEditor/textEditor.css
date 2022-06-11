@@ -41,8 +41,12 @@
   align-items: center;
 }
 
-.details-bar .save-doc-state{
+.details-bar .save-doc-state {
   margin-right: 50px;
+}
+
+.details-bar .save-doc-state .success {
+  height: 50px;
 }
 
 .edit-window .details-bar .users-box {
@@ -68,7 +72,7 @@
   justify-content: center;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid;
+  border: 1px solid;
   cursor: pointer;
 }
 

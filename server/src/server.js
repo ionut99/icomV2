@@ -29,6 +29,7 @@ const {
   deleteUser,
   getUser,
   getUsersInRoom,
+  getUserColor,
 } = require("./api/controllers/Socket");
 
 const { InsertNewMessage } = require("./api/controllers/Message");
@@ -124,6 +125,7 @@ io.on("connection", (socket) => {
       socket.emit("all users edit", {
         roomId: user.roomId,
         users: getUsersInRoom(user.roomId, user.id, user.type),
+        color: getUserColor(user.roomId, user.type),
       });
       //
       socket.broadcast.to(user.roomId).emit("user joined edit", user);

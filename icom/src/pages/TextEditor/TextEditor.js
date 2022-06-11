@@ -79,6 +79,7 @@ function TextEditor() {
   const [presences, setPresences] = useState({});
   const [onlineUsers, setOnlineUsers] = useState([]);
   //
+  const colorRef = useRef(null);
 
   // users handler
   const setUsers = (usersList) => {
@@ -93,6 +94,18 @@ function TextEditor() {
     setOnlineUsers((onlineUsers) =>
       onlineUsers.filter((online) => online.id !== socketId)
     );
+  };
+  //
+
+  //
+  const saveDocumentState = () => {
+    if (editorRef.current == null) return;
+    //
+    const delta = editorRef.current.getContents();
+    const deltaLength = editorRef.current.getLength();
+
+    console.log(delta);
+    console.log(deltaLength);
   };
 
   //
@@ -119,12 +132,12 @@ function TextEditor() {
 
         const index = Object.keys(newState).findIndex((item) => item === id);
         const Ucolor = getUserColor(index);
-        newState[id].color = Ucolor;
+        newState[id].color = data.color;
         //
         if (editorRef.current) {
           const cursors = editorRef.current.getModule("cursors");
           if (data.editorCursor) {
-            cursors.createCursor(id, data.userName, Ucolor);
+            cursors.createCursor(id, data.userName, data.color);
             cursors.moveCursor(id, data.editorCursor);
             cursors.toggleFlag(id, true);
           } else {
@@ -164,6 +177,8 @@ function TextEditor() {
     socketRef.current.on("all users edit", (roomDetails) => {
       if (roomDetails.roomId !== fileId) return;
       setUsers(roomDetails.users);
+      colorRef.current = roomDetails.color;
+      console.log(roomDetails.color);
     });
 
     socketRef.current.on("user joined edit", (newUser) => {
@@ -180,9 +195,10 @@ function TextEditor() {
   useEffect(() => {
     //
     if (socketRef.current == null) return;
+    let itMounted = true;
 
     socketRef.current.on("receive doc edit", (data) => {
-      if (data.userId !== user.userId) {
+      if (itMounted && data.userId !== user.userId) {
         editorRef.current.updateContents(data.body);
       }
       //
@@ -190,17 +206,19 @@ function TextEditor() {
 
     //
     socketRef.current.on("receive doc presence", (data) => {
-      if (data.fileId !== fileId) return;
+      if (itMounted && data.fileId !== fileId) return;
       getUsersPresence(socketRef.current.id, data);
     });
 
     //
     socketRef.current.on("receive doc pointer", (data) => {
-      if (data.fileId !== fileId) return;
+      if (itMounted && data.fileId !== fileId) return;
       getUsersPresence(socketRef.current.id, data);
     });
     //
-
+    return () => {
+      itMounted = false;
+    };
     //
   }, []);
 
@@ -211,6 +229,10 @@ function TextEditor() {
         theme: "snow",
         modules: {
           toolbar: TOOLBAR_OPTIONS,
+          history: {
+            delay: 1000,
+            maxStack: 500,
+          },
           cursors: {
             transformOnTextChange: true,
           },
@@ -251,6 +273,7 @@ function TextEditor() {
             fileId: fileId,
             userId: user.userId,
             userName: user.name,
+            color: colorRef.current,
             editorCursor: range,
             mousePointer: mousePointerRef.current,
           };
@@ -282,6 +305,7 @@ function TextEditor() {
           fileId: fileId,
           userId: user.userId,
           userName: user.name,
+          color: colorRef.current,
           mousePointer: value,
           editorCursor: editorCursorRef.current,
         };
@@ -317,7 +341,7 @@ function TextEditor() {
                   >
                     <div
                       className="picture-profile"
-                      style={{ borderColor: userOnline.color }}
+                      // style={{ borderColor: }}
                     >
                       {userOnline.userId && (
                         <Avatar userId={userOnline.userId} roomId={null} />
@@ -330,7 +354,11 @@ function TextEditor() {
               <Spinner animation="border" />
             )}
           </div>
-          <SaveButton />
+          <SaveButton
+            saveDocumentState={saveDocumentState}
+            fileId={fileId}
+            folderId={folderId}
+          />
         </div>
         <div className="edit-box" id="editor-container"></div>
         <AppUsers presences={presences} />

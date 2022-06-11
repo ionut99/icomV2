@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Modal, Form } from "react-bootstrap";
 
-function SaveButton() {
+function SaveButton(props) {
+  //
+  const { fileId, folderId, saveDocumentState } = props;
+  //
   // const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [fileName, setfileName] = useState("");
@@ -13,9 +16,11 @@ function SaveButton() {
     setOpen(false);
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleSubmit(event) {
+    event.preventDefault();
     // send request for save created document !
+    saveDocumentState();
+    // console.log("de cate ori?");
     closeModal();
   }
 
@@ -27,6 +32,7 @@ function SaveButton() {
         onClick={() => {
           openModal();
         }}
+        className="save-button"
       >
         Save
       </Button>
