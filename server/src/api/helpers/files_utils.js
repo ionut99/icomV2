@@ -224,7 +224,7 @@ const saveFileConfiguration = async (
 
 //
 //read custom text file
-async function readFile(filePath) {
+async function readCustomFile(filePath) {
   try {
     const data = await fs.promises.readFile(filePath, "utf8");
     return JSON.parse(data);
@@ -271,7 +271,7 @@ module.exports = {
   checkFileExists,
   extractProfilePicturePath,
   saveFileConfiguration,
-  readFile,
+  readCustomFile,
   writeCustomFile,
   CreateFileUserRelation,
 };

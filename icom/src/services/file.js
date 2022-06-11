@@ -91,7 +91,7 @@ export const DownloadFileService = async (fileId, userId) => {
 //
 
 // get specific document
-export const getDocumentContentById = async (fileId, userId) => {
+export const getTextFileById = async (fileId, userId) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/document/content`, {
       fileId,

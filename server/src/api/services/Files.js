@@ -146,9 +146,9 @@ function GetFileDetailsFromDataBase(fileId, userId) {
 }
 
 //
-function VerifyIfExist(fileName, folderId, userId) {
+function VerifyIfExist(fileName, fileId, folderId, userId) {
   //
-  let selectQuery = "SELECT * FROM ?? WHERE ?? = ? AND ?? = ?";
+  let selectQuery = "SELECT * FROM ?? WHERE ?? = ? AND ?? = ? AND ?? != ?";
   let query = "";
   if (folderId === "root") {
     query = mysql.format(selectQuery, [
@@ -157,6 +157,8 @@ function VerifyIfExist(fileName, folderId, userId) {
       fileName,
       "file.userId",
       userId,
+      "file.fileId",
+      fileId,
     ]);
   } else {
     query = mysql.format(selectQuery, [
@@ -165,6 +167,8 @@ function VerifyIfExist(fileName, folderId, userId) {
       fileName,
       "file.folderId",
       folderId,
+      "file.fileId",
+      fileId,
     ]);
   }
 
@@ -178,10 +182,12 @@ function VerifyIfExist(fileName, folderId, userId) {
   });
 }
 
-function UpdateFileDetails(fileId, userId, fileSize, createdTime) {
-  let updateQuery = "UPDATE ?? SET ?? = ?, ?? = ?, ?? = ? WHERE ?? = ?";
+function UpdateFileDetails(fileId, fileName, userId, fileSize, createdTime) {
+  let updateQuery = "UPDATE ?? SET ?? = ?, ?? = ?, ?? = ?, ?? = ? WHERE ?? = ?";
   let query = mysql.format(updateQuery, [
     "file",
+    "fileName",
+    fileName,
     "userId",
     userId,
     "size",

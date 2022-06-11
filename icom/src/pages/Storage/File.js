@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
 import { Button } from "react-bootstrap";
 //
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,8 +18,12 @@ import { handleReturnHumanDateFormat } from "../../helpers/FileIcons";
 //
 
 function File({ file }) {
-  const ref = useRef();
+  //
   const dispatch = useDispatch();
+  let history = useHistory();
+
+  //
+  const ref = useRef();
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
 
@@ -26,6 +31,12 @@ function File({ file }) {
   const [optionButton, setOptionButton] = useState(false);
 
   const CreateFileDate = handleReturnHumanDateFormat(file.createdTime);
+  //
+
+  const handleClickFile = (folderId, fileId, type) => {
+    if (type == "text/plain")
+      history.push("/newdocument/" + folderId + "/" + fileId);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -82,6 +93,7 @@ function File({ file }) {
           file.userId === user.userId ? "outline-success" : "outline-primary"
         }
         className="folder-button"
+        onClick={() => handleClickFile(file.folderId, file.fileId, file.type)}
       >
         <div className="folder-details">
           <FontAwesomeIcon

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+
 import { Button, Modal, Form } from "react-bootstrap";
 
 //
@@ -7,18 +9,15 @@ import date from "date-and-time";
 //
 
 function SaveButton(props) {
+  let history = useHistory();
   //
-  const { fileId, folderId, saveDocumentState } = props;
-  //
-  // const dispatch = useDispatch();
-  //
+  const { fileId, folderId, docName, setDocName, saveDocumentState } = props;
 
   //
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
   //
   const [open, setOpen] = useState(false);
-  const [fileName, setfileName] = useState("");
   //
   function openModal() {
     setOpen(true);
@@ -32,9 +31,14 @@ function SaveButton(props) {
     event.preventDefault();
     //
     const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
+
+    if (docName != "")
+      saveDocumentState(user.userId, fileId, folderId, docName, createdTime);
+    else alert("File name empty, please choose one!");
+
     //
-    saveDocumentState(user.userId, fileId, folderId, fileName, createdTime);
     closeModal();
+    history.goBack();
   }
 
   return (
@@ -57,8 +61,8 @@ function SaveButton(props) {
               <Form.Control
                 type="text"
                 required
-                value={fileName}
-                onChange={(e) => setfileName(e.target.value)}
+                value={docName}
+                onChange={(e) => setDocName(e.target.value)}
               />
             </Form.Group>
           </Modal.Body>

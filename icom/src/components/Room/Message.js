@@ -20,17 +20,15 @@ import "./room.css";
 
 //
 function Message(props) {
+  const { message } = props;
+
   const ref = useRef();
   const dispatch = useDispatch();
   //
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
   //
-  const { message } = props;
 
-  // console.log("Corpul mesajului este:");
-  // console.log(message);
-  //
   const [messageDetails, setmMssageDetails] = useState(false);
   //
   const [pictureSrc, setPictureSrc] = useState(undefined);

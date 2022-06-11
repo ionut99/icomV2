@@ -19,13 +19,14 @@ import Navbar from "../../components/Navbar/Navbar";
 import SaveButton from "./SaveButton";
 import AppUsers from "./AppUsers";
 
-import { getDocumentContentById } from "../../services/file";
+import { getTextFileById } from "../../services/file";
 import { v4 as uuidv4 } from "uuid";
 
 //
-import { connectSocketToChannel } from "../../services/socket";
 //
 import "./textEditor.css";
+import { result } from "lodash";
+import { set } from "immutable";
 
 const { REACT_APP_API_URL } = process.env;
 
@@ -44,6 +45,7 @@ function TextEditor() {
   //
 
   const socketRef = useRef(null);
+  const colorRef = useRef(null);
   //
   const editorRef = useRef(null);
   //
@@ -53,8 +55,9 @@ function TextEditor() {
   const [presences, setPresences] = useState({});
   const [onlineUsers, setOnlineUsers] = useState([]);
   //
-  const colorRef = useRef(null);
-
+  const [doc, setDoc] = useState(null);
+  const [docName, setDocName] = useState("");
+  //
   // users handler
   const setUsers = (usersList) => {
     setOnlineUsers(usersList);
@@ -138,9 +141,32 @@ function TextEditor() {
     }
   };
 
+  //retrieve doc from server if exist
+  useEffect(() => {
+    if (fileId == null || user == null) return;
+    //
+    let isMounted = true;
+    getTextFileById(fileId, user.userId)
+      .then((result) => {
+        if (result.status == 200)
+          if (isMounted) {
+            setDoc(result.data["contentResult"]);
+            setDocName(result.data["fileName"]);
+          }
+      })
+      .catch(() => {
+        console.log("Error fetch document content ...");
+      });
+
+    return () => {
+      isMounted = false;
+    };
+    //
+  }, [fileId]);
+
   //create socket...
   useEffect(() => {
-    if (fileId === null || fileId === undefined) return;
+    if (fileId == null) return;
     socketRef.current = socketIOClient(REACT_APP_API_URL);
 
     return () => {
@@ -314,6 +340,12 @@ function TextEditor() {
   }, [editorRef]);
   //
 
+  useEffect(() => {
+    if (doc && editorRef.current) {
+      editorRef.current.setContents(doc);
+    }
+  }, [editorRef, doc]);
+
   return (
     <div className="page">
       <Navbar />
@@ -351,6 +383,8 @@ function TextEditor() {
             saveDocumentState={saveDocumentState}
             fileId={fileId}
             folderId={folderId}
+            docName={docName}
+            setDocName={setDocName}
           />
         </div>
         <div className="edit-box" id="editor-container"></div>

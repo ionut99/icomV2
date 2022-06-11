@@ -92,7 +92,7 @@ export const saveTextFileAsync =
   async (dispatch) => {
     //
 
-    const res_addFile = await SaveFileStateService(
+    const res_saveText = await SaveFileStateService(
       userId,
       folderId,
       fileId,
@@ -101,19 +101,21 @@ export const saveTextFileAsync =
       fileContent
     );
     //
-    // if (res_addFile.status === 200) {
-    //   dispatch(
-    //     addChildFile(
-    //       fileId,
-    //       fileName,
-    //       createdTime,
-    //       folderId,
-    //       "text/plain",
-    //       userId,
-    //       fileSize
-    //     )
-    //   );
-    // } else {
-    //   console.log("Erro add File to database");
-    // }
+    if (res_saveText.status === 200) {
+      if (res_saveText.data.SaveTextFile) {
+        dispatch(
+          addChildFile(
+            fileId,
+            fileName,
+            createdTime,
+            folderId,
+            "text/plain",
+            userId,
+            fileSize
+          )
+        );
+      }
+    } else {
+      console.log("Erro add File to database");
+    }
   };

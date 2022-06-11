@@ -21,6 +21,7 @@ const {
   extractProfilePicturePath,
   saveFileConfiguration,
   writeCustomFile,
+  readCustomFile,
   CreateFileUserRelation,
 } = require("../helpers/files_utils");
 
@@ -206,12 +207,31 @@ async function SaveCustomTextFile(req, res) {
       throw new Error("Undefined parameteres");
 
     const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
-    //
-    var res_check = await VerifyIfExist(fileName, folderId, userId);
 
-    if (res_check.length == 0) {
+    //
+
+    var res_check_name = await VerifyIfExist(
+      fileName,
+      fileId,
+      folderId,
+      userId
+    );
+
+    if (res_check_name.length > 0)
+      return handleResponse(req, res, 190, {
+        SaveTextFile: false,
+        UpdateTextFile: false,
+        NameTaken: true,
+      });
+
+    //
+
+    //
+    var res_check_exit = await GetFileDetailsFromDataBase(fileId);
+
+    if (res_check_exit.length == 0) {
       // daca nu exista ->  insereaza intrare noua in tabela
-      console.log("custom text file nu exist..");
+      // console.log("custom text file nu exist..");
 
       // write new file
       const newFileName = Date.now() + " " + fileName;
@@ -252,13 +272,22 @@ async function SaveCustomTextFile(req, res) {
       if (!res_service)
         return new Error("Error insert file user relation in database ...");
       //
+
+      return handleResponse(req, res, 200, {
+        SaveTextFile: true,
+        UpdateTextFile: false,
+      });
     } else {
       //  exista -> modifica dimensiunea si created time
-      console.log("custom text file exist .. trebuie modificat");
-      const existFileName = res_check[0].systemPath.split("\\\\").slice(-1);
+      // console.log("custom text file exist .. trebuie modificat");
+
+      const existFileName = res_check_exit[0].systemPath
+        .split("\\\\")
+        .slice(-1);
       //
       var res_update = await UpdateFileDetails(
-        fileId,
+        res_check_exit[0].fileId,
+        fileName,
         userId,
         fileSize,
         createdTime
@@ -278,14 +307,22 @@ async function SaveCustomTextFile(req, res) {
 
       if (res_write == false)
         throw new Error("Error write custom text content to file...");
+
+      return handleResponse(req, res, 200, {
+        SaveTextFile: false,
+        UpdateTextFile: true,
+        NameTaken: false,
+      });
     }
 
     //
-
-    return handleResponse(req, res, 190, { SaveTextFile: "SUCCES" });
   } catch (error) {
     console.error(error);
-    return handleResponse(req, res, 190, { SaveTextFile: "FAILED" });
+    return handleResponse(req, res, 190, {
+      SaveTextFile: false,
+      UpdateTextFile: false,
+      NameTaken: false,
+    });
   }
 }
 
@@ -338,13 +375,26 @@ async function GetDocumentContent(req, res) {
     const fileId = req.body.fileId;
     const userId = req.body.userId;
 
-    ContentFile = [
-      { insert: "Hello " },
-      { insert: "World!", attributes: { bold: true } },
-      { insert: "\n" },
-    ];
+    if (fileId == null || userId == null)
+      throw new Error("Error, invalid parameters ...");
 
-    return handleResponse(req, res, 200, { ContentFile });
+    //
+    var res_check = await GetFileDetailsFromDataBase(fileId, userId);
+
+    if (res_check.length == 0) throw new Error("Error, file not found ...");
+
+    var filePath = res_check[0].systemPath;
+    var fileName = res_check[0].fileName;
+    //
+    const downloadFilePath = path.join(__dirname, "../../../", filePath);
+
+    var contentResult = await readCustomFile(downloadFilePath);
+
+    if (!contentResult) throw new Error("Error read file content ...");
+
+    return handleResponse(req, res, 200, { contentResult, fileName });
+    //
+    //
   } catch (error) {
     console.error(error);
     return handleResponse(req, res, 410, "  Err send File  ");
@@ -369,7 +419,7 @@ async function DownLoadFile(req, res) {
 
     if (resDetails === undefined) {
       console.log("Error get file path ... File.js lin. 340");
-      return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
+      return handleResponse(req, res, 410, { DownloadFile: false });
     }
     //
     const DownloadFilePath = path.join(
