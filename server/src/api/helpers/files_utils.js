@@ -29,7 +29,7 @@ function checkFileExists(filepath) {
 async function extractProfilePicturePath(userId, roomId) {
   try {
     if (userId === null || userId === undefined) {
-      return "users/default/defaultAvatar.png";
+      return "default/defaultAvatar.png";
     }
     if (roomId === null) {
       const userAvatar = await GetUserDetailsData(userId)
@@ -42,7 +42,7 @@ async function extractProfilePicturePath(userId, roomId) {
         });
 
       if (userAvatar === undefined || userAvatar === null) {
-        return "users/default/defaultAvatar.png";
+        return "default/defaultAvatar.png";
       }
       return userAvatar;
       //
@@ -77,16 +77,15 @@ async function extractProfilePicturePath(userId, roomId) {
             throw err;
           });
 
-        if (userDetails2.avatar === null)
-          return "users/default/defaultAvatar.png";
+        if (userDetails2.avatar === null) return "default/defaultAvatar.png";
         return userDetails2.avatar;
       } else {
         if (roomDetails.avatar === null)
-          return "users/default/defaultGroupAvatar.png";
+          return "default/defaultGroupAvatar.png";
         return roomDetails.avatar;
       }
     }
-    return "users/default/defaultGroupAvatar.png";
+    return "default/defaultGroupAvatar.png";
   } catch (error) {
     console.error(error);
   }
@@ -188,10 +187,7 @@ const saveFileConfiguration = async (
 
     // store file
 
-    var pathToStore = path.join(
-      "users/" + userId + "/",
-      numericTime + " " + fileName
-    );
+    var pathToStore = path.join(userId + "/", numericTime + " " + fileName);
     pathToStore = pathToStore.replace(/\\/g, "\\\\");
 
     //Store File details in database

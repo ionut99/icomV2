@@ -101,7 +101,7 @@ async function UpdateProfilePicture(req, res) {
             } else {
               console.log("Successfully stored new avatar");
               var pathToStore = path.join(
-                "users/" + userId + "/",
+                userId + "/",
                 createdTime + " " + fileName
               );
               pathToStore = pathToStore.replace(/\\/g, "\\\\");
@@ -231,9 +231,7 @@ async function SaveCustomTextFile(req, res) {
 
     if (res_check_exit.length == 0) {
       // daca nu exista ->  insereaza intrare noua in tabela
-      // console.log("custom text file nu exist..");
 
-      // write new file
       const newFileName = Date.now() + " " + fileName;
       //
       const filePath = path.join(__dirname, "../../../users/", userId);
@@ -347,7 +345,11 @@ async function GetProfilePicture(req, res) {
     var currentAvatarPath = await extractProfilePicturePath(userId, roomId);
 
     if (typeof currentAvatarPath == "string")
-      currentAvatarPath = path.join(__dirname, "../../../", currentAvatarPath);
+      currentAvatarPath = path.join(
+        __dirname,
+        "../../../users/",
+        currentAvatarPath
+      );
     else {
       console.error(" Empty Avatar ");
       return handleResponse(req, res, 410, "  Err send File  ");
@@ -438,7 +440,7 @@ async function DownLoadFile(req, res) {
     //
     const DownloadFilePath = path.join(
       __dirname,
-      "../../../",
+      "../../../users/",
       resDetails.systemPath
     );
 
@@ -475,14 +477,13 @@ async function GetPicturePreview(req, res) {
       });
 
     if (typeof filePath == "string")
-      filePath = path.join(__dirname, "../../../", filePath);
+      filePath = path.join(__dirname, "../../../users/", filePath);
     else {
       console.error(" Error preview Image ");
       return handleResponse(req, res, 410, "  Err send File  ");
     }
 
     var options = {
-      //root: path.join(__dirname, "public"),
       dotfiles: "deny",
       headers: {
         "x-timestamp": Date.now(),
