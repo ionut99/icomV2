@@ -234,10 +234,8 @@ async function readCustomFile(filePath) {
 }
 
 //write custom text file ...(before write check if file already is in system)
-async function writeCustomFile(userId, fileName, writedata) {
+async function writeCustomFile(filePath, fileName, writedata) {
   try {
-    const filePath = path.join(__dirname, "../../../users/", userId);
-
     try {
       if (!(await checkFileExists(filePath))) {
         fs.mkdir(filePath, { recursive: true }, async function (err) {

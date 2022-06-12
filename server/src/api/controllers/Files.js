@@ -236,12 +236,13 @@ async function SaveCustomTextFile(req, res) {
       // write new file
       const newFileName = Date.now() + " " + fileName;
       //
-      var res_write = await writeCustomFile(userId, newFileName, fileContent);
-
+      const filePath = path.join(__dirname, "../../../users/", userId);
+      var res_write = await writeCustomFile(filePath, newFileName, fileContent);
+      //
       if (res_write == false)
         throw new Error("Error write custom text content to file...");
 
-      var pathToStore = path.join("users/" + userId + "/", newFileName);
+      var pathToStore = path.join(userId + "/", newFileName);
       pathToStore = pathToStore.replace(/\\/g, "\\\\");
       //
 
@@ -281,9 +282,13 @@ async function SaveCustomTextFile(req, res) {
       //  exista -> modifica dimensiunea si created time
       // console.log("custom text file exist .. trebuie modificat");
 
-      const existFileName = res_check_exit[0].systemPath
-        .split("\\\\")
-        .slice(-1);
+      const existFileName = res_check_exit[0].systemPath.split("\\\\")[1];
+
+      const existFilePath = path.join(
+        __dirname,
+        "../../../users/",
+        res_check_exit[0].systemPath.split("\\\\")[0]
+      );
       //
       var res_update = await UpdateFileDetails(
         res_check_exit[0].fileId,
@@ -303,7 +308,11 @@ async function SaveCustomTextFile(req, res) {
         return new Error("Error update file data in database ...");
 
       //
-      var res_write = await writeCustomFile(userId, existFileName, fileContent);
+      var res_write = await writeCustomFile(
+        existFilePath,
+        existFileName,
+        fileContent
+      );
 
       if (res_write == false)
         throw new Error("Error write custom text content to file...");
@@ -386,7 +395,12 @@ async function GetDocumentContent(req, res) {
     var filePath = res_check[0].systemPath;
     var fileName = res_check[0].fileName;
     //
-    const downloadFilePath = path.join(__dirname, "../../../", filePath);
+    const downloadFilePath = path.join(
+      __dirname,
+      "../../../",
+      "users/",
+      filePath
+    );
 
     var contentResult = await readCustomFile(downloadFilePath);
 

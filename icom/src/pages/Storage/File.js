@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Button } from "react-bootstrap";
 //
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

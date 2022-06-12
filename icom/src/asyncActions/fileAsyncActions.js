@@ -101,6 +101,7 @@ export const saveTextFileAsync =
       fileContent
     );
     //
+    console.log(res_saveText);
     if (res_saveText.status === 200) {
       if (res_saveText.data.SaveTextFile) {
         dispatch(

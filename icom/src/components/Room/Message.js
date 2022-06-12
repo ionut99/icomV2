@@ -79,9 +79,9 @@ function Message(props) {
   }, [message]);
 
   //
-  const handleDownloadFile = (fileId, fileName, userId) => {
+  const handleDownloadFile = async (fileId, fileName, userId) => {
     if (message.type !== "text" && message.fileId !== undefined)
-      dispatch(DownloadFileFromServer(fileId, fileName, userId));
+      await DownloadFileFromServer(fileId, fileName, userId);
     else return;
   };
 
