@@ -296,42 +296,45 @@ async function CreateNewRoom_Group(req, res) {
 async function AddNewMemberInGroup(req, res) {
   try {
     const roomId = req.body.roomId;
-    const userSearchListID = req.body.userSearchListID;
+    const userSearchListId = req.body.userSearchListId;
 
-    if (roomId === "" || userSearchListID === null) {
+    if (roomId === "" || userSearchListId === null) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    var participantDetails = await GetParticipantByID(userSearchListID, roomId)
+    var participantDetails = await GetParticipantByID(userSearchListId, roomId)
       .then(function (result) {
-        if (result.length > 0) return result;
-        else return undefined;
+        return result;
       })
       .catch((err) => {
         throw err;
       });
 
-    if (participantDetails !== undefined) {
-      var result = await AddNewMemberInGroupData(roomId, userSearchListID)
+    if (participantDetails.length === 0) {
+      var result = await AddNewMemberInGroupData(roomId, userSearchListId)
         .then(function (result) {
-          if (result.length > 0) return result;
+          return result.affectedRows;
         })
         .catch((err) => {
           throw err;
         });
-      if (result.length > 0)
-        return handleResponse(req, res, 200, { AddParticipant: "SUCCES" });
+      if (result > 0)
+        return handleResponse(req, res, 200, {
+          AddParticipant: true,
+          UserAlreadyMember: false,
+        });
     } else {
-      return handleResponse(req, res, 200, "User is Already a member");
+      return handleResponse(req, res, 412, {
+        AddParticipant: false,
+        UserAlreadyMember: true,
+      });
     }
   } catch (error) {
     console.error(error);
-    return handleResponse(
-      req,
-      res,
-      412,
-      " Failed to add new member in group room "
-    );
+    return handleResponse(req, res, 412, {
+      AddParticipant: false,
+      UserAlreadyMember: false,
+    });
   }
 }
 
@@ -352,9 +355,9 @@ async function GetPartList(req, res) {
             userName: user.surname + " " + user.name,
             email: user.email,
             userId: user.userId,
-            isAdmin: user.IsAdmin,
-            isOnline: user.IsOnline,
-            lastOnline: user.LastOnline,
+            isAdmin: user.isAdmin,
+            isOnline: user.isOnline,
+            lastOnline: user.lastOnline,
           };
         });
       })

@@ -23,13 +23,13 @@ function InsertNewRoomData(roomName, private, uuidRoom) {
   });
 }
 
-function InsertParticipantData(uuidRoom, userID) {
+function InsertParticipantData(uuidRoom, userId) {
   let insertQuery = "INSERT INTO ?? (ID, ??, ??) VALUES (NULL, ?, ?)";
   let query = mysql.format(insertQuery, [
     "participants",
-    "UserID",
-    "RoomID",
-    userID,
+    "userId",
+    "roomId",
+    userId,
     uuidRoom,
   ]);
   return new Promise((resolve, reject) => {
@@ -44,11 +44,11 @@ function InsertParticipantData(uuidRoom, userID) {
 
 function DeleteAllMessageFromRoom(roomId) {
   let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
-  let query = mysql.format(deletQuery, ["messages", "messages.RoomID", roomId]);
-  return new Promise((resolve) => {
+  let query = mysql.format(deletQuery, ["messages", "messages.roomId", roomId]);
+  return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
       if (err) {
-        return resolve("FAILED");
+        return reject(err);
       }
       return resolve(result);
     });
@@ -59,13 +59,13 @@ function DeleteAllParticipantsFromRoom(roomId) {
   let deletQuery = "DELETE FROM ?? WHERE ?? = ?";
   let query = mysql.format(deletQuery, [
     "participants",
-    "participants.RoomID",
+    "participants.roomId",
     roomId,
   ]);
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
       if (err) {
-        return resolve("FAILED");
+        return reject(err);
       }
       return resolve(result);
     });
@@ -116,7 +116,7 @@ function GetRoomMessagesData(roomId, messageTime, messagesPosition, number) {
   });
 }
 
-function GetRoomFolderID(ChannelID) {
+function GetRoomFolderID(channelId) {
   let selectQuery =
     "SELECT ?? FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ? AND ?? = 'root'";
   let query = mysql.format(selectQuery, [
@@ -125,9 +125,9 @@ function GetRoomFolderID(ChannelID) {
     "foldersusers",
     "folders.folderId",
     "foldersusers.folderIdResource",
-    "foldersusers.RoomIdBeneficiary",
-    ChannelID,
-    "folders.parentID",
+    "foldersusers.roomIdBeneficiary",
+    channelId,
+    "folders.parentId",
   ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
@@ -139,15 +139,15 @@ function GetRoomFolderID(ChannelID) {
   });
 }
 
-function GetPartListData(ChannelID) {
+function GetPartListData(channelId) {
   let selectQuery = "SELECT * FROM ?? INNER JOIN ?? ON ?? = ?? WHERE ?? = ?";
   let query = mysql.format(selectQuery, [
     "participants",
     "iusers",
-    "participants.UserID",
+    "participants.userId",
     "iusers.userId",
-    "RoomID",
-    ChannelID,
+    "roomId",
+    channelId,
   ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
@@ -159,9 +159,9 @@ function GetPartListData(ChannelID) {
   });
 }
 
-function GetRoomDetailsData(roomID) {
+function GetRoomDetailsData(roomId) {
   let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
-  let query = mysql.format(selectQuery, ["room", "room.ID", roomID]);
+  let query = mysql.format(selectQuery, ["room", "room.ID", roomId]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
       if (err) {
@@ -185,12 +185,12 @@ function GetAllRoomsDetailsData() {
   });
 }
 
-function GetNumberOfParticipantsOfRoom(roomID) {
+function GetNumberOfParticipantsOfRoom(roomId) {
   let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
   let query = mysql.format(selectQuery, [
     "participants",
-    "participants.RoomID",
-    roomID,
+    "participants.roomId",
+    roomId,
   ]);
   return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {

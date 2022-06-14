@@ -83,8 +83,8 @@ function AddNewMemberInGroupData(roomID, userSearchListID) {
   let insertQuery = "INSERT INTO ?? (ID, ??, ??) VALUES (NULL, ?, ?)";
   let query = mysql.format(insertQuery, [
     "participants",
-    "UserID",
-    "RoomID",
+    "userId",
+    "roomId",
     userSearchListID,
     roomID,
   ]);
@@ -99,10 +99,10 @@ function AddNewMemberInGroupData(roomID, userSearchListID) {
 }
 
 // Update User Avatar
-function UpdateAvatarPathData(UserID, Path) {
+function UpdateAvatarPathData(userId, path) {
   return new Promise((resolve) => {
     sqlPool.pool.query(
-      `UPDATE iusers SET  Avatar = '${Path}' WHERE userId = '${UserID}'`,
+      `UPDATE iusers SET  avatar = '${path}' WHERE userId = '${userId}'`,
       (err, result) => {
         if (err) {
           return resolve("FAILED");
@@ -114,9 +114,9 @@ function UpdateAvatarPathData(UserID, Path) {
 }
 
 //Get Room's Avatar Details
-function GetRoomDetails(RoomID) {
+function GetRoomDetails(roomId) {
   let selectQuery = "SELECT * FROM ?? WHERE ?? = ?";
-  let query = mysql.format(selectQuery, ["room", "room.ID", RoomID]);
+  let query = mysql.format(selectQuery, ["room", "room.ID", roomId]);
   return new Promise((resolve) => {
     sqlPool.pool.query(query, (err, result) => {
       if (err) {
@@ -135,11 +135,11 @@ function GetParticipantFromPrivateConversation(roomId, userId) {
     "iusers.userId",
     "participants",
     "iusers",
-    "participants.UserID",
+    "participants.userId",
     "iusers.userId",
-    "participants.RoomID",
+    "participants.roomId",
     roomId,
-    "participants.UserID",
+    "participants.userId",
     userId,
   ]);
   return new Promise((resolve, reject) => {
@@ -182,13 +182,13 @@ function InsertNewUserAccountData(
   let query = mysql.format(insertQuery, [
     "iusers",
     "userId",
-    "Surname",
-    "Name",
-    "Email",
-    "Salt",
-    "Password",
-    "IsAdmin",
-    "Avatar",
+    "surname",
+    "name",
+    "email",
+    "salt",
+    "password",
+    "isAdmin",
+    "avatar",
     userId,
     userSurname,
     userName,
@@ -222,23 +222,23 @@ function EditUserAccountDataBase(
     "UPDATE ?? SET ?? = ?, ?? = ?, ?? = ?, ?? = ?, ?? = ? WHERE ?? = ?";
   let query = mysql.format(updateQuery, [
     "iusers",
-    "Surname",
+    "surname",
     userSurname,
-    "Name",
+    "name",
     userName,
-    "Email",
+    "email",
     email,
-    "Password",
+    "password",
     password,
-    "Salt",
+    "salt",
     salt,
     "userId",
     userId,
   ]);
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     sqlPool.pool.query(query, (err, result) => {
       if (err) {
-        return resolve("FAILED");
+        return reject(err);
       }
       return resolve(result);
     });

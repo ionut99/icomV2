@@ -160,8 +160,8 @@ export const createNewGroup =
 
 // handle add new member in a group
 export const addNewMemberInGroup =
-  (roomId, userSearchListID) => async (dispatch) => {
-    const varVerify = await addNewMemberInRoomService(roomId, userSearchListID);
+  (roomId, userSearchListId) => async (dispatch) => {
+    const varVerify = await addNewMemberInRoomService(roomId, userSearchListId);
     // TO DO - display message
     console.log(varVerify);
   };

@@ -31,10 +31,10 @@ export const newChatPersonService = async (search_box_text, userId) => {
   }
 };
 
-export const getPersonToAddInGroup = async (RoomID, userId) => {
+export const getPersonToAddInGroup = async (roomId, userId) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/users/toadd`, {
-      RoomID,
+      roomId,
       userId,
     });
   } catch (err) {
@@ -120,11 +120,11 @@ export const createNewRoomService = async (
 };
 
 // insert new member in a group in database
-export const addNewMemberInRoomService = async (RoomID, userSearchListID) => {
+export const addNewMemberInRoomService = async (roomId, userSearchListId) => {
   try {
     return await axios.post(`${REACT_APP_API_URL}/room/newmember`, {
-      RoomID,
-      userSearchListID,
+      roomId,
+      userSearchListId,
     });
   } catch (err) {
     return {
