@@ -16,6 +16,8 @@ function Folder({ folder }) {
   const ref = useRef();
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
+  //
+  const userDetails = user.surname + " " + user.name;
 
   const [authName, setauthName] = useState("");
   const [optionButton, setOptionButton] = useState(false);
@@ -88,7 +90,9 @@ function Folder({ folder }) {
             }}
           />
           <div className="folder-name">
-            <p>{`  ${folder.name}`}</p>
+            <p>{`  ${folder.name
+              .replace(userDetails, "")
+              .replace(" # ", " ")}`}</p>
           </div>
           <div className="folder-date">
             <p>{` ${

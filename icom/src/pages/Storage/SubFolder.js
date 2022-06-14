@@ -13,6 +13,10 @@ import { handleReturnFileIcon } from "../../helpers/FileIcons";
 function SubFolder({ currentFolder }) {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
+  //
+  const userDetails = user.surname + " " + user.name;
+
+  //
   const [viewSubFolderButton, setviewSubFolderButton] = useState(true);
 
   const [childFolders, setchildFolders] = useState([]);
@@ -112,7 +116,7 @@ function SubFolder({ currentFolder }) {
                   color: " #F8D775",
                 }}
               />
-              {currentFolder.name}
+              {currentFolder.name.replace(userDetails, "").replace(" # ", " ")}
             </Breadcrumb.Item>
           )}
         </Breadcrumb>

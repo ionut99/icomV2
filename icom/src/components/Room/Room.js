@@ -123,7 +123,6 @@ function Room(props) {
     if (socketRef.current === null) return;
 
     socketRef.current.on("receive chat message", (message) => {
-      console.log("am primit un mesaj");
       if (message.roomId !== null) {
         dispatch(UpdateLastMessage(message.body, message.roomId));
         if (message.roomId === channelId) {
