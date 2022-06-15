@@ -3,7 +3,11 @@ const path = require("path");
 var fs = require("fs");
 var date = require("date-and-time");
 
+//
+const { GetRoomDetailsData } = require("../services/Room");
+//
 const {
+  UpdateGroupAvatar,
   UpdateAvatarPathData,
   GetUserDetailsData,
 } = require("../services/User");
@@ -32,6 +36,101 @@ const storageFile = multer.diskStorage({
     // null as first argument means no error
   },
 });
+
+async function UpdateGroupPicture(req, res) {
+  try {
+    let upload = multer({ storage: storageFile }).single("avatar");
+    upload(req, res, async (err) => {
+      if (!req.file) {
+        return handleResponse(
+          req,
+          res,
+          413,
+          "Please select an image to upload"
+        );
+      } else if (err instanceof multer.MulterError) {
+        return handleResponse(req, res, 415, "Multer Error");
+      } else if (err) {
+        return handleResponse(
+          req,
+          res,
+          413,
+          "Please select an image to upload"
+        );
+      }
+
+      // file details
+      const fileName = req.file.originalname;
+      const userId = req.body.userId;
+      const roomId = req.body.roomId;
+
+      const roomData = await GetRoomDetailsData(roomId)
+        .then(function (result) {
+          if (result.length > 0) return result[0];
+          else return undefined;
+        })
+        .catch((err) => {
+          throw err;
+        });
+      //
+      if (roomData === undefined) {
+        throw new Error("Wrong room ID!");
+      }
+      //
+      const oldPath = path.join(__dirname, "../../../users/tempDir/", fileName);
+      const newPath = path.join(__dirname, "../../../users/", userId);
+
+      try {
+        if (!(await checkFileExists(newPath))) {
+          console.log("Nu exista folderr...");
+          fs.mkdir(newPath, { recursive: true }, (err) => {
+            if (err) {
+              return console.error(err);
+            }
+            console.log("Directory created successfully!");
+          });
+        }
+      } catch (err) {
+        throw err;
+      }
+      //
+      try {
+        const createdTime = Date.now();
+        fs.rename(
+          oldPath,
+          newPath + "/" + createdTime + " " + fileName,
+          async function (err) {
+            if (err) {
+              throw err;
+            } else {
+              console.log("Successfully stored new avatar");
+              var pathToStore = path.join(
+                userId + "/",
+                createdTime + " " + fileName
+              );
+              pathToStore = pathToStore.replace(/\\/g, "\\\\");
+
+              try {
+                // function for room update avatar ..
+                const result = await UpdateGroupAvatar(roomId, pathToStore);
+              } catch (err) {
+                throw err;
+              }
+
+              return handleResponse(req, res, 200, {
+                UpdateGroupPicture: true,
+              });
+            }
+          }
+        );
+      } catch (error) {
+        throw error;
+      }
+    });
+  } catch (err) {
+    return handleResponse(req, res, 190, { UpdateGroupPicture: false });
+  }
+}
 
 // change profile picture //
 async function UpdateProfilePicture(req, res) {
@@ -509,6 +608,7 @@ async function GetPicturePreview(req, res) {
 }
 
 module.exports = {
+  UpdateGroupPicture,
   UpdateProfilePicture,
   GetProfilePicture,
   UploadNewStoredFile,

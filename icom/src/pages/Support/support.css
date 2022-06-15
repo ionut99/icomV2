@@ -11,12 +11,12 @@
 }
 
 .page .support-page {
+  position: absolute;
+  min-width: 900px;
   height: calc(100vh - 60px);
   width: 100%;
-  min-width: 900px;
   bottom: 0px;
   top: 60px;
-  position: absolute;
   background-image: url("../../images/loginBackground.jpg");
 }
 
@@ -45,10 +45,19 @@
 .page .support-page .filter .content .text-description {
   margin-left: 100px;
   padding: 25px;
-  font-size: 25px;
+  font-size: 30px;
   text-align: center;
   justify-content: center;
+  font-family: "Times New Roman", serif;
   border: #dadde0 2px solid;
   background-color: #fff;
   border-radius: 1.4rem;
+}
+
+.text-description a {
+  color: blue;
+}
+
+.text-description a:hover {
+  text-decoration: underline;
 }

@@ -23,6 +23,8 @@ import * as AiIcons from "react-icons/ai";
 import * as BsIcons from "react-icons/bs";
 
 import Avatar from "../Avatar/Avatar";
+import ChangeAvatar from "../ChangeAvatar/ChangeAvatar";
+import { Telegram } from "@mui/icons-material";
 
 function Conversation(props) {
   const ref = useRef();
@@ -71,6 +73,8 @@ function Conversation(props) {
       openModal: true,
     });
   };
+
+  const handleChangeGroupPicture = (roomId, userId) => {};
 
   useEffect(() => {
     let isMounted = true;
@@ -157,9 +161,16 @@ function Conversation(props) {
               <BsIcons.BsPeople size={20} />
               <p>Participants</p>
             </div>
-            <div className="dropdown-instrument">
-              <AiIcons.AiOutlinePushpin size={20} />
-              <p>Pin</p>
+            <div
+              style={{
+                display: channel.type ? "none" : "flex",
+              }}
+            >
+              <ChangeAvatar
+                userId={user.userId}
+                roomId={channel.roomId}
+                group={true}
+              />
             </div>
           </div>
         </div>

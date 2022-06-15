@@ -17,6 +17,9 @@ const {
 
 const { GetRoomNamesAdmin } = require("../controllers/Admin");
 
+//
+const { UpdateGroupPicture } = require("../controllers/Files");
+
 // router.post("/newroom", authMiddleware, CreateNewRoom);
 // router.post("/deleteroom", authMiddleware, DeleteRoom);
 
@@ -41,5 +44,6 @@ router.post("/newgroup", CreateNewRoom_Group);
 router.post("/newmember", AddNewMemberInGroup);
 router.post("/participants", GetPartList);
 router.post("/groups", GetRoomNamesAdmin);
+router.post("/updatePicture", UpdateGroupPicture);
 
 module.exports = router;

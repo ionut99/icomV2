@@ -146,7 +146,7 @@ function TextEditor() {
     let isMounted = true;
     getTextFileById(fileId, user.userId)
       .then((result) => {
-        if (result.status == 200)
+        if (result.status === 200)
           if (isMounted) {
             setDoc(result.data["contentResult"]);
             setDocName(result.data["fileName"]);

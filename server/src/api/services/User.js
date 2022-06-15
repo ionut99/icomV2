@@ -98,6 +98,20 @@ function AddNewMemberInGroupData(roomID, userSearchListID) {
   });
 }
 
+//Update Room Avatar
+function UpdateGroupAvatar(roomId, path) {
+  let insertQuery = "UPDATE ?? SET  ?? = ? WHERE ?? = ?";
+  let query = mysql.format(insertQuery, ["room", "avatar", path, "ID", roomId]);
+  return new Promise((resolve) => {
+    sqlPool.pool.query(query, (err, result) => {
+      if (err) {
+        return resolve("FAILED");
+      }
+      return resolve(result);
+    });
+  });
+}
+
 // Update User Avatar
 function UpdateAvatarPathData(userId, path) {
   return new Promise((resolve) => {
@@ -251,6 +265,7 @@ module.exports = {
   InsertNewMessageData,
   AddNewMemberInGroupData,
   UpdateAvatarPathData,
+  UpdateGroupAvatar,
   GetRoomDetails,
   GetParticipantFromPrivateConversation,
   GetUserDetailsData,

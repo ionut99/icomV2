@@ -98,7 +98,7 @@ function Navbar() {
             <div className="user-details">Sign in as {user.name}</div>
 
             <div className="dropdown-options">
-              <ChangeAvatar userId={user.userId} />
+              <ChangeAvatar userId={user.userId} roomId={null} group={false} />
             </div>
             <div className="dropdown-options">
               <ChangePassword

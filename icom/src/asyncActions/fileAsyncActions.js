@@ -4,6 +4,7 @@ import { addChildFile } from "../actions/folderActions";
 import {
   getPicturePreviewService,
   updateProfilePictureService,
+  updateGroupPictureService,
   SaveFileStateService,
 } from "../services/file";
 
@@ -77,6 +78,19 @@ export const getPicturePreview = async (fileId, userId) => {
     };
   });
 };
+
+//
+export const updateGroupPicture =
+  (roomId, userId, newPicture) => async (dispatch) => {
+    const varVerify = await updateGroupPictureService(
+      roomId,
+      userId,
+      newPicture
+    );
+    // TO DO - display message
+    console.log(varVerify);
+  };
+//
 
 export const updateProfilePicture =
   (userId, newPicture) => async (dispatch) => {

@@ -146,3 +146,25 @@ export const updateProfilePictureService = async (userId, newPicture) => {
     };
   }
 };
+
+//
+export const updateGroupPictureService = async (roomId, userId, newPicture) => {
+  const formdata = new FormData();
+  formdata.append("avatar", newPicture);
+  formdata.append("roomId", roomId);
+  formdata.append("userId", userId);
+  try {
+    return await axios.post(
+      `${REACT_APP_API_URL}/room/updatePicture`,
+      formdata,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      }
+    );
+  } catch (err) {
+    return {
+      error: true,
+      response: err.response,
+    };
+  }
+};

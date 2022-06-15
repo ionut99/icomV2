@@ -2,17 +2,22 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button, Modal, Form } from "react-bootstrap";
 
-import { updateProfilePicture } from "../../asyncActions/fileAsyncActions";
+import {
+  updateProfilePicture,
+  updateGroupPicture,
+} from "../../asyncActions/fileAsyncActions";
 
 import { getAvatarPictureAsync } from "../../asyncActions/authAsyncActions";
 import { Spinner } from "react-bootstrap";
+//
+import * as ImIcons from "react-icons/im";
 
 import "./change.css";
 
 function ChangeAvatar(props) {
   const dispatch = useDispatch();
 
-  const { userId } = props;
+  const { userId, roomId, group } = props;
   //
   const [open, setOpen] = useState(false);
   //
@@ -30,7 +35,7 @@ function ChangeAvatar(props) {
 
   //
   function openModal() {
-    getAvatarPictureAsync(userId, null).then((result) => {
+    getAvatarPictureAsync(userId, roomId).then((result) => {
       if (result !== undefined) {
         setProfilePicture({
           file: undefined,
@@ -122,13 +127,28 @@ function ChangeAvatar(props) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    dispatch(updateProfilePicture(userId, profilePicture.file));
+    if (!group) dispatch(updateProfilePicture(userId, profilePicture.file));
+    else if (roomId !== null) {
+      //
+      dispatch(updateGroupPicture(roomId, userId, profilePicture.file));
+    }
     closeModal();
   }
 
   return (
     <>
+      <div
+        className="dropdown-instrument"
+        style={{
+          display: !group ? "none" : "flex",
+        }}
+        onClick={openModal}
+      >
+        <ImIcons.ImFilePicture size={17} />
+        <p>Change Image</p>
+      </div>
       <Button
+        style={{ display: group ? "none" : "block" }}
         className="user-menu-button"
         variant="btn btn-outline-primary btn-sm"
         onClick={openModal}

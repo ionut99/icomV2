@@ -73,6 +73,8 @@
 
 .team-picture {
   display: flex;
+  justify-content: center;
+  overflow: hidden;
   margin: 0 auto;
   width: 255px;
   height: 255px;

@@ -1,11 +1,7 @@
 import React from "react";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { GitHub } from "@fortawesome/free-solid-svg-icons";
-
-import GitIcon from "../../images/git.png";
-
 import Navbar from "../../components/Navbar/Navbar";
+import GitIcon from "../../images/git.png";
 
 import "./support.css";
 
