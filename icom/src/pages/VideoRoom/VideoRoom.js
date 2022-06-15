@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState, useContext } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import Peer from "simple-peer";
 import styled from "styled-components";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Peer from "simple-peer";
 
 //
 
@@ -18,7 +17,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { Button } from "react-bootstrap";
-// import { SocketContext } from "../../context/socket";
 import socketIOClient from "socket.io-client";
 import Video from "./Video";
 import "./videoroom.css";
@@ -61,7 +59,6 @@ const videoConstraints = {
   width: window.innerWidth / 2,
 };
 
-
 const VideoRoom = (props) => {
   //
   const socketRef = useRef();
@@ -77,7 +74,6 @@ const VideoRoom = (props) => {
   const [microphone, setmicrophone] = useState(true);
   //
   const [videoInput, setVideoInput] = useState(true);
-  // const [userStream, setUserStream] = useState(undefined);
   //
   const [peers, setPeers] = useState([]);
   //
@@ -122,7 +118,6 @@ const VideoRoom = (props) => {
       .then((stream) => {
         if (stream != null) {
           userVideo.current.srcObject = stream;
-          // setUserStream(stream);
         }
         socketRef.current.emit("join room", request, (error) => {
           if (error) {
@@ -137,7 +132,7 @@ const VideoRoom = (props) => {
               userVideo.current.srcObject
             );
             const peerObj = {
-              peerID: user.id,
+              peerId: user.id,
               peer,
             };
             peersRef.current.push(peerObj);
@@ -152,7 +147,7 @@ const VideoRoom = (props) => {
             userVideo.current.srcObject
           );
           const peerObj = {
-            peerID: payload.callerID,
+            peerId: payload.callerID,
             peer,
           };
           peersRef.current.push(peerObj);
@@ -160,7 +155,7 @@ const VideoRoom = (props) => {
         });
 
         socketRef.current.on("receiving returned signal", (payload) => {
-          const item = peersRef.current.find((p) => p.peerID === payload.id);
+          const item = peersRef.current.find((p) => p.peerId === payload.id);
           item.peer.signal(payload.signal);
         });
 
@@ -223,13 +218,13 @@ const VideoRoom = (props) => {
   //
 
   function removePeer(socket_id) {
-    const item = peersRef.current.find((p) => p.peerID === socket_id);
+    const item = peersRef.current.find((p) => p.peerId === socket_id);
     if (item) {
       item.peer.destroy();
     }
 
-    peersRef.current = peersRef.current.filter((p) => p.peerID !== socket_id);
-    setPeers((peers) => peers.filter((peer) => peer.peerID !== socket_id));
+    peersRef.current = peersRef.current.filter((p) => p.peerId !== socket_id);
+    setPeers((peers) => peers.filter((peer) => peer.peerId !== socket_id));
   }
 
   function destroyAllPeers() {
@@ -337,11 +332,11 @@ const VideoRoom = (props) => {
           </div>
           {peers.map((peer) => {
             return (
-              <div className="user-video" key={peer.peerID}>
+              <div className="user-video" key={peer.peerId}>
                 <Video
                   width="400"
                   height="300"
-                  key={peer.peerID}
+                  key={peer.peerId}
                   peer={peer.peer}
                 />
               </div>
