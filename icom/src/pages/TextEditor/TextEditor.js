@@ -25,8 +25,6 @@ import { v4 as uuidv4 } from "uuid";
 //
 //
 import "./textEditor.css";
-import { result } from "lodash";
-import { set } from "immutable";
 
 const { REACT_APP_API_URL } = process.env;
 

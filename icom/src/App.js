@@ -7,8 +7,9 @@ import TextEditor from "./pages/TextEditor/TextEditor";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import VideoRoom from "./pages/VideoRoom/VideoRoom";
 import Storage from "./pages/Storage/Storage";
-import ChatWindow from "./pages/Chat/Chat";
+import ChatPage from "./pages/Chat/Chat";
 import Login from "./pages/Login/Login";
+import Support from "./pages/Support/Support";
 //
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
@@ -67,7 +68,7 @@ function App() {
               />
               <PrivateRoute
                 path="/chat"
-                component={ChatWindow}
+                component={ChatPage}
                 isAuthenticated={isAuthenticated}
               />
               <PrivateRoute
@@ -100,6 +101,13 @@ function App() {
                 exact
                 path="/controlpanel"
                 component={ControlPanel}
+                isAuthenticated={isAuthenticated}
+              />
+
+              <PrivateRoute
+                exact
+                path="/support"
+                component={Support}
                 isAuthenticated={isAuthenticated}
               />
 

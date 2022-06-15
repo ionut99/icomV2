@@ -12,10 +12,11 @@ import {
 } from "../../asyncActions/adminAsyncActions";
 
 import Avatar from "../../components/Avatar/Avatar";
+//
 import "./panel.css";
+//
 export default function ControlPanel() {
-  // const dispatch = useDispatch();
-
+  //
   const [search_text, setSearch_text] = useState("");
   const [adminUserList, setAdminUserList] = useState([]);
   //

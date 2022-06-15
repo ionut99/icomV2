@@ -21,11 +21,11 @@
 }
 
 .teams-content {
-  background-color: rgba(0, 0, 0, 0.7);
   width: 100%;
   height: 100%;
   padding: 15px 15px;
   overflow-y: scroll;
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .teams-list {
@@ -42,18 +42,40 @@
   border-radius: 1rem;
 }
 
+.team-unit:hover {
+  background-color: #dadde0;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.22) 0px -12px 30px, rgba(0, 0, 0, 0.22) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.19) 0px -3px 5px;
+}
+
+.team-unit:hover .team-picture {
+  border: solid rgb(85, 82, 82) 2px;
+}
+
+.team-unit:hover .users-details {
+  border-top: solid rgb(85, 82, 82) 2px;
+}
+
+.team-unit:hover .team-title {
+  border-bottom: rgb(85, 82, 82) 2px solid;
+}
+
 .team-unit .team-title {
-  margin-left: 15px;
+  margin-bottom: 15px;
+  padding-left: 15px;
+  padding-top: 10px;
   font-size: 22px;
   overflow: hidden;
-  
+  border-bottom: #dadde0 2px solid;
 }
 
 .team-picture {
   display: flex;
   margin: 0 auto;
-  width: 270px;
-  height: 270px;
+  width: 255px;
+  height: 255px;
   border: solid #dadde0 2px;
   border-radius: 50%;
   margin-bottom: 10px;
@@ -73,7 +95,7 @@
 .users-details {
   display: flex;
   padding: 3px;
-  border: #dadde0 2px solid;
+  border-top: #dadde0 2px solid;
 
   overflow: hidden;
   border-bottom-left-radius: 1rem;

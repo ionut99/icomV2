@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-//
-import Avatar from "../../components/Avatar/Avatar";
+import { useHistory } from "react-router-dom";
 //
 import { getRoomUsersDetailsList } from "../../asyncActions/adminAsyncActions";
 import { getChannelDetailsService } from "../../services/user";
 //
+import { updateChannelDetails } from "../../asyncActions/userAsyncActions";
+//
+import Avatar from "../../components/Avatar/Avatar";
+//
 export default function Team(props) {
+  //
+  const dispatch = useDispatch();
+  //
+  let history = useHistory();
   const { team } = props;
 
   //
@@ -16,6 +23,11 @@ export default function Team(props) {
   //
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
+
+  const handleNavigateChat = (roomId, userId) => {
+    dispatch(updateChannelDetails(roomId, userId));
+    history.push("/chat");
+  };
 
   useEffect(() => {
     const getUsers = async (userId, roomId) => {
@@ -32,7 +44,10 @@ export default function Team(props) {
 
   //
   return (
-    <div className="team-unit">
+    <div
+      className="team-unit"
+      onClick={() => handleNavigateChat(team.roomId, user.userId)}
+    >
       <div className="team-title">
         <p>{roomName}</p>
       </div>
