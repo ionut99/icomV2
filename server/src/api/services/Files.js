@@ -1,4 +1,3 @@
-const e = require("express");
 const mysql = require("mysql");
 var sqlPool = require("./sql.js");
 

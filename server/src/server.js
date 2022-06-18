@@ -9,9 +9,11 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const https = require("https");
-const fs = require("fs");
-const path = require("path");
+//
+// const https = require("https");
+// const fs = require("fs");
+// const path = require("path");
+//
 const app = express();
 
 //
@@ -51,7 +53,6 @@ app.use(
 // );
 
 const { Server } = require("socket.io");
-const { use } = require("./api/routes/room");
 
 //
 // parse application/json
