@@ -143,11 +143,11 @@ const VideoRoom = (props) => {
         socketRef.current.on("user joined", (payload) => {
           const peer = addPeer(
             payload.signal,
-            payload.callerID,
+            payload.callerId,
             userVideo.current.srcObject
           );
           const peerObj = {
-            peerId: payload.callerID,
+            peerId: payload.callerId,
             peer,
           };
           peersRef.current.push(peerObj);
@@ -177,7 +177,7 @@ const VideoRoom = (props) => {
 
   //
 
-  function createPeer(userToSignal, callerID, stream) {
+  function createPeer(userToSignal, callerId, stream) {
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -188,7 +188,7 @@ const VideoRoom = (props) => {
     peer.on("signal", (signal) => {
       socketRef.current.emit("sending signal", {
         userToSignal,
-        callerID,
+        callerId,
         signal,
       });
     });
@@ -198,7 +198,7 @@ const VideoRoom = (props) => {
 
   //
 
-  function addPeer(incomingSignal, callerID, stream) {
+  function addPeer(incomingSignal, callerId, stream) {
     const peer = new Peer({
       initiator: false,
       trickle: false,
@@ -207,7 +207,7 @@ const VideoRoom = (props) => {
     });
 
     peer.on("signal", (signal) => {
-      socketRef.current.emit("returning signal", { signal, callerID });
+      socketRef.current.emit("returning signal", { signal, callerId });
     });
 
     peer.signal(incomingSignal);

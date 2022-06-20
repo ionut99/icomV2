@@ -1,8 +1,8 @@
-const room = require("./api/routes/room");
-const user = require("./api/routes/user");
 const document = require("./api/routes/file");
 const folder = require("./api/routes/folder");
 const authCA = require("./api/routes/auth");
+const room = require("./api/routes/room");
+const user = require("./api/routes/user");
 
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -36,11 +36,19 @@ const {
 
 const { InsertNewMessage } = require("./api/controllers/Message");
 
+
+//
+const COOKIE_SECRET="wPbZcy0jtgyYxQWb0Fn7Fi4lL7GwvqlyRCpDbF2Jp69BVVxgKT8mU3hD/IKC0W1p+zO7CNxjQm7tbeEg0rRJTn5wm757h5iwEIvRHFzp0/nBYmEeqO/i0xKcRZsB92PaqW2nZB6C+nV+SH58qxQkzJQEa8wI+opDm2N9h6xd9uAH2Qeiq94SmBUJo7K13licDaUGCFiuT+o0plqLzpnV9YbhDhPpSxSusn5W25xAjfnJsTHi/LD908A9Gm8ldMe85ny71tw+oBaEjnJgFvdtX0VzoP4LWejFqS1TiL0M/yaeGea5doL9ZWTyiR6RMakMRSBX2sjqdiXf02g=="
+//
+const CLIENT_URL = "http://localhost:3000";
+const SERVER_PORT = 5000;
+
+//
 // To Verify cors-origin !!!
 // enable CORS
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, // url of the frontend application
+    origin: CLIENT_URL, // url of the frontend application
     credentials: true, // set credentials true for secure httpOnly cookie
   })
 );
@@ -62,7 +70,7 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // use cookie parser for secure httpOnly cookie
-app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(cookieParser(COOKIE_SECRET));
 
 app.use("/users", user);
 
@@ -79,13 +87,13 @@ app.use("/auth", authCA);
 // listens on https
 // const HTTPS_SERVER = https.createServer(opts, app);
 
-// HTTPS_SERVER.listen(process.env.SERVER_PORT, () => {
-//   console.log(`HTTPS Server started on port ${process.env.SERVER_PORT}`);
+// HTTPS_SERVER.listen(SERVER_PORT, () => {
+//   console.log(`HTTPS Server started on port ${SERVER_PORT}`);
 // });
 //
 
-const httpServer = app.listen(process.env.SERVER_PORT, () => {
-  console.log(`Server started on port ${process.env.SERVER_PORT}`);
+const httpServer = app.listen(SERVER_PORT, () => {
+  console.log(`Server started on port ${SERVER_PORT}`);
 });
 
 const io = new Server(httpServer, {

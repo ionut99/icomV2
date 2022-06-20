@@ -3,7 +3,15 @@ const moment = require("moment");
 const randtoken = require("rand-token");
 const ms = require("ms");
 
-const dev = process.env.NODE_ENV !== "production";
+const NODE_ENV = "development";
+const JWT_SECRET =
+  "OU9KE61vTKV6VKSSX23imuxmZIsE9Xq2ibBkQi7gazcPSZ8x/ezgOUy5vLxTp6HyhUaUBsxiRETppskfbQB5yL1gPlEpBznfiGNsB9RVoUqGFcWTwTCI50xRqBTvIiRZOWrVDQZXhG9mIRwjiKo7/zhA0NUnUV0UazGK5qKQhbzlU0EVqKuA93ZdUcizFeS8K6mi138XGyV/ltXZxFc2VsVURrCn5q7WgfnEuvODC7PqXBzfhWPklRI9bq7V+o1or3EU54ykGkUYrTv998ZxJ0yBr9LG5/OlqnizYjogu9tSIT1sOr6miH8X1s34RqlA/MYGM4Te5bB5va5nd4cCA==";
+//
+
+const ACCESS_TOKEN_LIFE = "100m";
+const REFRESH_TOKEN_LIFE = "30d";
+//
+const dev = NODE_ENV !== "production";
 
 // refresh token list to manage the xsrf token
 const refreshTokens = {};
@@ -34,17 +42,15 @@ function generateToken(user) {
   const xsrfToken = randtoken.generate(24);
 
   // create private key by combining JWT secret and xsrf token
-  const privateKey = process.env.JWT_SECRET + xsrfToken;
+  const privateKey = JWT_SECRET + xsrfToken;
 
   // generate access token and expiry date
   const token = jwt.sign(userData, privateKey, {
-    expiresIn: process.env.ACCESS_TOKEN_LIFE,
+    expiresIn: ACCESS_TOKEN_LIFE,
   });
 
   // expiry time of the access token
-  const expiredAt = moment()
-    .add(ms(process.env.ACCESS_TOKEN_LIFE), "ms")
-    .valueOf();
+  const expiredAt = moment().add(ms(ACCESS_TOKEN_LIFE), "ms").valueOf();
 
   return {
     token,
@@ -57,14 +63,14 @@ function generateToken(user) {
 function generateRefreshToken(userId) {
   if (!userId) return null;
 
-  return jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: process.env.REFRESH_TOKEN_LIFE,
+  return jwt.sign({ userId }, JWT_SECRET, {
+    expiresIn: REFRESH_TOKEN_LIFE,
   });
 }
 
 // verify access token and refresh token
 function verifyToken(token, xsrfToken = "", cb) {
-  const privateKey = process.env.JWT_SECRET + xsrfToken;
+  const privateKey = JWT_SECRET + xsrfToken;
   jwt.verify(token, privateKey, cb);
 }
 
