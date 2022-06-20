@@ -65,6 +65,13 @@
 }
 
 .image_prev {
+  background-color: #302e2e;
+  display: flex;
+  justify-content: center;
   height: 300px;
   width: 400px;
+}
+
+.image_prev img {
+  /* border-radius: 50%; */
 }

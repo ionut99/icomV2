@@ -236,12 +236,28 @@ const VideoRoom = (props) => {
   }
 
   const handleLeaveConference = () => {
-    console.log("Utilizatorul vrea sa iasa din conferinta!");
+    console.log("leave video room ...");
+    if (userVideo.current.srcObject !== null) {
+      userVideo.current.srcObject.getTracks().map(function (val) {
+        val.stop();
+      });
+    }
   };
 
   const handleMuteUser = () => {
     console.log("set user on mute");
-    setmicrophone(!microphone);
+    userVideo.current.srcObject.getTracks().forEach(function (track) {
+      console.log(track);
+      if (track.readyState === "live") {
+        if (track.enabled === true) {
+          // track.enabled = false;
+        } else {
+          // track.enabled = true;
+        }
+        // setVideoInput(!videoInput);
+        setmicrophone(!microphone);
+      }
+    });
   };
 
   return (
