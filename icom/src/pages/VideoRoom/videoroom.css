@@ -63,3 +63,8 @@
   margin: 0.5rem;
   transform: rotateY(180deg);
 }
+
+.image_prev {
+  height: 300px;
+  width: 400px;
+}

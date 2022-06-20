@@ -322,7 +322,7 @@ const VideoRoom = (props) => {
               }}
             />
             <div
-              className="image_preview"
+              className="image_prev"
               style={{
                 display: !videoInput ? "flex" : "none",
               }}
