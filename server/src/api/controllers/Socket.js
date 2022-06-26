@@ -86,19 +86,19 @@ const addUserInRoom = async ({ id, userId, roomId, type }) => {
 
   //
   const onU = getNumberOfUsersInRoom(roomId, type);
-  console.log(
-    "new " +
-      type +
-      " join user: " +
-      userId.substring(userId.length - 5) +
-      " // socket: " +
-      id +
-      " -> " +
-      roomId.substring(roomId.length - 5) +
-      " " +
-      "users on: " +
-      onU
-  );
+  // console.log(
+  //   "new " +
+  //     type +
+  //     " join user: " +
+  //     userId.substring(userId.length - 5) +
+  //     " // socket: " +
+  //     id +
+  //     " -> " +
+  //     roomId.substring(roomId.length - 5) +
+  //     " " +
+  //     "users on: " +
+  //     onU
+  // );
   //
 
   return { user };
@@ -110,12 +110,12 @@ const deleteUser = (id) => {
 
   for (let i = 0; i < users.length; i++) {
     if (users[i].id === id) {
-      console.log(
-        "Disconnect " +
-          users[i].userId.substring(users[i].userId.length - 6) +
-          " from " +
-          users[i].roomId.substring(users[i].roomId.length - 6)
-      );
+      // console.log(
+      //   "Disconnect " +
+      //     users[i].userId.substring(users[i].userId.length - 6) +
+      //     " from " +
+      //     users[i].roomId.substring(users[i].roomId.length - 6)
+      // );
       users.splice(i, 1);
       i--;
       removed = true;

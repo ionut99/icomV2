@@ -77,16 +77,44 @@ const chatRedu = (state = ChannelState, action) => {
       if (roomMessages.length === 1 && state.roomMessages.length > 0) {
         return state;
       }
-      if (position === "top" && state.roomMessages.length > 7) {
+      if (position === "top" && state.roomMessages.length > 10) {
         // append top
-        const newList = roomMessages.concat(state.roomMessages.slice(1, 7));
+
+        // list for append
+        const appList = state.roomMessages.slice(1, 20);
+
+        for (let j = 0; j < roomMessages.length; j++) {
+          for (let i = 0; i < appList.length; i++) {
+            if (appList[i].ID_message === roomMessages[j].ID_message) {
+              appList.splice(i, 1);
+              i--;
+            }
+          }
+        }
+        const newList = roomMessages.concat(appList);
+        //
         return {
           ...state,
           roomMessages: newList,
         };
-      } else if (position === "bottom" && state.roomMessages.length > 7) {
+      } else if (position === "bottom" && state.roomMessages.length > 10) {
         //append bottom
-        const newList = state.roomMessages.slice(-7, -1).concat(roomMessages);
+
+        //
+        const appList = roomMessages;
+
+        for (let j = 0; j < state.roomMessages.length; j++) {
+          for (let i = 0; i < appList.length; i++) {
+            if (appList[i].ID_message === state.roomMessages[j].ID_message) {
+              appList.splice(i, 1);
+              i--;
+            }
+          }
+        }
+        //
+
+        const newList = state.roomMessages.slice(-20, -1).concat(appList);
+
         return {
           ...state,
           roomMessages: newList,

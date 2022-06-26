@@ -24,7 +24,6 @@ import * as BsIcons from "react-icons/bs";
 
 import Avatar from "../Avatar/Avatar";
 import ChangeAvatar from "../ChangeAvatar/ChangeAvatar";
-import { Telegram } from "@mui/icons-material";
 
 function Conversation(props) {
   const ref = useRef();
@@ -49,6 +48,7 @@ function Conversation(props) {
     if (roomId !== channelId) {
       dispatch(updateChannelDetails(roomId, user.userId));
       dispatch(updateMessageChannelList([], "top"));
+      dispatch(updateMessageChannelList([], "bottom"));
     }
     //
     dispatch(userSetRoomListAsync("", user.userId));

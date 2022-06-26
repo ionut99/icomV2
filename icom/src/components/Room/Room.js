@@ -74,7 +74,7 @@ function Room(props) {
           });
         }
       }
-      if (scrollTop + clientHeight === scrollHeight) {
+      if (scrollTop + clientHeight >= scrollHeight - 50) {
         if (roomMessages.length > 0) {
           setLastMessageTime({
             time: roomMessages[roomMessages.length - 1].createdTime,
@@ -212,17 +212,15 @@ function Room(props) {
               <IoIcons2.IoCallOutline />
             </div>
           </div>
-          <div className="test-scrollbar">
-            <div className="messages" ref={listInnerRef} onScroll={onScroll}>
-              {loaded ? (
-                roomMessages.map((message, index) => {
-                  return <Message message={message} key={index} />;
-                })
-              ) : (
-                <Spinner animation="border" />
-              )}
-              <div ref={messagesEndRef} />
-            </div>
+          <div className="messages" ref={listInnerRef} onScroll={onScroll}>
+            {loaded ? (
+              roomMessages.map((message, index) => {
+                return <Message message={message} key={message.ID_message} />;
+              })
+            ) : (
+              <Spinner animation="border" />
+            )}
+            <div ref={messagesEndRef} />
           </div>
           <SendMessage />
         </div>

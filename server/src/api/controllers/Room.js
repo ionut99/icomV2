@@ -25,7 +25,7 @@ const {
 
 const { GetRoomMessagesData, GetRoomFolderID } = require("../services/Room");
 
-const { handleResponse } = require("../helpers/utils");
+const { handleResponse } = require("../helpers/auth_utils");
 const { GetParticipantByID } = require("../services/Auth");
 const { GetAllUsersDataBase } = require("../services/User");
 const { CompleteMessageList } = require("../helpers/message_utils");
@@ -494,7 +494,7 @@ async function GetMessageListInTime(req, res) {
       roomId,
       messageTime,
       messagesPosition,
-      15
+      40
     )
       .then(function (result) {
         return result;

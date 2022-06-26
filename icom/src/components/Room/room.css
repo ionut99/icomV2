@@ -32,16 +32,9 @@
   font-size: 1.8rem;
 }
 
-.right-section .test-scrollbar {
-  max-height: 710px;
-  height: 81%;
-}
-
 .right-section .messages {
-  max-height: 100%;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  height: calc(100vh - 250px);
+  overflow-y: scroll;
 }
 
 .right-section .messages .one_message {
@@ -80,7 +73,7 @@
   flex-direction: column;
   align-items: center;
   background: var(--sender-message-color);
-  color: var(--white-color);
+  /* color: var(--white-color); */
   padding: 10px;
   border-radius: 10px;
 }
@@ -94,7 +87,7 @@
 }
 
 .message_content .message_picture img {
-  max-width: 400px;
+  max-height: 300px;
 }
 
 .message_content .message_body {
@@ -106,7 +99,6 @@
 }
 
 .message_content .message_body .text.link {
-  /* color: #0969da; */
   cursor: pointer;
   text-decoration: underline;
   font-size: medium;
@@ -114,7 +106,7 @@
 
 .text.link:hover {
   color: #0969da;
-  -webkit-transform: scale(1.02);
+  --webkit-transform: scale(1.02);
 }
 
 .message_content .message_body .message_icon {
@@ -367,11 +359,5 @@
     max-width: 64%;
     min-width: 400px;
     margin-right: 0%;
-  }
-}
-
-@media screen and (max-height: 900px) {
-  .right-section .test-scrollbar {
-    max-height: 500px;
   }
 }

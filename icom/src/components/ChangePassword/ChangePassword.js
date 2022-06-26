@@ -62,6 +62,9 @@ function ChangePassword(props) {
         Edit Profile
       </Button>
       <Modal show={open} onHide={closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Change personal data?</Modal.Title>
+        </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
             <Form.Group>

@@ -1,4 +1,4 @@
-const { handleResponse } = require("../helpers/utils");
+const { handleResponse } = require("../helpers/auth_utils");
 
 const {
   generateOfuscatedPassword,

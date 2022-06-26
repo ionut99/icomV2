@@ -5,8 +5,8 @@
   --color-element-hover: #dadde0;
   --border-color: #a7a7a7;
   --border-color-less-intense: #bcbec0;
-  --sender-message-color: #0969da;
-  --me-message-color: #2ecc71;
+  --sender-message-color: rgb(202, 233, 202);
+  --me-message-color: rgb(202, 202, 233);
   --skroll-bar: #d6dee1;
   --skroll-bar-hover: #a8bbbf;
   --white-color: white;

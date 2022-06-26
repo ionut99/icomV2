@@ -18,7 +18,7 @@ const {
   InsertNewFileDataBase,
   UpdateFileDetails,
 } = require("../services/Files");
-const { handleResponse } = require("../helpers/utils");
+const { handleResponse } = require("../helpers/auth_utils");
 //
 const {
   checkFileExists,

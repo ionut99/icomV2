@@ -18,6 +18,8 @@
   top: 60px;
   position: absolute;
   background-image: url("../../images/loginBackground.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
 .teams-content {

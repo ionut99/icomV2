@@ -1,37 +1,6 @@
 import axios from "axios";
-// import https, { Agent } from "https";
-// import { httpsAgent } from "../helpers/agent";
-
-// import pavel_cert from "../cert/pavel_cert.pem";
-// import pavel_key from "../cert/pavel_key.pem";
-// import server_cert from "../cert/server_cert.pem";
-
-// export const agent = new https.Agent({
-//   cert: fs.readFileSync(certFile),
-//   key: fs.readFileSync(keyFile),
-//   cert: pavel_cert,
-//   key: pavel_key,
-//   ca: server_cert,
-//   rejectUnauthorized: false,
-// });
-
-
-//
 
 axios.defaults.withCredentials = true;
-
-
-//
-// axios.proxy.protocol = "https";
-// axios.https.Agent = new https.Agent({
-//   // cert: fs.readFileSync(certFile),
-//   // key: fs.readFileSync(keyFile),
-//   // cert: pavel_cert,
-//   // key: pavel_key,
-//   // ca: server_cert,
-//   keepAlive: true,
-//   rejectUnauthorized: false,
-// });
 
 const { REACT_APP_API_URL } = process.env;
 

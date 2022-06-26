@@ -9,7 +9,7 @@ const {
   verifyToken,
   clearTokens,
   handleResponse,
-} = require("../helpers/utils");
+} = require("../helpers/auth_utils");
 
 const { generateOfuscatedPassword } = require("../helpers/user_utils");
 

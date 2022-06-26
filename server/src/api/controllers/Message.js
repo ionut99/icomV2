@@ -1,5 +1,5 @@
 const date = require("date-and-time");
-const { handleResponse } = require("../helpers/utils");
+const { handleResponse } = require("../helpers/auth_utils");
 const { InsertNewMessageData } = require("../services/User");
 
 // insert new message in a room

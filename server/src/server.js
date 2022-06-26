@@ -17,12 +17,10 @@ require("dotenv").config();
 const app = express();
 
 //
-// const opts = {
-//   key: fs.readFileSync(path.join(__dirname, "server_key.pem")),
-//   cert: fs.readFileSync(path.join(__dirname, "server_cert.pem")),
-//   requestCert: true,
-//   rejectUnauthorized: false, // so we can do own error handling
-//   ca: [fs.readFileSync(path.join(__dirname, "server_cert.pem"))],
+
+// const options = {
+//   key: fs.readFileSync(path.join(__dirname, "./certs/private.key")),
+//   cert: fs.readFileSync(path.join(__dirname, "./certs/certificate.crt")),
 // };
 //
 
@@ -36,9 +34,9 @@ const {
 
 const { InsertNewMessage } = require("./api/controllers/Message");
 
-
 //
-const COOKIE_SECRET="wPbZcy0jtgyYxQWb0Fn7Fi4lL7GwvqlyRCpDbF2Jp69BVVxgKT8mU3hD/IKC0W1p+zO7CNxjQm7tbeEg0rRJTn5wm757h5iwEIvRHFzp0/nBYmEeqO/i0xKcRZsB92PaqW2nZB6C+nV+SH58qxQkzJQEa8wI+opDm2N9h6xd9uAH2Qeiq94SmBUJo7K13licDaUGCFiuT+o0plqLzpnV9YbhDhPpSxSusn5W25xAjfnJsTHi/LD908A9Gm8ldMe85ny71tw+oBaEjnJgFvdtX0VzoP4LWejFqS1TiL0M/yaeGea5doL9ZWTyiR6RMakMRSBX2sjqdiXf02g=="
+const COOKIE_SECRET =
+  "wPbZcy0jtgyYxQWb0Fn7Fi4lL7GwvqlyRCpDbF2Jp69BVVxgKT8mU3hD/IKC0W1p+zO7CNxjQm7tbeEg0rRJTn5wm757h5iwEIvRHFzp0/nBYmEeqO/i0xKcRZsB92PaqW2nZB6C+nV+SH58qxQkzJQEa8wI+opDm2N9h6xd9uAH2Qeiq94SmBUJo7K13licDaUGCFiuT+o0plqLzpnV9YbhDhPpSxSusn5W25xAjfnJsTHi/LD908A9Gm8ldMe85ny71tw+oBaEjnJgFvdtX0VzoP4LWejFqS1TiL0M/yaeGea5doL9ZWTyiR6RMakMRSBX2sjqdiXf02g==";
 //
 const CLIENT_URL = "http://localhost:3000";
 const SERVER_PORT = 5000;
@@ -52,13 +50,6 @@ app.use(
     credentials: true, // set credentials true for secure httpOnly cookie
   })
 );
-
-// app.use(
-//   cors({
-//     origin: "*", // url of the frontend application
-//     // credentials: true, // set credentials true for secure httpOnly cookie
-//   })
-// );
 
 const { Server } = require("socket.io");
 
@@ -85,12 +76,11 @@ app.use("/auth", authCA);
 
 //
 // listens on https
-// const HTTPS_SERVER = https.createServer(opts, app);
+// const HTTPS_SERVER = https.createServer(options, app);
 
 // HTTPS_SERVER.listen(SERVER_PORT, () => {
 //   console.log(`HTTPS Server started on port ${SERVER_PORT}`);
 // });
-//
 
 const httpServer = app.listen(SERVER_PORT, () => {
   console.log(`Server started on port ${SERVER_PORT}`);
@@ -98,7 +88,7 @@ const httpServer = app.listen(SERVER_PORT, () => {
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: CLIENT_URL,
   },
 });
 

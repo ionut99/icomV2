@@ -1,5 +1,5 @@
 var uui = require("uuid");
-const { handleResponse } = require("../helpers/utils");
+const { handleResponse } = require("../helpers/auth_utils");
 
 //
 const {
