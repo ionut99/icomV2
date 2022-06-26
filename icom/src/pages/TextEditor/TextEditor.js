@@ -186,7 +186,6 @@ function TextEditor() {
       },
       (error) => {
         if (error) {
-          // alert(error);
           console.log(error);
         }
       }

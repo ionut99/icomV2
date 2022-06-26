@@ -44,8 +44,9 @@
 
 .video-page .video-content {
   flex: 1 1 auto;
-  background-position: center;
   background-image: url("../../images/loginBackground.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
 .video-page .video-content .video-wrapper {
@@ -72,6 +73,5 @@
   width: 400px;
 }
 
-.image_prev img {
-  /* border-radius: 50%; */
-}
+/* .image_prev img {
+} */
