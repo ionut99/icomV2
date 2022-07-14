@@ -26,8 +26,7 @@ const COOKIE_OPTIONS = {
 
 // generate tokens and return it
 function generateToken(user) {
-  //1. Don't use password and other sensitive fields
-  //2. Use the information that are useful in other parts
+  
   if (!user) return null;
 
   const userData = {

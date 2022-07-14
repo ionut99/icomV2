@@ -23,13 +23,12 @@ router.post("/signin", SignInUser);
 router.post("/logout", LogOutUser);
 router.post("/verifyToken", VerifyToken);
 
-// router.post("/search", authMiddleware, GetUserSearchList);
-// router.post("/updatePicture", authMiddleware, UpdateProfilePicture);
-router.post("/newchat", getNewUserChatList);
-router.post("/search", adminGetUserList);
-router.post("/toadd", GetNOTPartList);
-router.post("/updatePicture", UpdateProfilePicture);
-router.post("/details", GetUserDetails);
-router.post("/newuser", InserNewUserAccount);
-router.post("/edit", EditUserAccountAsync);
+
+router.post("/newchat", authMiddleware, getNewUserChatList);
+router.post("/search", authMiddleware, adminGetUserList);
+router.post("/toadd", authMiddleware, GetNOTPartList);
+router.post("/updatePicture", authMiddleware, UpdateProfilePicture);
+router.post("/details", authMiddleware, GetUserDetails);
+router.post("/newuser", authMiddleware, InserNewUserAccount);
+router.post("/edit", authMiddleware, EditUserAccountAsync);
 module.exports = router;

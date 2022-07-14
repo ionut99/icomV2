@@ -40,7 +40,7 @@ function Chat() {
   const [groupName, SetgroupName] = useState("");
   //
   const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;
+  const { user } = authObj;   
   //
   const [loaded, setLoaded] = useState(false);
   //
