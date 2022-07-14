@@ -23,7 +23,6 @@ router.post("/signin", SignInUser);
 router.post("/logout", LogOutUser);
 router.post("/verifyToken", VerifyToken);
 
-
 router.post("/newchat", authMiddleware, getNewUserChatList);
 router.post("/search", authMiddleware, adminGetUserList);
 router.post("/toadd", authMiddleware, GetNOTPartList);

@@ -1,8 +1,10 @@
+const { handleResponse } = require("../helpers/auth_utils");
 "use strict";
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const router = express.Router();
+
 
 router.get("/authenticate", (req, res) => {
   const cert = req.socket.getPeerCertificate();
@@ -22,6 +24,11 @@ router.get("/authenticate", (req, res) => {
       .status(401)
       .send(`Sorry, but you need to provide a client certificate to continue.`);
   }
+});
+
+
+router.get("/test", (req, res) => {
+  return handleResponse(req, res, 200,  "The server is up!" );
 });
 
 module.exports = router;
