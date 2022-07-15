@@ -86,20 +86,20 @@ const addUserInRoom = async ({ id, userId, roomId, type }) => {
 
   //
   const onU = getNumberOfUsersInRoom(roomId, type);
-  // console.log(
-  //   "new " +
-  //     type +
-  //     " join user: " +
-  //     userId.substring(userId.length - 5) +
-  //     " // socket: " +
-  //     id +
-  //     " -> " +
-  //     roomId.substring(roomId.length - 5) +
-  //     " " +
-  //     "users on: " +
-  //     onU
-  // );
-  //
+  console.log(
+    "new " +
+      type +
+      " join user: " +
+      userId.substring(userId.length - 5) +
+      " // socket: " +
+      id +
+      " -> " +
+      roomId.substring(roomId.length - 5) +
+      " " +
+      "users on: " +
+      onU
+  );
+  
 
   return { user };
 };

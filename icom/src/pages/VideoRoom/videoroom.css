@@ -49,8 +49,14 @@
   background-position: center;
 }
 
+.current-user-video{
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}
+
 .video-page .video-content .video-wrapper {
-  height: 90vh;
+  height: calc(100vh - 70px);
   display: flex;
   flex-wrap: wrap;
   margin-top: 10px;
@@ -59,19 +65,33 @@
 }
 
 .video-page .video-content .video-wrapper .user-video {
-  height: 300px;
+  display: block;
+  height: 350px;
   margin: 5px;
   margin: 0.5rem;
-  transform: rotateY(180deg);
+  border: 2px solid red;
+}
+
+.user-video .user-name{
+  background-color: #fff;
+  border: blue solid 1px;
+  margin-top: auto;
 }
 
 .image_prev {
   background-color: #302e2e;
   display: flex;
   justify-content: center;
+  align-items: center;
   height: 300px;
   width: 400px;
 }
 
-/* .image_prev img {
-} */
+.image_prev .userprofile{
+  display: flex;
+  justify-content: center;
+  height: 250px;
+  width: 250px;
+  border-radius: 50%;
+  overflow: hidden;
+}

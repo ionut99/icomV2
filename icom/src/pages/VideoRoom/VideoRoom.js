@@ -9,7 +9,6 @@ import Peer from "simple-peer";
 //
 
 import {
-  faClock,
   faMicrophone,
   faMicrophoneAltSlash,
   faVideo,
@@ -20,38 +19,18 @@ import { Button } from "react-bootstrap";
 import socketIOClient from "socket.io-client";
 import Video from "./Video";
 import "./videoroom.css";
+//
+import { iceConfig } from "./Config";
 
 import Avatar from "../../components/Avatar/Avatar";
+import Timer from "./Timer";
 
 const { REACT_APP_API_URL } = process.env;
 
 const StyledVideo = styled.video`
   height: 300px;
+  transform: rotateY(180deg);
 `;
-
-const configuration = {
-  // Using From https://www.metered.ca/tools/openrelay/
-  iceServers: [
-    {
-      urls: "stun:openrelay.metered.ca:80",
-    },
-    {
-      urls: "turn:openrelay.metered.ca:80",
-      username: "openrelayproject",
-      credential: "openrelayproject",
-    },
-    {
-      urls: "turn:openrelay.metered.ca:443",
-      username: "openrelayproject",
-      credential: "openrelayproject",
-    },
-    {
-      urls: "turn:openrelay.metered.ca:443?transport=tcp",
-      username: "openrelayproject",
-      credential: "openrelayproject",
-    },
-  ],
-};
 
 //
 const videoConstraints = {
@@ -60,6 +39,7 @@ const videoConstraints = {
 };
 
 const VideoRoom = (props) => {
+  console.log(iceConfig);
   //
   const socketRef = useRef();
   //
@@ -71,11 +51,19 @@ const VideoRoom = (props) => {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
   //
+  const [userToStop, setUserToStop] = useState({
+    userId: undefined,
+    socketId: undefined,
+    camera: false,
+  });
+
+  //
   const [microphone, setmicrophone] = useState(true);
   //
   const [videoInput, setVideoInput] = useState(true);
   //
   const [peers, setPeers] = useState([]);
+
   //
   const request = {
     userId: user.userId,
@@ -91,10 +79,40 @@ const VideoRoom = (props) => {
         if (track.readyState === "live" && track.kind === "video") {
           if (track.enabled === true) {
             track.enabled = false;
+            socketRef.current.emit("user stop camera", request);
           } else {
             track.enabled = true;
+            socketRef.current.emit("user start camera", request);
           }
           setVideoInput(!videoInput);
+        }
+      });
+    }
+  };
+  //
+  const handleLeaveConference = () => {
+    console.log("leave video room ...");
+    if (userVideo.current.srcObject !== null) {
+      userVideo.current.srcObject.getTracks().map(function (val) {
+        val.stop();
+      });
+    }
+  };
+
+  const handleMuteUser = () => {
+    //
+    if (microphone) {
+      setmicrophone(false);
+      userVideo.current.srcObject.getTracks().forEach(function (track) {
+        if (track.readyState === "live" && track.kind === "audio") {
+          track.enabled = false;
+        }
+      });
+    } else {
+      setmicrophone(true);
+      userVideo.current.srcObject.getTracks().forEach(function (track) {
+        if (track.readyState === "live" && track.kind === "audio") {
+          track.enabled = true;
         }
       });
     }
@@ -114,7 +132,7 @@ const VideoRoom = (props) => {
 
   useEffect(() => {
     navigator.mediaDevices
-      .getUserMedia({ video: videoInput, audio: false })
+      .getUserMedia({ video: videoInput, audio: microphone })
       .then((stream) => {
         if (stream != null) {
           userVideo.current.srcObject = stream;
@@ -164,6 +182,22 @@ const VideoRoom = (props) => {
           removePeer(socket_id);
         });
 
+        socketRef.current.on("user stop camera", (payload) => {
+          setUserToStop({
+            userId: payload.userId,
+            socketId: payload.socketId,
+            camera: false,
+          });
+        });
+
+        socketRef.current.on("user start camera", (payload) => {
+          setUserToStop({
+            userId: payload.userId,
+            socketId: payload.socketId,
+            camera: true,
+          });
+        });
+
         socketRef.current.on("disconnect", () => {
           console.log("GOT DISCONNECTED");
           destroyAllPeers();
@@ -182,7 +216,7 @@ const VideoRoom = (props) => {
       initiator: true,
       trickle: false,
       stream: stream,
-      config: configuration,
+      config: iceConfig,
     });
 
     peer.on("signal", (signal) => {
@@ -203,7 +237,7 @@ const VideoRoom = (props) => {
       initiator: false,
       trickle: false,
       stream: stream,
-      config: configuration,
+      config: iceConfig,
     });
 
     peer.on("signal", (signal) => {
@@ -234,41 +268,12 @@ const VideoRoom = (props) => {
     peersRef.current = [];
     setPeers([]);
   }
-
-  const handleLeaveConference = () => {
-    console.log("leave video room ...");
-    if (userVideo.current.srcObject !== null) {
-      userVideo.current.srcObject.getTracks().map(function (val) {
-        val.stop();
-      });
-    }
-  };
-
-  const handleMuteUser = () => {
-    console.log("set user on mute");
-    userVideo.current.srcObject.getTracks().forEach(function (track) {
-      console.log(track);
-      if (track.readyState === "live") {
-        if (track.enabled === true) {
-          // track.enabled = false;
-        } else {
-          // track.enabled = true;
-        }
-        // setVideoInput(!videoInput);
-        setmicrophone(!microphone);
-      }
-    });
-  };
-
+  //
   return (
     <div className="video-page">
       <div className="buttons-bar">
-        <div className="time">
-          <div className="icon">
-            <FontAwesomeIcon icon={faClock} size="lg" />
-          </div>
-          20:12
-        </div>
+        <Timer />
+
         <div className="buttons">
           <Button
             className="video-button"
@@ -327,7 +332,7 @@ const VideoRoom = (props) => {
       </div>
       <div className="video-content">
         <div className="video-wrapper">
-          <div className="user-video">
+          <div className="current-user-video">
             <StyledVideo
               muted
               ref={userVideo}
@@ -343,7 +348,9 @@ const VideoRoom = (props) => {
                 display: !videoInput ? "flex" : "none",
               }}
             >
-              <Avatar userId={user.userId} roomId={null} />
+              <div className="userprofile">
+                <Avatar userId={user.userId} roomId={null} />
+              </div>
             </div>
           </div>
           {peers.map((peer) => {
@@ -354,6 +361,8 @@ const VideoRoom = (props) => {
                   height="300"
                   key={peer.peerId}
                   peer={peer.peer}
+                  peerId={peer.peerId}
+                  userToStop={userToStop}
                 />
               </div>
             );

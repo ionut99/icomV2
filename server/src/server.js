@@ -220,6 +220,30 @@ io.on("connection", (socket) => {
   });
 
   //
+  socket.on("user stop camera", (payload) => {
+    const user = getUser(socket.id);
+    if (user === undefined) return;
+    //
+    socket.broadcast.to(payload.roomId).emit("user stop camera", {
+      socketId: socket.id,
+      userId: payload.userId,
+      roomId: payload.roomId,
+    });
+  });
+
+  //
+  socket.on("user start camera", (payload) => {
+    const user = getUser(socket.id);
+    if (user === undefined) return;
+    //
+    socket.broadcast.to(payload.roomId).emit("user start camera", {
+      socketId: socket.id,
+      userId: payload.userId,
+      roomId: payload.roomId,
+    });
+  });
+
+  //
   socket.on("disconnect", () => {
     const user = getUser(socket.id);
     const deleted = deleteUser(socket.id);
