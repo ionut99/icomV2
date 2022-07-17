@@ -23,7 +23,7 @@ function Dashboard() {
     if (user == null) return;
 
     const getGroupChannels = async (userId) => {
-      return await getSearchRoomService("", userId)
+      return getSearchRoomService("", userId)
         .then((result) => {
           return result.data["search_results"].filter((team) => team.type == 0);
         })

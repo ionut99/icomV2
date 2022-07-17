@@ -33,13 +33,12 @@ const StyledVideo = styled.video`
 `;
 
 //
-const videoConstraints = {
-  height: window.innerHeight / 2,
-  width: window.innerWidth / 2,
-};
+// const videoConstraints = {
+//   height: window.innerHeight / 2,
+//   width: window.innerWidth / 2,
+// };
 
 const VideoRoom = (props) => {
-  console.log(iceConfig);
   //
   const socketRef = useRef();
   //
@@ -51,12 +50,17 @@ const VideoRoom = (props) => {
   const authObj = useSelector((state) => state.auth);
   const { user } = authObj;
   //
-  const [userToStop, setUserToStop] = useState({
+  const [stopCamera, setStopCamera] = useState({
     userId: undefined,
     socketId: undefined,
     camera: false,
   });
-
+  //
+  const [stopMicrophone, setStopMicrophone] = useState({
+    userId: undefined,
+    socketId: undefined,
+    microphone: false,
+  });
   //
   const [microphone, setmicrophone] = useState(true);
   //
@@ -106,6 +110,7 @@ const VideoRoom = (props) => {
       userVideo.current.srcObject.getTracks().forEach(function (track) {
         if (track.readyState === "live" && track.kind === "audio") {
           track.enabled = false;
+          socketRef.current.emit("user stop microphone", request);
         }
       });
     } else {
@@ -113,6 +118,7 @@ const VideoRoom = (props) => {
       userVideo.current.srcObject.getTracks().forEach(function (track) {
         if (track.readyState === "live" && track.kind === "audio") {
           track.enabled = true;
+          socketRef.current.emit("user start microphone", request);
         }
       });
     }
@@ -143,14 +149,16 @@ const VideoRoom = (props) => {
           }
         });
         socketRef.current.on("all users", (roomData) => {
-          roomData.users.forEach((user) => {
+          roomData.users.forEach((userElement) => {
             const peer = createPeer(
-              user.id,
+              user.userId,
+              userElement.id,
               socketRef.current.id,
               userVideo.current.srcObject
             );
             const peerObj = {
-              peerId: user.id,
+              userId: userElement.userId,
+              peerId: userElement.id,
               peer,
             };
             peersRef.current.push(peerObj);
@@ -165,6 +173,7 @@ const VideoRoom = (props) => {
             userVideo.current.srcObject
           );
           const peerObj = {
+            userId: payload.callerUserId,
             peerId: payload.callerId,
             peer,
           };
@@ -183,7 +192,7 @@ const VideoRoom = (props) => {
         });
 
         socketRef.current.on("user stop camera", (payload) => {
-          setUserToStop({
+          setStopCamera({
             userId: payload.userId,
             socketId: payload.socketId,
             camera: false,
@@ -191,12 +200,30 @@ const VideoRoom = (props) => {
         });
 
         socketRef.current.on("user start camera", (payload) => {
-          setUserToStop({
+          setStopCamera({
             userId: payload.userId,
             socketId: payload.socketId,
             camera: true,
           });
         });
+
+        //
+        socketRef.current.on("user stop microphone", (payload) => {
+          setStopMicrophone({
+            userId: payload.userId,
+            socketId: payload.socketId,
+            microphone: false,
+          });
+        });
+
+        socketRef.current.on("user start microphone", (payload) => {
+          setStopMicrophone({
+            userId: payload.userId,
+            socketId: payload.socketId,
+            microphone: true,
+          });
+        });
+        //
 
         socketRef.current.on("disconnect", () => {
           console.log("GOT DISCONNECTED");
@@ -211,7 +238,7 @@ const VideoRoom = (props) => {
 
   //
 
-  function createPeer(userToSignal, callerId, stream) {
+  function createPeer(userId, userToSignal, callerId, stream) {
     const peer = new Peer({
       initiator: true,
       trickle: false,
@@ -221,6 +248,7 @@ const VideoRoom = (props) => {
 
     peer.on("signal", (signal) => {
       socketRef.current.emit("sending signal", {
+        userId,
         userToSignal,
         callerId,
         signal,
@@ -261,6 +289,8 @@ const VideoRoom = (props) => {
     setPeers((peers) => peers.filter((peer) => peer.peerId !== socket_id));
   }
 
+  //
+
   function destroyAllPeers() {
     for (let i = 0; i < peersRef.current.length; i++) {
       peersRef.current[i].peer.destroy();
@@ -273,7 +303,6 @@ const VideoRoom = (props) => {
     <div className="video-page">
       <div className="buttons-bar">
         <Timer />
-
         <div className="buttons">
           <Button
             className="video-button"
@@ -362,7 +391,9 @@ const VideoRoom = (props) => {
                   key={peer.peerId}
                   peer={peer.peer}
                   peerId={peer.peerId}
-                  userToStop={userToStop}
+                  peerUserId={peer.userId}
+                  stopCamera={stopCamera}
+                  stopMicrophone={stopMicrophone}
                 />
               </div>
             );

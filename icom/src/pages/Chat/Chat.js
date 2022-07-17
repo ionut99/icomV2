@@ -19,6 +19,10 @@ import {
   createNewGroup,
 } from "../../asyncActions/userAsyncActions";
 
+//
+// import { setAuthToken } from "../../services/auth";
+//
+
 import Conversation from "../../components/Search/Conversation";
 import PersonList from "../../components/Search/PersonList";
 import Room from "../../components/Room/Room";
@@ -26,8 +30,10 @@ import Room from "../../components/Room/Room";
 import * as BsIcons from "react-icons/bs";
 import * as AiIcons from "react-icons/ai";
 import { v4 as uuidv4 } from "uuid";
+// import moment from "moment";
 
 import "./chat.css";
+// import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
 
 function setSearchBoxContent(search_box_content, dispatch) {
   dispatch(setUserSearchBoxContent(search_box_content));
@@ -40,7 +46,7 @@ function Chat() {
   const [groupName, SetgroupName] = useState("");
   //
   const authObj = useSelector((state) => state.auth);
-  const { user } = authObj;   
+  const { user } = authObj;
   //
   const [loaded, setLoaded] = useState(false);
   //
@@ -74,7 +80,6 @@ function Chat() {
   };
 
   function closeModal() {
-    // delete old data
     SetgroupName("");
     SetnewGroup(false);
   }
@@ -89,6 +94,7 @@ function Chat() {
   const SearchPerson = (event) => {
     setSearchBoxContent(event.target.value, dispatch);
   };
+  //
 
   // get user list on page load
   useEffect(() => {

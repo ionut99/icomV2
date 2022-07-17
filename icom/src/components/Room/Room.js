@@ -208,9 +208,6 @@ function Room(props) {
                 <BsIcons.BsCameraVideo />
               </Link>
             </div>
-            <div className="room-instrument">
-              <IoIcons2.IoCallOutline />
-            </div>
           </div>
           <div className="messages" ref={listInnerRef} onScroll={onScroll}>
             {loaded ? (

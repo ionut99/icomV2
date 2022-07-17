@@ -170,7 +170,7 @@ async function GetUserDetails(req, res) {
       return handleResponse(req, res, 410, "Invalid Request Parameters ");
     }
 
-    const userDetails = await GetUserDetailsData(userId)
+    var userDetails = await GetUserDetailsData(userId)
       .then(function (result) {
         if (result.length > 0) return result[0];
         else return undefined;
@@ -182,8 +182,9 @@ async function GetUserDetails(req, res) {
       return handleResponse(req, res, 412, " Get User Details Error ");
     }
 
-    // TO DO:
-    // must remove password and salt!!!!!!!!!!!!!
+    delete userDetails.salt;
+    delete userDetails.password;
+    //
     return handleResponse(req, res, 200, { userDetails });
   } catch (error) {
     console.error(error);

@@ -10,12 +10,19 @@ import {
   getGroupsDetails,
   getRoomUsersDetailsList,
 } from "../../asyncActions/adminAsyncActions";
-
+//
+// import { verifyTokenAsync } from "../../asyncActions/authAsyncActions";
+// import { setAuthToken } from "../../services/auth";
+//
 import Avatar from "../../components/Avatar/Avatar";
+//
+// import moment from "moment";
 //
 import "./panel.css";
 //
 export default function ControlPanel() {
+  //
+  // const dispatch = useDispatch();
   //
   const [search_text, setSearch_text] = useState("");
   const [adminUserList, setAdminUserList] = useState([]);
@@ -32,7 +39,7 @@ export default function ControlPanel() {
   const [userDetails, setuserDetails] = useState({});
 
   const authObj = useSelector((state) => state.auth);
-  const { user, expiredAt, token } = authObj;
+  const { user } = authObj;
   //
 
   const getSearchUserList = async (search_text, userId) => {

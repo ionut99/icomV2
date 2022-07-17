@@ -49,7 +49,7 @@
   background-position: center;
 }
 
-.current-user-video{
+.current-user-video {
   position: absolute;
   right: 20px;
   bottom: 20px;
@@ -69,13 +69,16 @@
   height: 350px;
   margin: 5px;
   margin: 0.5rem;
-  border: 2px solid red;
 }
 
-.user-video .user-name{
-  background-color: #fff;
-  border: blue solid 1px;
+.user-video .user-name {
+  padding-top: 4px;
+  display: inline-flex;
+  background-color: rgb(175, 175, 175);
   margin-top: auto;
+  font-size: 25px;
+  justify-content: center;
+  width: 400px;
 }
 
 .image_prev {
@@ -87,7 +90,7 @@
   width: 400px;
 }
 
-.image_prev .userprofile{
+.image_prev .userprofile {
   display: flex;
   justify-content: center;
   height: 250px;

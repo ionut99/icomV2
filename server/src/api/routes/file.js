@@ -1,7 +1,7 @@
 "use strict";
 const express = require("express");
 const router = express.Router();
-const { authMiddleware } = require("../middlewares/Auth");
+//
 const {
   GetProfilePicture,
   UploadNewStoredFile,
@@ -10,9 +10,6 @@ const {
   GetPicturePreview,
   SaveCustomTextFile,
 } = require("../controllers/Files");
-
-// router.post("/getdocument", authMiddleware, GetDocument);
-// router.post("/geprofilepicture", authMiddleware, GetProfilePicture);
 
 router.post("/profile", GetProfilePicture);
 router.post("/newfile", UploadNewStoredFile);

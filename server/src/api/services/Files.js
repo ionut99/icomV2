@@ -9,10 +9,11 @@ function InsertNewFileDataBase(
   createdTime,
   userId,
   size,
-  systemPath
+  systemPath,
+  IV
 ) {
   let insertQuery =
-    "INSERT INTO ?? (??,??,??,??,??,??,??,??) VALUES (?,?,?,?,?,?,?,?)";
+    "INSERT INTO ?? (??,??,??,??,??,??,??,??, ??) VALUES (?,?,?,?,?,?,?,?, ?)";
   let query = mysql.format(insertQuery, [
     "file",
     "fileId",
@@ -23,6 +24,7 @@ function InsertNewFileDataBase(
     "userId",
     "size",
     "systemPath",
+    "IV",
     fileId,
     type,
     fileName,
@@ -31,6 +33,7 @@ function InsertNewFileDataBase(
     userId,
     size,
     systemPath,
+    IV,
   ]);
 
   return new Promise((resolve, reject) => {

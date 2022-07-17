@@ -202,13 +202,11 @@ io.on("connection", (socket) => {
   //
 
   //
-
-  //
-  //
   socket.on("sending signal", (payload) => {
     io.to(payload.userToSignal).emit("user joined", {
       signal: payload.signal,
       callerId: payload.callerId,
+      callerUserId: payload.userId,
     });
   });
 
@@ -237,6 +235,30 @@ io.on("connection", (socket) => {
     if (user === undefined) return;
     //
     socket.broadcast.to(payload.roomId).emit("user start camera", {
+      socketId: socket.id,
+      userId: payload.userId,
+      roomId: payload.roomId,
+    });
+  });
+
+  //
+  socket.on("user stop microphone", (payload) => {
+    const user = getUser(socket.id);
+    if (user === undefined) return;
+    //
+    socket.broadcast.to(payload.roomId).emit("user stop microphone", {
+      socketId: socket.id,
+      userId: payload.userId,
+      roomId: payload.roomId,
+    });
+  });
+
+  //
+  socket.on("user start microphone", (payload) => {
+    const user = getUser(socket.id);
+    if (user === undefined) return;
+    //
+    socket.broadcast.to(payload.roomId).emit("user start microphone", {
       socketId: socket.id,
       userId: payload.userId,
       roomId: payload.roomId,

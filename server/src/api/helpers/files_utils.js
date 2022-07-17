@@ -1,7 +1,11 @@
 const path = require("path");
 var fs = require("fs");
 //
+var crypto = require("crypto");
+//
 var date = require("date-and-time");
+//
+const { encryptString } = require("./security");
 //
 const {
   GetUserDetailsData,
@@ -172,20 +176,75 @@ const saveFileConfiguration = async (
     //
     const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
     const numericTime = Date.now();
+
+    // try {
+    //   fs.rename(
+    //     oldPath,
+    //     newPath + "/" + numericTime + " " + fileName,
+    //     async function (err) {
+    //       if (err) throw err;
+    //     }
+    //   );
+    // } catch (err) {
+    //   throw err;
+    // }
+
+    // const nonce = crypto.randomBytes(ALGORITHM_NONCE_SIZE);
+
+    const secretKey = "vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3";
+    const iv = "vOVH6sdmpNWjRRIq";
     //
     try {
-      fs.rename(
-        oldPath,
-        newPath + "/" + numericTime + " " + fileName,
-        async function (err) {
-          if (err) throw err;
-        }
+      //
+      // let key = crypto.pbkdf2Sync(
+      //   Buffer.from(fileId, "utf8"),
+      //   nonce,
+      //   PBKDF2_ITERATIONS,
+      //   ALGORITHM_KEY_SIZE,
+      //   PBKDF2_NAME
+      // );
+
+      var cipher = crypto.createCipheriv("aes-256-ctr", secretKey, iv);
+      var input = fs.createReadStream(oldPath);
+      var output = fs.createWriteStream(
+        newPath + "/" + numericTime + " " + fileName
       );
+
+      input.pipe(cipher).pipe(output);
+
+      output.on("finish", function () {
+        console.log("Successfully encrypted file!");
+        // delete file
+        fs.unlink(oldPath, (err) => {
+          if (err) {
+            throw err;
+          }
+        });
+      });
+      // new try ...
+      // let plaintext = fs.readFileSync(oldPath);
+
+      // const encrypted = encryptString(plaintext, fileId);
+
+      // console.log("Autotag:" + encrypted.tag.length);
+      // //
+      // fs.writeFileSync(
+      //   newPath + "/" + numericTime + " " + fileName,
+      //   encrypted.buffer,
+      //   (err) => {
+      //     if (err) throw err;
+
+      //     fs.unlink(oldPath, (err) => {
+      //       if (err) {
+      //         throw err;
+      //       }
+      //     });
+      //   }
+      // );
+      //
     } catch (err) {
       throw err;
     }
-
-    // store file
 
     var pathToStore = path.join(userId + "/", numericTime + " " + fileName);
     pathToStore = pathToStore.replace(/\\/g, "\\\\");
@@ -199,7 +258,8 @@ const saveFileConfiguration = async (
       createdTime,
       userId,
       fileSize,
-      pathToStore
+      pathToStore,
+      iv
     )
       .then(function (result) {
         return result.affectedRows;
