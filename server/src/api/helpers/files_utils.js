@@ -5,7 +5,11 @@ var crypto = require("crypto");
 //
 var date = require("date-and-time");
 //
-const { encryptString } = require("./security");
+// const { encryptString } = require("./security");
+//
+const ALGORITHM_KEY_SIZE = 32;
+const PBKDF2_NAME = "sha256";
+const PBKDF2_ITERATIONS = 32767;
 //
 const {
   GetUserDetailsData,
@@ -20,6 +24,8 @@ const {
 
 //
 const { GetFolderDetailsService } = require("../services/Folders");
+
+//
 
 // returns a promise which resolves true if file exists:
 function checkFileExists(filepath) {
@@ -177,34 +183,20 @@ const saveFileConfiguration = async (
     const createdTime = date.format(new Date(), "YYYY/MM/DD HH:mm:ss.SSS");
     const numericTime = Date.now();
 
-    // try {
-    //   fs.rename(
-    //     oldPath,
-    //     newPath + "/" + numericTime + " " + fileName,
-    //     async function (err) {
-    //       if (err) throw err;
-    //     }
-    //   );
-    // } catch (err) {
-    //   throw err;
-    // }
-
-    // const nonce = crypto.randomBytes(ALGORITHM_NONCE_SIZE);
-
-    const secretKey = "vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3";
-    const iv = "vOVH6sdmpNWjRRIq";
+    let iv = crypto.randomBytes(16).toString("ascii");
+    //
+    let secretKey = crypto.pbkdf2Sync(
+      Buffer.from(fileId, "utf8"),
+      iv,
+      PBKDF2_ITERATIONS,
+      ALGORITHM_KEY_SIZE,
+      PBKDF2_NAME
+    );
     //
     try {
       //
-      // let key = crypto.pbkdf2Sync(
-      //   Buffer.from(fileId, "utf8"),
-      //   nonce,
-      //   PBKDF2_ITERATIONS,
-      //   ALGORITHM_KEY_SIZE,
-      //   PBKDF2_NAME
-      // );
 
-      var cipher = crypto.createCipheriv("aes-256-ctr", secretKey, iv);
+      var cipher = crypto.createCipheriv("aes-256-cbc", secretKey, iv);
       var input = fs.createReadStream(oldPath);
       var output = fs.createWriteStream(
         newPath + "/" + numericTime + " " + fileName
@@ -213,7 +205,7 @@ const saveFileConfiguration = async (
       input.pipe(cipher).pipe(output);
 
       output.on("finish", function () {
-        console.log("Successfully encrypted file!");
+        // console.log("Successfully encrypted file!");
         // delete file
         fs.unlink(oldPath, (err) => {
           if (err) {
@@ -221,26 +213,6 @@ const saveFileConfiguration = async (
           }
         });
       });
-      // new try ...
-      // let plaintext = fs.readFileSync(oldPath);
-
-      // const encrypted = encryptString(plaintext, fileId);
-
-      // console.log("Autotag:" + encrypted.tag.length);
-      // //
-      // fs.writeFileSync(
-      //   newPath + "/" + numericTime + " " + fileName,
-      //   encrypted.buffer,
-      //   (err) => {
-      //     if (err) throw err;
-
-      //     fs.unlink(oldPath, (err) => {
-      //       if (err) {
-      //         throw err;
-      //       }
-      //     });
-      //   }
-      // );
       //
     } catch (err) {
       throw err;
@@ -249,7 +221,7 @@ const saveFileConfiguration = async (
     var pathToStore = path.join(userId + "/", numericTime + " " + fileName);
     pathToStore = pathToStore.replace(/\\/g, "\\\\");
 
-    //Store File details in database
+    //
     var res_service = await InsertNewFileDataBase(
       fileId,
       fileType,

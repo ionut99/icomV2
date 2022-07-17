@@ -4,8 +4,11 @@ var fs = require("fs");
 var date = require("date-and-time");
 const crypto = require("crypto");
 
-const { decryptString } = require("../helpers/security");
-
+// const { decryptString } = require("../helpers/security");
+//
+const ALGORITHM_KEY_SIZE = 32;
+const PBKDF2_NAME = "sha256";
+const PBKDF2_ITERATIONS = 32767;
 //
 const { GetRoomDetailsData } = require("../services/Room");
 //
@@ -555,33 +558,24 @@ async function DownLoadFile(req, res) {
       fileName
     );
     //
-    // decriptare fisier din baza de date
+    const iv = resDetails.IV;
     //
-    // const nonce = resDetails.IV;
-    // //
-    // if (!nonce) throw new Error("Undefined IV for decryption");
-
-    const secretKey = "vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3";
-    const iv = "vOVH6sdmpNWjRRIq";
+    let secretKey = crypto.pbkdf2Sync(
+      Buffer.from(fileId, "utf8"),
+      iv,
+      PBKDF2_ITERATIONS,
+      ALGORITHM_KEY_SIZE,
+      PBKDF2_NAME
+    );
     //
     try {
       //
-      // let key = crypto.pbkdf2Sync(
-      //   Buffer.from(fileId, "utf8"),
-      //   nonce,
-      //   PBKDF2_ITERATIONS,
-      //   ALGORITHM_KEY_SIZE,
-      //   PBKDF2_NAME
-      // );
-      //
-      //
-      const decrypt = crypto.createDecipheriv("aes-256-ctr", secretKey, iv);
-      //
+      const decrypt = crypto.createDecipheriv("aes-256-cbc", secretKey, iv);
       var input = fs.createReadStream(DownloadFilePath);
       var output = fs.createWriteStream(decryptedFile);
       input.pipe(decrypt).pipe(output);
       output.on("finish", function () {
-        console.log("Successfully decrypt file");
+        // console.log("Successfully decrypt file");
         res.download(decryptedFile, (err) => {
           if (err) {
             return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
@@ -594,35 +588,6 @@ async function DownLoadFile(req, res) {
           });
         });
       });
-
-      //new try
-      // let encryptedData = fs.readFileSync(DownloadFilePath);
-      // //
-      // let authTag = "puI0FfV4Btiy7iPiZFbwew==";
-      // const decrypted = decryptString(encryptedData, authTag);
-      // if (decrypted !== undefined) {
-      //   fs.writeFileSync(decryptedFile, decipher);
-      //   //
-      //   const file = fs.createWriteStream(decryptedFile);
-      //   file.write(new Buffer.from(decrypted, "ascii"), function (err) {
-      //     if (err) return console.log(err);
-      //     console.log(`Successfully decrypted`);
-      //     file.close();
-      //   });
-      //   //
-      //   res.download(decryptedFile, (err) => {
-      //     if (err) {
-      //       return handleResponse(req, res, 410, { DownloadFile: "FAILED" });
-      //     }
-      //     // delete file
-      //     // fs.unlink(decryptedFile, (err) => {
-      //     //   if (err) {
-      //     //     throw err;
-      //     //   }
-      //     // });
-      //   });
-      //   //
-      // }
       //
     } catch (err) {
       throw err;
