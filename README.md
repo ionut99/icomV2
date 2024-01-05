@@ -21,9 +21,9 @@ user account credentials, namely email address and assigned password
 account. If the user enters the wrong credentials he will receive
 a notification message and will have to fill in the fields again.
 
-***<p style="text-align: center;"> ![Alt text ](image.png)</p>***
-
-***<p style="text-align: center;"> Login Page</p>***
+| ![Alt text ](image.png) | 
+|:--:| 
+| *Login Page* |
 
 After login the user is redirected to the homepage,
 where all public groups (not private conversations) are listed, from which he is a member.
@@ -33,19 +33,18 @@ set a profile picture, are assigned a standard icon. To access
 conversations it is sufficient for the user to select one of the displayed groups,
 and will be redirected to the group's messaging window.
 
-***<p style="text-align: center;"> ![Alt text ](image-1.png)</p>***
-
-***<p style="text-align: center;"> Home Page</p>***
-
+| ![Alt text ](image-1.png) | 
+|:--:| 
+| *Home Page* |
 
 To navigate to the rest of the pages use the sidebar on the left.
 This can be accessed by pressing the menu button in the navbar. Via
 menu you can navigate between the windows: home, messages, files,
 support and users (only for users with administrator role).
 
-***<p style="text-align: center;"> ![Alt text ](image-2.png)</p>***
-
-***<p style="text-align: center;"> Navigation Menu</p>***
+| ![Alt text ](image-2.png) | 
+|:--:| 
+| *Navigation Menu* |
 
 After accessing the messaging button, the user is redirected to
 chat area of the application. They can search for existing conversations
@@ -54,9 +53,9 @@ are sorted in alphabetical order according to the keyword searched for. For each
 conversation is displayed along with the time it was sent.
 and a button for more options.
 
-***<p style="text-align: center;"> ![Alt text ](image-3.png)</p>***
-
-***<p style="text-align: center;"> Accessing the messaging service</p>***
+| ![Alt text ](image-3.png) | 
+|:--:| 
+| *Accessing the messaging service* |
 
 After accessing a conversation, the right side of the page opens
 the group's message box. The user has the possibility to send
@@ -64,9 +63,9 @@ text messages as well as file attachments using the tools at the bottom of the
 box. After selecting the desired file to send, a
 preview of the file along with details about it.
 
-***<p style="text-align: center;"> ![Alt text ](image-4.png)</p>***
-
-***<p style="text-align: center;"> Example of sending a file in conversation</p>***
+| ![Alt text ](image-4.png) | 
+|:--:| 
+| *Example of sending a file in conversation* |
 
 To create new groups, the user has to click on the button with the icon in
 button next to the search box, and to get details about a
@@ -75,9 +74,9 @@ downloaded using the link in the body of the message, and to see the full
 storage you need to access the file access button on the right hand side. Enter
 a video call is done by using the start video call buttons.
 
-***<p style="text-align: center;"> ![Alt text ](image-5.png)</p>***
-
-***<p style="text-align: center;"> Introducing the functionality within the messaging window</p>***
+| ![Alt text ](image-5.png) | 
+|:--:| 
+| *Introducing the functionality within the messaging window* |
 
 The storage space simulates a file system in the way it is organized and
 representation. Each conversation or group is represented by a folder in which
@@ -90,17 +89,16 @@ the upload file button and creating a new folder via the
 button.To start editing a text document, go to
 the create new button.
 
-***<p style="text-align: center;"> ![Alt text ](image-6.png)</p>***
-
-***<p style="text-align: center;"> Presentation of the file storage system</p>***
-
+| ![Alt text ](image-6.png) | 
+|:--:| 
+| *Presentation of the file storage system* |
 
 # Collaborative text editing capability
 
 
-***<p style="text-align: center;"> ![Alt text ](image-7.png)</p>***
-
-***<p style="text-align: center;"> Collaborative text editing session</p>***
+| ![Alt text ](image-7.png) | 
+|:--:| 
+| *Collaborative text editing session* |
 
 Each user participating in editing the document can use the
 colored pointer in a different color than the others. Another functional feature is
@@ -114,9 +112,9 @@ development infrastructure. In other words, the same hardware was used for the s
 participation in the call. Leaving the call can be done via the
 Leave button or by accessing another page in the application.
 
-***<p style="text-align: center;"> ![Alt text ](image-8.png)</p>***
-
-***<p style="text-align: center;"> Presentation of the video-audio communication session</p>***
+| ![Alt text ](image-8.png) | 
+|:--:| 
+| *Presentation of the video-audio communication session* |
 
 For the administration of user accounts, administrators are allowed to
 to access the Users window using the navbar (option available only
@@ -127,6 +125,6 @@ user account, the Add New User button must be clicked and then the
 the form fields with the user's details. Administrators can also
 edit or delete user accounts as needed.
 
-***<p style="text-align: center;"> ![Alt text ](image-9.png)</p>***
-
-***<p style="text-align: center;"> Control window for administrators</p>***
+| ![Alt text ](image-9.png) | 
+|:--:| 
+| *Control Page for administrators* |
