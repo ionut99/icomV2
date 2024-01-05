@@ -22,6 +22,7 @@ account. If the user enters the wrong credentials he will receive
 a notification message and will have to fill in the fields again.
 
 ***<p style="text-align: center;"> ![Alt text ](image.png)</p>***
+
 ***<p style="text-align: center;"> Login Page</p>***
 
 After login the user is redirected to the homepage,
@@ -33,6 +34,7 @@ conversations it is sufficient for the user to select one of the displayed group
 and will be redirected to the group's messaging window.
 
 ***<p style="text-align: center;"> ![Alt text ](image-1.png)</p>***
+
 ***<p style="text-align: center;"> Home Page</p>***
 
 
@@ -42,6 +44,7 @@ menu you can navigate between the windows: home, messages, files,
 support and users (only for users with administrator role).
 
 ***<p style="text-align: center;"> ![Alt text ](image-2.png)</p>***
+
 ***<p style="text-align: center;"> Navigation Menu</p>***
 
 After accessing the messaging button, the user is redirected to
@@ -52,6 +55,7 @@ conversation is displayed along with the time it was sent.
 and a button for more options.
 
 ***<p style="text-align: center;"> ![Alt text ](image-3.png)</p>***
+
 ***<p style="text-align: center;"> Accessing the messaging service</p>***
 
 After accessing a conversation, the right side of the page opens
@@ -61,6 +65,7 @@ box. After selecting the desired file to send, a
 preview of the file along with details about it.
 
 ***<p style="text-align: center;"> ![Alt text ](image-4.png)</p>***
+
 ***<p style="text-align: center;"> Example of sending a file in conversation</p>***
 
 To create new groups, the user has to click on the button with the icon in
@@ -71,6 +76,7 @@ storage you need to access the file access button on the right hand side. Enter
 a video call is done by using the start video call buttons.
 
 ***<p style="text-align: center;"> ![Alt text ](image-5.png)</p>***
+
 ***<p style="text-align: center;"> Introducing the functionality within the messaging window</p>***
 
 The storage space simulates a file system in the way it is organized and
@@ -85,6 +91,7 @@ button.To start editing a text document, go to
 the create new button.
 
 ***<p style="text-align: center;"> ![Alt text ](image-6.png)</p>***
+
 ***<p style="text-align: center;"> Presentation of the file storage system</p>***
 
 
@@ -92,6 +99,7 @@ the create new button.
 
 
 ***<p style="text-align: center;"> ![Alt text ](image-7.png)</p>***
+
 ***<p style="text-align: center;"> Collaborative text editing session</p>***
 
 Each user participating in editing the document can use the
@@ -107,6 +115,7 @@ participation in the call. Leaving the call can be done via the
 Leave button or by accessing another page in the application.
 
 ***<p style="text-align: center;"> ![Alt text ](image-8.png)</p>***
+
 ***<p style="text-align: center;"> Presentation of the video-audio communication session</p>***
 
 For the administration of user accounts, administrators are allowed to
@@ -119,4 +128,5 @@ the form fields with the user's details. Administrators can also
 edit or delete user accounts as needed.
 
 ***<p style="text-align: center;"> ![Alt text ](image-9.png)</p>***
+
 ***<p style="text-align: center;"> Control window for administrators</p>***
