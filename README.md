@@ -1,17 +1,20 @@
-#About the Icom collaborative App
+
+# About the Icom collaborative App
 
 
-The application was built using ReactJS, NodeJS and MySQL. Icom is an app for collaborative working. The following actions can be carried out using it:
--   sending private or group messages;
--   audio-video calls using peer-to-peer connection;
--   editing and saving files in real time by multiple participants;
--   user management by administrators;
--   end-to-end encryption for message transmission between two users;
--   saving files at group level and accessing them remotely;
--   JWT token authenticatorș
+The application was built using **ReactJS**, **NodeJS** and **MySQL**. Icom is an app for collaborative working. The following actions can be carried out using it:
+-   **sending private or group messages**;
+-   **audio-video calls** using peer-to-peer connection;
+-   **editing and saving files in real time by multiple participants**;
+-   **user management by administrators**;
+-   **end-to-end encryption for message transmission between two users**;
+-   **saving files at group level and accessing them remotely**;
+-   **JWT token authenticator**;
 
 
-#Design and usage 
+# Design and usage 
+
+
 The design of the app is intuitive and easy to use, resembling other 
 web applications. For authentication the user has to enter
 user account credentials, namely email address and assigned password
@@ -76,7 +79,9 @@ the create new button.
 
 ![Alt text](image-6.png)
 
-#Collaborative text editing capability
+
+# Collaborative text editing capability
+
 
 ![Alt text](image-7.png)
 
